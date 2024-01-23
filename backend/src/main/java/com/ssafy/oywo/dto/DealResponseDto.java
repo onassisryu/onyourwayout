@@ -21,6 +21,7 @@ public class DealResponseDto {
     private RewardType rewardType;
     private Long complaint;
     private Status status;
+    private String dealType;
     private LocalDateTime expireAt;
     private List<DealImage> dealImages;
     private LocalDateTime createdAt;
@@ -36,6 +37,7 @@ public class DealResponseDto {
         this.rewardType = entity.getRewardType();
         this.complaint = entity.getComplaint();
         this.status = entity.getStatus();
+        this.dealType = entity.getDealType();
         this.expireAt = entity.getExpireAt();
         this.dealImages = entity.getDealImages();
         this.createdAt = entity.getCreatedAt();

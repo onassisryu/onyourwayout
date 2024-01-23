@@ -17,6 +17,7 @@ public class DealRequestsDto {
     private RewardType rewardType;
     private Long complaint;
     private Status status;
+    private String dealType;
     private LocalDateTime expireAt;
     private List<DealImage> dealImages;
 }

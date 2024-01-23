@@ -41,7 +41,7 @@ public class Deal extends Timestamped {
 
     @Column(name = "deal_type")
     @Enumerated(EnumType.STRING)
-    private String category;
+    private String dealType;
 
     @Column(name = "expire_at")
     private LocalDateTime expireAt;
@@ -56,6 +56,7 @@ public class Deal extends Timestamped {
         this.rewardType = requestsDto.getRewardType();
         this.complaint = requestsDto.getComplaint();
         this.status = requestsDto.getStatus();
+        this.dealType = requestsDto.getDealType();
         this.expireAt = requestsDto.getExpireAt();
         this.dealImages = requestsDto.getDealImages();
     }
