@@ -1,11 +1,11 @@
-import React from "react";
-import {Button} from "react-native";
-import styled from "styled-components/native";
+import React from 'react';
+import {Button} from 'react-native';
+import styled from 'styled-components/native';
 
 const Container = styled.View`
   justify-content: center;
   align-items: center;
-  font-family: "Zocial";
+  font-family: 'AntDesign';
 `;
 
 const StyledText = styled.Text`
@@ -13,13 +13,13 @@ const StyledText = styled.Text`
   margin-bottom: 10px;
 `;
 
-const Home = () => {
+const Location = () => {
   return (
     <Container>
-      <StyledText>Homffe</StyledText>
+      <StyledText>Location</StyledText>
       <Button title="go to the list screen" />
     </Container>
   );
 };
 
-export default Home;
+export default Location;
