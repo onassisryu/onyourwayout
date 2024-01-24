@@ -1,12 +1,10 @@
 package com.ssafy.oywo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name="apartment")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -14,7 +12,7 @@ import lombok.*;
 public class Apart {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "uuid")
     private Long aptId;
 
@@ -27,9 +25,9 @@ public class Apart {
     @Column(name="area_code")
     private String areaCode;
 
-    @Column(name="lat")
+    @Column(name="lat",precision = 11)
     private double lat;
 
-    @Column(name="long")
+    @Column(name="long",precision = 11)
     private double lng;
 }

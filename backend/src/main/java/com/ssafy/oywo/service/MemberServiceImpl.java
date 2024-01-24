@@ -8,6 +8,7 @@ import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.entity.RefreshToken;
 import com.ssafy.oywo.jwt.JwtTokenProvider;
 import com.ssafy.oywo.repository.HoRepository;
+import com.ssafy.oywo.repository.HouseRepository;
 import com.ssafy.oywo.repository.MemberRepository;
 import com.ssafy.oywo.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ import java.util.*;
 public class MemberServiceImpl implements org.example.jwttest.service.MemberService {
     private final MemberRepository memberRepository;
     private final HoRepository hoRepository;
+    private final HouseRepository houseRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -72,7 +74,7 @@ public class MemberServiceImpl implements org.example.jwttest.service.MemberServ
         String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
         List<String> roles = new ArrayList<>();
         roles.add("USER");  // USER 권한 부여
-
+    /*
         // 초대 코드 확인
         // 1. 초대코드가 존재하는 경우
         String inviteCode=signUpDto.getInviteCode();
@@ -81,7 +83,9 @@ public class MemberServiceImpl implements org.example.jwttest.service.MemberServ
         if(ho.isPresent()){
             // 호 아이디를 받는다.
             Long hoId=ho.get().getId();
+
             // 거주자에 등록한다.
+
         }
         // 2. 초대코드가 올바르지 않거나 존재하지 않는 경우
         else{
@@ -91,7 +95,7 @@ public class MemberServiceImpl implements org.example.jwttest.service.MemberServ
             //  2-2. 이미 등록되어 있는 호인 경우
         }
 
-
+*/
         Member member=memberRepository.save(signUpDto.toEntity(encodedPassword, false, roles));
 
         return MemberDto.toDto(member);

@@ -37,7 +37,6 @@ public class SignUpDto {
 
     public Member toEntity(String encodedPassword, boolean isCertificated, List<String> roles){
         return Member.builder()
-                .name(name)
                 .username(username)
                 .password(password)
                 .birthDate(birthDate)

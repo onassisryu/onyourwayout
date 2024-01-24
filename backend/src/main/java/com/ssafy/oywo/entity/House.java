@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
+@Table(name="house")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -43,8 +44,4 @@ public class House implements Persistable<HouseId> {
 
 }
 
-@Embeddable
-class HouseId implements Serializable{
-    private Long memberId;
-    private Long hoId;
-}
+

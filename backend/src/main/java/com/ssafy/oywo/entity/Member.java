@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
+@Table(name = "members")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -20,12 +21,10 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(of="id")
 public class Member implements UserDetails {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "uuid")
     private Long id;
 
-    @Column(name="name",nullable=false)
-    private String name;                    // 이름
     @Column(name="email", nullable = false)
     private String username;                // 사용자 이메일
 
@@ -59,8 +58,6 @@ public class Member implements UserDetails {
     @Column(name="end_alarm")
     private Date endAlarm;                  // 알람 끝 시간
 
-    @Column(name="deal_count")
-    private int dealCount;                  // 거래 수
 
     @Column(name="is_certificated")
     private boolean isCertificated;         // 인증 사용자 여부

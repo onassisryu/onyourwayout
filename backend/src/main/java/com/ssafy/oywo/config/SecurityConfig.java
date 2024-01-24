@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -36,6 +37,8 @@ public class SecurityConfig {
                 .requestMatchers("/members/signin").permitAll()
                 // USER 권한이 있어야 요청할 수 있음
                 .requestMatchers("/members/signup").permitAll()
+                // apart에 대한 정보 요청은 모두 허가
+                .requestMatchers(HttpMethod.GET,"/apart/**").permitAll()
                 // 이 밖에 모든 요청에 대해서 인증을 필요로 한다는 설정
                 .anyRequest().authenticated()
                 .and()

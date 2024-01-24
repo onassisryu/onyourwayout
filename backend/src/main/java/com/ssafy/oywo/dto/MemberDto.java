@@ -40,7 +40,6 @@ public class MemberDto {
     static public MemberDto toDto(Member member){
         return MemberDto.builder()
                 .id(member.getId())
-                .name(member.getName())
                 .username(member.getUsername())
                 .fcmToken(member.getFcmToken())
                 .build();
