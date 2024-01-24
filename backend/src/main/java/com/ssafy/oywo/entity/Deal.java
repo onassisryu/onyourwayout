@@ -1,6 +1,6 @@
 package com.ssafy.oywo.entity;
 
-import com.ssafy.oywo.dto.DealRequestsDto;
+import com.ssafy.oywo.dto.DealDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,13 +29,13 @@ public class Deal extends BaseTimeEntity {
     private String content;
 
     // Member
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "request_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Member requestId;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "request_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+//    private Member requestId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accept_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Member AccpetId;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "accept_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+//    private Member acceptId;
 
     @Column
     private Long cash;
@@ -64,43 +64,53 @@ public class Deal extends BaseTimeEntity {
 
 
     @Builder
-    public Deal(DealRequestsDto requestsDto) {
-        this.title = requestsDto.getTitle();
-        this.content = requestsDto.getContent();
-        this.cash = requestsDto.getCash();
-        this.item = requestsDto.getItem();
-        this.rewardTypeCode = requestsDto.getRewardTypeCode();
-//        this.complaint = requestsDto.getComplaint();
-        this.statusCode = requestsDto.getStatusCode();
-        this.dealTypeCode = requestsDto.getDealTypeCode();
-//        this.expireAt = requestsDto.getExpireAt();
-        this.dealImages = requestsDto.getDealImages();
+    public Deal(Long id, String title, String content, Long cash, String item, Long rewardTypeCode, int complaint, Long statusCode, Long dealTypeCode, LocalDateTime expireAt, List<DealImage> dealImages) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.cash = cash;
+        this.item = item;
+        this.rewardTypeCode = rewardTypeCode;
+        this.complaint = complaint;
+        this.statusCode = statusCode;
+        this.dealTypeCode = dealTypeCode;
+        this.expireAt = expireAt;
+        this.dealImages = dealImages;
+    }
 
-        if (requestsDto.getExpireAtStr() != null) {
-            this.expireAt = LocalDateTime.parse(requestsDto.getExpireAtStr(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    // 거래 정보 수정
+    public void update(DealDto.Request dto) {
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.cash = dto.getCash();
+        this.item = dto.getItem();
+        this.rewardTypeCode = dto.getRewardTypeCode();
+        this.complaint = dto.getComplaint();
+        this.statusCode = dto.getStatusCode();
+        this.dealTypeCode = dto.getDealTypeCode();
+        if (dto.getExpireAtStr() != null) {
+            this.expireAt = LocalDateTime.parse(dto.getExpireAtStr(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         } else {
-            // 기본 1시간 이후로 설정
             this.expireAt = LocalDateTime.now().plusMinutes(60);
         }
+        this.dealImages = dto.getDealImages();
     }
 
-    public void update(DealRequestsDto requestsDto) {
-        this.title = requestsDto.getTitle();
-        this.content = requestsDto.getContent();
-        this.cash = requestsDto.getCash();
-        this.item = requestsDto.getItem();
-        this.rewardTypeCode = requestsDto.getRewardTypeCode();
-//        this.complaint = requestsDto.getComplaint();
-        this.statusCode = requestsDto.getStatusCode();
-        this.dealTypeCode = requestsDto.getDealTypeCode();
-        this.expireAt = LocalDateTime.parse(requestsDto.getExpireAtStr(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        this.dealImages = requestsDto.getDealImages();
-    }
-
-//    public void setExpireAt(LocalDateTime expireAt) {
-//        this.expireAt = expireAt;
-//        expireAt.getDeal().add(this);
+    //== 비즈니스 로직 ==//
+    /**
+     * 거래 수락
+     */
+//    public void acceptDeal(Member acceptUser) {
+//        // 수락 유저 설정
+//        this.acceptId = acceptUser;
+//
+//        // 상태 코드 변경
+//        this.statusCode =
+//
+//        // 알림
 //    }
+
+
 
     public void addDealImage(DealImage dealImage) {
         dealImages.add(dealImage);

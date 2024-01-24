@@ -1,8 +1,6 @@
 package com.ssafy.oywo.service;
 
-import com.ssafy.oywo.dto.DealRequestsDto;
-import com.ssafy.oywo.dto.DealResponseDto;
-import com.ssafy.oywo.dto.SuccessResponseDto;
+import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.repository.DealRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,19 +16,21 @@ public class DealService {
 
     private final DealRepository dealRepository;
 
+    // 전체 조회
     @Transactional(readOnly = true)
-    public List<DealResponseDto> getDeals() {
+    public List<DealDto.Response> getDeals() {
         List<Deal> deals = dealRepository.findAllByOrderByModifiedAtDesc();
         return deals
                 .stream()
-                .map(DealResponseDto::new)
+                .map(DealDto.Response::new)
                 .toList();
     }
 
-    public DealResponseDto createDeal(DealRequestsDto requestsDto) {
+    // 생성
+    public DealDto.Response createDeal(DealDto.Request dto) {
 //        validateRequest(requestsDto);
 
-        Deal deal = new Deal(requestsDto);
+        Deal deal = dto.toEntity();
 //        User user = userUtil.findCurrent; // user
 
         try {
@@ -38,7 +38,7 @@ public class DealService {
         } catch (Exception e) {
             throw new RuntimeException("거래 생성 중 오류 발생", e);
         }
-        return new DealResponseDto(deal);
+        return new DealDto.Response(deal);
     }
 
 
@@ -51,31 +51,40 @@ public class DealService {
 //            throw new IllegalArgumentException("필수 입력 값 다 채우기.");
 //        }
 
-    public DealResponseDto getDeal(Long id) {
+
+    // 단건 조회
+    @Transactional(readOnly = true)
+    public DealDto.Response getDeal(Long id) {
         return dealRepository.findById(id)
-                .map(DealResponseDto::new)
+                .map(DealDto.Response::new)
                 .orElseThrow(
                         () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
                 );
     }
 
-    public DealResponseDto updateDeal(Long id, DealRequestsDto requestsDto) {
+    // 수정
+    public DealDto.Response updateDeal(Long id, DealDto.Request dto) {
         Deal deal = dealRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
         );
 
-        // + 요청유저id 같지 않을 경우
+        // + 요청유저id 같지 않을 경우 exception
 
+        deal.update(dto);
 
-        deal.update(requestsDto);
-        return new DealResponseDto(deal);
+        // 거래 수락 경우(Member acceptUser)
+        //        if (dto.isAccepted()) {
+//            deal.acceptDeal(acceptUser);
+//        }
+        return new DealDto.Response(deal);
     }
 
-    public SuccessResponseDto deleteDeal(Long id, DealRequestsDto requestsDto) {
+
+    // 삭제
+    public void deleteDeal(Long id, DealDto.Request dto) {
         Deal deal = dealRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
         );
         dealRepository.deleteById(id);
-        return new SuccessResponseDto(true);
     }
 }

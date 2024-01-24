@@ -1,15 +1,15 @@
 package com.ssafy.oywo.controller;
 
-import com.ssafy.oywo.dto.DealRequestsDto;
-import com.ssafy.oywo.dto.DealResponseDto;
-import com.ssafy.oywo.dto.SuccessResponseDto;
+import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.service.DealService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class DealController {
 
@@ -19,43 +19,52 @@ public class DealController {
     /**
      * 거래 전체 조회
      */
-    @GetMapping("/api/deals")
-    public List<DealResponseDto> getDeals() {
+    @GetMapping("/deals")
+    public List<DealDto.Response> getDeals() {
         return dealService.getDeals();
     }
 
     /**
      * 거래 생성
      */
-    @PostMapping("/api/deal")
-    public DealResponseDto createDeal(@RequestBody DealRequestsDto requestsDto) {
-        return dealService.createDeal(requestsDto);
+    @PostMapping("/deal")
+    public ResponseEntity createDeal(@RequestBody DealDto.Request dto) {
+        return ResponseEntity.ok(dealService.createDeal(dto));
     }
 
 
     /**
      * 거래 하나 조회
      */
-    @GetMapping("/api/deal/{id}")
-    public DealResponseDto getDeal(@PathVariable Long id) {
-        return dealService.getDeal(id);
+    @GetMapping("/deal/{id}")
+    public ResponseEntity getDeal(@PathVariable Long id) {
+        return ResponseEntity.ok(dealService.getDeal(id));
     }
 
 
     /**
      * 거래 수정
      */
-    @PostMapping("/api/deal/{id}")
-    public DealResponseDto updateDeal(@PathVariable Long id, @RequestBody DealRequestsDto requestsDto) throws Exception {
-        return dealService.updateDeal(id, requestsDto);
+    @PostMapping("/deal/{id}")
+    public ResponseEntity updateDeal(@PathVariable Long id, @RequestBody DealDto.Request dto) throws Exception {
+        return ResponseEntity.ok(dealService.updateDeal(id, dto));
     }
 
 
     /**
      * 거래 삭제
      */
-    @PostMapping("/api/deal/{id}")
-    public SuccessResponseDto deleteDeal(@PathVariable Long id, @RequestBody DealRequestsDto requestsDto) throws Exception {
-        return dealService.deleteDeal(id, requestsDto);
+    @PostMapping("/deal/{id}")
+    public ResponseEntity deleteDeal(@PathVariable Long id, @RequestBody DealDto.Request dto) throws Exception {
+        dealService.deleteDeal(id, dto);
+        return ResponseEntity.ok(id);
     }
+
+
+    /**
+     * 거래 수락
+     */
+
+
+
 }
