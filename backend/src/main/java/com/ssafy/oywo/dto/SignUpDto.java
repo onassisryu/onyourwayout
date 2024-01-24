@@ -35,14 +35,12 @@ public class SignUpDto {
     private List<String> roles=new ArrayList<>();
 
 
-    public Member toEntity(String encodedPassword, boolean isCertificated, List<String> roles){
+    public Member toEntity(String encodedPassword){
         return Member.builder()
                 .username(username)
                 .password(password)
                 .birthDate(birthDate)
                 .phoneNumber(phoneNumber)
-                .isCertificated(isCertificated)
-                .roles(roles)
                 .build();
     }
 }

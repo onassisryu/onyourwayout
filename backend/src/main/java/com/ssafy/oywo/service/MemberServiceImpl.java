@@ -96,7 +96,7 @@ public class MemberServiceImpl implements org.example.jwttest.service.MemberServ
         }
 
 */
-        Member member=memberRepository.save(signUpDto.toEntity(encodedPassword, false, roles));
+        Member member=memberRepository.save(signUpDto.toEntity(encodedPassword));
 
         return MemberDto.toDto(member);
     }
