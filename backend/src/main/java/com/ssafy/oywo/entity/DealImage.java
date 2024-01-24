@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Entity
-public class DealImage extends Timestamped {
+public class DealImage extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +15,7 @@ public class DealImage extends Timestamped {
 
     @ManyToOne
     @JoinColumn(name = "deal_id")
-    private Deal deal;
+    private Deal dealId;
 
     @Column(nullable = false)
     private String imgUrl;
@@ -23,7 +23,7 @@ public class DealImage extends Timestamped {
 
     // 거래 정보 저장
     public void setDeal(Deal deal) {
-        this.deal = deal;
+        this.dealId= deal;
 
         if (!deal.getDealImages().contains(this)) {
             deal.getDealImages().add(this);

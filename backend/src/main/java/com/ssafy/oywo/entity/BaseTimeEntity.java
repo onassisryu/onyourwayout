@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class Timestamped {
+public class BaseTimeEntity {
 
     @CreatedDate
     @Column(name = "created_at")

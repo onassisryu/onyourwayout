@@ -2,8 +2,6 @@ package com.ssafy.oywo.dto;
 
 import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.entity.DealImage;
-import com.ssafy.oywo.entity.RewardType;
-import com.ssafy.oywo.entity.Status;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,30 +15,33 @@ public class DealResponseDto {
     private Long id;
     private String title;
     private String content;
-    private Long reward;
-    private RewardType rewardType;
+    private Long cash;
+    private String item;
+    private Long rewardTypeCode;
     private int complaint;
-    private Status status;
-    private String dealType;
+    private Long statusCode;
+    private Long dealTypeCode;
     private LocalDateTime expireAt;
     private List<DealImage> dealImages;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-
+    private LocalDateTime deletedAt;
 
 
     public DealResponseDto(Deal entity) {
         this.id = entity.getId();
         this.title = entity.getTitle();
         this.content = entity.getContent();
-        this.reward = entity.getReward();
-        this.rewardType = entity.getRewardType();
+        this.cash = entity.getCash();
+        this.item = entity.getItem();
+        this.rewardTypeCode = entity.getRewardTypeCode();
         this.complaint = entity.getComplaint();
-        this.status = entity.getStatus();
-        this.dealType = entity.getDealType();
+        this.statusCode = entity.getStatusCode();
+        this.dealTypeCode = entity.getDealTypeCode();
         this.expireAt = entity.getExpireAt();
         this.dealImages = entity.getDealImages();
         this.createdAt = entity.getCreatedAt();
         this.modifiedAt = entity.getModifiedAt();
+        this.deletedAt = entity.getDeletedAt();
     }
 }
