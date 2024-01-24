@@ -25,6 +25,9 @@ public class Member implements UserDetails {
     @Column(name = "uuid")
     private Long id;
 
+    @Column(name="nickname")
+    private String nickname;
+
     @Column(name="email", nullable = false)
     private String username;                // 사용자 이메일
 
@@ -58,7 +61,6 @@ public class Member implements UserDetails {
     @Column(name="end_alarm")
     private Date endAlarm;                  // 알람 끝 시간
 
-
     @Column(name="is_certificated")
     private boolean isCertificated;         // 인증 사용자 여부
 
@@ -90,6 +92,8 @@ public class Member implements UserDetails {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
+
+
 
     @Override
     public boolean isAccountNonExpired() {

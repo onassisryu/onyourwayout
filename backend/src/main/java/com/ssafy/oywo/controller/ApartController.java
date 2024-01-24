@@ -47,8 +47,9 @@ public class ApartController {
     @GetMapping("/dong/{aptId}")
     public ResponseEntity<?> getDongList(@PathVariable("aptId") int aptId){
         List<DongDto> dongList=new ArrayList<>();
-        HashMap<String,List<?>> payload=new HashMap<>();
+        HashMap<String,Object> payload=new HashMap<>();
         dongList=dongService.getDongList(aptId);
+        payload.put("aptId",aptId);
         payload.put("data",dongList);
         return ResponseEntity.ok(payload);
     }

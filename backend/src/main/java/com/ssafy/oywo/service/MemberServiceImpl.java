@@ -2,8 +2,6 @@ package com.ssafy.oywo.service;
 
 import com.ssafy.oywo.dto.JwtToken;
 import com.ssafy.oywo.dto.MemberDto;
-import com.ssafy.oywo.dto.SignUpDto;
-import com.ssafy.oywo.entity.Ho;
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.entity.RefreshToken;
 import com.ssafy.oywo.jwt.JwtTokenProvider;
@@ -28,7 +26,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Transactional(readOnly=true)
 @Slf4j
-public class MemberServiceImpl implements org.example.jwttest.service.MemberService {
+public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final HoRepository hoRepository;
     private final HouseRepository houseRepository;
@@ -66,12 +64,12 @@ public class MemberServiceImpl implements org.example.jwttest.service.MemberServ
 
     @Transactional
     @Override
-    public MemberDto signUp(SignUpDto signUpDto) {
-        if (memberRepository.existsByUsername(signUpDto.getUsername())) {
+    public MemberDto signUp(MemberDto memberDto) {
+        if (memberRepository.existsByUsername(memberDto.getUsername())) {
             throw new IllegalArgumentException("이미 사용 중인 사용자 이름입니다.");
         }
         // Password 암호화
-        String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
+        String encodedPassword = passwordEncoder.encode(memberDto.getPassword());
         List<String> roles = new ArrayList<>();
         roles.add("USER");  // USER 권한 부여
     /*
@@ -96,7 +94,7 @@ public class MemberServiceImpl implements org.example.jwttest.service.MemberServ
         }
 
 */
-        Member member=memberRepository.save(signUpDto.toEntity(encodedPassword));
+        Member member=memberRepository.save(memberDto.toEntity());
 
         return MemberDto.toDto(member);
     }

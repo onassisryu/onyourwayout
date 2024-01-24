@@ -2,11 +2,9 @@ package com.ssafy.oywo.controller;
 
 import com.ssafy.oywo.dto.JwtToken;
 import com.ssafy.oywo.dto.MemberDto;
-import com.ssafy.oywo.dto.SignInDto;
-import com.ssafy.oywo.dto.SignUpDto;
+import com.ssafy.oywo.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.jwttest.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,24 +20,21 @@ public class MemberController {
 
     private final MemberService memberSerivce;
 
-
     @PostMapping("/signin")
-    public JwtToken signIn(@RequestBody SignInDto signInDto) {
-        String username = signInDto.getUsername();
-        String password = signInDto.getPassword();
+    public JwtToken signIn(@RequestBody MemberDto memberDto) {
+        String username = memberDto.getUsername();
+        String password = memberDto.getPassword();
 
         JwtToken jwtToken = memberSerivce.signIn(username, password);
-        System.out.println(jwtToken);
         log.info("request username = {}, password = {}", username, password);
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
-
 
         return jwtToken;
     }
     @PostMapping("/signup")
-    public ResponseEntity<MemberDto> signUp(@RequestBody SignUpDto signUpDto) {
-        System.out.print(signUpDto);
-        MemberDto savedMemberDto = memberSerivce.signUp(signUpDto);
+    public ResponseEntity<MemberDto> signUp(@RequestBody MemberDto memberDto) {
+        //System.out.print(memberDto);
+        MemberDto savedMemberDto = memberSerivce.signUp(memberDto);
         return ResponseEntity.ok(savedMemberDto);
     }
     @PostMapping("/refresh")

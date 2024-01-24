@@ -5,9 +5,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @ToString
@@ -20,6 +23,8 @@ public class MemberDto {
     private String name;                    // 이름
     private String username;                // 사용자 이메일
     private String password;                // 비밀번호
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;                 // 생년월일
     private String phoneNumber;            // 전화번호
     private int score;                      // 점수
@@ -40,16 +45,21 @@ public class MemberDto {
     static public MemberDto toDto(Member member){
         return MemberDto.builder()
                 .id(member.getId())
-                .username(member.getUsername())
-                .fcmToken(member.getFcmToken())
+                .password(member.getPassword())
+                .birthDate(member.getBirthDate())
+                .phoneNumber(member.getPhoneNumber())
+                .roles(member.getRoles())
                 .build();
     }
+    private List<String> roles=new ArrayList<>();
 
     public Member toEntity(){
         return Member.builder()
-                .id(id)
                 .username(username)
                 .password(password)
+                .birthDate(birthDate)
+                .phoneNumber(phoneNumber)
+                .roles(roles)
                 .build();
     }
 }
