@@ -23,7 +23,6 @@ public class DealController {
     public List<DealResponseDto> getDeals() {
         return dealService.getDeals();
     }
-}
 
     /**
      * 거래 생성
@@ -32,3 +31,4 @@ public class DealController {
     public DealResponseDto createDeal(@RequestBody DealRequestsDto requestsDto) {
         return dealService.createDeal(requestsDto);
     }
+}

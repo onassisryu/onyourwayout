@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.antlr.v4.runtime.misc.NotNull;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,7 +21,7 @@ public class Deal extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20)
     private String title;
 
     @Column(columnDefinition = "TEXT")
@@ -28,19 +30,18 @@ public class Deal extends Timestamped {
     @Column
     private Long reward;
 
-    @Column(name = "reward_type", nullable = false)
+    @Column(name = "reward_type")
     @Enumerated(EnumType.STRING)
     private RewardType rewardType;
 
-    @Column
-    private Long complaint;
+    @ColumnDefault("0")
+    private int complaint;
 
     @Column
     @Enumerated(EnumType.STRING)
     private Status status;
 
     @Column(name = "deal_type")
-    @Enumerated(EnumType.STRING)
     private String dealType;
 
     @Column(name = "expire_at")

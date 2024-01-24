@@ -42,9 +42,8 @@ public class DealService {
     private void validateRequest(DealRequestsDto requestsDto) {
         if (requestsDto.getTitle() == null || requestsDto.getTitle().isEmpty()
                 || requestsDto.getReward() == null
-                || requestsDto.getRewardType() == null
-                || requestsDto.getStatus() == null
-                || requestsDto.getDealType() == null || requestsDto.getDealType().isEmpty()){
+//                || requestsDto.getRewardType() == null
+                || requestsDto.getStatus() == null)
             throw new IllegalArgumentException("필수 입력 값을 채워주세요.");
         }
     }
