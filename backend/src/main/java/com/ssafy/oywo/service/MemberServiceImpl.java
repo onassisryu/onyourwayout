@@ -2,6 +2,7 @@ package com.ssafy.oywo.service;
 
 import com.ssafy.oywo.dto.JwtToken;
 import com.ssafy.oywo.dto.MemberDto;
+import com.ssafy.oywo.entity.Code;
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.entity.RefreshToken;
 import com.ssafy.oywo.jwt.JwtTokenProvider;
@@ -47,7 +48,7 @@ public class MemberServiceImpl implements MemberService {
         // 2. 실제 검증. authenticate() 메서드를 통해 요청된 Member 에 대한 검증 진행
         // authenticate 메서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
+        System.out.println("authenticationToken"+authenticationToken);
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 
@@ -64,7 +65,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public MemberDto signUp(MemberDto memberDto) {
+    public MemberDto.Response signUp(MemberDto.Request memberDto) {
         if (memberRepository.existsByUsername(memberDto.getUsername())) {
             throw new IllegalArgumentException("이미 사용 중인 사용자 이름입니다.");
         }
@@ -72,6 +73,12 @@ public class MemberServiceImpl implements MemberService {
         String encodedPassword = passwordEncoder.encode(memberDto.getPassword());
         List<String> roles = new ArrayList<>();
         roles.add("USER");  // USER 권한 부여
+
+//        List<Code> roles=new ArrayList<>();
+//        roles.add(new Code(1L));
+//
+//        List<Code> code=new ArrayList<>();
+//        code.add(new Code(1L));             // "USER"의 CODE ID 1이라고 가정
     /*
         // 초대 코드 확인
         // 1. 초대코드가 존재하는 경우
@@ -94,9 +101,10 @@ public class MemberServiceImpl implements MemberService {
         }
 
 */
-        Member member=memberRepository.save(memberDto.toEntity());
+        MemberDto.SignUp signup=new MemberDto.SignUp();
+        Member member=memberRepository.save(signup.toEntity(memberDto,roles));
 
-        return MemberDto.toDto(member);
+        return new MemberDto.Response(member);
     }
 
     public Optional<RefreshToken> getRefreshToken(String refreshToken){
@@ -121,5 +129,10 @@ public class MemberServiceImpl implements MemberService {
         }
         return map;
 
+    }
+
+    @Override
+    public Member getMemberInfo(String username, String password) {
+        return memberRepository.findByUsernameAndPassword(username,password);
     }
 }

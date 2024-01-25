@@ -2,6 +2,7 @@ package com.ssafy.oywo.controller;
 
 import com.ssafy.oywo.dto.JwtToken;
 import com.ssafy.oywo.dto.MemberDto;
+import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,20 +22,27 @@ public class MemberController {
     private final MemberService memberSerivce;
 
     @PostMapping("/signin")
-    public JwtToken signIn(@RequestBody MemberDto memberDto) {
+    public ResponseEntity<?> signIn(@RequestBody MemberDto.Request memberDto) {
+
         String username = memberDto.getUsername();
         String password = memberDto.getPassword();
 
         JwtToken jwtToken = memberSerivce.signIn(username, password);
         log.info("request username = {}, password = {}", username, password);
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
+        // 사용자 정보와 함께 넘겨주기
 
-        return jwtToken;
+        Member member=memberSerivce.getMemberInfo(username,password);
+
+        HashMap<String,Object> payload=new HashMap<>();
+        payload.put("token",jwtToken);
+        payload.put("memberInfo",member);
+        return ResponseEntity.ok(payload);
     }
     @PostMapping("/signup")
-    public ResponseEntity<MemberDto> signUp(@RequestBody MemberDto memberDto) {
+    public ResponseEntity<MemberDto.Response> signUp(@RequestBody MemberDto.Request memberDto) {
         //System.out.print(memberDto);
-        MemberDto savedMemberDto = memberSerivce.signUp(memberDto);
+        MemberDto.Response savedMemberDto = memberSerivce.signUp(memberDto);
         return ResponseEntity.ok(savedMemberDto);
     }
     @PostMapping("/refresh")
