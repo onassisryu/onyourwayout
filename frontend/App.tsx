@@ -6,8 +6,10 @@
  */
 
 import React from 'react';
+import {ThemeProvider} from 'styled-components/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+// import Theme from '@/Theme';
 import Home from '@screens/Home';
 import Location from '@screens/Location';
 import Chat from '@screens/Chat';
@@ -29,12 +31,12 @@ const App = () => {
           tabBarHideOnKeyboard: true,
           headerShown: false,
           tabBarStyle: {
-            backgroundColor: '#ffffff',
-            borderTopColor: '#ffffff',
+            paddingBottom: 5,
+            tabBarActiveTinitColor: '#27D894',
             height: 60,
           },
           tabBarIcon: ({focused, color, size}) => {
-            let iconName;
+            let iconName!: string;
             if (route.name === 'Home') {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === 'Location') {
@@ -43,11 +45,11 @@ const App = () => {
             return <Ionic name={iconName!} size={size} color={color} />;
           },
         })}>
-        <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Location" component={Location} />
-        <Tab.Screen name="Apart" component={Apart} />
-        <Tab.Screen name="Chat" component={Chat} />
-        <Tab.Screen name="My" component={My} />
+        <Tab.Screen name="홈" component={Home} />
+        <Tab.Screen name="위치" component={Location} />
+        <Tab.Screen name="아파트" component={Apart} />
+        <Tab.Screen name="채팅" component={Chat} />
+        <Tab.Screen name="내정보" component={My} />
       </Tab.Navigator>
     );
   };
