@@ -1,7 +1,5 @@
 package com.ssafy.oywo.service;
 
-import com.ssafy.oywo.entity.Apart;
-
 import java.util.List;
 
 public interface ApartService {

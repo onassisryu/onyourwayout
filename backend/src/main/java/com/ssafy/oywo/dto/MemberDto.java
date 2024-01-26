@@ -1,10 +1,6 @@
 package com.ssafy.oywo.dto;
 
-import com.ssafy.oywo.entity.Code;
 import com.ssafy.oywo.entity.Member;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 

@@ -1,14 +1,10 @@
 package com.ssafy.oywo.controller;
 
 import com.ssafy.oywo.dto.DongDto;
-import com.ssafy.oywo.entity.Apart;
-import com.ssafy.oywo.entity.Dong;
 import com.ssafy.oywo.service.ApartService;
 import com.ssafy.oywo.service.DongService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -2,7 +2,6 @@ package com.ssafy.oywo.service;
 
 import com.ssafy.oywo.dto.JwtToken;
 import com.ssafy.oywo.dto.MemberDto;
-import com.ssafy.oywo.entity.Code;
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.entity.RefreshToken;
 import com.ssafy.oywo.jwt.JwtTokenProvider;
