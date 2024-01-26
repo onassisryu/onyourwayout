@@ -2,6 +2,7 @@ package com.ssafy.oywo.dto;
 
 import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.entity.DealImage;
+import com.ssafy.oywo.entity.DealType;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,19 +19,18 @@ public class DealDto {
         private Long id;
         private String title;
         private String content;
-        // Members
-        private Members requestId;
-        private Members acceptId;
-        private Long cash;
+        private Long requestId;
+        private Long acceptId;
+        private int cash;
         private String item;
-        private Long rewardTypeCode;
+        private Deal.RewardType rewardType;
         private int complaint;
-        private Long statusCode;
-        private Long dealTypeCode;
+        private Deal.DealStatus dealStatus;
+        private DealType dealType;
         private String expireAtStr;
         private List<DealImage> dealImages;
 
-        private boolean accepted;
+//        private boolean accepted;
 
         public void setExpireAtStr(String expireAtStr) {
             this.expireAtStr = expireAtStr;
@@ -49,15 +49,14 @@ public class DealDto {
             }
 
             Deal deal = Deal.builder()
-//                    .Id(id)
                     .title(title)
                     .content(content)
                     .cash(cash)
                     .item(item)
-                    .rewardTypeCode(rewardTypeCode)
+                    .rewardType(rewardType)
                     .complaint(complaint)
-                    .statusCode(statusCode)
-                    .dealTypeCode(dealTypeCode)
+                    .dealStatus(dealStatus)
+                    .dealType(dealType)
                     .expireAt(expireAt)
                     .dealImages(dealImages)
                     .build();
@@ -65,9 +64,9 @@ public class DealDto {
         }
 
         // 거래 수락되었는지 메서드
-        public boolean isAccpeted() {
-            return accepted;
-        }
+//        public boolean isAccpeted() {
+//            return accepted;
+//        }
 
     }
 
@@ -78,15 +77,14 @@ public class DealDto {
         private Long id;
         private String title;
         private String content;
-        // Members
-        private Members requestId;
-        private Members acceptId;
-        private Long cash;
+        private Long requestId;
+        private Long acceptId;
+        private int cash;
         private String item;
-        private Long rewardTypeCode;
+        private Deal.RewardType rewardType;
         private int complaint;
-        private Long statusCode;
-        private Long dealTypeCode;
+        private Deal.DealStatus dealStatus;
+        private DealType dealType;
         private LocalDateTime expireAt;
         private List<DealImage> dealImages;
         private LocalDateTime createdAt;
@@ -104,10 +102,10 @@ public class DealDto {
             this.acceptId = entity.getAcceptId();
             this.cash = entity.getCash();
             this.item = entity.getItem();
-            this.rewardTypeCode = entity.getRewardTypeCode();
+            this.rewardType = entity.getRewardType();
             this.complaint = entity.getComplaint();
-            this.statusCode = entity.getStatusCode();
-            this.dealTypeCode = entity.getDealTypeCode();
+            this.dealStatus = entity.getDealStatus();
+            this.dealType = entity.getDealType();
             this.expireAt = entity.getExpireAt();
             this.dealImages = entity.getDealImages();
             this.createdAt = entity.getCreatedAt();

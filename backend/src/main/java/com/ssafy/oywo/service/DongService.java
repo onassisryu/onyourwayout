@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface DongService {
     // 아파트 코드로 동 리스트를 반환
-    List<DongDto> getDongList(int aptId);
+    List<DongDto.Response> getDongList(Long aptId);
 }

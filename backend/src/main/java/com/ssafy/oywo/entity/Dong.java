@@ -1,6 +1,7 @@
 package com.ssafy.oywo.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "dong")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Dong {
 
     @Id
@@ -22,9 +25,5 @@ public class Dong {
 
     private String name;
 
-    @Builder
-    public Dong(Apartment apartment, String name) {
-        this.apartment = apartment;
-        this.name = name;
-    }
+
 }

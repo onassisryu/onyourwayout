@@ -1,7 +1,6 @@
 package com.ssafy.oywo.service;
 
 import com.ssafy.oywo.entity.Member;
-import com.ssafy.oywo.repository.CodeRepository;
 import com.ssafy.oywo.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -17,7 +16,6 @@ public class CustomerUserDetailService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final CodeRepository codeRepository;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 

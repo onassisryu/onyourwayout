@@ -6,7 +6,9 @@ import com.ssafy.oywo.dto.MemberDto;
 
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.entity.RefreshToken;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
