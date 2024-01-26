@@ -72,7 +72,7 @@ public class MemberServiceImpl implements MemberService {
         // Password 암호화
         String encodedPassword = passwordEncoder.encode(memberDto.getPassword());
         List<String> roles = new ArrayList<>();
-        roles.add("USER");  // USER 권한 부여
+        roles.add(Member.RoleType.ROLE_USER.name());  // USER 권한 부여
 
 //        List<Code> roles=new ArrayList<>();
 //        roles.add(new Code(1L));

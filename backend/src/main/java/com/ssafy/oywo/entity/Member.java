@@ -23,6 +23,17 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class Member implements UserDetails {
 
+    @Getter
+    public enum RoleType{
+        ROLE_USER("USER"), ROLE_ADMIN("ADMIN");
+
+        private final String role;
+
+        RoleType(String role){
+            this.role=role;
+        }
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uuid")
