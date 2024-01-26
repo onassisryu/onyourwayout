@@ -1,24 +1,30 @@
 package com.ssafy.oywo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="dong")
+@Table(name = "dong")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor
 public class Dong {
+
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uuid")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="apt_id")
-    private Apart apart;
+    @ManyToOne
+    @JoinColumn(name = "apt_id")
+    private Apartment apartment;
 
-    @Column(name="name")
     private String name;
+
+    @Builder
+    public Dong(Apartment apartment, String name) {
+        this.apartment = apartment;
+        this.name = name;
+    }
 }

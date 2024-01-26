@@ -1,14 +1,17 @@
 package com.ssafy.oywo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name="ho")
+@Table(name = "ho")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor
 public class Ho {
 
     @Id
@@ -16,13 +19,26 @@ public class Ho {
     @Column(name = "uuid")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name="dong_id")
-    private Dong dongId;
+    @ManyToOne
+    @JoinColumn(name = "dong_id")
+    private Dong dong;
 
-    @Column(name="name")
-    private String name;    // 호 이름
+    private String name;
 
-    @Column(name="invite_code")
-    private String inviteCode;  // 초대 코드
+    private String inviteCode;
+
+
+    @OneToMany
+    @JoinTable(name = "house",
+            joinColumns = @JoinColumn(name = "ho_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id"))
+    private List<Member> member = new ArrayList<>();
+
+    @Builder
+    public Ho(Dong dong, String name, String inviteCode) {
+        this.dong = dong;
+        this.name = name;
+        this.inviteCode = inviteCode;
+    }
+
 }

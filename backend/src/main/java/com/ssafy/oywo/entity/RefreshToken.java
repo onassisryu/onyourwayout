@@ -13,13 +13,13 @@ public class RefreshToken {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name="uuid")
     private Long id;
 
     @Column(name="email",nullable = false)
     private String userName;
 
-    @Column(name="refresh_token",nullable = false)
+    @Column(nullable = false)
     private String refreshToken;
 
 }

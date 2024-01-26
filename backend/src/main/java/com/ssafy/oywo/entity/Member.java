@@ -1,88 +1,91 @@
 package com.ssafy.oywo.entity;
 
+
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "members")
+@Table(name = "member")
 @Getter
-@ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
-@EqualsAndHashCode(of="id")
 public class Member implements UserDetails {
+
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uuid")
     private Long id;
 
-    @Column(name="nickname")
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
+
+    @Column(name = "nickname", unique = true)
     private String nickname;
 
-    @Column(name="email", nullable = false)
-    private String username;                // 사용자 이메일
+    @Column(name = "password", nullable = false)
+    private String password;
 
-    @Column(name="pwd", nullable = false)
-    private String password;                // 비밀번호
+    @Column(name = "birth_date", nullable = false)
+    private Date birthDate;
 
-    @Column(name="birth_date", nullable = false)
-    private Date birthDate;                 // 생년월일
+    @Column(name = "phone_number", unique = true, nullable = false)
+    private String phoneNumber;
 
-    @Column(name="phone_number", nullable = false)
-    private String phoneNumber;            // 전화번호
+    private int score;
 
-    @Column(name="score")
-    private int score;                      // 점수
+    private String fcmToken;
 
-    @Column(name="fcm_token")
-    private String fcmToken;                // fcm 토큰
+    private String profileImg;
 
-    @Column(name="penalty_count")
-    private int penaltyCount;               // 패널티 누적 수
+    private int penaltyCount;
 
-    @Column(name="pause_start_time")
-    private Date pauseStartTime;            // 정지 시작 시간
+    private Timestamp pauseStartAt;
 
-    @Column(name="pause_end_time")
-    private Date pauseEndTime;              // 정지 종료 시간
+    private Timestamp pauseEndAt;
 
-    @Column(name="start_alarm")
-    private Date startAlarm;                // 알람 시작 시간
+    private Time notificationStart;
 
-    @Column(name="end_alarm")
-    private Date endAlarm;                  // 알람 끝 시간
+    private Time notificationEnd;
 
-    @Column(name="is_certificated")
-    private boolean isCertificated;         // 인증 사용자 여부
+    private boolean isCertified;
 
-    @Column(name="noti_dong_all")
-    private boolean notiDongAll;            // 모든 동 알림
+    private boolean isNotiDongAll;
 
-    @Column(name="noti_category_all")
-    private boolean notiCategoryAll;        // 모든 카테고리 알림
+    private boolean isNotiCategoryAll;
 
-    @Column(name="created_at")
-    private Date createdAt;              // 생성 시간
+    private Timestamp createdAt;
 
-    @Column(name="modified_at")
-    private Date modifiedAt;             // 수정 시간
+    private Timestamp updatedAt;
 
-    @Column(name="deleted_at")
-    private Date deletedAt;              // 삭제 시간
+    private Timestamp deletedAt;
 
-    @Column(name="apart_certificate_img")
-    private String apartCertificateImg;  // 아파트 증명 이미지
+    private String certificationImg;
+
+    @OneToMany
+    @JoinTable(name = "chat_user_list",
+            joinColumns = @JoinColumn(name = "member_id"),
+            inverseJoinColumns = @JoinColumn(name = "chat_room_id"))
+    private List<ChatRoom> chatRooms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<NotiDong> notiDongs = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<NotiDealCategory> notiDealCategories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<MembersNotification> membersNotifications = new ArrayList<>();
+
 
     // 이전 코드
     @ElementCollection(fetch = FetchType.EAGER)
@@ -91,7 +94,7 @@ public class Member implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-       // 이전 코드
+        // 이전 코드
         return this.roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
