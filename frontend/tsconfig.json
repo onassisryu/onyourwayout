@@ -2,11 +2,16 @@
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "types": ["@types/styled-components-react-native"],
     "paths": {
       "@/*": ["src/*"],
-      "tests": ["tests/*"],
       "@components/*": ["src/components/*"],
-      "@screens/*": ["src/screens/*"]
+      "@screens/*": ["src/screens/*"],
+      "~/*": ["assets/*"],
+      "icons/*": ["assets/icons/*"],
+      "images/*": ["assets/images/*"],
+      "videos/*": ["assets/videos/*"],
+      "tests": ["tests/*"]
     }
   },
   "resolveJsonModule": true,

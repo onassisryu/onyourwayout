@@ -6,99 +6,60 @@
  */
 
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, useColorScheme, View} from 'react-native';
+import {ThemeProvider} from 'styled-components/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+// import Theme from '@/Theme';
+import Home from '@screens/Home';
+import Location from '@screens/Location';
+import Chat from '@screens/Chat';
+import Apart from '@screens/Apart';
+import My from '@screens/My';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+//icon
+import Ionic from 'react-native-vector-icons/Ionicons';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+import {NavigationContainer} from '@react-navigation/native';
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
+const App = () => {
+  const Stack = createNativeStackNavigator();
+  const Tab = createBottomTabNavigator();
+  const BottomTab = () => {
+    return (
+      <Tab.Navigator
+        screenOptions={({route}) => ({
+          tabBarHideOnKeyboard: true,
+          headerShown: false,
+          tabBarStyle: {
+            paddingBottom: 5,
+            tabBarActiveTinitColor: '#27D894',
+            height: 60,
           },
-        ]}>
-        {title}
-      </Text>
-
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
+          tabBarIcon: ({focused, color, size}) => {
+            let iconName!: string;
+            if (route.name === 'Home') {
+              iconName = focused ? 'home' : 'home-outline';
+            } else if (route.name === 'Location') {
+              iconName = focused ? 'location' : 'location-outline';
+            }
+            return <Ionic name={iconName!} size={size} color={color} />;
           },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+        })}>
+        <Tab.Screen name="홈" component={Home} />
+        <Tab.Screen name="위치" component={Location} />
+        <Tab.Screen name="아파트" component={Apart} />
+        <Tab.Screen name="채팅" component={Chat} />
+        <Tab.Screen name="내정보" component={My} />
+      </Tab.Navigator>
+    );
   };
-
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">ㅇfsfㄹ</Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">Read the docs to discover what to do next:</Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Bottom" component={BottomTab} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+};
 
 export default App;
