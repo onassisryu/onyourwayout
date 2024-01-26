@@ -1,7 +1,6 @@
 package com.ssafy.oywo.controller;
 
 import com.ssafy.oywo.dto.DealDto;
-import com.ssafy.oywo.entity.Members;
 import com.ssafy.oywo.service.DealService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
