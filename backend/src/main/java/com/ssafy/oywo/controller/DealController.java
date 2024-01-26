@@ -1,6 +1,7 @@
 package com.ssafy.oywo.controller;
 
 import com.ssafy.oywo.dto.DealDto;
+import com.ssafy.oywo.entity.Members;
 import com.ssafy.oywo.service.DealService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +48,10 @@ public class DealController {
      */
     @PostMapping("/deal/{id}")
     public ResponseEntity updateDeal(@PathVariable Long id, @RequestBody DealDto.Request dto) throws Exception {
+
+        // 수락한 사용자 정보
+//        Members acceptUser =s
+
         return ResponseEntity.ok(dealService.updateDeal(id, dto));
     }
 
@@ -61,9 +66,6 @@ public class DealController {
     }
 
 
-    /**
-     * 거래 수락
-     */
 
 
 

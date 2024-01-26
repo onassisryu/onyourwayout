@@ -73,9 +73,9 @@ public class DealService {
         deal.update(dto);
 
         // 거래 수락 경우(Member acceptUser)
-        //        if (dto.isAccepted()) {
-//            deal.acceptDeal(acceptUser);
-//        }
+        if (dto.isAccepted()) {
+            deal.acceptDeal(acceptUser);
+        }
         return new DealDto.Response(deal);
     }
 

@@ -28,14 +28,14 @@ public class Deal extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    // Member
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "request_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-//    private Member requestId;
+    // Members
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Members requestId;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "accept_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-//    private Member acceptId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accept_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Members acceptId;
 
     @Column
     private Long cash;
@@ -64,10 +64,12 @@ public class Deal extends BaseTimeEntity {
 
 
     @Builder
-    public Deal(Long id, String title, String content, Long cash, String item, Long rewardTypeCode, int complaint, Long statusCode, Long dealTypeCode, LocalDateTime expireAt, List<DealImage> dealImages) {
+    public Deal(Long id, String title, String content, Members requestId, Members acceptId, Long cash, String item, Long rewardTypeCode, int complaint, Long statusCode, Long dealTypeCode, LocalDateTime expireAt, List<DealImage> dealImages, boolean acceptDeal) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.requestId = requestId;
+        this.acceptId = acceptId;
         this.cash = cash;
         this.item = item;
         this.rewardTypeCode = rewardTypeCode;
@@ -76,12 +78,17 @@ public class Deal extends BaseTimeEntity {
         this.dealTypeCode = dealTypeCode;
         this.expireAt = expireAt;
         this.dealImages = dealImages;
+
     }
+
 
     // 거래 정보 수정
     public void update(DealDto.Request dto) {
         this.title = dto.getTitle();
         this.content = dto.getContent();
+        //Members
+        this.requestId = dto.getRequestId();
+        this.acceptId = dto.getAcceptId();
         this.cash = dto.getCash();
         this.item = dto.getItem();
         this.rewardTypeCode = dto.getRewardTypeCode();
@@ -100,15 +107,15 @@ public class Deal extends BaseTimeEntity {
     /**
      * 거래 수락
      */
-//    public void acceptDeal(Member acceptUser) {
-//        // 수락 유저 설정
-//        this.acceptId = acceptUser;
-//
-//        // 상태 코드 변경
-//        this.statusCode =
-//
-//        // 알림
-//    }
+    public void acceptDeal(Members acceptUser) {
+        // 수락 유저 설정
+        this.acceptId = acceptUser;
+
+        // 상태 코드 변경
+        this.statusCode = 1L;
+
+        // 알림
+    }
 
 
 

@@ -2,6 +2,7 @@ package com.ssafy.oywo.dto;
 
 import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.entity.DealImage;
+import com.ssafy.oywo.entity.Members;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,8 +19,9 @@ public class DealDto {
         private Long id;
         private String title;
         private String content;
-        // private Member requestId;
-        // private Member acceptId;
+        // Members
+        private Members requestId;
+        private Members acceptId;
         private Long cash;
         private String item;
         private Long rewardTypeCode;
@@ -29,7 +31,7 @@ public class DealDto {
         private String expireAtStr;
         private List<DealImage> dealImages;
 
-//        private boolean accepted;
+        private boolean accepted;
 
         public void setExpireAtStr(String expireAtStr) {
             this.expireAtStr = expireAtStr;
@@ -64,9 +66,9 @@ public class DealDto {
         }
 
         // 거래 수락되었는지 메서드
-//        public boolean isAccpeted() {
-//            return accepted;
-//        }
+        public boolean isAccpeted() {
+            return accepted;
+        }
 
     }
 
@@ -77,8 +79,9 @@ public class DealDto {
         private Long id;
         private String title;
         private String content;
-        // private Member requestId;
-        // private Member acceptId;
+        // Members
+        private Members requestId;
+        private Members acceptId;
         private Long cash;
         private String item;
         private Long rewardTypeCode;
@@ -98,8 +101,8 @@ public class DealDto {
             this.id = entity.getId();
             this.title = entity.getTitle();
             this.content = entity.getContent();
-//            this.requestId = entity.getUser().getId();
-//            this.acceptId = entity.getAcceptId();
+            this.requestId = entity.getRequestId();
+            this.acceptId = entity.getAcceptId();
             this.cash = entity.getCash();
             this.item = entity.getItem();
             this.rewardTypeCode = entity.getRewardTypeCode();
