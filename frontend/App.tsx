@@ -6,10 +6,15 @@
  */
 
 import React from 'react';
-import {ThemeProvider} from 'styled-components/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-// import Theme from '@/Theme';
+
+//recoil&react-query
+import {RecoilRoot} from 'recoil';
+import {QueryClient, QueryClientProvider} from 'react-query';
+
+import {ThemeProvider} from '@emotion/react';
+import theme from '@/Theme';
 import Home from '@screens/Home';
 import Location from '@screens/Location';
 import Chat from '@screens/Chat';
@@ -24,6 +29,7 @@ import {NavigationContainer} from '@react-navigation/native';
 const App = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
+  const queryClient = new QueryClient();
   const BottomTab = () => {
     return (
       <Tab.Navigator
@@ -54,11 +60,19 @@ const App = () => {
     );
   };
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Bottom" component={BottomTab} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <React.StrictMode>
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <NavigationContainer>
+            <ThemeProvider theme={theme}>
+              <Stack.Navigator screenOptions={{headerShown: false}}>
+                <Stack.Screen name="Bottom" component={BottomTab} />
+              </Stack.Navigator>
+            </ThemeProvider>
+          </NavigationContainer>
+        </QueryClientProvider>
+      </RecoilRoot>
+    </React.StrictMode>
   );
 };
 
