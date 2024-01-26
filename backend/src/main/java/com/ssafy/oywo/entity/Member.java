@@ -40,7 +40,7 @@ public class Member implements UserDetails {
     private Long id;
 
     @Column(name = "email", unique = true, nullable = false)
-    private String email;
+    private String username;
 
     @Column(name = "nickname", unique = true)
     private String nickname;

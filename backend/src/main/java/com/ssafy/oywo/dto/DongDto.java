@@ -1,6 +1,5 @@
 package com.ssafy.oywo.dto;
 
-import com.ssafy.oywo.entity.Apart;
 import com.ssafy.oywo.entity.Dong;
 import lombok.*;
 

@@ -2,7 +2,6 @@ package com.ssafy.oywo.service;
 
 import com.ssafy.oywo.dto.JwtToken;
 import com.ssafy.oywo.dto.MemberDto;
-import com.ssafy.oywo.entity.Code;
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.entity.RefreshToken;
 import com.ssafy.oywo.jwt.JwtTokenProvider;
@@ -79,28 +78,28 @@ public class MemberServiceImpl implements MemberService {
 //
 //        List<Code> code=new ArrayList<>();
 //        code.add(new Code(1L));             // "USER"의 CODE ID 1이라고 가정
-    /*
+
         // 초대 코드 확인
         // 1. 초대코드가 존재하는 경우
-        String inviteCode=signUpDto.getInviteCode();
-        Optional<Ho> ho=hoRepository.findByInviteCode(inviteCode);
-        // 거주자 리스트에 추가
-        if(ho.isPresent()){
-            // 호 아이디를 받는다.
-            Long hoId=ho.get().getId();
+//        String inviteCode=memberDto.getInviteCode();
+//        Optional<Ho> ho=hoRepository.findByInviteCode(inviteCode);
+//        // 거주자 리스트에 추가
+//        if(ho.isPresent()){
+//            // 호 아이디를 받는다.
+//            Long hoId=ho.get().getId();
+//
+//            // 거주자에 등록한다.
+//
+//        }
+//        // 2. 초대코드가 올바르지 않거나 존재하지 않는 경우
+//        else{
+//            Optional<Ho> existedHo=hoRepository.findByDongIdAndName(signUpDto.getDongId(), signUpDto.getHo());
+//            //  2-1. 등록되어 있지 않은 호인 경우
+//
+//            //  2-2. 이미 등록되어 있는 호인 경우
+//        }
 
-            // 거주자에 등록한다.
 
-        }
-        // 2. 초대코드가 올바르지 않거나 존재하지 않는 경우
-        else{
-            Optional<Ho> existedHo=hoRepository.findByDongIdAndName(signUpDto.getDongId(), signUpDto.getHo());
-            //  2-1. 등록되어 있지 않은 호인 경우
-
-            //  2-2. 이미 등록되어 있는 호인 경우
-        }
-
-*/
         MemberDto.SignUp signup=new MemberDto.SignUp();
         Member member=memberRepository.save(signup.toEntity(memberDto,roles));
 

@@ -1,6 +1,5 @@
 package com.ssafy.oywo.service;
 
-import com.ssafy.oywo.entity.Apart;
 import com.ssafy.oywo.repository.ApartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,18 +1,14 @@
 package com.ssafy.oywo.dto;
 
-import com.ssafy.oywo.entity.Code;
 import com.ssafy.oywo.entity.Member;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
 
 
 public class MemberDto {
@@ -26,8 +22,10 @@ public class MemberDto {
         private String username;                // 사용자 이메일
         private String password;                // 비밀번호
 
+        private String inviteCode;              // 인증 코드
+
         @DateTimeFormat(pattern = "yyyy-MM-dd")
-        private Date birthDate;                 // 생년월일
+        private java.sql.Date birthDate;                 // 생년월일
         private String phoneNumber;            // 전화번호
         private String apartCertificateImg;  // 아파트 증명 이미지
 
@@ -38,10 +36,10 @@ public class MemberDto {
                     .password(password)
                     .birthDate(birthDate)
                     .phoneNumber(phoneNumber)
-                    .createdAt(new Date())
-                    .isCertificated(false)
+                    .createdAt(new Timestamp(System.currentTimeMillis()))
+                    .isCertified(false)
                     .score(50)              // 기본값 50
-                    .apartCertificateImg(apartCertificateImg)
+                    .certificationImg(apartCertificateImg)
                     .build();
 
             return member;
@@ -79,6 +77,7 @@ public class MemberDto {
 
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         private Date birthDate;                 // 생년월일
+
         private String phoneNumber;            // 전화번호
         private String apartCertificateImg;  // 아파트 증명 이미지
         private List<String> roles=new ArrayList<>();
@@ -90,10 +89,10 @@ public class MemberDto {
                     .password(req.getPassword())
                     .birthDate(req.getBirthDate())
                     .phoneNumber(req.getPhoneNumber())
-                    .createdAt(new Date())
-                    .isCertificated(false)
+                    .createdAt(new Timestamp(System.currentTimeMillis()))
+                    .isCertified(false)
                     .score(50)              // 기본값 50
-                    .apartCertificateImg(req.getApartCertificateImg())
+                    .certificationImg(req.getApartCertificateImg())
                     .roles(roles)
                     .build();
 

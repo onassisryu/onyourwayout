@@ -1,6 +1,5 @@
 package com.ssafy.oywo.service;
 
-import com.ssafy.oywo.entity.Code;
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.repository.CodeRepository;
 import com.ssafy.oywo.repository.MemberRepository;
