@@ -21,13 +21,4 @@ public class DealImage extends BaseTimeEntity {
     private String imgUrl;
 
 
-    // 거래 정보 저장
-    public void setDeal(Deal deal) {
-        this.dealId= deal;
-
-        if (!deal.getDealImages().contains(this)) {
-            deal.getDealImages().add(this);
-        }
-    }
-
 }
