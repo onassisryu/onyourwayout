@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Notification {
 
-    enum NotificationType {
+    public enum NotificationType {
         CHAT, NOTI_DONG, NOTI_BLOCK, NOTI_APT
     }
 

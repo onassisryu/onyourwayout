@@ -13,11 +13,11 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class Deal extends BaseTimeEntity {
-    enum RewardType {
+    public enum RewardType {
         CASH, ITEM
     }
 
-    enum DealStatus {
+    public enum DealStatus {
         OPEN, ING, CLOSE
     }
 
