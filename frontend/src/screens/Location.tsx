@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button} from 'react-native';
-import styled from 'styled-components/native';
+import styled from '@emotion/native';
 
 const Container = styled.View`
   justify-content: center;

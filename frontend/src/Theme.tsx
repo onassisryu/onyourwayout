@@ -1,10 +1,30 @@
-export default {
-  color: {
-    white: '#FFFFFF',
-    black: '#000000',
-    main: '#FF0000',
-  },
-  fonts: {
-    normal: '14px',
-  },
+import {Theme} from '@emotion/react';
+
+const color = {
+  black: '#262626',
+  primary: '#00D282',
+  gray100: '#DCDCDC',
 };
+
+const fontSize = {
+  small: '14px',
+  medium: '16px',
+  title: '42px',
+  subtitle: '20px',
+};
+const border = {
+  primary: '#00D282',
+};
+
+export type ColorsTypes = typeof color;
+export type FontSizeTypes = typeof fontSize;
+export type BordersTypes = typeof border;
+
+// 이 부분은 ThemeProvider로 적용하기 위한 과정이다.
+const theme: Theme = {
+  color,
+  fontSize,
+  border,
+};
+
+export default theme;
