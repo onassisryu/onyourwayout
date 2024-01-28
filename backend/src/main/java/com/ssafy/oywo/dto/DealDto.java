@@ -30,8 +30,6 @@ public class DealDto {
         private String expireAtStr;
         private List<DealImage> dealImages;
 
-//        private boolean accepted;
-
         public void setExpireAtStr(String expireAtStr) {
             this.expireAtStr = expireAtStr;
         }
@@ -51,6 +49,8 @@ public class DealDto {
             Deal deal = Deal.builder()
                     .title(title)
                     .content(content)
+                    .requestId(requestId)
+                    .acceptId(acceptId)
                     .cash(cash)
                     .item(item)
                     .rewardType(rewardType)
@@ -62,12 +62,6 @@ public class DealDto {
                     .build();
             return deal;
         }
-
-        // 거래 수락되었는지 메서드
-//        public boolean isAccpeted() {
-//            return accepted;
-//        }
-
     }
 
 
