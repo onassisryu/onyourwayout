@@ -33,10 +33,22 @@ public class DealService {
     }
 
     // 생성
-    public DealDto.Response createDeal(DealDto.Request dto) {
+    public DealDto.Response createDeal(DealDto.Request dto, String username) {
         validateRequest(dto);
 
         // 로그인된 사용자의 id 가져오기
+        Long loginUserId = memberRepository.findByUsername(username)
+                .map(Member::getId)
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
+        // requestId에 로그인사용자 id넣기
+        dto.setRequestId(loginUserId);
+
+        // item넣으면 -> ITEM / cash 넣으면 -> CASH
+        if (dto.getItem() != null) {
+            dto.setRewardType(Deal.RewardType.ITEM);
+        } else if (dto.getCash() != 0) {
+            dto.setRewardType(Deal.RewardType.CASH);
+        }
 
         // dealStatus -> OPEN
         dto.setDealStatus(Deal.DealStatus.OPEN);
@@ -55,23 +67,22 @@ public class DealService {
     // 거래 생성 유효성 검증
     private void validateRequest(DealDto.Request dto) {
         if (dto.getTitle() == null || dto.getTitle().isEmpty()
-                || dto.getRewardType() == null
                 || dto.getDealType() == null) {
-            throw new IllegalArgumentException("제목/보상유형/거래유형 은 필수 입력 항목임");
+            throw new IllegalArgumentException("제목/거래유형 은 필수 입력 항목임");
         }
 
         if (dto.getCash() < 0) {
             throw new IllegalArgumentException("현물보상금액은 음수일 수 없음");
         }
 
-        if (dto.getCash() == 0 ||
+        if (dto.getCash() == 0 &&
                 (dto.getItem() == null || dto.getItem().isEmpty())) {
             throw new IllegalArgumentException("현물보상 또는 물물보상은 필수 입력");
         }
 
-//        if (dto.getCash() != 0 && dto.getItem() != null) {
-//            throw new IllegalArgumentException("두 보상을 동시에 선택할 수 없음")
-//        }
+        if (dto.getCash() != 0 && dto.getItem() != null) {
+            throw new IllegalArgumentException("두 보상을 동시에 선택할 수 없음");
+        }
 
         if (dto.getExpireAtStr() != null) {
             try {
@@ -97,6 +108,7 @@ public class DealService {
     }
 
 
+
     // 수정
     public DealDto.Response updateDeal(Long id, DealDto.Request dto) {
         Deal deal = dealRepository.findById(id).orElseThrow(
@@ -106,9 +118,49 @@ public class DealService {
         // + 요청유저id 같지 않을 경우 exception
 
         deal.update(dto);
+        dealRepository.save(deal);
 
         return new DealDto.Response(deal);
     }
+
+
+
+    // 수락
+    public DealDto.Response acceptDeal(Long id, Long acceptId) {
+        Deal deal = dealRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
+        );
+
+        // 거래 상태 확인
+        if (deal.getDealStatus() != Deal.DealStatus.OPEN) {
+            throw new IllegalStateException("현재 거래 상태에서는 수락할 수 없음");
+        }
+
+        // 수락자 확인
+        Member acceptUser = memberRepository.findById(acceptId).orElseThrow(
+                () -> new IllegalArgumentException("해당 사용자 아이디가 존재하지 않음")
+        );
+        System.out.println("acceptUser = " + acceptUser);
+        System.out.println("acceptUserId = " + acceptUser.getId());
+        System.out.println("requestId = " + deal.getRequestId());
+
+        if (deal.getRequestId().equals(acceptUser.getId())) {
+            throw new IllegalStateException("요청자와 수락자는 같을 수 없음");
+        }
+
+        DealDto.Request dto = DealDto.Request.builder()
+                .acceptId(acceptId)
+                .dealStatus(Deal.DealStatus.ING)
+                .build();
+
+        // 엔티티 갱신
+        deal.update(dto);
+        // 갱신된 엔티티 저장
+        dealRepository.save(deal);
+
+        return new DealDto.Response(deal);
+    }
+
 
 
     // 삭제
@@ -120,30 +172,4 @@ public class DealService {
     }
 
 
-    // 수락
-    public DealDto.Response acceptDeal(Long id, Long acceptId) {
-        Deal deal = dealRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
-        );
-
-        Member acceptUser = memberRepository.findById(acceptId).orElseThrow(
-                () -> new IllegalArgumentException("해당 사용자 아이디가 존재하지 않음")
-        );
-
-
-        DealDto.Request dto = DealDto.Request.builder()
-                .id(deal.getId())
-                .requestId((deal.getRequestId()))
-                .acceptId(acceptId)    // acceptId로 갱신
-                .dealStatus(Deal.DealStatus.ING)   // ING로 갱신
-                .build();
-
-        // 엔티티 갱신
-        deal.update(dto);
-
-        // 갱신된 엔티티 저장
-        dealRepository.save(deal);
-
-        return new DealDto.Response(deal);
-    }
 }

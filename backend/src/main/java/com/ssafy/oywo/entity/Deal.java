@@ -59,32 +59,53 @@ public class Deal extends BaseTimeEntity {
     @OneToMany(mappedBy = "dealId")
     private List<DealImage> dealImages = new ArrayList<>();
 
+
+    // 수정 로직
     public void update(DealDto.Request dto) {
-        this.id = dto.getId();
-        this.requestId = dto.getRequestId();
-        this.acceptId = dto.getAcceptId();
-        this.title = dto.getTitle();
-        this.content = dto.getContent();
-        this.item = dto.getItem();
-        this.cash = dto.getCash();
-        this.rewardType = dto.getRewardType();
-        this.complaint = dto.getComplaint();
+        if (dto.getAcceptId() != null) {
+            this.acceptId = dto.getAcceptId();
+        }
+
+        if (dto.getTitle() != null) {
+            this.title = dto.getTitle();
+        }
+
+        if (dto.getContent() != null) {
+            this.content = dto.getContent();
+        }
+
+        if (dto.getItem() != null) {
+            this.item = dto.getItem();
+        }
+
+        if (dto.getCash() > 0) {
+            this.cash = dto.getCash();
+        }
+
+        if (dto.getRewardType() != null) {
+            this.rewardType = dto.getRewardType();
+        }
+
+        if (dto.getComplaint() > 0) {
+            this.complaint = dto.getComplaint();
+        }
 
         // dealStatus 갱신
         if (dto.getDealStatus() != null) {
             this.dealStatus = dto.getDealStatus();
         }
 
-        this.dealStatus = dto.getDealStatus();
-        this.dealType = dto.getDealType();
+        if (dto.getDealType() != null) {
+            this.dealType = dto.getDealType();
+        }
+
         if (dto.getExpireAtStr() != null) {
             this.expireAt = LocalDateTime.parse(dto.getExpireAtStr(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        } else {
-            // 기본 1시간 이후로 설정
-            this.expireAt = LocalDateTime.now().plusMinutes(60);
         }
-//        this.expireAt = dto.getExpireAtStr();
-        this.dealImages = dto.getDealImages();
+
+        if (dto.getDealImages() != null) {
+            this.dealImages = dto.getDealImages();
+        }
 
     }
 }
