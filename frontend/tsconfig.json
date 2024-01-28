@@ -2,7 +2,6 @@
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "types": ["@types/styled-components-react-native"],
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
@@ -12,9 +11,22 @@
       "images/*": ["assets/images/*"],
       "videos/*": ["assets/videos/*"],
       "tests": ["tests/*"]
-    }
+    },
+
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "jsx": "react-native",
+    "lib": ["es6"],
+    "module": "node16",
+    "types": ["node"],
+    "moduleResolution": "node16",
+    "noEmit": true,
+    "strict": true,
+    "target": "esnext"
   },
-  "resolveJsonModule": true,
-  "allowSyntheticDefaultImports": true,
-  "esModuleInterop": true
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js"]
 }
