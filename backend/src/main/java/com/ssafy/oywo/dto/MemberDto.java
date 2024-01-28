@@ -1,5 +1,6 @@
 package com.ssafy.oywo.dto;
 
+import com.ssafy.oywo.entity.Ho;
 import com.ssafy.oywo.entity.Member;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -29,6 +30,9 @@ public class MemberDto {
         private String phoneNumber;            // 전화번호
         private String apartCertificateImg;  // 아파트 증명 이미지
 
+        private Long dongId;                // 동 id
+        private String hoName;              // 호 이름
+        
         public Member toEntity(){
             Member member=Member.builder()
                     .nickname(nickname)
@@ -46,6 +50,7 @@ public class MemberDto {
         }
     }
 
+    // 회원 정보와 회원이 등록한 집 정보를 담은 class
     @Getter
     public static class Response{
         private Long id;
@@ -54,9 +59,15 @@ public class MemberDto {
         private Date birthDate;
         private String phoneNumber;
         private int score;
-        //private List<String> roles=new ArrayList<>();
+        private boolean isCertified;
+
+        private Long dongId;
+        private String dongName;
+        private Long hoId;
+        private String hoName;
+
         private List<String> roles=new ArrayList<>();
-        public Response(Member member){
+        public Response(Member member, Ho ho){
             this.id=member.getId();
             this.nickname=member.getNickname();
             this.username=getUsername();
@@ -64,6 +75,11 @@ public class MemberDto {
             this.phoneNumber=member.getPhoneNumber();
             this.score=member.getScore();
             this.roles=member.getRoles();
+            this.isCertified=member.isCertified();
+            this.dongId=ho.getDong().getId();
+            this.dongName=ho.getDong().getName();
+            this.hoId=ho.getId();
+            this.hoName=ho.getName();
         }
     }
     @Data
@@ -82,7 +98,7 @@ public class MemberDto {
         private String apartCertificateImg;  // 아파트 증명 이미지
         private List<String> roles=new ArrayList<>();
 
-        public Member toEntity(MemberDto.Request req,List<String> roles){
+        public Member toEntity(MemberDto.Request req,List<String> roles,boolean isCertified){
             Member member=Member.builder()
                     .nickname(req.getNickname())
                     .username(req.getUsername())
@@ -90,7 +106,7 @@ public class MemberDto {
                     .birthDate(req.getBirthDate())
                     .phoneNumber(req.getPhoneNumber())
                     .createdAt(new Timestamp(System.currentTimeMillis()))
-                    .isCertified(false)
+                    .isCertified(isCertified)
                     .score(50)              // 기본값 50
                     .certificationImg(req.getApartCertificateImg())
                     .roles(roles)

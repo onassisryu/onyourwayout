@@ -1,6 +1,7 @@
 package com.ssafy.oywo.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,8 @@ import java.util.List;
 @Entity
 @Table(name = "ho")
 @Getter
+@Builder                    // 추가
+@AllArgsConstructor         // 추가
 @NoArgsConstructor
 public class Ho {
 
@@ -26,19 +29,12 @@ public class Ho {
     private String name;
 
     private String inviteCode;
-
-
+    
     @OneToMany
     @JoinTable(name = "house",
             joinColumns = @JoinColumn(name = "ho_id"),
             inverseJoinColumns = @JoinColumn(name = "member_id"))
     private List<Member> member = new ArrayList<>();
-
-    @Builder
-    public Ho(Dong dong, String name, String inviteCode) {
-        this.dong = dong;
-        this.name = name;
-        this.inviteCode = inviteCode;
-    }
+    
 
 }

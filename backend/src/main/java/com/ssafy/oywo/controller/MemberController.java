@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -22,6 +23,12 @@ public class MemberController {
 
     private final MemberService memberSerivce;
 
+    /**
+     * 로그인
+     * 인증 불필요
+     * @param memberDto
+     * @return
+     */
     @PostMapping("/signin")
     public ResponseEntity<?> signIn(@RequestBody MemberDto.Request memberDto) {
 
@@ -32,10 +39,8 @@ public class MemberController {
         JwtToken jwtToken = memberSerivce.signIn(username, password);
         log.info("request username = {}, password = {}", username, password);
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
-        // 사용자 정보와 함께 넘겨주기
 
         Member member=memberSerivce.getMemberInfo(username,password);
-
 
         HashMap<String,Object> payload=new HashMap<>();
         payload.put("token",jwtToken);
@@ -43,12 +48,26 @@ public class MemberController {
         System.out.println(payload);
         return ResponseEntity.ok(payload);
     }
+
+    /**
+     * 회원가입
+     * 인증 불필요
+     * @param memberDto
+     * @return
+     */
     @PostMapping("/signup")
     public ResponseEntity<MemberDto.Response> signUp(@RequestBody MemberDto.Request memberDto) {
         //System.out.print(memberDto);
         MemberDto.Response savedMemberDto = memberSerivce.signUp(memberDto);
         return ResponseEntity.ok(savedMemberDto);
     }
+
+    /**
+     * refresh token으로 access token 재발급
+     * 인증 불필요
+     * @param bodyJson : "refreshToken" 정보 
+     * @return refreshToken이 유효한 경우 accessToken 발급
+     */
     @PostMapping("/refresh")
     public ResponseEntity<?> validateRefreshToken(@RequestBody HashMap<String,String> bodyJson){
         log.info("refresh controller 실행");
@@ -58,8 +77,47 @@ public class MemberController {
             return new ResponseEntity<>(map, HttpStatus.PAYMENT_REQUIRED);
         }
         return new ResponseEntity<>(map,HttpStatus.OK);
-
     }
+
+    /**
+     * 회원 정보 수정
+     * 인증 필요
+     * @param memberDto
+     * @return
+     */
+    @PutMapping("/modify")
+    public ResponseEntity<?> modifyUserInfo(@RequestBody MemberDto.Request memberDto){
+        Member modifiedMember=memberSerivce.modify(memberDto);
+        return new ResponseEntity<>(modifiedMember,HttpStatus.ACCEPTED);
+    }
+
+    /**
+     * 회원 고유 id로 정보 확인
+     * 인증 필요
+     * @return
+     */
+    @GetMapping("/info/{id}")
+    public ResponseEntity<?> getMemberInfo(@PathVariable("id") Long id){
+        Optional<Member> member=memberSerivce.getMemberInfo(id);
+        if (member.isPresent()){
+            return ResponseEntity.ok(member.get());
+        }
+        return ResponseEntity.noContent().build();
+        
+    }
+
+    /**
+     * 회원 이메일로 로그아웃
+     * 인증 필요
+     * @param username
+     * @return
+     */
+    @DeleteMapping("/logout/{username}")
+    public ResponseEntity<?> logout(@PathVariable String username){
+        memberSerivce.logout(username);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping("/test")
     public String test(){
         System.out.println("test");
