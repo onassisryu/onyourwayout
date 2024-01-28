@@ -1,30 +1,28 @@
-import React from 'react';
-import {Button} from 'react-native';
 import styled, {css} from '@emotion/native';
-import {useTheme, ThemeProvider} from '@emotion/react';
+import {useTheme} from '@emotion/react';
+import DefaultButton from '@/components/DefaultButton';
+import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 
-const Container = styled.View`
-  justify-content: center;
-  align-items: center;
-  font-family: 'Zocial';
-`;
-const StyledText = styled.Text`
+const StyledText = styled(GlobalText)`
   font-size: 30px;
-  margin-bottom: 10px;
 `;
 
 const Home = () => {
   const theme = useTheme();
   return (
-    <Container>
+    <GlobalContainer>
       <StyledText
         style={css`
-          background-color: ${theme.color.primary};]};
+          background-color: ${theme.color.primary};
         `}>
-        Homffe
+        Home
       </StyledText>
-      <Button title="go to the list screen" />
-    </Container>
+      <GlobalButton>
+        <GlobalText>go to the chat screen</GlobalText>
+      </GlobalButton>
+      <DefaultButton title="수락하기" color="primary" size="md" />
+      <DefaultButton title="수락하기" color="primary" size="lg" />
+    </GlobalContainer>
   );
 };
 

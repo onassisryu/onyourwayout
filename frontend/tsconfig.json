@@ -2,6 +2,7 @@
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "types": ["@emotion/react/types/css-prop"],
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
@@ -12,7 +13,28 @@
       "videos/*": ["assets/videos/*"],
       "tests": ["tests/*"]
     },
-
+    "plugins": [
+      {
+        "name": "@styled/typescript-styled-plugin",
+        "lint": {
+          "validProperties": [
+            "aspect-ratio",
+            "elevation",
+            "margin-vertical",
+            "margin-horizontal",
+            "padding-horizontal",
+            "padding-vertical",
+            "resize-mode",
+            "shadow-color",
+            "shadow-opacity",
+            "shadow-offset",
+            "shadow-radius",
+            "text-align-vertical",
+            "tint-color"
+          ]
+        }
+      }
+    ],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
@@ -22,7 +44,6 @@
     "jsx": "react-native",
     "lib": ["es6"],
     "module": "node16",
-    "types": ["node"],
     "moduleResolution": "node16",
     "noEmit": true,
     "strict": true,
