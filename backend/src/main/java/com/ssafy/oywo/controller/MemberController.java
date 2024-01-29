@@ -57,7 +57,6 @@ public class MemberController {
      */
     @PostMapping("/signup")
     public ResponseEntity<MemberDto.Response> signUp(@RequestBody MemberDto.Request memberDto) {
-        //System.out.print(memberDto);
         MemberDto.Response savedMemberDto = memberSerivce.signUp(memberDto);
         return ResponseEntity.ok(savedMemberDto);
     }
@@ -80,14 +79,14 @@ public class MemberController {
     }
 
     /**
-     * 회원 정보 수정
-     * 인증 필요
-     * @param memberDto
+     * 
+     * @param id 사용자 고유 id
+     * @param memberDto 사용자 관련 정보 수정
      * @return
      */
-    @PutMapping("/modify")
-    public ResponseEntity<?> modifyUserInfo(@RequestBody MemberDto.Request memberDto){
-        Member modifiedMember=memberSerivce.modify(memberDto);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> modifyUserInfo(@PathVariable Long id, @RequestBody MemberDto.Request memberDto){
+        Member modifiedMember=memberSerivce.modify(id, memberDto);
         return new ResponseEntity<>(modifiedMember,HttpStatus.ACCEPTED);
     }
 
@@ -103,7 +102,6 @@ public class MemberController {
             return ResponseEntity.ok(member.get());
         }
         return ResponseEntity.noContent().build();
-        
     }
 
     /**
@@ -123,5 +121,4 @@ public class MemberController {
         System.out.println("test");
         return "success";
     }
-
 }

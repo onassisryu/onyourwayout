@@ -20,12 +20,10 @@ public interface MemberService {
     public Map<String,String> validateRefreshToken(String refreshToken);
 
     public Member modify(Member member);
-    public Member modify(MemberDto.Request memberDto);
+    public Member modify(Long id, MemberDto.Request memberDto);
     public void logout(String username);
 
     public Member getMemberInfo(String username, String password);
     public Optional<Member> getMemberInfo(Long id);
-
-    public Optional<Member> update(Long idx,MemberDto.SignUp memberDto);
 
 }

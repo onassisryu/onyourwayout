@@ -11,6 +11,7 @@ import com.ssafy.oywo.repository.DongRepository;
 import com.ssafy.oywo.repository.HoRepository;
 import com.ssafy.oywo.repository.MemberRepository;
 import com.ssafy.oywo.repository.RefreshTokenRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 
 @Service
@@ -57,7 +59,9 @@ public class MemberServiceImpl implements MemberService {
         // 기존에 존재하는 refreshToken 삭제
         if (refreshTokenRepository.existsByUserName(username)) {
             log.info("기존에 존재하는 refreshToken 삭제");
-            refreshTokenRepository.deleteByUserName(username);
+            RefreshToken refreshToken=refreshTokenRepository.findByUserName(username)
+                    .orElseThrow(()->new EntityNotFoundException());
+            refreshTokenRepository.deleteById(refreshToken.getId());
         }
         RefreshToken refreshToken=RefreshToken.builder().userName(username).refreshToken(jwtToken.getRefreshToken()).build();
         refreshTokenRepository.save(refreshToken);
@@ -71,6 +75,7 @@ public class MemberServiceImpl implements MemberService {
         if (memberRepository.existsByUsername(memberDto.getUsername())) {
             throw new IllegalArgumentException("이미 사용 중인 사용자 이름입니다.");
         }
+
         // Password 암호화
         String encodedPassword = passwordEncoder.encode(memberDto.getPassword());
         List<String> roles = new ArrayList<>();
@@ -111,15 +116,13 @@ public class MemberServiceImpl implements MemberService {
         else if (inviteCode.equals("") || !isValidInviteCode){
             Long dongId=memberDto.getDongId();
             String hoName=memberDto.getHoName();
-
             Optional<Ho> ho=hoRepository.findByDongIdAndName(dongId,hoName);
             // 이미 등록된 호가 있는 경우
             // 해당 호에 회원을 추가한다.
             if (ho.isPresent()){
                 List<Member> members=ho.get().getMember();
                 members.add(member);
-                hoRepository.save(ho.get().builder().member(members).build());
-
+                ho.get().builder().member(members).build();
                 response=new MemberDto.Response(member,ho.get());
             }
             // 등록되지 않은 호인 경우
@@ -166,26 +169,32 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member modify(MemberDto.Request memberDto) {
-        Member member=Member.builder()
-                .nickname(memberDto.getNickname())
-                .phoneNumber(memberDto.getPhoneNumber())
-                .birthDate(memberDto.getBirthDate())
-                .password(memberDto.getPassword())
-                .build();
-
-        Member modifiedMember=memberRepository.save(member);
-
-        return modifiedMember;
+    public Member modify(Long id,MemberDto.Request memberDto) {
+        Optional<Member> modifiedMember=memberRepository.findById(id);
+        if (modifiedMember.isPresent()){
+            modifiedMember.get().builder()
+                    .nickname(memberDto.getNickname())
+                    .phoneNumber(memberDto.getPhoneNumber())
+                    .birthDate(memberDto.getBirthDate())
+                    .password(memberDto.getPassword())
+                    .build();
+            return modifiedMember.get();
+        }
+        return null;
     }
 
     public Member modify(Member member){
         return memberRepository.save(member);
     }
 
+    @Transactional
     @Override
     public void logout(String username) {
-        refreshTokenRepository.deleteByUserName(username);
+        Optional<RefreshToken> refreshToken=refreshTokenRepository.findByUserName(username);
+
+        if (refreshToken.isPresent()){
+            refreshTokenRepository.deleteById(refreshToken.get().getId());
+        }
     }
 
     @Override
@@ -198,8 +207,4 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findById(id);
     }
 
-    @Override
-    public Optional<Member> update(Long idx, MemberDto.SignUp memberDto) {
-        return Optional.empty();
-    }
 }

@@ -25,7 +25,7 @@ public class ApartController {
     // 법정동 코드와 아파트 이름으로 아파트 리스트 반환 메소드
     @GetMapping("/list/{areaCode}")
     public ResponseEntity<?> getApartList(@PathVariable("areaCode") String areaCode, @RequestParam String name){
-        List<Apartment> apartList=new ArrayList<>();
+        List<Apartment> apartList=null;
         HashMap<String,List<Apartment>> payload=new HashMap<>();
         // 아파트 이름을 입력하지 않은 경우
         if (name.equals("")){

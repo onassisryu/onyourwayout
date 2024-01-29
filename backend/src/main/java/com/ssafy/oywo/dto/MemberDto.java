@@ -72,7 +72,7 @@ public class MemberDto {
         public Response(Member member, Ho ho){
             this.id=member.getId();
             this.nickname=member.getNickname();
-            this.username=getUsername();
+            this.username=member.getUsername();
             this.birthDate=member.getBirthDate();
             this.phoneNumber=member.getPhoneNumber();
             this.score=member.getScore();
