@@ -1,6 +1,7 @@
 package com.ssafy.oywo.controller;
 
 import com.ssafy.oywo.dto.DealDto;
+import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.service.DealService;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +23,17 @@ public class DealController {
 
 
     /**
-     * 거래 전체 조회
+     * 거래 전체 조회 + 필터(QueryString)
      */
     @GetMapping()
     public List<DealDto.Response> getDeals() {
 
         return dealService.getDeals();
     }
+
+
+
+
 
     /**
      * 거래 생성
@@ -103,7 +108,7 @@ public class DealController {
             @PathVariable("gb") String gb,
             @RequestBody DealDto.Request dto) throws Exception {
 
-        return ResponseEntity.ok(dealService.reviewDeal(id, gb, dto));
+        return ResponseEntity.ok(dealService.reviewDeal(id, gb, dto.getRequestId()));
     }
 
 

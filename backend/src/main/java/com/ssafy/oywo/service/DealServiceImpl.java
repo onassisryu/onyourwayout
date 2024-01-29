@@ -1,17 +1,13 @@
 package com.ssafy.oywo.service;
 
 import com.ssafy.oywo.dto.DealDto;
+import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.repository.DealRepository;
 import com.ssafy.oywo.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -213,7 +208,7 @@ public class DealServiceImpl implements DealService{
     }
 
 
-    // 거래 완료 + 리뷰
+    // 거래 완료
     @Override
     public DealDto.Response closeDeal(Long id, Long acceptId) {
         Deal deal = dealRepository.findById(id).orElseThrow(
@@ -248,14 +243,33 @@ public class DealServiceImpl implements DealService{
 
     }
 
+
     // 거래 리뷰
-//    @Override
-//    public DealDto.Response reviewDeal(Long id, String gb, DealDto.Request dto) {
-//
-//        if (gb == )
-//
-//        return null;
-//    }
+    @Override
+    public MemberDto.Response reviewDeal(Long id, String gb, Long requestId) {
+        Deal deal = dealRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
+        );
+
+        Member member = memberRepository.findById(requestId).orElseThrow(
+            () -> new IllegalArgumentException("해당 requestId 아이디가 존재하지 않음")
+        );
+
+        int score = member.getScore();
+
+        if (gb.equals("good")) {
+            // Member score +1
+            score++;
+
+        } else if (gb.equals("bad")) {
+            // Member score -1
+            score--;
+        }
+
+        memberRepository.save(Member.builder().score(score).build());
+
+        return new MemberDto.Response(member);
+    }
 
 
     // 삭제
