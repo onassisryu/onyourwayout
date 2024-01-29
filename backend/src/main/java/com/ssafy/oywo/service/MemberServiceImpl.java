@@ -135,4 +135,5 @@ public class MemberServiceImpl implements MemberService {
     public Member getMemberInfo(String username, String password) {
         return memberRepository.findByUsernameAndPassword(username,password);
     }
+
 }
