@@ -89,7 +89,8 @@ public class AlarmController {
         member.builder().notificationStart(alarmDto.getNotificationStart());
         member.builder().notificationEnd(alarmDto.getNotificationEnd());
 
-        // member=memberService.modify(member);
+        // 변경한 내용 DB에 수정
+        member=memberService.modify(member);
 
         // 사용자 아이디, 설정한 동 정보, 설정한 카테고리 유형, 시작시간과 마지막 시간 정보 response
         payload.put("memberId",member.getId());

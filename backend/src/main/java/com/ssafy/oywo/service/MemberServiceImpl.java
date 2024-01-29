@@ -248,6 +248,10 @@ public class MemberServiceImpl implements MemberService {
         return modifiedMember;
     }
 
+    public Member modify(Member member){
+        return memberRepository.save(member);
+    }
+
     @Override
     public void logout(String username) {
         refreshTokenRepository.deleteByUserName(username);

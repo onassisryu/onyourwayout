@@ -18,6 +18,8 @@ public interface MemberService {
     public MemberDto.Response signUp(MemberDto.Request memberDto);
     public Optional<RefreshToken> getRefreshToken(String refreshToken);
     public Map<String,String> validateRefreshToken(String refreshToken);
+
+    public Member modify(Member member);
     public Member modify(MemberDto.Request memberDto);
     public void logout(String username);
 
