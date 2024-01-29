@@ -54,6 +54,8 @@ public class MemberController {
      * 인증 불필요
      * @param memberDto
      * @return
+     * 
+     * "username", "nickname", "password", "nickname", "phoneNumber", "dongId", "hoName", "inviteCode" 필수
      */
     @PostMapping("/signup")
     public ResponseEntity<MemberDto.Response> signUp(@RequestBody MemberDto.Request memberDto) {
