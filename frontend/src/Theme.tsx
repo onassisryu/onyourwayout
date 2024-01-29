@@ -8,6 +8,7 @@ const color = {
 };
 const font = {
   primary: 'PretendardVariable',
+  clover: 'YClover TTF-Bold',
 };
 
 const fontSize = {
