@@ -104,8 +104,7 @@ public class MemberServiceImpl implements MemberService {
             // 유효한 초대 코드인 경우
             if (ho.isPresent()){
                 isValidInviteCode=true;
-                // 회원의 인증 여부를 true로 수정
-                member=memberRepository.save(member.builder().isCertified(true).build());
+                member=memberRepository.save(signup.toEntity(memberDto,roles,true));
                 // 해당하는 호에 회원 추가
                 List<Member> members=ho.get().getMember();
                 members.add(member);
@@ -113,11 +112,11 @@ public class MemberServiceImpl implements MemberService {
 
                 response=new MemberDto.Response(member,ho.get());
             }
-
         }
         // 초대 코드를 기입하지 않은 경우 또는 유효하지 않은 초대 코드인 경우
         // 동 id와 호 이름으로 회원을 저장한다.
         else if (inviteCode.equals("") || !isValidInviteCode){
+            member=memberRepository.save(signup.toEntity(memberDto,roles,false));
             Long dongId=memberDto.getDongId();
             String hoName=memberDto.getHoName();
             Optional<Ho> ho=hoRepository.findByDongIdAndName(dongId,hoName);
@@ -182,6 +181,7 @@ public class MemberServiceImpl implements MemberService {
                     .phoneNumber(memberDto.getPhoneNumber())
                     .birthDate(memberDto.getBirthDate())
                     .password(memberDto.getPassword())
+                    .updatedAt(new Timestamp(System.currentTimeMillis()))
                     .build();
             return modifiedMember.get();
         }
