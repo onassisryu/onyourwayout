@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.swing.text.html.Option;
 import javax.swing.text.html.Option;
 import java.sql.Timestamp;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -77,6 +78,7 @@ public class MemberServiceImpl implements MemberService {
         if (memberRepository.existsByUsername(memberDto.getUsername())) {
             throw new IllegalArgumentException("이미 사용 중인 사용자 이름입니다.");
         }
+
         // Password 암호화
         String encodedPassword = passwordEncoder.encode(memberDto.getPassword());
         List<String> roles = new ArrayList<>();
@@ -97,7 +99,6 @@ public class MemberServiceImpl implements MemberService {
 
         // 초대 코드를 기입한 경우
         if (!inviteCode.equals("")){
-
             Optional<Ho> ho=hoRepository.findByInviteCode(inviteCode);
             
             // 유효한 초대 코드인 경우
@@ -119,7 +120,6 @@ public class MemberServiceImpl implements MemberService {
         else if (inviteCode.equals("") || !isValidInviteCode){
             Long dongId=memberDto.getDongId();
             String hoName=memberDto.getHoName();
-
             Optional<Ho> ho=hoRepository.findByDongIdAndName(dongId,hoName);
             // 이미 등록된 호가 있는 경우
             // 해당 호에 회원을 추가한다.
@@ -182,7 +182,6 @@ public class MemberServiceImpl implements MemberService {
                     .phoneNumber(memberDto.getPhoneNumber())
                     .birthDate(memberDto.getBirthDate())
                     .password(memberDto.getPassword())
-                    .updatedAt(new Timestamp(System.currentTimeMillis()))
                     .build();
             return modifiedMember.get();
         }
@@ -196,7 +195,11 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public void logout(String username) {
-        refreshTokenRepository.deleteByUserName(username);
+        Optional<RefreshToken> refreshToken=refreshTokenRepository.findByUserName(username);
+
+        if (refreshToken.isPresent()){
+            refreshTokenRepository.deleteById(refreshToken.get().getId());
+        }
     }
 
     @Override

@@ -65,7 +65,6 @@ public class MemberController {
             "phoneNumber는 중복 입력을 할 수 없습니다. 초대 코드가 있다면 넣고, 없다면 빈 문자열로 요청해야 합니다.")
     @PostMapping("/signup")
     public ResponseEntity<MemberDto.Response> signUp(@RequestBody MemberDto.Request memberDto) {
-        //System.out.print(memberDto);
         MemberDto.Response savedMemberDto = memberSerivce.signUp(memberDto);
         return ResponseEntity.ok(savedMemberDto);
     }
@@ -91,8 +90,7 @@ public class MemberController {
     }
 
     /**
-
-     *
+     * 
      * @param id 사용자 고유 id
      * @param memberDto 사용자 관련 정보 수정
      * @return
@@ -117,7 +115,6 @@ public class MemberController {
             return ResponseEntity.ok(member.get());
         }
         return ResponseEntity.noContent().build();
-        
     }
 
     /**
@@ -138,5 +135,4 @@ public class MemberController {
         System.out.println("test");
         return "success";
     }
-
 }
