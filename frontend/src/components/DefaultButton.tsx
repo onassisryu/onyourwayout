@@ -1,6 +1,6 @@
 import {GlobalText, GlobalButton} from '@/GlobalStyles';
 import styled, {css} from '@emotion/native';
-import {Global, useTheme} from '@emotion/react';
+import {useTheme} from '@emotion/react';
 
 type Color = 'primary' | 'white' | 'gray';
 type Size = 'sm' | 'md' | 'lg';
