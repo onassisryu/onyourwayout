@@ -8,7 +8,7 @@ export const GlobalContainer = styled.View`
   align-items: center;
   margin: 0;
   padding: 0;
-  color: ${theme.color.black};
+  // color: ${theme.color.black};
   box-sizing: border-box;
 `;
 

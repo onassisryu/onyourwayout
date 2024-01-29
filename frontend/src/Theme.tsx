@@ -4,9 +4,10 @@ const color = {
   black: '#262626',
   primary: '#00D282',
   gray100: '#DCDCDC',
+  gray200: '#C4C4C4',
 };
 const font = {
-  primary: 'Cochin',
+  primary: 'PretendardVariable',
 };
 
 const fontSize = {
