@@ -59,6 +59,7 @@ public class MemberController {
      */
     @PostMapping("/signup")
     public ResponseEntity<MemberDto.Response> signUp(@RequestBody MemberDto.Request memberDto) {
+        System.out.println(memberDto);
         MemberDto.Response savedMemberDto = memberSerivce.signUp(memberDto);
         return ResponseEntity.ok(savedMemberDto);
     }
