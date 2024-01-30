@@ -6,10 +6,18 @@
  */
 
 import React from 'react';
-import {ThemeProvider} from 'styled-components/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-// import Theme from '@/Theme';
+import {NavigationContainer} from '@react-navigation/native';
+
+//recoil&react-query
+import {RecoilRoot} from 'recoil';
+import {QueryClient, QueryClientProvider} from 'react-query';
+
+import {ThemeProvider} from '@emotion/react';
+import theme from '@/Theme';
+
+//page
 import Home from '@screens/Home';
 import Location from '@screens/Location';
 import Chat from '@screens/Chat';
@@ -19,11 +27,11 @@ import My from '@screens/My';
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
 
-import {NavigationContainer} from '@react-navigation/native';
-
 const App = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
+  const queryClient = new QueryClient();
+
   const BottomTab = () => {
     return (
       <Tab.Navigator
@@ -35,17 +43,24 @@ const App = () => {
             tabBarActiveTinitColor: '#27D894',
             height: 60,
           },
-          tabBarIcon: ({focused, color, size}) => {
+          tabBarIcon: ({focused, size, color}) => {
             let iconName!: string;
             if (route.name === 'Home') {
-              iconName = focused ? 'home' : 'home-outline';
+              iconName = focused ? 'home' : 'home';
             } else if (route.name === 'Location') {
-              iconName = focused ? 'location' : 'location-outline';
+              iconName = focused ? 'search' : 'ios-search-outline';
+            } else if (route.name === 'Apart') {
+              iconName = focused ? 'caret-forward-circle' : 'caret-forward-circle-outline';
+            } else if (route.name === 'Chat') {
+              iconName = focused ? 'ios-heart' : 'ios-heart-outline';
+            } else if (route.name === 'My') {
+              iconName = focused ? 'ios-person-circle' : 'ios-person-outline';
             }
-            return <Ionic name={iconName!} size={size} color={color} />;
+
+            return <Ionic name={iconName} size={size} color={color} />;
           },
         })}>
-        <Tab.Screen name="홈" component={Home} />
+        <Tab.Screen name="Home" component={Home} />
         <Tab.Screen name="위치" component={Location} />
         <Tab.Screen name="아파트" component={Apart} />
         <Tab.Screen name="채팅" component={Chat} />
@@ -54,11 +69,19 @@ const App = () => {
     );
   };
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Bottom" component={BottomTab} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <React.StrictMode>
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <NavigationContainer>
+            <ThemeProvider theme={theme}>
+              <Stack.Navigator screenOptions={{headerShown: false}}>
+                <Stack.Screen name="Bottom" component={BottomTab} />
+              </Stack.Navigator>
+            </ThemeProvider>
+          </NavigationContainer>
+        </QueryClientProvider>
+      </RecoilRoot>
+    </React.StrictMode>
   );
 };
 
