@@ -3,13 +3,12 @@ import {useTheme} from '@emotion/react';
 import DefaultButton from '@/components/DefaultButton';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import React from 'react';
-import { NavigationProp } from '@react-navigation/native';
+import {NavigationProp} from '@react-navigation/native';
 
 import MainComponent from '@components/Mainpage/MainNotice';
 import MainHeader from '@components/Mainpage/MainHeader';
 import MainDoList from '@components/Mainpage/MainDoList';
-import { ScrollView } from 'react-native'
-
+import {ScrollView} from 'react-native';
 
 // const StyledText = styled(GlobalText)`
 //   font-size: 30px;
@@ -18,7 +17,7 @@ interface Props {
   navigation: NavigationProp<any>;
 }
 
-const Home = ({ navigation }: Props) => {
+const Home = ({navigation}: Props) => {
   const theme = useTheme();
   return (
     <GlobalContainer>
@@ -35,7 +34,7 @@ const Home = ({ navigation }: Props) => {
       <DefaultButton title="수락하기" color="primary" size="lg" /> */}
       <ScrollView>
         <MainHeader navigation={navigation} />
-        <MainComponent /> 
+        <MainComponent />
         <MainDoList />
       </ScrollView>
     </GlobalContainer>
