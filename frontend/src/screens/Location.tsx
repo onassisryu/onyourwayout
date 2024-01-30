@@ -1,24 +1,43 @@
 import React from 'react';
-import {Button} from 'react-native';
-import styled from '@emotion/native';
+import {Button, Text} from 'react-native';
+import {WebView} from 'react-native-webview';
+import {Dimensions} from 'react-native';
+import styled, {css} from '@emotion/native';
 
-const Container = styled.View`
-  justify-content: center;
+const dimensions = {
+  fullHeight: Dimensions.get('window').height,
+  fullWidth: Dimensions.get('window').width,
+};
+const SafeContainer = styled.SafeAreaView`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  font-family: 'AntDesign';
+  background-color: pink;
+  height: ${dimensions.fullHeight}px;
+  justify-content: center;
 `;
 
-const StyledText = styled.Text`
-  font-size: 30px;
-  margin-bottom: 10px;
+const Map = styled(WebView)`
+  flex: 1;
+  /* width: ${dimensions.fullWidth};
+  height: ${dimensions.fullHeight}; */
+  width: 100px;
+  height: 50px;
 `;
 
 const Location = () => {
   return (
-    <Container>
-      <StyledText>Location</StyledText>
-      <Button title="go to the list screen" />
-    </Container>
+    <SafeContainer>
+      <Text
+        style={css`
+          background-color: red;
+          width: 100%;
+        `}>
+        sf
+      </Text>
+      <Map originWhitelist={['*']} source={{uri: 'https://www.google.com/'}} />
+    </SafeContainer>
   );
 };
 

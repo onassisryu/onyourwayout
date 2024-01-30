@@ -104,7 +104,7 @@ const DefaultButton = (props: ButtonProps) => {
       `;
   }
   return (
-    <StledButton style={[colorStyle, sizeStyle]} onPress={props.onPress}>
+    <StledButton style={[colorStyle, sizeStyle]} onPress={props.onPress} {...props}>
       <StyledText size={props.size} color={props.color}>
         {props.title}
       </StyledText>
