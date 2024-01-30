@@ -23,10 +23,11 @@ import Location from '@screens/Location';
 import Chat from '@screens/Chat';
 import Apart from '@screens/Apart';
 import My from '@screens/My';
+import Notice from '@screens/Notice';
+import NoticeSettings from '@screens/NoticeSettings';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const App = () => {
   const Stack = createNativeStackNavigator();
@@ -41,33 +42,24 @@ const App = () => {
           headerShown: false,
           tabBarStyle: {
             paddingBottom: 5,
+            tabBarActiveTinitColor: '#27D894',
             height: 60,
-            fontweight: 'bold',
-          },
-          tabBarActiveTintColor: '#27D894',
-          tabBarLabelStyle: {
-            fontWeight: 'bold', // 글씨 두께 설정
-          },
-          tabBarInactiveLabelStyle: {
-            color: 'black', // 선택되지 않은 탭의 글씨 색상
-            fontWeight: 'normal', // 선택되지 않은 탭의 글씨 두께 설정
           },
           tabBarIcon: ({focused, size, color}) => {
             let iconName!: string;
-
-            if (route.name === '홈') {
-              iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === '위치') {
-              iconName = focused ? 'location' : 'location-outline';
-            } else if (route.name === '채팅') {
-              iconName = focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline';
-            } else if (route.name === '아파트') {
-              iconName = focused ? 'office-building' : 'office-building-outline'; // Material 아이콘 사용
-              return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
-            } else if (route.name === '내정보') {
-              iconName = focused ? 'person' : 'person-outline';
+            if (route.name === 'Home') {
+              iconName = focused ? 'home' : 'home';
+            } else if (route.name === 'Location') {
+              iconName = focused ? 'search' : 'ios-search-outline';
+            } else if (route.name === 'Apart') {
+              iconName = focused ? 'caret-forward-circle' : 'caret-forward-circle-outline';
+            } else if (route.name === 'Chat') {
+              iconName = focused ? 'ios-heart' : 'ios-heart-outline';
+            } else if (route.name === 'My') {
+              iconName = focused ? 'ios-person-circle' : 'ios-person-outline';
             }
-            return <Ionic name={iconName!} size={size} color={color} />;
+
+            return <Ionic name={iconName} size={size} color={color} />;
           },
         })}>
         <Tab.Screen name="Home" component={Home} />
@@ -84,8 +76,10 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <NavigationContainer>
             <ThemeProvider theme={theme}>
-              <Stack.Navigator screenOptions={{headerShown: false}}>
+              <Stack.Navigator screenOptions={{headerShown: false}}> 
                 <Stack.Screen name="Bottom" component={BottomTab} />
+                <Stack.Screen name="Notice" component={Notice} />
+                <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
               </Stack.Navigator>
             </ThemeProvider>
           </NavigationContainer>
