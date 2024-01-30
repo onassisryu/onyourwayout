@@ -1,6 +1,6 @@
 import {GlobalText, GlobalButton} from '@/GlobalStyles';
 import styled, {css} from '@emotion/native';
-import {useTheme} from '@emotion/react';
+import {Global, useTheme} from '@emotion/react';
 
 type Color = 'primary' | 'white' | 'gray';
 type Size = 'sm' | 'md' | 'lg';
@@ -10,6 +10,7 @@ interface ButtonProps {
   color: Color;
   size?: Size;
   onPress?: () => void;
+  disabled?: boolean;
 }
 
 const StyledText = styled(GlobalText)<{size?: Size; color?: Color}>`
@@ -40,7 +41,7 @@ const StyledText = styled(GlobalText)<{size?: Size; color?: Color}>`
   }};
 `;
 
-const StledButton = styled(GlobalButton)`
+const StyledButton = styled(GlobalButton)`
   /* shadow-opacity: 0.25px;
   shadow-color: '#000';
   shadow-offset: {
@@ -104,11 +105,11 @@ const DefaultButton = (props: ButtonProps) => {
       `;
   }
   return (
-    <StledButton style={[colorStyle, sizeStyle]} onPress={props.onPress}>
+    <StyledButton style={[colorStyle, sizeStyle]} onPress={props.onPress} {...props}>
       <StyledText size={props.size} color={props.color}>
         {props.title}
       </StyledText>
-    </StledButton>
+    </StyledButton>
   );
 };
 

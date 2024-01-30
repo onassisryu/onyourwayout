@@ -30,6 +30,10 @@ import Location from '@screens/Location';
 import Chat from '@screens/Chat';
 import Apart from '@screens/Apart';
 import My from '@screens/My';
+import Login from '@screens/Login';
+import Signup from '@screens/Signup';
+import Notice from '@screens/Notice';
+import NoticeSettings from '@screens/NoticeSettings';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -70,11 +74,7 @@ const App = () => {
           },
           tabBarActiveTintColor: '#27D894',
           tabBarLabelStyle: {
-            fontWeight: 'bold', // 글씨 두께 설정
-          },
-          tabBarInactiveLabelStyle: {
-            color: 'black', // 선택되지 않은 탭의 글씨 색상
-            fontWeight: 'normal', // 선택되지 않은 탭의 글씨 두께 설정
+            fontWeight: 'bold',
           },
           tabBarIcon: ({ focused, size, color }) => {
             let iconName!: string;
@@ -86,7 +86,7 @@ const App = () => {
             } else if (route.name === '채팅') {
               iconName = focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline';
             } else if (route.name === '아파트') {
-              iconName = focused ? 'office-building' : 'office-building-outline'; // Material 아이콘 사용
+              iconName = focused ? 'office-building' : 'office-building-outline';
               return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
             } else if (route.name === '내정보') {
               iconName = focused ? 'person' : 'person-outline';
@@ -94,7 +94,7 @@ const App = () => {
             return <Ionic name={iconName!} size={size} color={color} />;
           },
         })}>
-        <Tab.Screen name="Home" component={Home} />
+        <Tab.Screen name="홈" component={Home} />
         <Tab.Screen name="위치" component={Location} />
         <Tab.Screen name="아파트" component={Apart} />
         <Tab.Screen name="채팅" component={Chat} />
@@ -110,6 +110,11 @@ const App = () => {
             <ThemeProvider theme={theme}>
               <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="Bottom" component={BottomTab} />
+                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="Signup" component={Signup} />
+                <Stack.Screen name="홈" component={Home} />
+                <Stack.Screen name="Notice" component={Notice} />
+                <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
               </Stack.Navigator>
             </ThemeProvider>
           </NavigationContainer>
