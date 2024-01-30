@@ -33,7 +33,7 @@ const Home = ({ navigation }: Props) => {
       </GlobalButton>
       <DefaultButton title="수락하기" color="primary" size="md" />
       <DefaultButton title="수락하기" color="primary" size="lg" /> */}
-      <ScrollView>
+      <ScrollView style={{ width: '100%' }}>
         <MainHeader navigation={navigation} />
         <MainComponent /> 
         <MainDoList />
