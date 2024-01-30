@@ -89,7 +89,7 @@ public class MemberServiceImpl implements MemberService {
         MemberDto.SignUp signup=new MemberDto.SignUp();
         Member member=null;
 
-        Long memberId=member.getId();                   // 저장된 회원 고유 id
+//        Long memberId=member.getId();                   // 저장된 회원 고유 id
 
         // 반환할 값
         MemberDto.Response response=null;
@@ -108,7 +108,7 @@ public class MemberServiceImpl implements MemberService {
                 // 해당하는 호에 회원 추가
                 List<Member> members=ho.get().getMember();
                 members.add(member);
-                hoRepository.save(ho.get().builder().member(members).build());
+                ho.get().builder().member(members).build();
 
                 response=new MemberDto.Response(member,ho.get());
             }
