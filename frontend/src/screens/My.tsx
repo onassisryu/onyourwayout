@@ -2,7 +2,7 @@ import React from 'react';
 import {Button} from 'react-native';
 import styled from '@emotion/native';
 import Styled from 'styled-components/native';
-import { GlobalContainer,GlobalButton } from '@/GlobalStyles';
+import { GlobalContainer,GlobalButton } from '@/obalStyles';
 const Container = styled(GlobalContainer)`
 const Container = styled.View`
   justify-content: center;

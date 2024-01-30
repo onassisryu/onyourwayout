@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Text, TextInput, View, Keyboard, TouchableWithoutFeedback, Image, TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
-import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
+import {GlobalContainer, GlobalText, GlobalButton} from '@/obalStyles';
 import DefaultButton from '@/components/DefaultButton';
 import theme from '@/Theme';
 import Ionic from 'react-native-vector-icons/Ionicons';

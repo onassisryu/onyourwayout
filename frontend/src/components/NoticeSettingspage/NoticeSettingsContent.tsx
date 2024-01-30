@@ -1,15 +1,11 @@
 // import 내용
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from '@emotion/native';
-import { NavigationProp } from '@react-navigation/native';
+import {NavigationProp} from '@react-navigation/native';
 import theme from '@/Theme';
 
-import {
-  View,
-  TouchableOpacity,
-  ImageSourcePropType
-} from 'react-native';
-import { GlobalText } from '@/GlobalStyles';
+import {View, TouchableOpacity, ImageSourcePropType} from 'react-native';
+import {GlobalText} from '@/obalStyles';
 
 const SettingsComponent = styled.View`
   margin-left: 30px;
@@ -24,7 +20,6 @@ const SettingsTitle = styled(GlobalText)`
   margin-bottom: 15px;
 `;
 
-
 const SettingsContent = styled(GlobalText)`
   flex-direction: row;
   justify-content: space-between;
@@ -32,17 +27,15 @@ const SettingsContent = styled(GlobalText)`
   color: ${theme.color.black};
   font-weight: 900;
   margin-bottom: 20px;
-`
+`;
 
 const NoticeSettingsContent = () => {
-
-return (
+  return (
     <SettingsComponent>
       <SettingsTitle> 일반 </SettingsTitle>
       <SettingsContent>모든 알림 표시</SettingsContent>
-      
     </SettingsComponent>
-);
+  );
 };
 
 export default NoticeSettingsContent;
