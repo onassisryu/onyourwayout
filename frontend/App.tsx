@@ -24,6 +24,7 @@ import Chat from '@screens/Chat';
 import Apart from '@screens/Apart';
 import My from '@screens/My';
 import Login from '@screens/Login'
+import Signup from '@screens/Signup'
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -84,6 +85,7 @@ const App = () => {
               <Stack.Navigator screenOptions={{headerShown: false}}>
                 <Stack.Screen name="Bottom" component={BottomTab} />
                 <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="Signup" component={Signup} />
                 <Stack.Screen name="홈" component={Home} />
               </Stack.Navigator>
             </ThemeProvider>
