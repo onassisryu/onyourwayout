@@ -23,18 +23,14 @@ import Location from '@screens/Location';
 import Chat from '@screens/Chat';
 import Apart from '@screens/Apart';
 import My from '@screens/My';
-import Login from '@screens/Login'
-import Signup from '@screens/Signup'
+import Login from '@screens/Login';
+import Signup from '@screens/Signup';
 import Notice from '@screens/Notice';
 import NoticeSettings from '@screens/NoticeSettings';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
-
-const App = () => {
-  const Stack = createNativeStackNavigator();
-  const Tab = createBottomTabNavigator();
-  const queryClient = new QueryClient();
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const App = () => {
   const Stack = createNativeStackNavigator();
@@ -88,14 +84,13 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <NavigationContainer>
             <ThemeProvider theme={theme}>
-              <Stack.Navigator screenOptions={{headerShown: false}}> 
+              <Stack.Navigator screenOptions={{headerShown: false}}>
                 <Stack.Screen name="Bottom" component={BottomTab} />
                 <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="Signup" component={Signup} />
                 <Stack.Screen name="홈" component={Home} />
                 <Stack.Screen name="Notice" component={Notice} />
                 <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
-
               </Stack.Navigator>
             </ThemeProvider>
           </NavigationContainer>
