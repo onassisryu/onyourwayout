@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -135,13 +136,15 @@ public class MemberController {
     }
 
     // 사용자 id로 거주하고 있는 아파트 이름, 동, 호수 반환
+    @Operation(summary="사용자 아파트, 동, 호수 조회",
+            description="사용자 uuid로 거주하고 있는 아파트, 동, 호수를 조회합니다.")
     @GetMapping("/house/{id}")
-    public ResponseEntity<?> getApartInfo(@PathVariable("id") Long id){
+    public ResponseEntity<?> getApartInfo(@Parameter(name="id", description = "사용자 uuid")
+            @PathVariable("id") Long id){
 
         HashMap<String,Object> payload=new HashMap<>();
         HashMap<String,Object> hoPayload=new HashMap<>();
         HashMap<String,Object> dongPayload=new HashMap<>();
-        HashMap<String,Object> apartmentPayload=new HashMap<>();
 
         // 사용자 id로 호 id를 구한다.
         Long hoId= memberSerivce.getHoIdByMemberId(id);
