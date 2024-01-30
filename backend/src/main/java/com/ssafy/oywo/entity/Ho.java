@@ -35,6 +35,5 @@ public class Ho {
             joinColumns = @JoinColumn(name = "ho_id"),
             inverseJoinColumns = @JoinColumn(name = "member_id"))
     private List<Member> member = new ArrayList<>();
-    
 
 }

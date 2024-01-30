@@ -2,7 +2,11 @@ package com.ssafy.oywo.controller;
 
 import com.ssafy.oywo.dto.JwtToken;
 import com.ssafy.oywo.dto.MemberDto;
+import com.ssafy.oywo.entity.Apartment;
+import com.ssafy.oywo.entity.Dong;
+import com.ssafy.oywo.entity.Ho;
 import com.ssafy.oywo.entity.Member;
+import com.ssafy.oywo.service.HoService;
 import com.ssafy.oywo.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +28,7 @@ import java.util.Optional;
 public class MemberController {
 
     private final MemberService memberSerivce;
-
+    private final HoService hoService;
     /**
      * 로그인
      * 인증 불필요
@@ -128,6 +132,37 @@ public class MemberController {
                                         @PathVariable String username){
         memberSerivce.logout(username);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // 사용자 id로 거주하고 있는 아파트 이름, 동, 호수 반환
+    @GetMapping("/house/{id}")
+    public ResponseEntity<?> getApartInfo(@PathVariable("id") Long id){
+
+        HashMap<String,Object> payload=new HashMap<>();
+        HashMap<String,Object> hoPayload=new HashMap<>();
+        HashMap<String,Object> dongPayload=new HashMap<>();
+        HashMap<String,Object> apartmentPayload=new HashMap<>();
+
+        // 사용자 id로 호 id를 구한다.
+        Long hoId= memberSerivce.getHoIdByMemberId(id);
+
+        // ho id로 동 id와 동 이름을 구한다.
+        Ho ho=hoService.getHoById(hoId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 호입니다."));
+
+        hoPayload.put("id",ho.getId());
+        hoPayload.put("name",ho.getName());
+
+        dongPayload.put("id",ho.getDong().getId());
+        dongPayload.put("name",ho.getDong().getName());
+
+        // 동 id로 아파트 코드와 아파트 이름을 구한다.
+        Apartment apartment=ho.getDong().getApartment();
+
+        payload.put("ho",hoPayload);
+        payload.put("dong",dongPayload);
+        payload.put("apartment",apartment);
+
+        return new ResponseEntity<>(payload,HttpStatus.OK);
     }
 
 }

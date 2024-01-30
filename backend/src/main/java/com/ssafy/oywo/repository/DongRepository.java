@@ -15,6 +15,6 @@ public interface DongRepository extends JpaRepository<Dong, Long> {
     // 아파트 코드로 해당 아파트 동 정보 가져오기
 //    @Query("select new com.ssafy.oywo.dto.DongDto.Response(d.id, d.name, d.apartment) from Dong d where d.apartment.id=:apartId")
     List<Dong> findByApartment(Apartment apartment);
-
     Optional<Dong> findById(Long id);
+
 }

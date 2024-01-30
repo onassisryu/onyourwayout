@@ -113,6 +113,7 @@ public class MemberServiceImpl implements MemberService {
                 response=new MemberDto.Response(member,ho.get());
             }
         }
+
         // 초대 코드를 기입하지 않은 경우 또는 유효하지 않은 초대 코드인 경우
         // 동 id와 호 이름으로 회원을 저장한다.
         else if (inviteCode.equals("") || !isValidInviteCode){
@@ -221,7 +222,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Optional<Member> update(Long idx, MemberDto.SignUp memberDto) {
-        return Optional.empty();
+    public Long getHoIdByMemberId(Long memberId) {
+        return memberRepository.findHoAptIdsByMemberId(memberId);
     }
+
 }

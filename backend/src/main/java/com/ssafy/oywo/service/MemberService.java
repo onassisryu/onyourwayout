@@ -25,6 +25,7 @@ public interface MemberService {
     public Member getMemberInfo(String username, String password);
     public Optional<Member> getMemberInfo(Long id);
 
+    public Long getHoIdByMemberId(Long memberId);
     public Optional<Member> update(Long idx,MemberDto.SignUp memberDto);
 
 }
