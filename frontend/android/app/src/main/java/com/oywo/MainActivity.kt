@@ -1,4 +1,4 @@
-package com.oywo
+package com.ssafy.oywo
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
