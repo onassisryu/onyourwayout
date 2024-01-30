@@ -7,7 +7,7 @@ import lombok.*;
 @Entity
 @Getter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class RefreshToken {
 
