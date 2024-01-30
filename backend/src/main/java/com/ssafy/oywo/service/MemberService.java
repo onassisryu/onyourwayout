@@ -18,6 +18,8 @@ public interface MemberService {
     public MemberDto.Response signUp(MemberDto.Request memberDto);
     public Optional<RefreshToken> getRefreshToken(String refreshToken);
     public Map<String,String> validateRefreshToken(String refreshToken);
+    public Member modify(MemberDto.Request memberDto);
+    public void logout(String username);
 
     public Member modify(Member member);
     public Member modify(Long id, MemberDto.Request memberDto);
@@ -26,4 +28,9 @@ public interface MemberService {
     public Member getMemberInfo(String username, String password);
     public Optional<Member> getMemberInfo(Long id);
 
+<<<<<<< HEAD
+=======
+    public Optional<Member> update(Long idx,MemberDto.SignUp memberDto);
+
+>>>>>>> fbffdff (Fix : 회원 정보 수정, 로그아웃, 초대 코드 생성)
 }

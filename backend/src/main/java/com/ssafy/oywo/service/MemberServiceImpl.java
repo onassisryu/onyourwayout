@@ -85,8 +85,13 @@ public class MemberServiceImpl implements MemberService {
 
         // 먼저 회원 정보를 저장
         MemberDto.SignUp signup=new MemberDto.SignUp();
+<<<<<<< HEAD
         Member member=null;
         //Long memberId=member.getId();                   // 저장된 회원 고유 id
+=======
+        Member member=memberRepository.save(signup.toEntity(memberDto,roles,false));
+        Long memberId=member.getId();                   // 저장된 회원 고유 id
+>>>>>>> fbffdff (Fix : 회원 정보 수정, 로그아웃, 초대 코드 생성)
 
         // 반환할 값
         MemberDto.Response response=null;
@@ -96,6 +101,7 @@ public class MemberServiceImpl implements MemberService {
 
         // 초대 코드를 기입한 경우
         if (!inviteCode.equals("")){
+<<<<<<< HEAD
             System.out.println("================초대코드 기입");
             Optional<Ho> ho=hoRepository.findByInviteCode(inviteCode);
 
@@ -118,13 +124,42 @@ public class MemberServiceImpl implements MemberService {
             member=memberRepository.save(signup.toEntity(memberDto,roles,false));
             Long dongId=memberDto.getDongId();
             String hoName=memberDto.getHoName();
+=======
+            Optional<Ho> ho=hoRepository.findByInviteCode(inviteCode);
+            
+            // 유효한 초대 코드인 경우
+            if (ho.isPresent()){
+                isValidInviteCode=true;
+                // 회원의 인증 여부를 true로 수정
+                member=memberRepository.save(member.builder().isCertified(true).build());
+                // 해당하는 호에 회원 추가
+                List<Member> members=ho.get().getMember();
+                members.add(member);
+                hoRepository.save(ho.get().builder().member(members).build());
+
+                response=new MemberDto.Response(member,ho.get());
+            }
+
+        }
+        // 초대 코드를 기입하지 않은 경우 또는 유효하지 않은 초대 코드인 경우
+        // 동 id와 호 이름으로 회원을 저장한다.
+        else if (inviteCode.equals("") || !isValidInviteCode){
+            Long dongId=memberDto.getDongId();
+            String hoName=memberDto.getHoName();
+
+>>>>>>> fbffdff (Fix : 회원 정보 수정, 로그아웃, 초대 코드 생성)
             Optional<Ho> ho=hoRepository.findByDongIdAndName(dongId,hoName);
             // 이미 등록된 호가 있는 경우
             // 해당 호에 회원을 추가한다.
             if (ho.isPresent()){
                 List<Member> members=ho.get().getMember();
                 members.add(member);
+<<<<<<< HEAD
                 ho.get().builder().member(members).build();
+=======
+                hoRepository.save(ho.get().builder().member(members).build());
+
+>>>>>>> fbffdff (Fix : 회원 정보 수정, 로그아웃, 초대 코드 생성)
                 response=new MemberDto.Response(member,ho.get());
             }
             // 등록되지 않은 호인 경우
@@ -171,6 +206,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+<<<<<<< HEAD
     public Member modify(Long id,MemberDto.Request memberDto) {
         Optional<Member> modifiedMember=memberRepository.findById(id);
         if (modifiedMember.isPresent()){
@@ -198,6 +234,24 @@ public class MemberServiceImpl implements MemberService {
         if (refreshToken.isPresent()){
             refreshTokenRepository.deleteById(refreshToken.get().getId());
         }
+=======
+    public Member modify(MemberDto.Request memberDto) {
+        Member member=Member.builder()
+                .nickname(memberDto.getNickname())
+                .phoneNumber(memberDto.getPhoneNumber())
+                .birthDate(memberDto.getBirthDate())
+                .password(memberDto.getPassword())
+                .build();
+
+        Member modifiedMember=memberRepository.save(member);
+
+        return modifiedMember;
+    }
+
+    @Override
+    public void logout(String username) {
+        refreshTokenRepository.deleteByUserName(username);
+>>>>>>> fbffdff (Fix : 회원 정보 수정, 로그아웃, 초대 코드 생성)
     }
 
     @Override
@@ -210,4 +264,11 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findById(id);
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+    public Optional<Member> update(Long idx, MemberDto.SignUp memberDto) {
+        return Optional.empty();
+    }
+>>>>>>> fbffdff (Fix : 회원 정보 수정, 로그아웃, 초대 코드 생성)
 }
