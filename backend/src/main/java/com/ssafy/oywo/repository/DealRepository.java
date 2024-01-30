@@ -32,7 +32,7 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     List<Deal> findDealsByApartmentId(@Param("apartmentId") Long apartmentId);
 
 
-    // apt_id로  필터링된(dealType) 거래 들고오기
+    // apt_id로 필터링된(dealType) 거래 들고오기
     @Query("SELECT d FROM Deal d " +
             "WHERE d.requestId IN " +
             "(SELECT hoMember.id FROM Ho ho " +
@@ -45,6 +45,20 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             @Param("apartmentId") Long apartmentId,
             @Param("dealType") DealType dealType
     );
+
+
+    // member_id로 사용자별 요청한(requestId) 전체 거래 들고오기
+    @Query("SELECT d FROM Deal d " +
+            "WHERE d.requestId = :memberId")
+    List<Deal> findDealsByRequestId(@Param("memberId") Long memberId);
+
+
+    // member_id로 사용자별 수행한(acceptId) 전체 거래 들고오기
+    @Query("SELECT d FROM Deal d " +
+            "WHERE d.acceptId = :memberId")
+    List<Deal> findDealsByAcceptId(@Param("memberId") Long memberId);
+
+
 
 //    List<Deal> findAllByOrderByModifiedAtDesc();
 }
@@ -75,4 +89,3 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
 //            "                JOIN hoAptDong.apartment hoAptApt " +
 //            "                WHERE hoAptMember.id = :memberId))")
 //    List<Deal> findDealsByMemberId(@Param("memberId") Long memberId);
-

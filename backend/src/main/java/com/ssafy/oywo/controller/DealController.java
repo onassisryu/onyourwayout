@@ -25,19 +25,26 @@ public class DealController {
 
 
     /**
-     * 거래 전체 조회 + 필터(QueryString)
+     * 거래 전체 조회 + 필터(QueryString) --> 수정 필요 (ing 중인거)
      */
-    @GetMapping("/list")
+    @GetMapping("/list")     // 'localhost:8080/deal/list?dealType=PET'
     public List<DealDto.Response> getDeals(
-            @RequestParam(name = "dealType",
-                          defaultValue = "") DealType dealType) {
+            @RequestParam(name = "dealType", defaultValue = "") DealType dealType) {
 
-        System.out.println("dealType.getClass() = " + dealType.getClass());
-        System.out.println("dealType = " + dealType);
-//        DealType dealType = DealType.valueOf(dealType);
         return dealService.getDeals(dealType);
     }
 
+
+    /**
+     * 사용자별 거래(요청 or 수행) 전체 조회 --> 수정 필요(ing는?)
+     */
+    @GetMapping("/user/list")     // 'localhost:8080/deal/user/list?type=request&memberId=1'
+    public List<DealDto.Response> getDealsByMemberId(
+            @RequestParam(name = "type") String requestOrAccept,
+            @RequestParam(name = "memberId", defaultValue = "") Long memberId) throws Exception {
+
+        return dealService.getDealsByMemberId(requestOrAccept, memberId);
+    }
 
 
 
@@ -48,7 +55,7 @@ public class DealController {
     @PostMapping
     public ResponseEntity<?> createDeal(
             @RequestBody DealDto.Request dto) {
-//        String username = authentication.getName();
+
         return ResponseEntity.ok(dealService.createDeal(dto));
     }
 
@@ -81,7 +88,7 @@ public class DealController {
 
 
     /**
-     * 거래 수락
+     * 거래 수락 and 수락 취소 --> 수정 필요!
      */
     @PutMapping("/accept/{id}")
     public ResponseEntity<?> acceptDeal(
@@ -97,25 +104,24 @@ public class DealController {
 
 
     /**
-     * 거래 완료
+     * 거래 완료 --> 수정필요(거래 상대방)
      */
     @PutMapping("/close/{id}")
     public ResponseEntity<?> closeDeal(
             @PathVariable Long id,
             @RequestBody DealDto.Request dto) throws Exception {
-        return ResponseEntity.ok(dealService.closeDeal(id, dto.getAcceptId()));
+        return ResponseEntity.ok(dealService.closeDeal(id, dto.getAcceptId()) + "해당 거래가 완료되었습니다.");
     }
 
     /**
-     * 거래 리뷰
+     * 거래 상대방 리뷰
      */
     @PutMapping("/review/{id}/{gb}")
     public ResponseEntity<?> reviewDeal(
             @PathVariable("id") Long id,
-            @PathVariable("gb") String gb,
-            @RequestBody DealDto.Request dto) throws Exception {
+            @PathVariable("gb") String gb) throws Exception {
 
-        return ResponseEntity.ok(dealService.reviewDeal(id, gb, dto.getRequestId()));
+        return ResponseEntity.ok(dealService.reviewDeal(id, gb));
     }
 
 

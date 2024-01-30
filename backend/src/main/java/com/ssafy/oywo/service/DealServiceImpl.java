@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -46,7 +47,6 @@ public class DealServiceImpl implements DealService{
     @Transactional(readOnly = true)
     public List<DealDto.Response> getDeals(DealType dealType) {
         // 로그인 사용자 id
-        System.out.println("dealType = " + dealType);
         Long loginUserId = getLoginUserId();
         // 내 아파트 id 구하기
         Long myAptId = dealRepository.findHoAptIdsByMemberId(loginUserId);
@@ -75,20 +75,48 @@ public class DealServiceImpl implements DealService{
     }
 
 
-    // 생성
+    // 사용자별 거래(요청 or 수행) 전체 조회
+    @Override
+    public List<DealDto.Response> getDealsByMemberId(String requestOrAccept,Long memberId) {
+        // 로그인 사용자 id
+        Long loginUserId = getLoginUserId();
+
+        List<Deal> memberDeals;
+        if (requestOrAccept.equals("request")) {
+            if (!memberId.equals(loginUserId)) {
+                memberDeals = dealRepository.findDealsByRequestId(memberId);
+            } else {
+                memberDeals = dealRepository.findDealsByRequestId(loginUserId);
+            }
+        } else if (requestOrAccept.equals("accept")) {
+            if (!memberId.equals(loginUserId)) {
+                memberDeals = dealRepository.findDealsByAcceptId(memberId);
+            } else {
+                memberDeals = dealRepository.findDealsByAcceptId(loginUserId);
+            }
+        } else {
+            throw new IllegalArgumentException("type={request or accept}를 파라미터를 필수로 가져야함");
+        }
+
+        return memberDeals
+                .stream()
+                .map(DealDto.Response::new)
+                .toList();
+    }
+
+
+    // 거래 생성
     @Override
     public DealDto.Response createDeal(DealDto.Request dto) {
         validateRequest(dto);
 
         // 로그인된 사용자의 id 가져오기
         Long loginUserId = getLoginUserId();
-//        Long loginUserId = memberRepository.findByUsername(username)
-//                .map(Member::getId)
-//                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
-        // requestId에 로그인사용자 id넣기
-        dto.setRequestId(loginUserId);
+
         // dealStatus -> OPEN
         dto.setDealStatus(Deal.DealStatus.OPEN);
+        // requestId에 로그인사용자 id넣기
+        dto.setRequestId(loginUserId);
 
         // item넣으면 -> ITEM / cash 넣으면 -> CASH
         if (dto.getItem() != null) {
@@ -141,7 +169,7 @@ public class DealServiceImpl implements DealService{
     }
 
 
-    // 단건 조회
+    // 거래 하나 조회
     @Override
     @Transactional(readOnly = true)
     public DealDto.Response getDeal(Long id) {
@@ -157,7 +185,7 @@ public class DealServiceImpl implements DealService{
 
 
 
-    // 수정
+    // 거래 수정
     @Override
     public DealDto.Response updateDeal(Long id, DealDto.Request dto) {
         Deal deal = dealRepository.findById(id).orElseThrow(
@@ -248,29 +276,50 @@ public class DealServiceImpl implements DealService{
             // 엔티티 갱신
             deal.update(dto);
         } else {
-            throw new IllegalStateException("ING 아닌 거래는 삭제 불가");
+            throw new IllegalStateException("ING 아닌 거래는 거래완료 불가");
         }
 
         // 갱신된 엔티티 저장
         dealRepository.save(deal);
 
         return new DealDto.Response(deal);
-
-
     }
 
 
     // 거래 리뷰
     @Override
-    public MemberDto.Response reviewDeal(Long id, String gb, Long requestId) {
+    public MemberDto.Response reviewDeal(Long id, String gb) {
+        // 로그인 사용자 id
+        Long loginUserId = getLoginUserId();
+
         Deal deal = dealRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
         );
+        if (deal.getDealStatus() != Deal.DealStatus.CLOSE) {
+            throw new IllegalArgumentException("완료된 거래만 리뷰할 수 있습니다.");
+        }
 
-        Member member = memberRepository.findById(requestId).orElseThrow(
-            () -> new IllegalArgumentException("해당 requestId 아이디가 존재하지 않음")
-        );
+        //== 거래 상대방 가져오기 ==//
+        Member member;
+        // 요청자 -> 수행자 리뷰
+        if (Objects.equals(deal.getRequestId(), loginUserId)) {
+            // 수행자
+            member = memberRepository.findById(deal.getAcceptId()).orElseThrow(
+                    () -> new IllegalArgumentException("해당 acceptId 아이디가 존재하지 않음")
+            );
+        }
+        // 수행자 -> 요청자 리뷰
+        else if (Objects.equals(deal.getAcceptId(), loginUserId)) {
+            // 요청자
+            member = memberRepository.findById(deal.getRequestId()).orElseThrow(
+                    () -> new IllegalArgumentException("해당 requestId 아이디가 존재하지 않음")
+            );
+        }
+        else {
+            throw new IllegalArgumentException("거래 당사자만 해당 거래 상대방을 리뷰할 수 있습니다.");
+        }
 
+        //== 거래 상대방 이웃지수 관리 ==//
         int score = member.getScore();
 
         if (gb.equals("good")) {
@@ -280,6 +329,9 @@ public class DealServiceImpl implements DealService{
         } else if (gb.equals("bad")) {
             // Member score -1
             score--;
+
+        } else {
+            throw new IllegalArgumentException("good or bad 를 넣어야 합니다.");
         }
 
         memberRepository.save(
@@ -292,12 +344,19 @@ public class DealServiceImpl implements DealService{
     }
 
 
+
     // 삭제
     @Override
     public void deleteDeal(Long id, DealDto.Request dto) {
         Deal deal = dealRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
         );
+
+        // 로그인 사용자 id
+        Long loginUserId = getLoginUserId();
+        if (!deal.getRequestId().equals(loginUserId)) {
+            throw new IllegalStateException("거래 삭제 불가능: 해당 거래의 요청자와 현재 로그인 사용자가 다름");
+        }
 
         dealRepository.deleteById(id);
     }
