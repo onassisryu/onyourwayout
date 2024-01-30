@@ -5,24 +5,17 @@
  * @format
  */
 
-import React, { useEffect } from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {NavigationContainer} from '@react-navigation/native';
 
 //recoil&react-query
-import { RecoilRoot } from 'recoil';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import {RecoilRoot} from 'recoil';
+import {QueryClient, QueryClientProvider} from 'react-query';
 
-import { ThemeProvider } from '@emotion/react';
+import {ThemeProvider} from '@emotion/react';
 import theme from '@/Theme';
-
-//fcm
-import messaging from '@react-native-firebase/messaging'
-// 앱이 백그라운드에 있을때
-messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log('[Background Remote Message]', remoteMessage);
-})
 
 //page
 import Home from '@screens/Home';
@@ -40,27 +33,10 @@ const App = () => {
   const Tab = createBottomTabNavigator();
   const queryClient = new QueryClient();
 
-  console.log("App Loading....")
-
-  // 토큰 발급
-  const getFcmToken = async () => {
-    const fcmToken = await messaging().getToken()
-    console.log('[FCM Token] ', fcmToken)
-  }
-
-  useEffect(() => {
-    getFcmToken() // 토큰 발급
-    // 앱이 켜져있을때
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('[Remote Message] ', JSON.stringify(remoteMessage));
-    })
-    return unsubscribe
-  }, [])
-
   const BottomTab = () => {
     return (
       <Tab.Navigator
-        screenOptions={({ route }) => ({
+        screenOptions={({route}) => ({
           tabBarHideOnKeyboard: true,
           headerShown: false,
           tabBarStyle: {
@@ -76,7 +52,7 @@ const App = () => {
             color: 'black', // 선택되지 않은 탭의 글씨 색상
             fontWeight: 'normal', // 선택되지 않은 탭의 글씨 두께 설정
           },
-          tabBarIcon: ({ focused, size, color }) => {
+          tabBarIcon: ({focused, size, color}) => {
             let iconName!: string;
 
             if (route.name === '홈') {
@@ -108,7 +84,7 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <NavigationContainer>
             <ThemeProvider theme={theme}>
-              <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Stack.Navigator screenOptions={{headerShown: false}}>
                 <Stack.Screen name="Bottom" component={BottomTab} />
               </Stack.Navigator>
             </ThemeProvider>
