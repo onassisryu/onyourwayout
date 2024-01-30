@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Table(name = "member")
 @Builder
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class Member implements UserDetails {
 

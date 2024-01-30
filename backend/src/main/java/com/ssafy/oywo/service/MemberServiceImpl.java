@@ -172,22 +172,30 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
+    @Transactional
     @Override
     public Member modify(Long id,MemberDto.Request memberDto) {
-        Optional<Member> modifiedMember=memberRepository.findById(id);
-        if (modifiedMember.isPresent()){
-            modifiedMember.get().builder()
+
+        Optional<Member> member=memberRepository.findById(id);
+
+        if (member.isPresent()){
+            Member existedMember=member.get()
+                    .builder()
+                    .id(id)
+                    .username(memberDto.getUsername())
                     .nickname(memberDto.getNickname())
                     .phoneNumber(memberDto.getPhoneNumber())
                     .birthDate(memberDto.getBirthDate())
                     .password(memberDto.getPassword())
                     .updatedAt(new Timestamp(System.currentTimeMillis()))
-                    .build();
-            return modifiedMember.get();
+                    .build();;
+
+            return memberRepository.save(existedMember);
         }
         return null;
     }
 
+    @Transactional
     public Member modify(Member member){
         return memberRepository.save(member);
     }
