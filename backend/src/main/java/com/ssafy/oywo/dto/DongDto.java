@@ -1,5 +1,6 @@
 package com.ssafy.oywo.dto;
 
+import com.ssafy.oywo.entity.Apartment;
 import com.ssafy.oywo.entity.Dong;
 import lombok.*;
 
@@ -13,11 +14,11 @@ public class DongDto {
     public static class Request{
         private Long dongId;
         private String name;
-        private Apart apart;
+        private Apartment apartment;
         public Dong toEntity(){
-            Dong dong=Dong.builder()
+            Dong dong = Dong.builder()
                     .id(dongId)
-                    .apart(apart)
+                    .apartment(apartment)
                     .name(name)
                     .build();
             return dong;
@@ -27,12 +28,15 @@ public class DongDto {
     public static class Response{
         private Long dongId;
         private String name;
-        private Apart apart;
+        private Apartment apartment;
 
-        public Response(Dong dong){
-            this.dongId=dong.getId();
-            this.apart=dong.getApart();
-            this.name=dong.getName();
+
+        public Response(Long dongId, String name, Apartment apartment) {
+            this.dongId = dongId;
+            this.name = name;
+            this.apartment = apartment;
         }
+
+
     }
 }

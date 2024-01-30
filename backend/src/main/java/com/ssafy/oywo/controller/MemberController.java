@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ public class MemberController {
         String username = memberDto.getUsername();
         String password = memberDto.getPassword();
 
+        System.out.println("2222"+username+password);
         JwtToken jwtToken = memberSerivce.signIn(username, password);
         log.info("request username = {}, password = {}", username, password);
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
@@ -34,9 +36,11 @@ public class MemberController {
 
         Member member=memberSerivce.getMemberInfo(username,password);
 
+
         HashMap<String,Object> payload=new HashMap<>();
         payload.put("token",jwtToken);
         payload.put("memberInfo",member);
+        System.out.println(payload);
         return ResponseEntity.ok(payload);
     }
     @PostMapping("/signup")

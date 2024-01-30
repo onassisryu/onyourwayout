@@ -1,15 +1,23 @@
 package com.ssafy.oywo.controller;
 
 import com.ssafy.oywo.dto.DealDto;
+import com.ssafy.oywo.dto.MemberDto;
+import com.ssafy.oywo.entity.DealType;
+import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.service.DealService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/deal")
 @RequiredArgsConstructor
 public class DealController {
 
@@ -17,18 +25,30 @@ public class DealController {
 
 
     /**
-     * 거래 전체 조회
+     * 거래 전체 조회 + 필터(QueryString)
      */
-    @GetMapping("/deals")
-    public List<DealDto.Response> getDeals() {
-        return dealService.getDeals();
+    @GetMapping("/list")
+    public List<DealDto.Response> getDeals(
+            @RequestParam(name = "dealType",
+                          defaultValue = "") DealType dealType) {
+
+        System.out.println("dealType.getClass() = " + dealType.getClass());
+        System.out.println("dealType = " + dealType);
+//        DealType dealType = DealType.valueOf(dealType);
+        return dealService.getDeals(dealType);
     }
+
+
+
+
 
     /**
      * 거래 생성
      */
-    @PostMapping("/deal")
-    public ResponseEntity createDeal(@RequestBody DealDto.Request dto) {
+    @PostMapping
+    public ResponseEntity<?> createDeal(
+            @RequestBody DealDto.Request dto) {
+//        String username = authentication.getName();
         return ResponseEntity.ok(dealService.createDeal(dto));
     }
 
@@ -36,8 +56,9 @@ public class DealController {
     /**
      * 거래 하나 조회
      */
-    @GetMapping("/deal/{id}")
-    public ResponseEntity getDeal(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getDeal(@PathVariable Long id) {
+
         return ResponseEntity.ok(dealService.getDeal(id));
     }
 
@@ -45,27 +66,84 @@ public class DealController {
     /**
      * 거래 수정
      */
-    @PostMapping("/deal/{id}")
-    public ResponseEntity updateDeal(@PathVariable Long id, @RequestBody DealDto.Request dto) throws Exception {
-
-        // 수락한 사용자 정보
-//        Members acceptUser =s
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateDeal(
+            @PathVariable Long id,
+            @RequestBody DealDto.Request dto) throws Exception {
 
         return ResponseEntity.ok(dealService.updateDeal(id, dto));
+//        if (dto.getAcceptId() != null) {
+//            return ResponseEntity.ok(dealService.acceptDeal(id, dto.getAcceptId()));
+//        } else {
+//            return ResponseEntity.ok(dealService.updateDeal(id, dto));
+//        }
     }
+
+
+    /**
+     * 거래 수락
+     */
+    @PutMapping("/accept/{id}")
+    public ResponseEntity<?> acceptDeal(
+            @PathVariable Long id,
+            @RequestBody DealDto.Request dto) throws Exception {
+
+        return ResponseEntity.ok(dealService.acceptDeal(id, dto.getAcceptId()));
+    }
+//    @PostMapping("/deal/accept/{id}")
+//    public ResponseEntity<?> acceptDeal(@PathVariable Long id, @RequestBody Long acceptId) {
+//        return ResponseEntity.ok(dealService.acceptDeal(id, acceptId));
+//    }
+
+
+    /**
+     * 거래 완료
+     */
+    @PutMapping("/close/{id}")
+    public ResponseEntity<?> closeDeal(
+            @PathVariable Long id,
+            @RequestBody DealDto.Request dto) throws Exception {
+        return ResponseEntity.ok(dealService.closeDeal(id, dto.getAcceptId()));
+    }
+
+    /**
+     * 거래 리뷰
+     */
+    @PutMapping("/review/{id}/{gb}")
+    public ResponseEntity<?> reviewDeal(
+            @PathVariable("id") Long id,
+            @PathVariable("gb") String gb,
+            @RequestBody DealDto.Request dto) throws Exception {
+
+        return ResponseEntity.ok(dealService.reviewDeal(id, gb, dto.getRequestId()));
+    }
+
+
+
 
 
     /**
      * 거래 삭제
      */
-    @PostMapping("/deal/{id}")
-    public ResponseEntity deleteDeal(@PathVariable Long id, @RequestBody DealDto.Request dto) throws Exception {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteDeal(
+            @PathVariable Long id,
+            @RequestBody DealDto.Request dto) throws Exception {
+
         dealService.deleteDeal(id, dto);
-        return ResponseEntity.ok(id);
+        return ResponseEntity.ok(id + "번 거래가 삭제");
     }
 
 
+    /**
+     * 거래 신고
+     */
+    @PutMapping("/complain/{id}")
+    public ResponseEntity<?> complainDeal(
+            @PathVariable Long id,
+            @RequestBody DealDto.Request dto) throws Exception {
 
-
+        return ResponseEntity.ok("신고내역 테이블 필요!!!!");
+    }
 
 }

@@ -6,7 +6,6 @@ import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.entity.RefreshToken;
 import com.ssafy.oywo.jwt.JwtTokenProvider;
 import com.ssafy.oywo.repository.HoRepository;
-import com.ssafy.oywo.repository.HouseRepository;
 import com.ssafy.oywo.repository.MemberRepository;
 import com.ssafy.oywo.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +29,6 @@ import java.util.*;
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final HoRepository hoRepository;
-    private final HouseRepository houseRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -43,7 +42,7 @@ public class MemberServiceImpl implements MemberService {
         // 1. username + password 를 기반으로 Authentication 객체 생성
         // 이때 authentication 은 인증 여부를 확인하는 authenticated 값이 false
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-
+        System.out.println("authenticationToken : " + authenticationToken);
         // 2. 실제 검증. authenticate() 메서드를 통해 요청된 Member 에 대한 검증 진행
         // authenticate 메서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -71,7 +70,8 @@ public class MemberServiceImpl implements MemberService {
         // Password 암호화
         String encodedPassword = passwordEncoder.encode(memberDto.getPassword());
         List<String> roles = new ArrayList<>();
-        roles.add(Member.RoleType.ROLE_USER.name());  // USER 권한 부여
+//        roles.add(Member.RoleType.ROLE_USER.name());  // USER 권한 부여
+        roles.add("USER");  // USER 권한 부여
 
 //        List<Code> roles=new ArrayList<>();
 //        roles.add(new Code(1L));
@@ -102,6 +102,7 @@ public class MemberServiceImpl implements MemberService {
 
         MemberDto.SignUp signup=new MemberDto.SignUp();
         Member member=memberRepository.save(signup.toEntity(memberDto,roles));
+        System.out.println("++++++++++++++++"+member);
 
         return new MemberDto.Response(member);
     }
@@ -134,4 +135,5 @@ public class MemberServiceImpl implements MemberService {
     public Member getMemberInfo(String username, String password) {
         return memberRepository.findByUsernameAndPassword(username,password);
     }
+
 }
