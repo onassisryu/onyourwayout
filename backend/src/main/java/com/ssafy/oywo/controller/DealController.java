@@ -2,10 +2,12 @@ package com.ssafy.oywo.controller;
 
 import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.dto.MemberDto;
+import com.ssafy.oywo.entity.DealType;
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.service.DealService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,10 +27,15 @@ public class DealController {
     /**
      * 거래 전체 조회 + 필터(QueryString)
      */
-    @GetMapping()
-    public List<DealDto.Response> getDeals() {
+    @GetMapping("/list")
+    public List<DealDto.Response> getDeals(
+            @RequestParam(name = "dealType",
+                          defaultValue = "") DealType dealType) {
 
-        return dealService.getDeals();
+        System.out.println("dealType.getClass() = " + dealType.getClass());
+        System.out.println("dealType = " + dealType);
+//        DealType dealType = DealType.valueOf(dealType);
+        return dealService.getDeals(dealType);
     }
 
 

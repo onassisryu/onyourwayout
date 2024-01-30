@@ -2,13 +2,14 @@ package com.ssafy.oywo.service;
 
 import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.dto.MemberDto;
+import com.ssafy.oywo.entity.DealType;
 import com.ssafy.oywo.entity.Member;
 
 import java.util.List;
 
 public interface DealService {
 
-    List<DealDto.Response> getDeals();
+    List<DealDto.Response> getDeals(DealType dealType);
     DealDto.Response createDeal(DealDto.Request dto);
     DealDto.Response getDeal(Long id);
     DealDto.Response updateDeal(Long id, DealDto.Request dto);

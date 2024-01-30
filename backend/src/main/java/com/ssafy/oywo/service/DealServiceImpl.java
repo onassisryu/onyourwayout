@@ -3,6 +3,7 @@ package com.ssafy.oywo.service;
 import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.entity.Deal;
+import com.ssafy.oywo.entity.DealType;
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.repository.DealRepository;
 import com.ssafy.oywo.repository.MemberRepository;
@@ -37,24 +38,42 @@ public class DealServiceImpl implements DealService{
         // requestId에 로그인사용자 id넣기
         System.out.println("loginUserId = " + loginUserId);
         return loginUserId;
-
         }
 
 
     // 전체 거래 조회
     @Override
     @Transactional(readOnly = true)
-    public List<DealDto.Response> getDeals() {
+    public List<DealDto.Response> getDeals(DealType dealType) {
         // 로그인 사용자 id
+        System.out.println("dealType = " + dealType);
         Long loginUserId = getLoginUserId();
-        // 내 아파트 -> 모든 거래
-        List<Deal> deals = dealRepository.findDealsByMemberId(loginUserId);
+        // 내 아파트 id 구하기
+        Long myAptId = dealRepository.findHoAptIdsByMemberId(loginUserId);
+        System.out.println("myAptId = " + myAptId);
 
-        return deals
+        // RECYCLE, PET, SHOP, ETC
+        List<Deal> filteredDeals;
+
+        if (dealType == DealType.RECYCLE) {
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.RECYCLE);
+        } else if (dealType == DealType.PET) {
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.PET);
+        } else if (dealType == DealType.SHOP) {
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.SHOP);
+        } else if (dealType == DealType.ETC) {
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.ETC);
+        } else {
+            filteredDeals = dealRepository.findDealsByApartmentId(myAptId);
+        }
+
+        System.out.println("filteredDeals = " + filteredDeals);
+        return filteredDeals
                 .stream()
                 .map(DealDto.Response::new)
                 .toList();
     }
+
 
     // 생성
     @Override
@@ -68,6 +87,8 @@ public class DealServiceImpl implements DealService{
 //                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
         // requestId에 로그인사용자 id넣기
         dto.setRequestId(loginUserId);
+        // dealStatus -> OPEN
+        dto.setDealStatus(Deal.DealStatus.OPEN);
 
         // item넣으면 -> ITEM / cash 넣으면 -> CASH
         if (dto.getItem() != null) {
@@ -75,9 +96,6 @@ public class DealServiceImpl implements DealService{
         } else if (dto.getCash() != 0) {
             dto.setRewardType(Deal.RewardType.CASH);
         }
-
-        // dealStatus -> OPEN
-        dto.setDealStatus(Deal.DealStatus.OPEN);
 
         Deal deal = dto.toEntity();
 
@@ -129,8 +147,6 @@ public class DealServiceImpl implements DealService{
     public DealDto.Response getDeal(Long id) {
         // 로그인 사용자 id
         Long loginUserId = getLoginUserId();
-        // 내 아파트 -> 모든 거래
-        List<Deal> deals = dealRepository.findDealsByMemberId(loginUserId);
 
         return dealRepository.findById(id)
                 .map(DealDto.Response::new)
@@ -266,7 +282,11 @@ public class DealServiceImpl implements DealService{
             score--;
         }
 
-        memberRepository.save(Member.builder().score(score).build());
+        memberRepository.save(
+                Member.builder()
+                .score(score)
+                .build()
+        );
 
         return new MemberDto.Response(member);
     }

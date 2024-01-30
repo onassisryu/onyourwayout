@@ -33,10 +33,12 @@ public class Deal extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Long requestId;
 
     private Long acceptId;
 
+    @Column(nullable = false)
     private String title;
 
     @Column(columnDefinition = "TEXT")
@@ -46,12 +48,15 @@ public class Deal extends BaseTimeEntity {
 
     private int cash;
 
+    @Enumerated(EnumType.STRING)
     private RewardType rewardType;
 
     private int complaint;
 
+    @Enumerated(EnumType.STRING)
     private DealStatus dealStatus;
 
+    @Enumerated(EnumType.STRING)
     private DealType dealType;
 
     private LocalDateTime expireAt;
