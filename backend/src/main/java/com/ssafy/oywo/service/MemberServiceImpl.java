@@ -226,4 +226,9 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findHoAptIdsByMemberId(memberId);
     }
 
+    @Override
+    public Optional<Member> update(Long idx, MemberDto.SignUp memberDto) {
+        return Optional.empty();
+    }
+
 }
