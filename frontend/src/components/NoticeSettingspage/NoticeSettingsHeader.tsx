@@ -4,7 +4,7 @@ import styled from '@emotion/native';
 import {NavigationProp} from '@react-navigation/native';
 import theme from '@/Theme';
 import {View, TouchableOpacity, ImageSourcePropType} from 'react-native';
-import {GlobalText} from '@/obalStyles';
+import {GlobalText} from '@/GlobalStyles';
 
 const HeaderContainer = styled.View`
   flex-direction: row;

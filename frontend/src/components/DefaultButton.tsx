@@ -1,4 +1,4 @@
-import {GlobalText, GlobalButton} from '@/obalStyles';
+import {GlobalText, GlobalButton} from '@/GlobalStyles';
 import styled, {css} from '@emotion/native';
 import {Global, useTheme} from '@emotion/react';
 

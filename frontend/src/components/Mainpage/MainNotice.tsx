@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, {useState, useEffect} from 'react';
 import styled, {css} from '@emotion/native';
 import theme from '@/Theme';
-import {GlobalContainer, GlobalText, GlobalButton} from '@/obalStyles';
+import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import {TouchableOpacity, Text, View, ImageSourcePropType, Animated} from 'react-native';
 
 // 배경

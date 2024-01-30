@@ -6,7 +6,7 @@ import theme from '@/Theme';
 import moment from 'moment';
 import 'moment/locale/ko';
 import {View, TouchableOpacity, ImageSourcePropType} from 'react-native';
-import {GlobalText} from '@/obalStyles';
+import {GlobalText} from '@/GlobalStyles';
 
 const TabContainer = styled.View`
   flex-direction: row;

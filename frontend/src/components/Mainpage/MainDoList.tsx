@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import styled, {css} from '@emotion/native';
 import theme from '@/Theme';
-import {GlobalContainer, GlobalText, GlobalButton} from '@/obalStyles';
+import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import {ScrollView, Modal, View, ImageSourcePropType, TouchableWithoutFeedback} from 'react-native';
 
 const DoListComponent = styled.View`

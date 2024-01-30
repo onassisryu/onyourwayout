@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Text, View, TextInput, TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
-import {GlobalContainer} from '@/obalStyles';
+import {GlobalContainer} from '@/GlobalStyles';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
 import theme from '@/Theme';

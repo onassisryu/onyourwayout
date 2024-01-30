@@ -1,7 +1,7 @@
 import styled, {css} from '@emotion/native';
 import {useTheme} from '@emotion/react';
 import DefaultButton from '@/components/DefaultButton';
-import {GlobalContainer, GlobalText, GlobalButton} from '@/obalStyles';
+import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import React from 'react';
 import {NavigationProp} from '@react-navigation/native';
 
