@@ -83,6 +83,17 @@ public class MemberDto {
             this.hoId=ho.getId();
             this.hoName=ho.getName();
         }
+
+        public Response(Member member){
+            this.id=member.getId();
+            this.nickname=member.getNickname();
+            this.username=member.getUsername();
+            this.birthDate=member.getBirthDate();
+            this.phoneNumber=member.getPhoneNumber();
+            this.score=member.getScore();
+            this.roles=member.getRoles();
+            this.isCertified=member.isCertified();
+        }
     }
     @Data
     @AllArgsConstructor
