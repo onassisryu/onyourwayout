@@ -50,11 +50,11 @@ public class MemberController {
             log.info("request username = {}, password = {}", username, password);
             log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
-            Member member=memberSerivce.getMemberInfo(username,password);
+            MemberDto.Response memberResponse=memberSerivce.getMemberInfo(username,password);
             
             HashMap<String,Object> payload=new HashMap<>();
             payload.put("token",jwtToken);
-            payload.put("memberInfo",member);
+            payload.put("memberInfo",memberResponse);
             System.out.println(payload);
             return ResponseEntity.ok(payload);
 
@@ -106,7 +106,7 @@ public class MemberController {
     @Operation(summary = "사용자 정보 수정",description = "사용자 uuid로 사용자 정보를 수정합니다.")
     @PutMapping("/{id}")
     public ResponseEntity<?> modifyUserInfo(@Parameter(name = "id", description = "사용자 uuid") @PathVariable Long id, @RequestBody MemberDto.Request memberDto){
-        Member modifiedMember=memberSerivce.modify(id, memberDto);
+        MemberDto.Response modifiedMember=memberSerivce.modify(id, memberDto);
         return new ResponseEntity<>(modifiedMember,HttpStatus.ACCEPTED);
     }
 
@@ -119,9 +119,18 @@ public class MemberController {
     @GetMapping("/info/{id}")
     public ResponseEntity<?> getMemberInfo(@Parameter(name = "id", description = "사용자 uuid")
                                                @PathVariable("id") Long id){
-        Optional<Member> member=memberSerivce.getMemberInfo(id);
-        if (member.isPresent()){
-            return ResponseEntity.ok(member.get());
+        MemberDto.Response memberResponse=memberSerivce.getMemberInfo(id);
+
+        if (memberResponse!=null){
+            HashMap<String,Object> payload=new HashMap<>();
+            payload.put("id",memberResponse.getId());
+            payload.put("nickname",memberResponse.getNickname());
+            payload.put("birthDate",memberResponse.getBirthDate());
+            payload.put("phoneNumber",memberResponse.getPhoneNumber());
+            payload.put("score",memberResponse.getScore());
+            payload.put("certified",memberResponse.isCertified());
+
+            return ResponseEntity.ok(payload);
         }
         return ResponseEntity.noContent().build();
     }
