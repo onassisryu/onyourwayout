@@ -153,9 +153,6 @@ public class DealServiceImpl implements DealService{
             throw new IllegalArgumentException("현물보상 또는 물물보상은 필수 입력");
         }
 
-        if (dto.getCash() != 0 && dto.getItem() != null) {
-            throw new IllegalArgumentException("두 보상을 동시에 선택할 수 없음");
-        }
 
         if (dto.getExpireAtStr() != null) {
             try {

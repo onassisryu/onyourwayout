@@ -57,6 +57,7 @@ public class Deal extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private DealStatus dealStatus;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private DealType dealType;
 
@@ -81,17 +82,27 @@ public class Deal extends BaseTimeEntity {
             this.content = dto.getContent();
         }
 
-        if (dto.getItem() != null) {
+        if (dto.getCash() == 0) {
             this.item = dto.getItem();
-            this.cash = 0;
+            this.cash = dto.getCash();
             this.rewardType = RewardType.ITEM;
-//            dto.setRewardType(RewardType.ITEM);
 
-        } else if (dto.getCash() != 0) {
+        } else if (dto.getItem() == null || dto.getItem().isEmpty()){
             this.cash = dto.getCash();
             this.item = null;
             this.rewardType = RewardType.CASH;
         }
+
+//        if (dto.getItem() != null || !dto.getItem().isEmpty()) {
+//            this.item = dto.getItem();
+//            this.cash = 0;
+//            this.rewardType = RewardType.ITEM;
+//
+//        } else if (dto.getCash() != 0) {
+//            this.cash = dto.getCash();
+//            this.item = null;
+//            this.rewardType = RewardType.CASH;
+//        }
 
         if (dto.getCash() != 0 && dto.getItem() != null) {
             throw new IllegalArgumentException("두 보상을 동시에 선택할 수 없음");

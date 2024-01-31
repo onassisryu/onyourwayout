@@ -42,11 +42,11 @@ public class DealDto {
                 expireAt = LocalDateTime.now().plusMinutes(60);
             }
 
-            if (item != null) {
+            if (cash == 0) {
                 rewardType = Deal.RewardType.ITEM;
-                System.out.println("item = " + item);
-            } else if (cash != 0) {
+            } else {
                 rewardType = Deal.RewardType.CASH;
+                item = null;
             }
 
             Deal deal = Deal.builder()
