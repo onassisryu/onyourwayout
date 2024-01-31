@@ -71,12 +71,11 @@ public class Deal extends BaseTimeEntity {
     public void update(DealDto.Request dto) {
 
         if (dto.getAcceptId() != null) {
+            System.out.println("dto.getAcceptId() = " + dto.getAcceptId());
             this.acceptId = dto.getAcceptId();
         }
 
-        if (dto.getTitle() != null) {
-            this.title = dto.getTitle();
-        }
+        this.title = dto.getTitle();
 
         if (dto.getContent() != null) {
             this.content = dto.getContent();
@@ -118,13 +117,13 @@ public class Deal extends BaseTimeEntity {
         }
 
         // dealStatus 갱신
-        if (dto.getDealStatus() != null) {
-            this.dealStatus = dto.getDealStatus();
-        }
+        this.dealStatus = dto.getDealStatus();
+        this.dealType = dto.getDealType();
 
-        if (dto.getDealType() != null) {
-            this.dealType = dto.getDealType();
-        }
+//            if (DealStatus.CLOSE.equals(dto.getDealStatus())) {
+//                this.deletedAt = LocalDateTime.now();
+//            }
+
 
         if (dto.getExpireAtStr() != null) {
             this.expireAt = LocalDateTime.parse(dto.getExpireAtStr(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

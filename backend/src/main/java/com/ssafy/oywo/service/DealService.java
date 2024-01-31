@@ -2,6 +2,7 @@ package com.ssafy.oywo.service;
 
 import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.dto.MemberDto;
+import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.entity.DealType;
 import com.ssafy.oywo.entity.Member;
 
@@ -11,6 +12,10 @@ public interface DealService {
 
     // 거래 전체 조회 + 거래유형 필터(QueryString)
     List<DealDto.Response> getDeals(DealType dealType);
+    //동별 거래 전체 조회 + 거래 유형 필터
+    List<DealDto.Response> getDealsByDong(Long dongId, DealType dealType);
+    // 동 별 거래 건수 조회
+    Long countDealsByDong(Long dongId, DealType dealType);
     // 사용자별 거래(요청 or 수행) 전체 조회
     List<DealDto.Response> getDealsByMemberId(String requestOrAccept,Long memberId);
     // 거래 생성
@@ -27,6 +32,8 @@ public interface DealService {
     MemberDto.Response reviewDeal(Long id, String gb);
     // 거래 삭제
     void deleteDeal(Long id);
+
+
 
     // 거래 신고
 }

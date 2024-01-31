@@ -3,6 +3,7 @@ package com.ssafy.oywo.dto;
 import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.entity.DealImage;
 import com.ssafy.oywo.entity.DealType;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,18 +18,23 @@ public class DealDto {
     @Builder
     public static class Request {
         private Long id;
+        @NonNull
         private String title;
         private String content;
+        @NonNull
         private Long requestId;
         private Long acceptId;
         private int cash;
         private String item;
         private Deal.RewardType rewardType;
         private int complaint;
+        @NonNull
         private Deal.DealStatus dealStatus;
+        @NonNull
         private DealType dealType;
         private String expireAtStr;
         private List<DealImage> dealImages;
+        private LocalDateTime deletedAt;
 
         /*
         Dto -> Entity
@@ -108,7 +114,6 @@ public class DealDto {
             this.dealImages = entity.getDealImages();
             this.createdAt = entity.getCreatedAt();
             this.modifiedAt = entity.getModifiedAt();
-            this.deletedAt = entity.getDeletedAt();
 
         }
     }

@@ -2,13 +2,14 @@ package com.ssafy.oywo.service;
 
 import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.dto.MemberDto;
-import com.ssafy.oywo.entity.Deal;
-import com.ssafy.oywo.entity.DealType;
-import com.ssafy.oywo.entity.Member;
+import com.ssafy.oywo.entity.*;
 import com.ssafy.oywo.repository.DealRepository;
+import com.ssafy.oywo.repository.DongRepository;
 import com.ssafy.oywo.repository.MemberRepository;
+import jakarta.persistence.PreRemove;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,6 +32,7 @@ public class DealServiceImpl implements DealService{
     private final DealRepository dealRepository;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final DongRepository dongRepository;
 
 
     // 현재 로그인한 사용자 정보를 가져옴
@@ -75,6 +78,43 @@ public class DealServiceImpl implements DealService{
                 .stream()
                 .map(DealDto.Response::new)
                 .toList();
+    }
+
+    //동별 거래 전체 조회 + 거래 유형 필터
+    @Override
+    public List<DealDto.Response> getDealsByDong(Long dongId, DealType dealType) {
+        // 로그인 사용자 id
+        Long loginUserId = getLoginUserId();
+        // 내 아파트 id 구하기
+        Long myAptId = dealRepository.findHoAptIdsByMemberId(loginUserId);
+        // 내 아파트 동 리스트
+        List<Dong> dongs = dongRepository.findByApartmentId(myAptId);
+
+        List<Deal> dealsByDong = new ArrayList<>();
+
+        for (Dong dong : dongs) {
+            List<Deal> dongDeals = dealRepository.findDealsByDongIdAndDealType(
+                    myAptId, dong.getId(), dealType, Deal.DealStatus.CLOSE);
+            dealsByDong.addAll(dongDeals);
+        }
+        return dealsByDong
+                .stream()
+                .map(DealDto.Response::new)
+                .toList();
+    }
+
+    // 동별 거래 건 수 조회
+    @Override
+    public Long countDealsByDong(Long dongId, DealType dealType) {
+        // 로그인 사용자 id
+        Long loginUserId = getLoginUserId();
+        // 내 아파트 id 구하기
+        Long myAptId = dealRepository.findHoAptIdsByMemberId(loginUserId);
+        // 내 아파트 동 리스트
+        List<Dong> dongs = dongRepository.findByApartmentId(myAptId);
+
+
+        return dealRepository.countDealsByDongIdAndDealType(myAptId, dongId, dealType, Deal.DealStatus.CLOSE);
     }
 
 
@@ -198,6 +238,7 @@ public class DealServiceImpl implements DealService{
 
 
 
+//    @Transactional
     // 수락 and 수락 취소
     @Override
     public DealDto.Response acceptDeal(Long id, Long acceptId) {
@@ -221,7 +262,16 @@ public class DealServiceImpl implements DealService{
                 throw new IllegalStateException("요청자와 수락자는 같을 수 없음");
             }
 
+//            deal = Deal.builder()
+//                    .id(deal.getId())
+////                    .title(deal.getTitle())
+////                    .requestId(deal.getRequestId())
+//                    .acceptId(acceptId)
+//                    .dealStatus(Deal.DealStatus.ING)
+////                    .dealType(deal.getDealType())
+//                    .build();
             DealDto.Request dto = DealDto.Request.builder()
+                    .id(id)
                     .acceptId(acceptId)
                     .dealStatus(Deal.DealStatus.ING)
                     .build();
@@ -230,7 +280,16 @@ public class DealServiceImpl implements DealService{
 
         // 수락 취소
         } else if (deal.getDealStatus() == Deal.DealStatus.ING) {
+//            deal = Deal.builder()
+//                    .id(deal.getId())
+//                    .title(deal.getTitle())
+//                    .requestId(deal.getRequestId())
+//                    .acceptId(null)
+//                    .dealStatus(Deal.DealStatus.OPEN)
+//                    .dealType(deal.getDealType())
+//                    .build();
             DealDto.Request dto = DealDto.Request.builder()
+                    .id(id)
                     .acceptId(null)
                     .dealStatus(Deal.DealStatus.OPEN)
                     .build();
@@ -248,6 +307,7 @@ public class DealServiceImpl implements DealService{
     }
 
 
+    @Transactional
     // 거래 완료
     @Override
     public DealDto.Response closeDeal(Long id) {
@@ -272,10 +332,16 @@ public class DealServiceImpl implements DealService{
 
         if (deal.getDealStatus() == Deal.DealStatus.ING) {
             // AcceptId member의 상태값 변경
-            dealRepository.save(
-                    Deal.builder()
-                            .dealStatus(Deal.DealStatus.CLOSE)
-                            .build());
+            DealDto.Request dto = DealDto.Request.builder()
+                    .id(id)
+                    .dealStatus(Deal.DealStatus.CLOSE)
+                    .deletedAt(LocalDateTime.now())
+                    .build();
+
+            deal.update(dto);
+
+            dealRepository.save(deal);
+
         } else {
             throw new IllegalStateException("ING 아닌 거래는 거래완료 불가");
         }
@@ -297,6 +363,7 @@ public class DealServiceImpl implements DealService{
     }
 
 
+    @Transactional
     // 거래 리뷰
     @Override
     public MemberDto.Response reviewDeal(Long id, String gb) {
@@ -309,6 +376,8 @@ public class DealServiceImpl implements DealService{
         if (deal.getDealStatus() != Deal.DealStatus.CLOSE) {
             throw new IllegalArgumentException("완료된 거래만 리뷰할 수 있습니다.");
         }
+
+        System.out.println("deal.getId() = " + deal.getId());
 
         //== 거래 상대방 가져오기 ==//
         Member member;
@@ -329,6 +398,7 @@ public class DealServiceImpl implements DealService{
         else {
             throw new IllegalArgumentException("거래 당사자만 해당 거래 상대방을 리뷰할 수 있습니다.");
         }
+        System.out.println("member.getId() = " + member.getId());
 
         //== 거래 상대방 이웃지수 관리 ==//
         int score = member.getScore();
@@ -347,6 +417,7 @@ public class DealServiceImpl implements DealService{
 
         memberRepository.save(
                 Member.builder()
+                .id(member.getId())
                 .score(score)
                 .build()
         );
@@ -369,6 +440,12 @@ public class DealServiceImpl implements DealService{
             throw new IllegalStateException("거래 삭제 불가능: 해당 거래의 요청자와 현재 로그인 사용자가 다름");
         }
 
+        // 삭제 거래 : 상태관리?
+//        dealRepository.save(
+//                Deal.builder()
+//                        .dealStatus(Deal.DealStatus.CLOSE)
+//                        .build());
+        // 그냥 영구 삭제
         dealRepository.deleteById(id);
     }
 

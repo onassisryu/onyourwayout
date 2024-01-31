@@ -2,12 +2,16 @@ package com.ssafy.oywo.controller;
 
 import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.dto.MemberDto;
+import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.entity.DealType;
+import com.ssafy.oywo.entity.Dong;
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.service.DealService;
+import com.ssafy.oywo.service.DongService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +26,7 @@ import java.util.List;
 public class DealController {
 
     private final DealService dealService;
+    private DongService dongService;
 
 
     /**
@@ -34,6 +39,29 @@ public class DealController {
         return dealService.getDeals(dealType);
     }
 
+    /**
+     * 동별 거래 전체 조회 + 거래 유형 필터
+     */
+    @GetMapping("/dong/list")
+    public List<DealDto.Response> getDealsByDong (
+            @RequestParam(name = "dong", defaultValue = "") Long dongId,
+            @RequestParam(name = "dealType", defaultValue = "") DealType dealType) {
+
+        return dealService.getDealsByDong(dongId, dealType);
+    }
+
+    /**
+     * 동별 거래 건 수 조회
+     */
+    @GetMapping("/dong/count")
+    public Long countDealsByDong (
+            @RequestParam(name = "dong", defaultValue = "") Long dongId,
+            @RequestParam(name = "dealType", defaultValue = "") DealType dealType) {
+
+        return dealService.countDealsByDong(dongId, dealType);
+    }
+
+
 
     /**
      * 사용자별 거래(요청 or 수행) 전체 조회 --> 수정 필요(ing 표시?)
@@ -41,7 +69,7 @@ public class DealController {
     @GetMapping("/user/list")     // 'localhost:8080/deal/user/list?type=request&memberId=1'
     public List<DealDto.Response> getDealsByMemberId(
             @RequestParam(name = "type") String requestOrAccept,
-            @RequestParam(name = "memberId") Long memberId) throws Exception {
+            @RequestParam(name = "memberId", defaultValue = "") Long memberId) throws Exception {
 
         return dealService.getDealsByMemberId(requestOrAccept, memberId);
     }
@@ -90,7 +118,13 @@ public class DealController {
             @PathVariable Long id,
             @RequestBody DealDto.Request dto) throws Exception {
 
-        return ResponseEntity.ok(dealService.acceptDeal(id, dto.getAcceptId()) + "거래가 매칭되었습니다.");
+        DealDto.Response response = dealService.acceptDeal(id, dto.getAcceptId());
+
+        if (response.getDealStatus() == Deal.DealStatus.ING) {
+            return ResponseEntity.ok("거래가 수락되었습니다.");
+        } else {
+            return ResponseEntity.ok("거래수락이 취소되었습니다.");
+        }
     }
 //    @PostMapping("/deal/accept/{id}")
 //    public ResponseEntity<?> acceptDeal(@PathVariable Long id, @RequestBody Long acceptId) {
@@ -104,8 +138,11 @@ public class DealController {
     @PutMapping("/close/{id}")
     public ResponseEntity<?> closeDeal(
             @PathVariable Long id) throws Exception {
-        return ResponseEntity.ok(dealService.closeDeal(id) + "해당 거래가 완료되었습니다.");
+
+        dealService.closeDeal(id);
+        return ResponseEntity.ok("해당 거래가 완료되었습니다.");
     }
+
 
     /**
      * 거래 상대방 리뷰
@@ -123,7 +160,7 @@ public class DealController {
 
 
     /**
-     * 거래 삭제
+     * 거래 삭제 -- 완료아닌 삭제도 상태관리?
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDeal(
