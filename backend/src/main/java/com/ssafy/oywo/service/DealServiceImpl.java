@@ -358,7 +358,7 @@ public class DealServiceImpl implements DealService{
 
     // 삭제
     @Override
-    public void deleteDeal(Long id, DealDto.Request dto) {
+    public void deleteDeal(Long id) {
         Deal deal = dealRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
         );

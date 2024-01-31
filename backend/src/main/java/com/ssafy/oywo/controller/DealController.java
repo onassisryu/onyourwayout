@@ -127,10 +127,9 @@ public class DealController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDeal(
-            @PathVariable Long id,
-            @RequestBody DealDto.Request dto) throws Exception {
+            @PathVariable Long id) throws Exception {
 
-        dealService.deleteDeal(id, dto);
+        dealService.deleteDeal(id);
         return ResponseEntity.ok(id + "번 거래가 삭제");
     }
 

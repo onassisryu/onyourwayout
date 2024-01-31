@@ -26,7 +26,7 @@ public interface DealService {
     // 거래 리뷰
     MemberDto.Response reviewDeal(Long id, String gb);
     // 거래 삭제
-    void deleteDeal(Long id, DealDto.Request dto);
+    void deleteDeal(Long id);
 
     // 거래 신고
 }
