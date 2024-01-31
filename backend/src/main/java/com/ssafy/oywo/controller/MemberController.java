@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,19 +45,22 @@ public class MemberController {
         String username = memberDto.getUsername();
         String password = memberDto.getPassword();
 
-        System.out.println("2222"+username+password);
-        JwtToken jwtToken = memberSerivce.signIn(username, password);
-        log.info("request username = {}, password = {}", username, password);
-        log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
+        try{
+            JwtToken jwtToken = memberSerivce.signIn(username, password);
+            log.info("request username = {}, password = {}", username, password);
+            log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
-        Member member=memberSerivce.getMemberInfo(username,password);
+            MemberDto.Response memberResponse=memberSerivce.getMemberInfo(username,password);
+            
+            HashMap<String,Object> payload=new HashMap<>();
+            payload.put("token",jwtToken);
+            payload.put("memberInfo",memberResponse);
+            System.out.println(payload);
+            return ResponseEntity.ok(payload);
 
-
-        HashMap<String,Object> payload=new HashMap<>();
-        payload.put("token",jwtToken);
-        payload.put("memberInfo",member);
-        System.out.println(payload);
-        return ResponseEntity.ok(payload);
+        }catch (HttpClientErrorException.Unauthorized e){
+            return new ResponseEntity<>("잘못된 로그인 방식입니다.",HttpStatus.FORBIDDEN);
+        }
     }
 
     /**
@@ -101,7 +106,7 @@ public class MemberController {
     @Operation(summary = "사용자 정보 수정",description = "사용자 uuid로 사용자 정보를 수정합니다.")
     @PutMapping("/{id}")
     public ResponseEntity<?> modifyUserInfo(@Parameter(name = "id", description = "사용자 uuid") @PathVariable Long id, @RequestBody MemberDto.Request memberDto){
-        Member modifiedMember=memberSerivce.modify(id, memberDto);
+        MemberDto.Response modifiedMember=memberSerivce.modify(id, memberDto);
         return new ResponseEntity<>(modifiedMember,HttpStatus.ACCEPTED);
     }
 
@@ -114,9 +119,18 @@ public class MemberController {
     @GetMapping("/info/{id}")
     public ResponseEntity<?> getMemberInfo(@Parameter(name = "id", description = "사용자 uuid")
                                                @PathVariable("id") Long id){
-        Optional<Member> member=memberSerivce.getMemberInfo(id);
-        if (member.isPresent()){
-            return ResponseEntity.ok(member.get());
+        MemberDto.Response memberResponse=memberSerivce.getMemberInfo(id);
+
+        if (memberResponse!=null){
+            HashMap<String,Object> payload=new HashMap<>();
+            payload.put("id",memberResponse.getId());
+            payload.put("nickname",memberResponse.getNickname());
+            payload.put("birthDate",memberResponse.getBirthDate());
+            payload.put("phoneNumber",memberResponse.getPhoneNumber());
+            payload.put("score",memberResponse.getScore());
+            payload.put("certified",memberResponse.isCertified());
+
+            return ResponseEntity.ok(payload);
         }
         return ResponseEntity.noContent().build();
     }

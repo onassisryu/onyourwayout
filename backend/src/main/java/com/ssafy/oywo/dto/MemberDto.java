@@ -1,15 +1,16 @@
 package com.ssafy.oywo.dto;
 
-import com.ssafy.oywo.entity.Ho;
-import com.ssafy.oywo.entity.Member;
+import com.ssafy.oywo.entity.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 public class MemberDto {
@@ -54,6 +55,9 @@ public class MemberDto {
 
     // 회원 정보와 회원이 등록한 집 정보를 담은 class
     @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class Response{
         private Long id;
         private String nickname;
@@ -68,31 +72,60 @@ public class MemberDto {
         private Long hoId;
         private String hoName;
 
-        private List<String> roles=new ArrayList<>();
-        public Response(Member member, Ho ho){
-            this.id=member.getId();
-            this.nickname=member.getNickname();
-            this.username=member.getUsername();
-            this.birthDate=member.getBirthDate();
-            this.phoneNumber=member.getPhoneNumber();
-            this.score=member.getScore();
-            this.roles=member.getRoles();
-            this.isCertified=member.isCertified();
-            this.dongId=ho.getDong().getId();
-            this.dongName=ho.getDong().getName();
-            this.hoId=ho.getId();
-            this.hoName=ho.getName();
+        private Timestamp createdAt;
+        private Timestamp updatedAt;
+        private Timestamp deletedAt;
+        private String certificationImg;
+        private Time notificationStart;
+        private Time notificationEnd;
+        private List<ChatRoom> chatRooms;
+        private List<NotiDong> notiDongs;
+        private List<NotiDealCategory> notiDealCategories;
+        private List<MembersNotification> membersNotifications;
+
+        public static Response of(Member member, Ho ho){
+            return Response.builder()
+                    .id(member.getId())
+                    .nickname(member.getNickname())
+                    .birthDate(member.getBirthDate())
+                    .phoneNumber(member.getPhoneNumber())
+                    .score(member.getScore())
+                    .isCertified(member.isCertified())
+                    .dongId(ho.getDong().getId())
+                    .hoId(ho.getId())
+                    .hoName(ho.getName())
+                    .build();
+        }
+        public static Response of(Member member){
+            return Response.builder()
+                    .id(member.getId())
+                    .nickname(member.getNickname())
+                    .username(member.getUsername())
+                    .birthDate(member.getBirthDate())
+                    .phoneNumber(member.getPhoneNumber())
+                    .score(member.getScore())
+                    .isCertified(member.isCertified())
+                    .notificationStart(member.getNotificationStart())
+                    .notificationEnd(member.getNotificationEnd())
+                    .notiDealCategories(member.getNotiDealCategories())
+                    .notiDongs(member.getNotiDongs())
+                    .build();
         }
 
-        public Response(Member member){
-            this.id=member.getId();
-            this.nickname=member.getNickname();
-            this.username=member.getUsername();
-            this.birthDate=member.getBirthDate();
-            this.phoneNumber=member.getPhoneNumber();
-            this.score=member.getScore();
-            this.roles=member.getRoles();
-            this.isCertified=member.isCertified();
+        public Member toEntity(){
+            return Member.builder()
+                    .id(id)
+                    .nickname(nickname)
+                    .username(username)
+                    .birthDate(birthDate)
+                    .phoneNumber(phoneNumber)
+                    .score(score)
+                    .isCertified(isCertified)
+                    .notificationStart(notificationStart)
+                    .notificationEnd(notificationEnd)
+                    .notiDealCategories(notiDealCategories)
+                    .notiDongs(notiDongs)
+                    .build();
         }
     }
     @Data

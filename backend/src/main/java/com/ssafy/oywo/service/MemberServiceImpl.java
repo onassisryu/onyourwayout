@@ -23,6 +23,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.swing.text.html.Option;
 import javax.swing.text.html.Option;
@@ -46,7 +47,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public JwtToken signIn(String username, String password) {
+    public JwtToken signIn(String username, String password) throws HttpClientErrorException.Unauthorized {
 
         // 1. username + password 를 기반으로 Authentication 객체 생성
         // 이때 authentication 은 인증 여부를 확인하는 authenticated 값이 false
@@ -110,7 +111,7 @@ public class MemberServiceImpl implements MemberService {
                 members.add(member);
                 ho.get().builder().member(members).build();
 
-                response=new MemberDto.Response(member,ho.get());
+                response=MemberDto.Response.of(member,ho.get());
             }
         }
 
@@ -128,7 +129,7 @@ public class MemberServiceImpl implements MemberService {
                 members.add(member);
                 hoRepository.save(ho.get().builder().member(members).build());
 
-                response=new MemberDto.Response(member,ho.get());
+                response=MemberDto.Response.of(member,ho.get());
             }
             // 등록되지 않은 호인 경우
             else{
@@ -143,7 +144,7 @@ public class MemberServiceImpl implements MemberService {
                 Ho newHo= Ho.builder().dong(dong).name(hoName).member(members).inviteCode(newInviteCode).build();
                 newHo=hoRepository.save(newHo);
 
-                response=new MemberDto.Response(member,newHo);
+                response= MemberDto.Response.of(member, newHo);
             }
         }
         return response;
@@ -175,7 +176,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public Member modify(Long id,MemberDto.Request memberDto) {
+    public MemberDto.Response modify(Long id,MemberDto.Request memberDto) {
 
         Optional<Member> member=memberRepository.findById(id);
 
@@ -190,15 +191,16 @@ public class MemberServiceImpl implements MemberService {
                     .password(memberDto.getPassword())
                     .updatedAt(new Timestamp(System.currentTimeMillis()))
                     .build();;
-
-            return memberRepository.save(existedMember);
+            existedMember=memberRepository.save(existedMember);
+            return MemberDto.Response.of(existedMember);
         }
         return null;
     }
 
     @Transactional
-    public Member modify(Member member){
-        return memberRepository.save(member);
+    public MemberDto.Response modify(Member member){
+        Member modifiedMember=memberRepository.save(member);
+        return MemberDto.Response.of(modifiedMember);
     }
 
     @Transactional
@@ -212,13 +214,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member getMemberInfo(String username, String password) {
-        return memberRepository.findByUsernameAndPassword(username,password);
+    public MemberDto.Response getMemberInfo(String username, String password) {
+        Member member=memberRepository.findByUsernameAndPassword(username,password);
+        return MemberDto.Response.of(member);
     }
 
     @Override
-    public Optional<Member> getMemberInfo(Long id) {
-        return memberRepository.findById(id);
+    public MemberDto.Response getMemberInfo(Long id) {
+        Optional<Member> member=memberRepository.findById(id);
+        if (member.isPresent()){
+            return MemberDto.Response.of(member.get());
+        }
+        return null;
     }
 
     @Override
@@ -226,9 +233,27 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findHoAptIdsByMemberId(memberId);
     }
 
+    @Transactional
     @Override
-    public Optional<Member> update(Long idx, MemberDto.SignUp memberDto) {
-        return Optional.empty();
+    public void saveFcmToken(Long memberId, String fcmToken) {
+        Member member=memberRepository.findById(memberId)
+                .orElseThrow(()->new EntityNotFoundException("없는 사용자 입니다."));
+        member=member.builder().id(memberId).fcmToken(fcmToken).build();
+        memberRepository.save(member);
     }
+
+    @Transactional
+    @Override
+    public List<String> getFcmTokens(List<Long> memberIdList) {
+        List<String> fcmTokens=new ArrayList<>();
+        for(Long id:memberIdList){
+            Optional<Member> member=memberRepository.findById(id);
+            if (member.isPresent()){
+                fcmTokens.add(member.get().getFcmToken());
+            }
+        }
+        return fcmTokens;
+    }
+
 
 }
