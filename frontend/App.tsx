@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
@@ -16,6 +16,13 @@ import {QueryClient, QueryClientProvider} from 'react-query';
 
 import {ThemeProvider} from '@emotion/react';
 import theme from '@/Theme';
+
+//fcm
+import messaging from '@react-native-firebase/messaging';
+// 앱이 백그라운드에 있을때
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('[Background Remote Message]', remoteMessage);
+});
 
 //page
 import Home from '@screens/Home';
@@ -44,6 +51,10 @@ const App = () => {
             paddingBottom: 5,
             tabBarActiveTinitColor: '#27D894',
             height: 60,
+          },
+          tabBarActiveTintColor: '#27D894',
+          tabBarLabelStyle: {
+            fontWeight: 'bold',
           },
           tabBarIcon: ({focused, size, color}) => {
             let iconName!: string;

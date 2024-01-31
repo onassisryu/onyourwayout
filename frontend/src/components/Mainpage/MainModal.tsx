@@ -74,12 +74,44 @@ const DistinctLine = styled(GlobalContainer)`
 `;
 
 
-const MainModal = () => {
-     
-    const [modalVisible, setModalVisible] = useState(false);
-    
-    const outImage: ImageSourcePropType = require('images/나가요잉.png');
-    const inImage: ImageSourcePropType = require('images/해줘요잉.png');
+const MainPlusButton = ({navigation}: any) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  return (
+    <>
+      <ButtonContainer onPress={() => setModalVisible(true)}>
+        <FontAwesome5 name="plus" size={25} color="white" />
+      </ButtonContainer>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+        style={{zIndex: 1}}>
+        <TouchableWithoutFeedback onPress={() => setModalVisible(false)} style={{zIndex: 1}}>
+          <ModalBackground style={{zIndex: 1}}>
+            <ModalComponent>
+              <ModalSubComponent onPress={() => {}}>
+                <ModalImage source={outImage} />
+                <ModalText> 나가요잉 </ModalText>
+              </ModalSubComponent>
+              <DistinctLine></DistinctLine>
+              <ModalSubComponent
+                onPress={() => {
+                  navigation.navigate('DoIt1');
+                  setModalVisible(false);
+                }}>
+                <ModalImage source={inImage} />
+                <ModalText> 해줘요잉 </ModalText>
+              </ModalSubComponent>
+            </ModalComponent>
+          </ModalBackground>
+        </TouchableWithoutFeedback>
+      </Modal>
+    </>
+  );
+};
 
     return (
         <View>

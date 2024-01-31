@@ -25,8 +25,7 @@ const Home = ({ navigation }: Props) => {
         <MainComponent /> 
         <MainDoList />
       </ScrollView>
-      <MainModal />
-      
+      <MainModal navigation={navigation} />
     </GlobalContainer>
   );
 };
