@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public class MemberDto {
 
     @Data
@@ -62,10 +61,14 @@ public class MemberDto {
         private Long id;
         private String nickname;
         private String username;
+        private String password;
         private Date birthDate;
         private String phoneNumber;
         private int score;
+        private String profileImg;
+        private int penaltyCount;
         private boolean isCertified;
+        private String fcmToken;
 
         private Long dongId;
         private String dongName;
@@ -92,6 +95,7 @@ public class MemberDto {
                     .score(member.getScore())
                     .isCertified(member.isCertified())
                     .dongId(ho.getDong().getId())
+                    .dongName(ho.getDong().getName())
                     .hoId(ho.getId())
                     .hoName(ho.getName())
                     .build();
@@ -117,9 +121,11 @@ public class MemberDto {
                     .id(id)
                     .nickname(nickname)
                     .username(username)
+                    .password(password)
                     .birthDate(birthDate)
                     .phoneNumber(phoneNumber)
                     .score(score)
+                    .fcmToken(fcmToken)
                     .isCertified(isCertified)
                     .notificationStart(notificationStart)
                     .notificationEnd(notificationEnd)
