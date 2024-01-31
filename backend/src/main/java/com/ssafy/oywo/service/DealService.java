@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface DealService {
 
-    // 전체 거래 조회
+    // 거래 전체 조회 + 거래유형 필터(QueryString)
     List<DealDto.Response> getDeals(DealType dealType);
     // 사용자별 거래(요청 or 수행) 전체 조회
     List<DealDto.Response> getDealsByMemberId(String requestOrAccept,Long memberId);
@@ -22,7 +22,7 @@ public interface DealService {
     // 거래 수락 and 수락 취소
     DealDto.Response acceptDeal(Long id, Long acceptId);
     // 거래 완료
-    DealDto.Response closeDeal(Long id, Long acceptId);
+    DealDto.Response closeDeal(Long id);
     // 거래 리뷰
     MemberDto.Response reviewDeal(Long id, String gb);
     // 거래 삭제

@@ -49,7 +49,7 @@ public class Deal extends BaseTimeEntity {
 
     private int cash;
 
-//    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private RewardType rewardType;
 
     private int complaint;

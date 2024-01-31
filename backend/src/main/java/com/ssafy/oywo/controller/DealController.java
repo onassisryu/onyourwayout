@@ -25,7 +25,7 @@ public class DealController {
 
 
     /**
-     * 거래 전체 조회 + 필터(QueryString) --> 수정 필요 (ing 중인거)
+     * 거래 전체 조회 + 거래유형 필터(QueryString) - close거래 제외   --> 수정필요(동 별)
      */
     @GetMapping("/list")     // 'localhost:8080/deal/list?dealType=PET'
     public List<DealDto.Response> getDeals(
@@ -36,12 +36,12 @@ public class DealController {
 
 
     /**
-     * 사용자별 거래(요청 or 수행) 전체 조회 --> 수정 필요(ing는?)
+     * 사용자별 거래(요청 or 수행) 전체 조회 --> 수정 필요(ing 표시?)
      */
     @GetMapping("/user/list")     // 'localhost:8080/deal/user/list?type=request&memberId=1'
     public List<DealDto.Response> getDealsByMemberId(
             @RequestParam(name = "type") String requestOrAccept,
-            @RequestParam(name = "memberId", defaultValue = "") Long memberId) throws Exception {
+            @RequestParam(name = "memberId") Long memberId) throws Exception {
 
         return dealService.getDealsByMemberId(requestOrAccept, memberId);
     }
@@ -79,23 +79,18 @@ public class DealController {
             @RequestBody DealDto.Request dto) throws Exception {
 
         return ResponseEntity.ok(dealService.updateDeal(id, dto));
-//        if (dto.getAcceptId() != null) {
-//            return ResponseEntity.ok(dealService.acceptDeal(id, dto.getAcceptId()));
-//        } else {
-//            return ResponseEntity.ok(dealService.updateDeal(id, dto));
-//        }
     }
 
 
     /**
-     * 거래 수락 and 수락 취소 --> 수정 필요!
+     * 거래 최종수락 and 수락 취소 --> 수정 필요!
      */
     @PutMapping("/accept/{id}")
     public ResponseEntity<?> acceptDeal(
             @PathVariable Long id,
             @RequestBody DealDto.Request dto) throws Exception {
 
-        return ResponseEntity.ok(dealService.acceptDeal(id, dto.getAcceptId()));
+        return ResponseEntity.ok(dealService.acceptDeal(id, dto.getAcceptId()) + "거래가 매칭되었습니다.");
     }
 //    @PostMapping("/deal/accept/{id}")
 //    public ResponseEntity<?> acceptDeal(@PathVariable Long id, @RequestBody Long acceptId) {
@@ -104,13 +99,12 @@ public class DealController {
 
 
     /**
-     * 거래 완료 --> 수정필요(거래 상대방)
+     * 거래 완료(요청자)
      */
     @PutMapping("/close/{id}")
     public ResponseEntity<?> closeDeal(
-            @PathVariable Long id,
-            @RequestBody DealDto.Request dto) throws Exception {
-        return ResponseEntity.ok(dealService.closeDeal(id, dto.getAcceptId()) + "해당 거래가 완료되었습니다.");
+            @PathVariable Long id) throws Exception {
+        return ResponseEntity.ok(dealService.closeDeal(id) + "해당 거래가 완료되었습니다.");
     }
 
     /**
@@ -142,7 +136,7 @@ public class DealController {
 
 
     /**
-     * 거래 신고
+     * 거래 신고 -- 수정필요
      */
     @PutMapping("/complain/{id}")
     public ResponseEntity<?> complainDeal(

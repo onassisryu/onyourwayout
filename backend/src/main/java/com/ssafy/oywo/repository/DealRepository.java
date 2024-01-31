@@ -32,7 +32,7 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     List<Deal> findDealsByApartmentId(@Param("apartmentId") Long apartmentId);
 
 
-    // apt_id로 필터링된(dealType) 거래 들고오기
+    // apt_id로 필터링된(dealType) 거래 들고오기(CLOSE 거래 제외)
     @Query("SELECT d FROM Deal d " +
             "WHERE d.requestId IN " +
             "(SELECT hoMember.id FROM Ho ho " +
@@ -40,10 +40,11 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " JOIN ho.dong dong " +
             " JOIN dong.apartment apt " +
             " WHERE apt.id = :apartmentId) " +
-            "AND d.dealType = :dealType")
+            "AND d.dealType = :dealType AND d.dealStatus != :dealStatus" )
     List<Deal> findDealsByApartmentIdAndDealType(
             @Param("apartmentId") Long apartmentId,
-            @Param("dealType") DealType dealType
+            @Param("dealType") DealType dealType,
+            @Param("dealStatus") Deal.DealStatus dealStatus
     );
 
 

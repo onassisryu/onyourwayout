@@ -45,7 +45,7 @@ public class DealServiceImpl implements DealService{
         }
 
 
-    // 전체 거래 조회
+    // 거래 전체 조회 + 거래유형 필터(QueryString)
     @Override
     @Transactional(readOnly = true)
     public List<DealDto.Response> getDeals(DealType dealType) {
@@ -59,13 +59,13 @@ public class DealServiceImpl implements DealService{
         List<Deal> filteredDeals;
 
         if (dealType == DealType.RECYCLE) {
-            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.RECYCLE);
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.RECYCLE, Deal.DealStatus.CLOSE);
         } else if (dealType == DealType.PET) {
-            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.PET);
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.PET, Deal.DealStatus.CLOSE);
         } else if (dealType == DealType.SHOP) {
-            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.SHOP);
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.SHOP, Deal.DealStatus.CLOSE);
         } else if (dealType == DealType.ETC) {
-            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.ETC);
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.ETC, Deal.DealStatus.CLOSE);
         } else {
             filteredDeals = dealRepository.findDealsByApartmentId(myAptId);
         }
@@ -121,22 +121,12 @@ public class DealServiceImpl implements DealService{
         // requestId에 로그인사용자 id넣기
         dto.setRequestId(loginUserId);
 
-        // item넣으면 -> ITEM / cash 넣으면 -> CASH
-//        if (dto.getItem() != null || !dto.getItem().isEmpty()) {
-//            dto.setRewardType(Deal.RewardType.ITEM);
-//        } else if (dto.getCash() != 0) {
-//            dto.setRewardType(Deal.RewardType.CASH);
-//        }
         Deal deal = dto.toEntity();
-        System.out.println("deal = " + deal.getItem());
-        System.out.println("deal.getCash() = " + deal.getCash());
 
         try {
             dealRepository.save(deal);
         } catch (DataIntegrityViolationException e) {
-            // 이 구체적인 예외는 주로 Spring Data JPA에서 제약 조건 위반 시 발생합니다.
-            // 예외 세부 정보를 기록하거나 출력하여 디버깅 목적으로 사용합니다.
-            e.printStackTrace(); // 로깅 메커니즘으로 교체할 수 있습니다. (SLF4J 또는 Log4j 사용 권장)
+            e.printStackTrace();
             throw new RuntimeException("거래 생성 중 데이터 무결성 위반 발생", e);
         } catch (Exception e) {
             e.printStackTrace();
@@ -203,8 +193,6 @@ public class DealServiceImpl implements DealService{
                 () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
         );
 
-        // + 요청유저id 같지 않을 경우 exception
-
         deal.update(dto);
         dealRepository.save(deal);
 
@@ -265,7 +253,7 @@ public class DealServiceImpl implements DealService{
 
     // 거래 완료
     @Override
-    public DealDto.Response closeDeal(Long id, Long acceptId) {
+    public DealDto.Response closeDeal(Long id) {
         Deal deal = dealRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
         );
@@ -276,23 +264,38 @@ public class DealServiceImpl implements DealService{
             throw new IllegalStateException("거래 삭제 불가능: 해당 거래의 요청자와 현재 로그인 사용자가 다름");
         }
 
-        Member acceptUser = memberRepository.findById(acceptId).orElseThrow(
-                () -> new IllegalArgumentException("해당 사용자 아이디가 존재하지 않음")
-        );
+        if (deal.getAcceptId() == null) {
+            throw new IllegalStateException("거래 삭제 불가능: 거래 수행자 없음");
+        }
+
+//        Member acceptUser = memberRepository.findById(deal.getAcceptId()).orElseThrow(
+//                () -> new IllegalArgumentException("해당 사용자 아이디가 존재하지 않음")
+//        );
+
 
         if (deal.getDealStatus() == Deal.DealStatus.ING) {
-            DealDto.Request dto = DealDto.Request.builder()
-                    .dealStatus(Deal.DealStatus.CLOSE)
-                    .build();
-            // 엔티티 갱신
-            deal.update(dto);
+            // AcceptId member의 상태값 변경
+            dealRepository.save(
+                    Deal.builder()
+                            .dealStatus(Deal.DealStatus.CLOSE)
+                            .build());
         } else {
             throw new IllegalStateException("ING 아닌 거래는 거래완료 불가");
         }
 
-        // 갱신된 엔티티 저장
-        dealRepository.save(deal);
-
+//        if (deal.getDealStatus() == Deal.DealStatus.ING) {
+//            // AcceptId member의 상태값 변경
+//            DealDto.Request dto = DealDto.Request.builder()
+//                    .dealStatus(Deal.DealStatus.CLOSE)
+//                    .build();
+//            // 엔티티 갱신
+//            deal.update(dto);
+//        } else {
+//            throw new IllegalStateException("ING 아닌 거래는 거래완료 불가");
+//        }
+//
+//        // 갱신된 엔티티 저장
+//        dealRepository.save(deal);
         return new DealDto.Response(deal);
     }
 
