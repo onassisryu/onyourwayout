@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "598427262271",
+    "project_id": "oywo-dde82",
+    "storage_bucket": "oywo-dde82.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:598427262271:android:51352e6c222643aa4e478a",
+        "android_client_info": {
+          "package_name": "com.ssafy.oywo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDon7P87UwJ8ZAK2HCK6NIw3PhCeyRaE7k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

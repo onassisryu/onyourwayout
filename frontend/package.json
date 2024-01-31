@@ -13,6 +13,8 @@
     "@emotion/css": "^11.11.2",
     "@emotion/native": "^11.11.0",
     "@emotion/react": "^11.11.3",
+    "@react-native-firebase/app": "^18.8.0",
+    "@react-native-firebase/messaging": "^18.8.0",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/material-top-tabs": "^6.6.5",
     "@react-navigation/native": "^6.1.9",
