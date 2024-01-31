@@ -10,7 +10,6 @@ interface ButtonProps {
   color: Color;
   size?: Size;
   onPress?: () => void;
-  disabled?: boolean;
 }
 
 const StyledText = styled(GlobalText)<{size?: Size; color?: Color}>`
@@ -41,7 +40,7 @@ const StyledText = styled(GlobalText)<{size?: Size; color?: Color}>`
   }};
 `;
 
-const StyledButton = styled(GlobalButton)`
+const StledButton = styled(GlobalButton)`
   /* shadow-opacity: 0.25px;
   shadow-color: '#000';
   shadow-offset: {
@@ -105,11 +104,11 @@ const DefaultButton = (props: ButtonProps) => {
       `;
   }
   return (
-    <StyledButton style={[colorStyle, sizeStyle]} onPress={props.onPress} {...props}>
+    <StledButton style={[colorStyle, sizeStyle]} onPress={props.onPress}>
       <StyledText size={props.size} color={props.color}>
         {props.title}
       </StyledText>
-    </StyledButton>
+    </StledButton>
   );
 };
 

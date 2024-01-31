@@ -1,169 +1,23 @@
-import axios from 'axios';
-import {useSetRecoilState} from 'recoil';
-import {isLoggedInState} from '../recoil/atoms';
-import React, {useState, useEffect} from 'react';
-import {Text, Alert, View, Keyboard, TouchableWithoutFeedback, Image, TouchableOpacity} from 'react-native';
-import styled, {css} from '@emotion/native';
-import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
-import DefaultButton from '@/components/DefaultButton';
-import theme from '@/Theme';
-import Ionic from 'react-native-vector-icons/Ionicons';
+import React from 'react';
+import {Button} from 'react-native';
+import styled from '@emotion/native';
 
-interface StyledInputProps {
-  isnotValue?: boolean;
-}
-const Container = styled(GlobalContainer)`
+const Container = styled.View`
   justify-content: center;
   align-items: center;
-  padding: 48px;
-  height: 100%;
 `;
 
-const StyledText = styled(GlobalText)`
-  font-family: ${theme.font.clover};
-  color: ${theme.color.primary};
-  font-size: 50px;
-  margin-bottom: 50px;
+const StyledText = styled.Text`
+  font-size: 30px;
+  margin-bottom: 10px;
 `;
 
-const StyledInput = styled.TextInput<StyledInputProps>`
-  width: 100%;
-  font-size: 18px;
-  color: ${theme.color.primary};
-  background-color: white;
-  margin-top: 20px;
-  border-radius: 30px;
-  border: 2px solid ${theme.color.gray200};
-  padding: 10px;
-  padding-left: 40px;
-  border: 2px solid ${({isnotValue}) => (isnotValue ? theme.color.gray200 : theme.color.primary)};
-  color: ${theme.color.primary};
-`;
-
-const LoginButton = styled(DefaultButton)`
-  width: 100%;
-  font-size: 18px;
-  height: 50px;
-  margin-top: 20px;
-  border-radius: 30px;
-  padding: 10px;
-  background-color: ${({disabled}) => (disabled ? theme.color.gray200 : theme.color.primary)};
-`;
-
-const Login = ({navigation}: any) => {
-  const [username, setusername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [isnotValueid, setIsnotValueid] = useState(true);
-  const [isnotValuepassword, setIsnotValuepassword] = useState(true);
-  const setIsLoggedIn = useSetRecoilState(isLoggedInState);
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true); // Recoil 상태를 업데이트하여 로그인 상태를 true로 변경
-  };
-  function login() {
-    if (username.trim() === '') {
-      Alert.alert('아이디 입력 확인', '아이디가 입력되지 않았습니다.');
-    } else if (password.trim() === '') {
-      Alert.alert('비밀번호 입력 확인', '비밀번호가 입력되지 않았습니다.');
-    } else {
-      axios
-        .post('http://i10a302.p.ssafy.io:8080/members/signin', {username: username, password: password})
-        .then(function (resp) {
-          console.log(resp.data);
-          if (resp.data !== null && resp.data != '') {
-            handleLoginSuccess;
-            console.log('로그인 성공');
-          } else {
-            Alert.alert('로그인 실패', '아이디나 비밀번호를 확인하세요.');
-            setusername('');
-            setPassword('');
-          }
-        })
-        .catch(function (err) {
-          console.log(`Error Message: ${err}`);
-        });
-    }
-  }
-
-  useEffect(() => {
-    setIsDisabled(!(username && password)); // 아이디와 비밀번호가 입력되지 않은 경우 버튼을 비활성화
-  }, [username, password]);
-
-  useEffect(() => {
-    setIsnotValueid(!username);
-  }, [username]);
-
-  useEffect(() => {
-    setIsnotValuepassword(!password);
-  }, [password]);
-
+const Login = () => {
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Container>
-        <StyledText
-          style={css`
-            margin-top: 60px;
-            margin-bottom: 60px;
-          `}>
-          나온김에
-        </StyledText>
-        <StyledInput
-          placeholder="아이디 입력"
-          placeholderTextColor={theme.color.gray200}
-          value={username}
-          onChangeText={text => setusername(text)}
-          isnotValue={isnotValueid}
-        />
-
-        <StyledInput
-          placeholder="비밀번호 입력"
-          placeholderTextColor={theme.color.gray200}
-          value={password}
-          onChangeText={text => setPassword(text)}
-          secureTextEntry
-          isnotValue={isnotValuepassword}
-        />
-
-        <LoginButton title="로그인" color="primary" size="lg" disabled={isDisabled} onPress={() => login()} />
-
-        <View
-          style={css`
-            flex-direction: row;
-            margin-top: 20px;
-          `}>
-          <Text>비밀번호 찾기 </Text>
-          <Text
-            style={css`
-              margin-right: 20px;
-              margin-left: 20px;
-            `}>
-            |
-          </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Signup6')}>
-            <Text>회원가입</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Text
-          style={css`
-            margin-top: 60px;
-          `}>
-          SNS 계정으로 간편로그인하세요.
-        </Text>
-
-        <View
-          style={css`
-            flex-direction: row;
-            justify-content: space-between;
-            margin-top: 20px;
-            width: 70%;
-          `}>
-          <Image source={require('../../assets/icons/login_KAKAO.png')} />
-          <Image source={require('../../assets/icons/login_NAVER.png')} />
-          <Image source={require('../../assets/icons/login_GOOGLE.png')} />
-        </View>
-      </Container>
-    </TouchableWithoutFeedback>
+    <Container>
+      <StyledText>Login</StyledText>
+      <Button title="go to the list screen" />
+    </Container>
   );
 };
 
