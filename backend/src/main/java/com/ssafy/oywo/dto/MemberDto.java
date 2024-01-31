@@ -54,6 +54,7 @@ public class MemberDto {
 
     // 회원 정보와 회원이 등록한 집 정보를 담은 class
     @Getter
+    @Builder
     public static class Response{
         private Long id;
         private String nickname;
@@ -69,30 +70,29 @@ public class MemberDto {
         private String hoName;
 
         private List<String> roles=new ArrayList<>();
-        public Response(Member member, Ho ho){
-            this.id=member.getId();
-            this.nickname=member.getNickname();
-            this.username=member.getUsername();
-            this.birthDate=member.getBirthDate();
-            this.phoneNumber=member.getPhoneNumber();
-            this.score=member.getScore();
-            this.roles=member.getRoles();
-            this.isCertified=member.isCertified();
-            this.dongId=ho.getDong().getId();
-            this.dongName=ho.getDong().getName();
-            this.hoId=ho.getId();
-            this.hoName=ho.getName();
+        public static Response of(Member member, Ho ho){
+            return Response.builder()
+                    .id(member.getId())
+                    .nickname(member.getNickname())
+                    .birthDate(member.getBirthDate())
+                    .phoneNumber(member.getPhoneNumber())
+                    .score(member.getScore())
+                    .isCertified(member.isCertified())
+                    .dongId(ho.getDong().getId())
+                    .hoId(ho.getId())
+                    .hoName(ho.getName())
+                    .build();
         }
-
-        public Response(Member member){
-            this.id=member.getId();
-            this.nickname=member.getNickname();
-            this.username=member.getUsername();
-            this.birthDate=member.getBirthDate();
-            this.phoneNumber=member.getPhoneNumber();
-            this.score=member.getScore();
-            this.roles=member.getRoles();
-            this.isCertified=member.isCertified();
+        public static Response of(Member member){
+            return Response.builder()
+                    .id(member.getId())
+                    .nickname(member.getNickname())
+                    .username(member.getUsername())
+                    .birthDate(member.getBirthDate())
+                    .phoneNumber(member.getPhoneNumber())
+                    .score(member.getScore())
+                    .isCertified(member.isCertified())
+                    .build();
         }
     }
     @Data
