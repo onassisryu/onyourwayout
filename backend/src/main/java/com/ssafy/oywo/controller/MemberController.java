@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,19 +45,22 @@ public class MemberController {
         String username = memberDto.getUsername();
         String password = memberDto.getPassword();
 
-        System.out.println("2222"+username+password);
-        JwtToken jwtToken = memberSerivce.signIn(username, password);
-        log.info("request username = {}, password = {}", username, password);
-        log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
+        try{
+            JwtToken jwtToken = memberSerivce.signIn(username, password);
+            log.info("request username = {}, password = {}", username, password);
+            log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
-        Member member=memberSerivce.getMemberInfo(username,password);
+            Member member=memberSerivce.getMemberInfo(username,password);
+            
+            HashMap<String,Object> payload=new HashMap<>();
+            payload.put("token",jwtToken);
+            payload.put("memberInfo",member);
+            System.out.println(payload);
+            return ResponseEntity.ok(payload);
 
-
-        HashMap<String,Object> payload=new HashMap<>();
-        payload.put("token",jwtToken);
-        payload.put("memberInfo",member);
-        System.out.println(payload);
-        return ResponseEntity.ok(payload);
+        }catch (HttpClientErrorException.Unauthorized e){
+            return new ResponseEntity<>("잘못된 로그인 방식입니다.",HttpStatus.FORBIDDEN);
+        }
     }
 
     /**

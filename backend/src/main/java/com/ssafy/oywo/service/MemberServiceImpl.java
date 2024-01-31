@@ -23,6 +23,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.swing.text.html.Option;
 import javax.swing.text.html.Option;
@@ -46,7 +47,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public JwtToken signIn(String username, String password) {
+    public JwtToken signIn(String username, String password) throws HttpClientErrorException.Unauthorized {
 
         // 1. username + password 를 기반으로 Authentication 객체 생성
         // 이때 authentication 은 인증 여부를 확인하는 authenticated 값이 false
