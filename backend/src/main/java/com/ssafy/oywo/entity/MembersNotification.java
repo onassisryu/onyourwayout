@@ -26,4 +26,11 @@ public class MembersNotification {
     private Member member;
 
     private boolean isRead;
+
+    @Builder
+    public MembersNotification(Notification notification, Member member, boolean isRead) {
+        this.notification = notification;
+        this.member = member;
+        this.isRead = isRead;
+    }
 }

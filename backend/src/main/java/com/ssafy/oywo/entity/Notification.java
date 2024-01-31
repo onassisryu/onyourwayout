@@ -1,6 +1,8 @@
 package com.ssafy.oywo.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,8 +10,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "notification")
+@Builder
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Notification {
 
     public enum NotificationType {
@@ -25,6 +29,7 @@ public class Notification {
 
     private String message;
 
+    @Enumerated(EnumType.STRING)
     private NotificationType notificationType;
 
     @OneToMany(mappedBy = "notification")
