@@ -112,7 +112,7 @@ const turtleImage: ImageSourcePropType = require('images/turtle.png');
 const trashImage: ImageSourcePropType = require('images/trash3.png');
 const workImage: ImageSourcePropType = require('images/convstore.png');
 
-const MainDoList = () => {
+const MainDoList = ({navigation}: any) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   const onSelectCategory = (category: string) => {

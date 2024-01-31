@@ -5,24 +5,24 @@
  * @format
  */
 
-import React, { useEffect } from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import React, {useEffect} from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {NavigationContainer} from '@react-navigation/native';
 
 //recoil&react-query
-import { RecoilRoot } from 'recoil';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import {RecoilRoot} from 'recoil';
+import {QueryClient, QueryClientProvider} from 'react-query';
 
-import { ThemeProvider } from '@emotion/react';
+import {ThemeProvider} from '@emotion/react';
 import theme from '@/Theme';
 
 //fcm
-import messaging from '@react-native-firebase/messaging'
+import messaging from '@react-native-firebase/messaging';
 // 앱이 백그라운드에 있을때
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('[Background Remote Message]', remoteMessage);
-})
+});
 
 //page
 import Home from '@screens/Home';
@@ -34,6 +34,8 @@ import Login from '@screens/Login';
 import Signup from '@screens/Signup';
 import Notice from '@screens/Notice';
 import NoticeSettings from '@screens/NoticeSettings';
+import DoIt1 from '@/screens/DoIt/DoIt1';
+import DoIt2 from '@/screens/DoIt/DoIt2';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -44,27 +46,27 @@ const App = () => {
   const Tab = createBottomTabNavigator();
   const queryClient = new QueryClient();
 
-  console.log("App Loading....")
+  console.log('App Loading....');
 
   // 토큰 발급
   const getFcmToken = async () => {
-    const fcmToken = await messaging().getToken()
-    console.log('[FCM Token] ', fcmToken)
-  }
+    const fcmToken = await messaging().getToken();
+    console.log('[FCM Token] ', fcmToken);
+  };
 
   useEffect(() => {
-    getFcmToken() // 토큰 발급
+    getFcmToken(); // 토큰 발급
     // 앱이 켜져있을때
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log('[Remote Message] ', JSON.stringify(remoteMessage));
-    })
-    return unsubscribe
-  }, [])
+    });
+    return unsubscribe;
+  }, []);
 
   const BottomTab = () => {
     return (
       <Tab.Navigator
-        screenOptions={({ route }) => ({
+        screenOptions={({route}) => ({
           tabBarHideOnKeyboard: true,
           headerShown: false,
           tabBarStyle: {
@@ -76,7 +78,7 @@ const App = () => {
           tabBarLabelStyle: {
             fontWeight: 'bold',
           },
-          tabBarIcon: ({ focused, size, color }) => {
+          tabBarIcon: ({focused, size, color}) => {
             let iconName!: string;
 
             if (route.name === '홈') {
@@ -108,10 +110,12 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <NavigationContainer>
             <ThemeProvider theme={theme}>
-              <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Stack.Navigator screenOptions={{headerShown: false}}>
                 <Stack.Screen name="Bottom" component={BottomTab} />
                 <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="Signup" component={Signup} />
+                <Stack.Screen name="DoIt1" component={DoIt1} />
+                <Stack.Screen name="DoIt2" component={DoIt2} />
                 <Stack.Screen name="홈" component={Home} />
                 <Stack.Screen name="Notice" component={Notice} />
                 <Stack.Screen name="NoticeSettings" component={NoticeSettings} />

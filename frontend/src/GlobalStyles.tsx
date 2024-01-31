@@ -4,13 +4,13 @@ import theme from '@/Theme';
 export const GlobalContainer = styled.View`
   font-family: ${theme.font.primary};
   font-size: ${theme.fontSize.medium};
-  justify-content: center;
-  align-items: center;
   margin: 0;
   padding: 0;
   color: ${theme.color.black};
   box-sizing: border-box;
   background-color: white;
+  display: flex;
+  align-items: center;
 `;
 
 export const GlobalText = styled.Text`
@@ -27,7 +27,6 @@ export const GlobalButton = styled.TouchableOpacity`
   cursor: pointer;
   justify-content: center;
   align-items: center;
-  padding: 10px;
   border: none;
   border-radius: 10px;
   box-sizing: border-box;
