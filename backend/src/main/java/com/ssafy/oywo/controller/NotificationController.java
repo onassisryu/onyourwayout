@@ -1,5 +1,6 @@
 package com.ssafy.oywo.controller;
 
+import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.dto.NotificationDto;
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.service.MemberService;
@@ -23,9 +24,8 @@ public class NotificationController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getNotifications(@PathVariable("id") Long id) {
-        // TODO 이 부분 memberservice 수정되면 교체할것!
-        Optional<Member> member = memberService.getMemberInfo(id);
-        if(member.isEmpty()) {
+        MemberDto.Response memberDto = memberService.getMemberInfo(id);
+        if(memberDto == null) {
             return ResponseEntity.badRequest().build();
         }
         List<NotificationDto.Response> notifications = notificationService.getNotificationsByMemberID(id);
