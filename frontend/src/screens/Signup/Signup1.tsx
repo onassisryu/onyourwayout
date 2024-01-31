@@ -1,12 +1,12 @@
+// 이름
 import React, {useEffect, useState} from 'react';
-import {Button, Text, View, TextInput, TouchableOpacity} from 'react-native';
+import {Text, View, TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {GlobalContainer} from '@/GlobalStyles';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
 import theme from '@/Theme';
 import DefaultButton from '@/components/DefaultButton';
-const Container = styled(GlobalContainer)``;
 const InputContainer = styled.View`
   width: 100%;
   position: relative;
@@ -21,22 +21,32 @@ const StyledInput = styled.TextInput`
   border-bottom-width: 1px;
 `;
 
-const IconWrapper = styled(TouchableOpacity)`
+const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
   position: absolute;
   right: 10px;
   bottom: 10px;
+  ${({visible}) => !visible && 'opacity: 0;'};
 `;
 
-const Signup = ({navigation}: any) => {
+const Signup1 = ({navigation}: any) => {
   const [name, setName] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     setIsDisabled(!name);
   }, [name]);
 
   const handleClearInput = () => {
-    setName(''); // 입력 상자 비우기
+    setName('');
+  };
+
+  const handleInputFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleInputBlur = () => {
+    setIsFocused(false);
   };
 
   const NextButton = styled(DefaultButton)`
@@ -48,7 +58,7 @@ const Signup = ({navigation}: any) => {
     background-color: ${({disabled}) => (disabled ? theme.color.gray200 : theme.color.primary)};
   `;
   return (
-    <Container>
+    <GlobalContainer>
       <Header>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text>
@@ -81,8 +91,10 @@ const Signup = ({navigation}: any) => {
             placeholderTextColor={theme.color.gray200}
             onChangeText={text => setName(text)}
             value={name}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
           />
-          <IconWrapper onPress={handleClearInput}>
+          <IconWrapper onPress={handleClearInput} visible={isFocused && name.length > 0}>
             <Ant name="closecircleo" size={20} color={theme.color.gray200} />
           </IconWrapper>
         </InputContainer>
@@ -94,8 +106,8 @@ const Signup = ({navigation}: any) => {
           onPress={() => navigation.navigate('Signup2')}
         />
       </View>
-    </Container>
+    </GlobalContainer>
   );
 };
 
-export default Signup;
+export default Signup1;

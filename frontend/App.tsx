@@ -11,8 +11,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 
 //recoil&react-query
-import { RecoilRoot } from 'recoil';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import {useRecoilValue} from 'recoil';
+import {isLoggedInState} from '@/recoil/atoms';
+import {QueryClient, QueryClientProvider} from 'react-query';
 
 import { ThemeProvider } from '@emotion/react';
 import theme from '@/Theme';
@@ -31,36 +32,23 @@ import Chat from '@screens/Chat';
 import Apart from '@screens/Apart';
 import My from '@screens/My';
 import Login from '@screens/Login';
-import Signup from '@screens/Signup';
 import Notice from '@screens/Notice';
 import NoticeSettings from '@screens/NoticeSettings';
+import Signup1 from '@/screens/Signup/Signup1';
+import Signup2 from '@/screens/Signup/Signup2';
+import Signup3 from '@/screens/Signup/Signup3';
+import Signup4 from '@/screens/Signup/Signup4';
+import Signup5 from '@/screens/Signup/Signup5';
+import Signup6 from '@/screens/Signup/Signup4';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
 const App = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
   const queryClient = new QueryClient();
-
-  console.log("App Loading....")
-
-  // 토큰 발급
-  const getFcmToken = async () => {
-    const fcmToken = await messaging().getToken()
-    console.log('[FCM Token] ', fcmToken)
-  }
-
-  useEffect(() => {
-    getFcmToken() // 토큰 발급
-    // 앱이 켜져있을때
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('[Remote Message] ', JSON.stringify(remoteMessage));
-    })
-    return unsubscribe
-  }, [])
-
+  const isLoggedIn = useRecoilValue(isLoggedInState);
   const BottomTab = () => {
     return (
       <Tab.Navigator
@@ -103,24 +91,25 @@ const App = () => {
     );
   };
   return (
-    <React.StrictMode>
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <NavigationContainer>
-            <ThemeProvider theme={theme}>
-              <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="Bottom" component={BottomTab} />
-                <Stack.Screen name="Login" component={Login} />
-                <Stack.Screen name="Signup" component={Signup} />
-                <Stack.Screen name="홈" component={Home} />
-                <Stack.Screen name="Notice" component={Notice} />
-                <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
-              </Stack.Navigator>
-            </ThemeProvider>
-          </NavigationContainer>
-        </QueryClientProvider>
-      </RecoilRoot>
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <ThemeProvider theme={theme}>
+          <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Screen name="Bottom" component={BottomTab} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="홈" component={Home} />
+            <Stack.Screen name="Notice" component={Notice} />
+            <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
+            <Stack.Screen name="Signup1" component={Signup1} />
+            <Stack.Screen name="Signup2" component={Signup2} />
+            <Stack.Screen name="Signup3" component={Signup3} />
+            <Stack.Screen name="Signup4" component={Signup4} />
+            <Stack.Screen name="Signup5" component={Signup5} />
+            <Stack.Screen name="Signup6" component={Signup6} />
+          </Stack.Navigator>
+        </ThemeProvider>
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 };
 
