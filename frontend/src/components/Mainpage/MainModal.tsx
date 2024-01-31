@@ -1,29 +1,35 @@
+import React, { useState } from 'react';
 import styled from '@emotion/native';
-import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import React, {useState} from 'react';
-import {Modal, TouchableWithoutFeedback, ImageSourcePropType} from 'react-native';
+import theme from '@/Theme';
+import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
+import { 
+    Modal,
+    View,
+    ImageSourcePropType,
+    TouchableWithoutFeedback,
+} from 'react-native';
 
-const ButtonContainer = styled(GlobalButton)`
+
+const AddButton = styled(GlobalButton)`
   position: absolute;
-  right: 20px;
-  bottom: 10px;
+
+  bottom: 1px;
   width: 50px;
   height: 50px;
   border-radius: 30px;
-  background-color: ${props => props.theme.color.primary};
-  z-index: 200;
+  background-color: #00D282;
 `;
 
-const ModalText = styled(GlobalText)`
-  color: ${props => props.theme.color.black};
-  font-weight: bold;
-  line-height: 45px;
+const PlusText = styled(GlobalText)`
+  color: white;
+  font-size: 45px;
+  line-height: 40px;
 `;
+
 
 const ModalBackground = styled(GlobalContainer)`
   flex: 1;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   justify-content: center;
   align-items: center;
 `;
@@ -31,21 +37,29 @@ const ModalBackground = styled(GlobalContainer)`
 const ModalComponent = styled(GlobalContainer)`
   position: absolute;
   right: 20px;
-  bottom: 130px;
+  bottom: 160px;
   width: 170px;
   height: 150px;
-  border: 2px solid ${props => props.theme.color.primary};
+  border: 2px solid #00D282;
   border-radius: 15px;
   background-color: white;
   justify-content: center;
   align-items: center;
 `;
 
-const ModalSubComponent = styled.TouchableOpacity`
+const ModalSubComponent = styled(GlobalButton)`
   flex-direction: row;
   justify-content: space-between;
+  background-color: white;
   align-items: center;
   padding: 10px;
+`;
+
+const ModalText = styled(GlobalText)`
+  font-size: ${theme.fontSize.subtitle};
+  color:  ${theme.color.black};
+  font-weight: bold;
+  line-height: 45px;
 `;
 
 const ModalImage = styled.Image`
@@ -54,13 +68,11 @@ const ModalImage = styled.Image`
   resize-mode: contain;
 `;
 
-const DistinctLine = styled.View`
+const DistinctLine = styled(GlobalContainer)`
   width: 140px;
-  border: 1px solid #b2b2b2;
+  border: 1px solid #B2B2B2;
 `;
 
-const outImage: ImageSourcePropType = require('images/나가요잉.png');
-const inImage: ImageSourcePropType = require('images/해줘요잉.png');
 
 const MainPlusButton = ({navigation}: any) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -101,4 +113,37 @@ const MainPlusButton = ({navigation}: any) => {
   );
 };
 
-export default MainPlusButton;
+    return (
+        <View>
+          <AddButton onPress={() => setModalVisible(true)}>
+            <PlusText>+</PlusText>
+          </AddButton>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+                setModalVisible(false);
+            }}
+        >
+            <TouchableWithoutFeedback style={{ position: 'absolute', bottom: 20, right: 20 }} onPress={() => setModalVisible(false)}>
+                <ModalBackground>
+                <ModalComponent>
+                    <ModalSubComponent onPress={() => {}}>
+                    <ModalImage source={outImage}/> 
+                    <ModalText> 나가요잉 </ModalText>
+                    </ModalSubComponent>
+                    <DistinctLine></DistinctLine>
+                    <ModalSubComponent onPress={() => {}}>
+                    <ModalImage source={inImage}/> 
+                    <ModalText> 해줘요잉 </ModalText>
+                    </ModalSubComponent>
+                </ModalComponent>
+                </ModalBackground>
+            </TouchableWithoutFeedback>
+          </Modal>
+        </View>
+    )
+        }
+
+export default MainModal;

@@ -11,8 +11,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 
 //recoil&react-query
-import {useRecoilValue} from 'recoil';
-import {isLoggedInState} from '@/recoil/atoms';
+import {RecoilRoot} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
 import {ThemeProvider} from '@emotion/react';
@@ -31,18 +30,17 @@ import Location from '@screens/Location';
 import Chat from '@screens/Chat';
 import Apart from '@screens/Apart';
 import My from '@screens/My';
-import Login from '@screens/Login';
 import Notice from '@screens/Notice';
 import NoticeSettings from '@screens/NoticeSettings';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 const App = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
   const queryClient = new QueryClient();
-  const isLoggedIn = useRecoilValue(isLoggedInState);
+
   const BottomTab = () => {
     return (
       <Tab.Navigator
@@ -51,8 +49,8 @@ const App = () => {
           headerShown: false,
           tabBarStyle: {
             paddingBottom: 5,
+            tabBarActiveTinitColor: '#27D894',
             height: 60,
-            fontweight: 'bold',
           },
           tabBarActiveTintColor: '#27D894',
           tabBarLabelStyle: {
@@ -60,23 +58,22 @@ const App = () => {
           },
           tabBarIcon: ({focused, size, color}) => {
             let iconName!: string;
-
-            if (route.name === '홈') {
-              iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === '위치') {
-              iconName = focused ? 'location' : 'location-outline';
-            } else if (route.name === '채팅') {
-              iconName = focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline';
-            } else if (route.name === '아파트') {
-              iconName = focused ? 'office-building' : 'office-building-outline';
-              return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
-            } else if (route.name === '내정보') {
-              iconName = focused ? 'person' : 'person-outline';
+            if (route.name === 'Home') {
+              iconName = focused ? 'home' : 'home';
+            } else if (route.name === 'Location') {
+              iconName = focused ? 'search' : 'ios-search-outline';
+            } else if (route.name === 'Apart') {
+              iconName = focused ? 'caret-forward-circle' : 'caret-forward-circle-outline';
+            } else if (route.name === 'Chat') {
+              iconName = focused ? 'ios-heart' : 'ios-heart-outline';
+            } else if (route.name === 'My') {
+              iconName = focused ? 'ios-person-circle' : 'ios-person-outline';
             }
-            return <Ionic name={iconName!} size={size} color={color} />;
+
+            return <Ionic name={iconName} size={size} color={color} />;
           },
         })}>
-        <Tab.Screen name="홈" component={Home} />
+        <Tab.Screen name="Home" component={Home} />
         <Tab.Screen name="위치" component={Location} />
         <Tab.Screen name="아파트" component={Apart} />
         <Tab.Screen name="채팅" component={Chat} />
@@ -85,25 +82,21 @@ const App = () => {
     );
   };
   return (
-    <QueryClientProvider client={queryClient}>
-      <NavigationContainer>
-        <ThemeProvider theme={theme}>
-          <Stack.Navigator screenOptions={{headerShown: false}}>
-            <Stack.Screen name="Bottom" component={BottomTab} />
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="홈" component={Home} />
-            <Stack.Screen name="Notice" component={Notice} />
-            <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
-            <Stack.Screen name="Signup1" component={Signup1} />
-            <Stack.Screen name="Signup2" component={Signup2} />
-            <Stack.Screen name="Signup3" component={Signup3} />
-            <Stack.Screen name="Signup4" component={Signup4} />
-            <Stack.Screen name="Signup5" component={Signup5} />
-            <Stack.Screen name="Signup6" component={Signup6} />
-          </Stack.Navigator>
-        </ThemeProvider>
-      </NavigationContainer>
-    </QueryClientProvider>
+    <React.StrictMode>
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <NavigationContainer>
+            <ThemeProvider theme={theme}>
+              <Stack.Navigator screenOptions={{headerShown: false}}> 
+                <Stack.Screen name="Bottom" component={BottomTab} />
+                <Stack.Screen name="Notice" component={Notice} />
+                <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
+              </Stack.Navigator>
+            </ThemeProvider>
+          </NavigationContainer>
+        </QueryClientProvider>
+      </RecoilRoot>
+    </React.StrictMode>
   );
 };
 

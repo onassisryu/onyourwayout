@@ -4,12 +4,12 @@ import theme from '@/Theme';
 export const GlobalContainer = styled.View`
   font-family: ${theme.font.primary};
   font-size: ${theme.fontSize.medium};
+  justify-content: center;
   align-items: center;
   margin: 0;
   padding: 0;
   color: ${theme.color.black};
   box-sizing: border-box;
-  background-color: white;
 `;
 
 export const GlobalText = styled.Text`

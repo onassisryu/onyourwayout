@@ -1,10 +1,14 @@
 // import 내용
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from '@emotion/native';
-import {NavigationProp} from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
 import theme from '@/Theme';
-import {View, TouchableOpacity, ImageSourcePropType} from 'react-native';
-import {GlobalText} from '@/GlobalStyles';
+import {
+  View,
+  TouchableOpacity,
+  ImageSourcePropType
+} from 'react-native';
+import { GlobalText } from '@/GlobalStyles';
 
 const HeaderContainer = styled.View`
   flex-direction: row;
@@ -30,19 +34,20 @@ const SettingsImage = styled.Image`
 
 const NoticeTitle = styled(GlobalText)`
   font-weight: bold;
-  font-size: ${theme.fontSize.subtitle};
-  color: ${theme.color.black}
+  font-size: ${ theme.fontSize.subtitle };
+  color: ${ theme.color.black }
   padding-bottom: 5px;
 `;
 
 interface Props {
-  navigation: NavigationProp<any>;
+    navigation: NavigationProp<any>;
 }
 
 const backImage: ImageSourcePropType = require('icons/back.png');
-const settingsImage: ImageSourcePropType = require('icons/settings.png');
+const settingsImage: ImageSourcePropType = require('icons/settings.png')
 
-const NoticeHeader = ({navigation}: Props) => {
+const NoticeHeader = ({ navigation }: Props) => {
+
   return (
     <HeaderContainer>
       <TouchableOpacity onPress={() => navigation.goBack()}>
