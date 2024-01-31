@@ -1,6 +1,6 @@
 package com.ssafy.oywo.controller;
 
-import com.ssafy.oywo.dto.AlarmDto;
+import com.ssafy.oywo.dto.AlarmSettingDto;
 import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.entity.DealType;
 import com.ssafy.oywo.entity.Member;
@@ -50,7 +50,7 @@ public class AlarmController {
     // 알림 설정
     @Transactional
     @PostMapping("/set")
-    public ResponseEntity<?> setAlarm(AlarmDto.Setting alarmDto){
+    public ResponseEntity<?> setAlarm(AlarmSettingDto.Request alarmDto){
         HashMap<String,Object> payload=new HashMap<>();
 
         // 사용자 정보 가져오기
@@ -106,7 +106,8 @@ public class AlarmController {
 
     // 알림 설정 수정
     @PutMapping("/set")
-    public ResponseEntity<?> updateAlarm(AlarmDto.Setting alarmDto){
+    public ResponseEntity<?> updateAlarm(AlarmSettingDto.Request alarmDto){
+        HashMap<String,Object> payload=new HashMap<>();
         // 알림 정보를 수정할 사용자 정보 가져오기
         Optional<Member> member=memberService.getMemberInfo(alarmDto.getMemberId());
         Member modifiedMember=null;
@@ -145,7 +146,14 @@ public class AlarmController {
             modifiedMember=modifiedMember.builder().notificationStart(alarmDto.getNotificationStart()).build();
             modifiedMember=modifiedMember.builder().notificationEnd(alarmDto.getNotificationEnd()).build();
 
-            memberService.modify(modifiedMember);
+            modifiedMember=memberService.modify(modifiedMember);
+            payload.put("memberId",modifiedMember.getId());
+            payload.put("dongInfo",modifiedMember.getNotiDongs());
+            payload.put("categories",modifiedMember.getNotiDealCategories());
+            payload.put("notificationStart",modifiedMember.getNotificationStart());
+            payload.put("notificationEnd",modifiedMember.getNotificationEnd());
+
+            return new ResponseEntity<>(payload, HttpStatus.OK);
         }
         // 없는 사용자인 경우
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
