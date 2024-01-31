@@ -9,7 +9,6 @@ import com.ssafy.oywo.entity.RefreshToken;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,6 +18,14 @@ public interface MemberService {
     public Optional<RefreshToken> getRefreshToken(String refreshToken);
     public Map<String,String> validateRefreshToken(String refreshToken);
 
+    public Member modify(Member member);
+    public Member modify(Long id, MemberDto.Request memberDto);
+    public void logout(String username);
+
     public Member getMemberInfo(String username, String password);
+    public Optional<Member> getMemberInfo(Long id);
+
+    public Long getHoIdByMemberId(Long memberId);
+    public Optional<Member> update(Long idx,MemberDto.SignUp memberDto);
 
 }
