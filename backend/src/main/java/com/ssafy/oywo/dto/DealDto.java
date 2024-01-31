@@ -30,10 +30,6 @@ public class DealDto {
         private String expireAtStr;
         private List<DealImage> dealImages;
 
-        public void setExpireAtStr(String expireAtStr) {
-            this.expireAtStr = expireAtStr;
-        }
-
         /*
         Dto -> Entity
          */
@@ -44,6 +40,13 @@ public class DealDto {
             } else {
                 // 기본 1시간 이후로 설정
                 expireAt = LocalDateTime.now().plusMinutes(60);
+            }
+
+            if (item != null) {
+                rewardType = Deal.RewardType.ITEM;
+                System.out.println("item = " + item);
+            } else if (cash != 0) {
+                rewardType = Deal.RewardType.CASH;
             }
 
             Deal deal = Deal.builder()
@@ -60,6 +63,7 @@ public class DealDto {
                     .expireAt(expireAt)
                     .dealImages(dealImages)
                     .build();
+            System.out.println("rewardType = " + rewardType);
             return deal;
         }
     }
@@ -75,7 +79,7 @@ public class DealDto {
         private Long acceptId;
         private int cash;
         private String item;
-        private Deal.RewardType rewardType;
+        private final Deal.RewardType rewardType;
         private int complaint;
         private Deal.DealStatus dealStatus;
         private DealType dealType;

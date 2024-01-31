@@ -49,7 +49,7 @@ public class Deal extends BaseTimeEntity {
 
     private int cash;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     private RewardType rewardType;
 
     private int complaint;
@@ -68,6 +68,7 @@ public class Deal extends BaseTimeEntity {
 
     // 수정 로직
     public void update(DealDto.Request dto) {
+
         if (dto.getAcceptId() != null) {
             this.acceptId = dto.getAcceptId();
         }
@@ -82,15 +83,24 @@ public class Deal extends BaseTimeEntity {
 
         if (dto.getItem() != null) {
             this.item = dto.getItem();
-        }
+            this.cash = 0;
+            this.rewardType = RewardType.ITEM;
+//            dto.setRewardType(RewardType.ITEM);
 
-        if (dto.getCash() > 0) {
+        } else if (dto.getCash() != 0) {
             this.cash = dto.getCash();
+            this.item = null;
+            this.rewardType = RewardType.CASH;
         }
 
-        if (dto.getRewardType() != null) {
-            this.rewardType = dto.getRewardType();
+        if (dto.getCash() != 0 && dto.getItem() != null) {
+            throw new IllegalArgumentException("두 보상을 동시에 선택할 수 없음");
         }
+
+
+//        if (dto.getRewardType() != null || !dto.getItem().isEmpty()) {
+//            this.rewardType = dto.getRewardType();
+//        }
 
         if (dto.getComplaint() > 0) {
             this.complaint = dto.getComplaint();

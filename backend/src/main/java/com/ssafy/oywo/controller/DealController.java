@@ -54,7 +54,7 @@ public class DealController {
      */
     @PostMapping
     public ResponseEntity<?> createDeal(
-            @RequestBody DealDto.Request dto) {
+            @RequestBody DealDto.Request dto) throws Exception {
 
         return ResponseEntity.ok(dealService.createDeal(dto));
     }

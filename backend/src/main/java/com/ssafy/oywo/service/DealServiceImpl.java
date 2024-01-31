@@ -8,6 +8,8 @@ import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.repository.DealRepository;
 import com.ssafy.oywo.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -119,19 +122,27 @@ public class DealServiceImpl implements DealService{
         dto.setRequestId(loginUserId);
 
         // item넣으면 -> ITEM / cash 넣으면 -> CASH
-        if (dto.getItem() != null) {
-            dto.setRewardType(Deal.RewardType.ITEM);
-        } else if (dto.getCash() != 0) {
-            dto.setRewardType(Deal.RewardType.CASH);
-        }
-
+//        if (dto.getItem() != null || !dto.getItem().isEmpty()) {
+//            dto.setRewardType(Deal.RewardType.ITEM);
+//        } else if (dto.getCash() != 0) {
+//            dto.setRewardType(Deal.RewardType.CASH);
+//        }
         Deal deal = dto.toEntity();
+        System.out.println("deal = " + deal.getItem());
+        System.out.println("deal.getCash() = " + deal.getCash());
 
         try {
             dealRepository.save(deal);
+        } catch (DataIntegrityViolationException e) {
+            // 이 구체적인 예외는 주로 Spring Data JPA에서 제약 조건 위반 시 발생합니다.
+            // 예외 세부 정보를 기록하거나 출력하여 디버깅 목적으로 사용합니다.
+            e.printStackTrace(); // 로깅 메커니즘으로 교체할 수 있습니다. (SLF4J 또는 Log4j 사용 권장)
+            throw new RuntimeException("거래 생성 중 데이터 무결성 위반 발생", e);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("거래 생성 중 오류 발생", e);
         }
+
         return new DealDto.Response(deal);
     }
 
