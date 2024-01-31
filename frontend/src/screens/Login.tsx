@@ -1,5 +1,8 @@
+import axios from 'axios';
+import {useSetRecoilState} from 'recoil';
+import {isLoggedInState} from '../recoil/atoms';
 import React, {useState, useEffect} from 'react';
-import {Text, TextInput, View, Keyboard, TouchableWithoutFeedback, Image, TouchableOpacity} from 'react-native';
+import {Text, Alert, View, Keyboard, TouchableWithoutFeedback, Image, TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import DefaultButton from '@/components/DefaultButton';
@@ -48,19 +51,47 @@ const LoginButton = styled(DefaultButton)`
 `;
 
 const Login = ({navigation}: any) => {
-  const [id, setId] = useState('');
+  const [username, setusername] = useState('');
   const [password, setPassword] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isnotValueid, setIsnotValueid] = useState(true);
   const [isnotValuepassword, setIsnotValuepassword] = useState(true);
+  const setIsLoggedIn = useSetRecoilState(isLoggedInState);
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true); // Recoil 상태를 업데이트하여 로그인 상태를 true로 변경
+  };
+  function login() {
+    if (username.trim() === '') {
+      Alert.alert('아이디 입력 확인', '아이디가 입력되지 않았습니다.');
+    } else if (password.trim() === '') {
+      Alert.alert('비밀번호 입력 확인', '비밀번호가 입력되지 않았습니다.');
+    } else {
+      axios
+        .post('http://i10a302.p.ssafy.io:8080/members/signin', {username: username, password: password})
+        .then(function (resp) {
+          console.log(resp.data);
+          if (resp.data !== null && resp.data != '') {
+            handleLoginSuccess;
+            console.log('로그인 성공');
+          } else {
+            Alert.alert('로그인 실패', '아이디나 비밀번호를 확인하세요.');
+            setusername('');
+            setPassword('');
+          }
+        })
+        .catch(function (err) {
+          console.log(`Error Message: ${err}`);
+        });
+    }
+  }
 
   useEffect(() => {
-    setIsDisabled(!(id && password)); // 아이디와 비밀번호가 입력되지 않은 경우 버튼을 비활성화
-  }, [id, password]);
+    setIsDisabled(!(username && password)); // 아이디와 비밀번호가 입력되지 않은 경우 버튼을 비활성화
+  }, [username, password]);
 
   useEffect(() => {
-    setIsnotValueid(!id);
-  }, [id]);
+    setIsnotValueid(!username);
+  }, [username]);
 
   useEffect(() => {
     setIsnotValuepassword(!password);
@@ -79,8 +110,8 @@ const Login = ({navigation}: any) => {
         <StyledInput
           placeholder="아이디 입력"
           placeholderTextColor={theme.color.gray200}
-          value={id}
-          onChangeText={text => setId(text)}
+          value={username}
+          onChangeText={text => setusername(text)}
           isnotValue={isnotValueid}
         />
 
@@ -93,7 +124,7 @@ const Login = ({navigation}: any) => {
           isnotValue={isnotValuepassword}
         />
 
-        <LoginButton title="로그인" color="primary" size="lg" disabled={isDisabled} />
+        <LoginButton title="로그인" color="primary" size="lg" disabled={isDisabled} onPress={() => login()} />
 
         <View
           style={css`
@@ -108,7 +139,7 @@ const Login = ({navigation}: any) => {
             `}>
             |
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Signup6')}>
             <Text>회원가입</Text>
           </TouchableOpacity>
         </View>
