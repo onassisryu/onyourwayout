@@ -17,7 +17,7 @@ interface Props {
   navigation: NavigationProp<any>;
 }
 
-const Home = ({navigation}: Props) => {
+const Home = ({navigation}: any) => {
   const theme = useTheme();
   return (
     <GlobalContainer>
