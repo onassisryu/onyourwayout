@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import styled, {css} from '@emotion/native';
 import theme from '@/Theme';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
-import {ScrollView, Modal, View, ImageSourcePropType, TouchableWithoutFeedback} from 'react-native';
+import {ScrollView, View, ImageSourcePropType, TouchableWithoutFeedback} from 'react-native';
 
 const DoListComponent = styled.View`
   padding: 20px;
@@ -99,75 +99,6 @@ const DoListApart = styled(GlobalText)`
   font-weight: bold;
 `;
 
-const ButtonComponent = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`;
-
-const AddButton = styled.TouchableOpacity`
-  position: absolute;
-  right: 20px;
-  bottom: 1px;
-  width: 50px;
-  height: 50px;
-  border-radius: 30px;
-  background-color: #00d282;
-  justify-content: center;
-  align-items: center;
-`;
-
-const PlusText = styled.Text`
-  color: white;
-  font-size: 45px;
-  line-height: 50px;
-`;
-
-const ModalBackground = styled.View`
-  flex: 1;
-  background-color: rgba(0, 0, 0, 0.7);
-  justify-content: center;
-  align-items: center;
-`;
-
-const ModalComponent = styled.View`
-  position: absolute;
-  right: 20px;
-  bottom: 160px;
-  width: 170px;
-  height: 150px;
-  border: 2px solid #00d282;
-  border-radius: 15px;
-  background-color: white;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ModalSubComponent = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-`;
-
-const ModalText = styled(GlobalText)`
-  font-size: ${theme.fontSize.subtitle};
-  color: ${theme.color.black};
-  font-weight: bold;
-  line-height: 45px;
-`;
-
-const ModalImage = styled.Image`
-  width: 50px;
-  height: 50px;
-  resize-mode: contain;
-`;
-
-const DistinctLine = styled.View`
-  width: 140px;
-  border: 1px solid #b2b2b2;
-`;
-
 interface DoListCard {
   category: string;
   image: ImageSourcePropType;
@@ -180,9 +111,6 @@ const dogImage: ImageSourcePropType = require('images/dog.png');
 const turtleImage: ImageSourcePropType = require('images/turtle.png');
 const trashImage: ImageSourcePropType = require('images/trash3.png');
 const workImage: ImageSourcePropType = require('images/convstore.png');
-
-const outImage: ImageSourcePropType = require('images/나가요잉.png');
-const inImage: ImageSourcePropType = require('images/해줘요잉.png');
 
 const MainDoList = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -205,8 +133,6 @@ const MainDoList = () => {
 
   const filteredDoListCards: DoListCard[] =
     selectedCategory === '' ? doListCards : doListCards.filter(card => card.category === selectedCategory);
-
-  const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <View>
@@ -242,38 +168,6 @@ const MainDoList = () => {
           </DoListCard>
         ))}
       </DoListCardComponent>
-
-      <ButtonComponent>
-        <AddButton onPress={() => setModalVisible(true)}>
-          <PlusText>+</PlusText>
-        </AddButton>
-
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(false);
-          }}>
-          <TouchableWithoutFeedback
-            style={{position: 'absolute', bottom: 20, right: 20}}
-            onPress={() => setModalVisible(false)}>
-            <ModalBackground>
-              <ModalComponent>
-                <ModalSubComponent onPress={() => {}}>
-                  <ModalImage source={outImage} />
-                  <ModalText> 나가요잉 </ModalText>
-                </ModalSubComponent>
-                <DistinctLine></DistinctLine>
-                <ModalSubComponent onPress={() => {}}>
-                  <ModalImage source={inImage} />
-                  <ModalText> 해줘요잉 </ModalText>
-                </ModalSubComponent>
-              </ModalComponent>
-            </ModalBackground>
-          </TouchableWithoutFeedback>
-        </Modal>
-      </ButtonComponent>
     </View>
   );
 };
