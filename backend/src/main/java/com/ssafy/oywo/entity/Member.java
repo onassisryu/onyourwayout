@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @Table(name = "member")
 @Builder
 @Getter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member implements UserDetails {

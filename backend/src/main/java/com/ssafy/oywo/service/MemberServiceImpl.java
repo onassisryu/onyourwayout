@@ -189,6 +189,7 @@ public class MemberServiceImpl implements MemberService {
                     .phoneNumber(memberDto.getPhoneNumber())
                     .birthDate(memberDto.getBirthDate())
                     .password(memberDto.getPassword())
+                    .score(member.get().getScore())
                     .updatedAt(new Timestamp(System.currentTimeMillis()))
                     .build();;
             existedMember=memberRepository.save(existedMember);

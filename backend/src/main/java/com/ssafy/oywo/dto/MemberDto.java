@@ -89,6 +89,7 @@ public class MemberDto {
         public static Response of(Member member, Ho ho){
             return Response.builder()
                     .id(member.getId())
+                    .username(member.getUsername())
                     .nickname(member.getNickname())
                     .birthDate(member.getBirthDate())
                     .phoneNumber(member.getPhoneNumber())
