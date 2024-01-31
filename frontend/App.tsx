@@ -5,25 +5,25 @@
  * @format
  */
 
-import React, { useEffect } from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import React, {useEffect} from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {NavigationContainer} from '@react-navigation/native';
 
 //recoil&react-query
 import {useRecoilValue} from 'recoil';
 import {isLoggedInState} from '@/recoil/atoms';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
-import { ThemeProvider } from '@emotion/react';
+import {ThemeProvider} from '@emotion/react';
 import theme from '@/Theme';
 
 //fcm
-import messaging from '@react-native-firebase/messaging'
+import messaging from '@react-native-firebase/messaging';
 // 앱이 백그라운드에 있을때
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('[Background Remote Message]', remoteMessage);
-})
+});
 
 //page
 import Home from '@screens/Home';
@@ -34,12 +34,6 @@ import My from '@screens/My';
 import Login from '@screens/Login';
 import Notice from '@screens/Notice';
 import NoticeSettings from '@screens/NoticeSettings';
-import Signup1 from '@/screens/Signup/Signup1';
-import Signup2 from '@/screens/Signup/Signup2';
-import Signup3 from '@/screens/Signup/Signup3';
-import Signup4 from '@/screens/Signup/Signup4';
-import Signup5 from '@/screens/Signup/Signup5';
-import Signup6 from '@/screens/Signup/Signup4';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -52,7 +46,7 @@ const App = () => {
   const BottomTab = () => {
     return (
       <Tab.Navigator
-        screenOptions={({ route }) => ({
+        screenOptions={({route}) => ({
           tabBarHideOnKeyboard: true,
           headerShown: false,
           tabBarStyle: {
@@ -64,7 +58,7 @@ const App = () => {
           tabBarLabelStyle: {
             fontWeight: 'bold',
           },
-          tabBarIcon: ({ focused, size, color }) => {
+          tabBarIcon: ({focused, size, color}) => {
             let iconName!: string;
 
             if (route.name === '홈') {

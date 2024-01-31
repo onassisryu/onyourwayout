@@ -10,7 +10,6 @@ export const GlobalContainer = styled.View`
   color: ${theme.color.black};
   box-sizing: border-box;
   background-color: white;
-  height: 100%;
 `;
 
 export const GlobalText = styled.Text`
@@ -27,7 +26,6 @@ export const GlobalButton = styled.TouchableOpacity`
   cursor: pointer;
   justify-content: center;
   align-items: center;
-  padding: 10px;
   border: none;
   border-radius: 10px;
   box-sizing: border-box;

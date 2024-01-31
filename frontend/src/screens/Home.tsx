@@ -25,7 +25,7 @@ const Home = ({navigation}: any) => {
         <MainComponent />
         <MainDoList />
       </ScrollView>
-      <MainModal />
+      <MainModal navigation={navigation} />
     </GlobalContainer>
   );
 };
