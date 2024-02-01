@@ -3,6 +3,7 @@ package com.ssafy.oywo.dto;
 import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.entity.DealImage;
 import com.ssafy.oywo.entity.DealType;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -30,10 +31,6 @@ public class DealDto {
         private String expireAtStr;
         private List<DealImage> dealImages;
 
-        public void setExpireAtStr(String expireAtStr) {
-            this.expireAtStr = expireAtStr;
-        }
-
         /*
         Dto -> Entity
          */
@@ -44,6 +41,13 @@ public class DealDto {
             } else {
                 // 기본 1시간 이후로 설정
                 expireAt = LocalDateTime.now().plusMinutes(60);
+            }
+
+            if (cash == 0) {
+                rewardType = Deal.RewardType.ITEM;
+            } else {
+                rewardType = Deal.RewardType.CASH;
+                item = null;
             }
 
             Deal deal = Deal.builder()
@@ -60,6 +64,7 @@ public class DealDto {
                     .expireAt(expireAt)
                     .dealImages(dealImages)
                     .build();
+            System.out.println("rewardType = " + rewardType);
             return deal;
         }
     }
@@ -75,7 +80,7 @@ public class DealDto {
         private Long acceptId;
         private int cash;
         private String item;
-        private Deal.RewardType rewardType;
+        private final Deal.RewardType rewardType;
         private int complaint;
         private Deal.DealStatus dealStatus;
         private DealType dealType;
@@ -104,7 +109,6 @@ public class DealDto {
             this.dealImages = entity.getDealImages();
             this.createdAt = entity.getCreatedAt();
             this.modifiedAt = entity.getModifiedAt();
-            this.deletedAt = entity.getDeletedAt();
 
         }
     }

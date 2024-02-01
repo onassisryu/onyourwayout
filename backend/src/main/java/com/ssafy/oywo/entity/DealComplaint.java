@@ -1,6 +1,8 @@
 package com.ssafy.oywo.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,9 +16,11 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE deal_complaint SET deleted_at = NOW() WHERE uuid = ?")
 @SQLRestriction("deleted_at IS NULL")
+@AllArgsConstructor
+@Builder
 public class DealComplaint extends BaseTimeEntity{
 
-    public enum ConmplaintType {
+    public enum ComplaintType {
         CONTENT, MEMBER, ETC
     }
 
@@ -34,7 +38,7 @@ public class DealComplaint extends BaseTimeEntity{
     private Member member;
 
     @Enumerated(EnumType.STRING)
-    private ConmplaintType conmplaintType;
+    private ComplaintType complaintType;
 
     private String content;
 

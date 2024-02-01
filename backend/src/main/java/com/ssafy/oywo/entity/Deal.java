@@ -57,6 +57,7 @@ public class Deal extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private DealStatus dealStatus;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private DealType dealType;
 
@@ -66,52 +67,36 @@ public class Deal extends BaseTimeEntity {
     private List<DealImage> dealImages = new ArrayList<>();
 
 
-    // 수정 로직
+    // 수정/수락 로직
     public void update(DealDto.Request dto) {
+
         if (dto.getAcceptId() != null) {
             this.acceptId = dto.getAcceptId();
+        } else {
+            this.acceptId = null;
         }
 
-        if (dto.getTitle() != null) {
-            this.title = dto.getTitle();
-        }
+        if (dto.getTitle() != null) this.title = dto.getTitle();
+        if (dto.getContent() != null) this.content = dto.getContent();
 
-        if (dto.getContent() != null) {
-            this.content = dto.getContent();
-        }
-
-        if (dto.getItem() != null) {
+        if (dto.getCash() == 0) {
             this.item = dto.getItem();
-        }
-
-        if (dto.getCash() > 0) {
             this.cash = dto.getCash();
-        }
+            this.rewardType = RewardType.ITEM;
 
-        if (dto.getRewardType() != null) {
-            this.rewardType = dto.getRewardType();
+        } else if (dto.getItem() == null || dto.getItem().isEmpty()){
+            this.cash = dto.getCash();
+            this.item = null;
+            this.rewardType = RewardType.CASH;
         }
+        if (dto.getCash() != 0 && dto.getItem() != null)
+            throw new IllegalArgumentException("두 보상을 동시에 선택할 수 없음");
 
-        if (dto.getComplaint() > 0) {
-            this.complaint = dto.getComplaint();
-        }
-
-        // dealStatus 갱신
-        if (dto.getDealStatus() != null) {
-            this.dealStatus = dto.getDealStatus();
-        }
-
-        if (dto.getDealType() != null) {
-            this.dealType = dto.getDealType();
-        }
-
-        if (dto.getExpireAtStr() != null) {
-            this.expireAt = LocalDateTime.parse(dto.getExpireAtStr(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        }
-
-        if (dto.getDealImages() != null) {
-            this.dealImages = dto.getDealImages();
-        }
-
+        if (dto.getComplaint() > 0) this.complaint = dto.getComplaint();
+        if (dto.getDealStatus() != null) this.dealStatus = dto.getDealStatus();
+        if (dto.getDealType() != null) this.dealType = dto.getDealType();
+        if (dto.getExpireAtStr() != null) this.expireAt = LocalDateTime.parse(dto.getExpireAtStr(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        if (dto.getDealImages() != null) this.dealImages = dto.getDealImages();
     }
+
 }
