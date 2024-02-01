@@ -18,7 +18,7 @@ public class ChatRoomDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public class Request{
+    public static class Request{
         private String memberUsername;
         private String otherUsername;
     }
