@@ -85,7 +85,7 @@ const NoticeSettingsKeyword = () => {
   const [inputKeyword, setInputKeyword] = useState(placeholderText);
   const [keywords, setKeywords] = useState<string[]>([]);
 
-  // 사용자가 키워드 입력란에 입력하는 글자
+  // 사용자가 키워드 입력란에 입력하는 글자1
   const handleKeywordChange = (text: string) => {
     setInputKeyword(text || placeholderText);
   };
