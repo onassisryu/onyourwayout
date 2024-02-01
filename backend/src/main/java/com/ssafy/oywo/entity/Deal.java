@@ -26,7 +26,7 @@ public class Deal extends BaseTimeEntity {
     }
 
     public enum DealStatus {
-        OPEN, ING, CLOSE
+        OPEN, ING, CLOSE, CANCEL
     }
 
     @Id
