@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import styled from '@emotion/native';
 import { NavigationProp } from '@react-navigation/native';
+import { notificationIcon_black, mainLogo } from '~/icons';
 import {
   View,
   TouchableOpacity,
@@ -64,7 +65,7 @@ const NotificationIcon = ({ navigation }: Props) => {
 
   return (
     <TouchableOpacity onPress={handlePress}>
-      {/* <BellImage source={notificationIcon_black} /> */}
+      <BellImage source={notificationIcon_black} />
       {hasNotifications && <BellNotifBadge />}
     </TouchableOpacity>
   );
@@ -76,7 +77,7 @@ const Header = ({ navigation }: Props) => {
   return (
     <View>
       <HeaderContainer>
-        {/* <LogoImage source={mainLogo} /> */}
+        <LogoImage source={mainLogo} />
         <IconsContainer>
           <NotificationIcon navigation={navigation}/>
         </IconsContainer>
