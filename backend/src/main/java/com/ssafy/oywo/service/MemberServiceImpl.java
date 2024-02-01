@@ -127,7 +127,7 @@ public class MemberServiceImpl implements MemberService {
             if (ho.isPresent()){
                 List<Member> members=ho.get().getMember();
                 members.add(member);
-                hoRepository.save(ho.get().builder().member(members).build());
+                ho.get().builder().member(members).build();
 
                 response=MemberDto.Response.of(member,ho.get());
             }
@@ -253,6 +253,14 @@ public class MemberServiceImpl implements MemberService {
             }
         }
         return fcmTokens;
+    }
+
+    @Override
+    public void removeFcmToken(String username) {
+        Member member=memberRepository.findByUsername(username)
+                .orElseThrow(NoSuchElementException::new);
+        member=member.builder().id(member.getId()).fcmToken(null).build();
+        memberRepository.save(member);
     }
 
 

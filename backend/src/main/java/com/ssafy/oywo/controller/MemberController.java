@@ -51,7 +51,7 @@ public class MemberController {
             log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
             MemberDto.Response memberResponse=memberSerivce.getMemberInfo(username,password);
-            
+
             HashMap<String,Object> payload=new HashMap<>();
             payload.put("token",jwtToken);
             payload.put("memberInfo",memberResponse);
@@ -145,7 +145,10 @@ public class MemberController {
     @DeleteMapping("/logout/{username}")
     public ResponseEntity<?> logout(@Parameter(name = "username", description = "사용자 email")
                                         @PathVariable String username){
+        // 사용자 email로 로그아웃
         memberSerivce.logout(username);
+        //
+        memberSerivce.removeFcmToken(username);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

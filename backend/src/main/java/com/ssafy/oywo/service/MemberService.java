@@ -33,4 +33,6 @@ public interface MemberService {
     
     // member id list로 Fcm token 리스트 반환
     public List<String> getFcmTokens(List<Long> memberIdList);
+
+    public void removeFcmToken(String username);
 }
