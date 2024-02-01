@@ -1,9 +1,14 @@
-/**
- * @format
- */
-
 import {AppRegistry} from 'react-native';
+import {RecoilRoot} from 'recoil'; // RecoilRoot import 추가
 import App from './App';
 import {name as appName} from './app.json';
+import React from 'react';
+const RootComponent = () => (
+  <React.StrictMode>
+    <RecoilRoot>
+      <App />
+    </RecoilRoot>
+  </React.StrictMode>
+);
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, () => RootComponent);
