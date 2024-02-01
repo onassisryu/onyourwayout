@@ -1,11 +1,11 @@
 // import 내용
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from '@emotion/native';
 import { NavigationProp } from '@react-navigation/native';
-import { notificationIcon_black, mainLogo } from '~/icons';
 import {
   View,
   TouchableOpacity,
+  ImageSourcePropType
 } from 'react-native';
 
 // 헤더 컨테이너
@@ -50,6 +50,9 @@ const BellNotifBadge = styled.View`
 `;
 
 // 이미지 경로 정의
+const mainLogo: ImageSourcePropType = require('images/나온김에.png');
+const searchIcon: ImageSourcePropType = require('icons/search.png');
+const notificationIcon: ImageSourcePropType = require('icons/bell_black.png');
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -65,7 +68,7 @@ const NotificationIcon = ({ navigation }: Props) => {
 
   return (
     <TouchableOpacity onPress={handlePress}>
-      <BellImage source={notificationIcon_black} />
+      <BellImage source={notificationIcon} />
       {hasNotifications && <BellNotifBadge />}
     </TouchableOpacity>
   );

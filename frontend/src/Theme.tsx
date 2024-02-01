@@ -6,9 +6,11 @@ const color = {
   primary: '#00D282',
   gray: '#B2B2B2',
   gray100: '#DCDCDC',
+  gray200: '#C4C4C4',
 };
 const font = {
-  primary: 'Cochin',
+  primary: 'PretendardVariable',
+  clover: 'YClover TTF-Bold',
 };
 
 const fontSize = {
