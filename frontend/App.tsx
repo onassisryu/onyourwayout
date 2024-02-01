@@ -35,6 +35,7 @@ import MySetting from '@screens/MySetting';
 import Login from '@screens/Login';
 import Notice from '@screens/Notice';
 import NoticeSettings from '@screens/NoticeSettings';
+import DoIt1 from '@/screens/DoIt/DoIt1';
 import Signup1 from '@/screens/Signup/Signup1';
 import Signup2 from '@/screens/Signup/Signup2';
 import Signup3 from '@/screens/Signup/Signup3';
@@ -117,6 +118,7 @@ const App = () => {
             <Stack.Screen name="홈" component={Home} />
             <Stack.Screen name="Notice" component={Notice} />
             <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
+            <Stack.Screen name="DoIt1" component={DoIt1} />
             <Stack.Screen name="Signup1" component={Signup1} />
             <Stack.Screen name="Signup2" component={Signup2} />
             <Stack.Screen name="Signup3" component={Signup3} />

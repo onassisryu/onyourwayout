@@ -62,7 +62,7 @@ const DistinctLine = styled.View`
 const outImage: ImageSourcePropType = require('images/나가요잉.png');
 const inImage: ImageSourcePropType = require('images/해줘요잉.png');
 
-const MainPlusButton = () => {
+const MainPlusButton = ({navigation}: any) => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <>
@@ -85,7 +85,11 @@ const MainPlusButton = () => {
                 <ModalText> 나가요잉 </ModalText>
               </ModalSubComponent>
               <DistinctLine></DistinctLine>
-              <ModalSubComponent onPress={() => {}}>
+              <ModalSubComponent
+                onPress={() => {
+                  navigation.navigate('DoIt1');
+                  setModalVisible(false);
+                }}>
                 <ModalImage source={inImage} />
                 <ModalText> 해줘요잉 </ModalText>
               </ModalSubComponent>

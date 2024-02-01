@@ -1,4 +1,4 @@
-import styled from '@emotion/native';
+import styled, {css} from '@emotion/native';
 
 const Header = styled.View`
   width: 100%;

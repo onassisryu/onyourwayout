@@ -3,10 +3,10 @@ import React, {useState, useEffect} from 'react';
 import styled from '@emotion/native';
 import {NavigationProp} from '@react-navigation/native';
 import theme from '@/Theme';
+import {GlobalContainer, GlobalText} from '@/GlobalStyles';
 import {View, TouchableOpacity, ImageSourcePropType} from 'react-native';
-import {GlobalText} from '@/GlobalStyles';
 
-const HeaderContainer = styled.View`
+const HeaderContainer = styled(GlobalContainer)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -31,7 +31,7 @@ const SettingsImage = styled.Image`
 const NoticeTitle = styled(GlobalText)`
   font-weight: bold;
   font-size: ${theme.fontSize.subtitle};
-  color: ${theme.color.black}
+  color: ${theme.color.black};
   padding-bottom: 5px;
 `;
 
