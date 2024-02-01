@@ -4,7 +4,6 @@ import theme from '@/Theme';
 export const GlobalContainer = styled.View`
   font-family: ${theme.font.primary};
   font-size: ${theme.fontSize.medium};
-  align-items: center;
   margin: 0;
   padding: 0;
   color: ${theme.color.black};

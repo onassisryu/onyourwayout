@@ -1,54 +1,55 @@
 import React, {useState} from 'react';
-import styled, {css} from '@emotion/native';
-import theme from '@/Theme';
+import styled from '@emotion/native';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
-import {ScrollView, View, ImageSourcePropType, TouchableWithoutFeedback} from 'react-native';
+import {ScrollView, ImageSourcePropType} from 'react-native';
+import {Global} from '@emotion/react';
 
-const DoListComponent = styled.View`
+const DoListComponent = styled(GlobalContainer)`
   padding: 20px;
 `;
 
-const DoListHeader = styled.View`
+const DoListHeader = styled(GlobalContainer)`
+  display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
 `;
 
 const DoListTitle = styled(GlobalText)`
-  font-size: ${theme.fontSize.subtitle};
+  font-size: ${props => props.theme.fontSize.subtitle};
   font-weight: bold;
 `;
 
-const DoListSee = styled.TouchableOpacity``;
+const DoListSee = styled(GlobalButton)`
+  background-color: white;
+`;
 
 const DoListSeeText = styled(GlobalText)`
-  font-size: ${theme.fontSize.short};
-  color: ${theme.color.gray};
+  font-size: ${props => props.theme.fontSize.short};
+  color: ${props => props.theme.color.gray};
   font-weight: bold;
 `;
 
-const CategoryComponent = styled.View`
+const CategoryComponent = styled(GlobalContainer)`
+  display: flex;
   flex-direction: row;
-  justify-content: flex-start;
-  padding-left: 20px;
-  padding-right: 20px;
+  justify-content: space-between;
+  padding: 0 20px;
 `;
 
-const Category = styled.TouchableOpacity<{selected: boolean}>`
+const Category = styled(GlobalButton)<{selected: boolean}>`
   max-width: 200px;
   padding: 9px;
   border-radius: 15px;
   border: ${({selected}) => (selected ? '1px solid #E6FBF4' : '1px solid #B2B2B2')};
-  margin-right: 10px;
   background-color: ${({selected}) => (selected ? '#E6FBF4' : 'white')};
 `;
 
 const CategoryText = styled(GlobalText)<{selected: boolean}>`
-  font-size: ${theme.fontSize.small};
+  font-size: ${props => props.theme.fontSize.small};
   font-weight: bold;
   padding-right: 10px;
   padding-left: 10px;
-  color: ${({selected}) => (selected ? `${theme.color.primary}` : `${theme.color.gray}`)};
+  color: ${({selected, theme}) => (selected ? theme.color.primary : theme.color.gray)};
 `;
 
 const DoListCardComponent = styled(ScrollView)`
@@ -76,8 +77,8 @@ const DoListType = styled(GlobalText)`
   position: absolute;
   top: 5px;
   left: 5px;
-  font-size: ${theme.fontSize.medium};
-  color: ${theme.color.white};
+  font-size: ${props => props.theme.fontSize.medium};
+  color: ${props => props.theme.color.white};
   font-weight: bold;
 `;
 
@@ -85,8 +86,8 @@ const DoListContent = styled(GlobalText)`
   position: absolute;
   top: 110px;
   left: 5px;
-  font-size: ${theme.fontSize.small};
-  color: ${theme.color.white};
+  font-size: ${props => props.theme.fontSize.small};
+  color: ${props => props.theme.color.white};
   font-weight: bold;
 `;
 
@@ -94,8 +95,8 @@ const DoListApart = styled(GlobalText)`
   position: absolute;
   top: 128px;
   left: 7px;
-  font-size: ${theme.fontSize.short};
-  color: ${theme.color.white};
+  font-size: ${props => props.theme.fontSize.short};
+  color: ${props => props.theme.color.white};
   font-weight: bold;
 `;
 
@@ -135,7 +136,7 @@ const MainDoList = ({navigation}: any) => {
     selectedCategory === '' ? doListCards : doListCards.filter(card => card.category === selectedCategory);
 
   return (
-    <View>
+    <GlobalContainer>
       <DoListComponent>
         <DoListHeader>
           <DoListTitle> 이웃들에게 맡겨볼까요? </DoListTitle>
@@ -168,7 +169,8 @@ const MainDoList = ({navigation}: any) => {
           </DoListCard>
         ))}
       </DoListCardComponent>
-    </View>
+      <GlobalText style={{padding: 100}}>추가 콘텐츠</GlobalText>
+    </GlobalContainer>
   );
 };
 

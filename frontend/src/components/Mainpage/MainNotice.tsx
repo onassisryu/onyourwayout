@@ -1,9 +1,9 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
 import styled, {css} from '@emotion/native';
-import theme from '@/Theme';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import {TouchableOpacity, Text, View, ImageSourcePropType, Animated} from 'react-native';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
 // 배경
 const NotificationBar = styled.View`
@@ -23,19 +23,11 @@ const NotificationBottom = styled.View`
   padding-bottom: 205px;
 `;
 
-// 최근 알림 텍스트의 스타일 정의
-const IconImage = styled.Image`
-  width: 24px;
-  height: 24px;
-  margin-right: 10px;
-  margin-top: 5px;
-  resize-mode: contain;
-`;
-
 const NotificationText = styled(GlobalText)`
-  font-size: ${theme.fontSize.medium};
-  color: ${theme.color.white};
+  font-size: ${props => props.theme.fontSize.medium};
+  color: ${props => props.theme.color.white};
   font-weight: bold;
+  margin-left: 5px;
 `;
 
 // 탭 컨테이너 스타일 정의
@@ -60,8 +52,8 @@ const Tab = styled.TouchableOpacity<{selected?: boolean}>`
 
 // 탭 텍스트의 스타일 정의
 const TabText = styled(GlobalText)`
-  font-size: ${theme.fontSize.subtitle};
-  color: ${theme.color.white};
+  font-size: ${props => props.theme.fontSize.subtitle};
+  color: ${props => props.theme.color.white};
   font-weight: bold;
 `;
 
@@ -88,15 +80,15 @@ const Card2 = styled(AnimatedCard)`
 `;
 
 const CardTitle = styled(GlobalText)`
-  font-size: ${theme.fontSize.medium};
-  color: ${theme.color.primary};
+  font-size: ${props => props.theme.fontSize.medium};
+  color: ${props => props.theme.color.primary};
   font-weight: bold;
   margin-bottom: 10px;
 `;
 
 const CardComponent = styled.View`
   flex-direction: row;
-  justifycontent: space-between;
+  justify-content: space-between;
 `;
 
 const CardText = styled.Text`
@@ -123,8 +115,6 @@ const ContourLine = styled.View`
   height: 1px;
   background-color: #c2c2c2;
 `;
-
-const notificationIcon: ImageSourcePropType = require('icons/bell_white.png');
 
 // 페이지 컴포넌트 정의
 const Page1 = () => (
@@ -176,7 +166,7 @@ const MainComponent = ({navigation}: {navigation?: any}) => {
     <View>
       <NotificationBar>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <IconImage source={notificationIcon} />
+          <Fontisto name="bell" size={22} color="white" />
           <NotificationText>{recentNotification}</NotificationText>
         </View>
         <TabsContainer>

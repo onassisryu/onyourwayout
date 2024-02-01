@@ -14,7 +14,6 @@ interface Props {
 }
 
 const Home = ({navigation}: any) => {
-  const theme = useTheme();
   return (
     <GlobalContainer>
       <ScrollView
