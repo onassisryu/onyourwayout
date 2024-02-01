@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notification {
+public class Notification extends BaseTimeEntity {
 
     public enum NotificationType {
         CHAT, NOTI_DONG, NOTI_BLOCK, NOTI_APT

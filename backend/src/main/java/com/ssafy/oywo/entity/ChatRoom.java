@@ -12,14 +12,12 @@ import java.util.List;
 @Table(name = "chat_room")
 @Getter
 @NoArgsConstructor
-public class ChatRoom {
+public class ChatRoom extends BaseTimeEntity {
 
     @Id
     @Column(name = "uuid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private Timestamp createdAt;
 
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatMessage> chatMessages = new ArrayList<>();

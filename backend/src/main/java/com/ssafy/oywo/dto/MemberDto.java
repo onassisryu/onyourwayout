@@ -42,7 +42,6 @@ public class MemberDto {
                     .password(password)
                     .birthDate(birthDate)
                     .phoneNumber(phoneNumber)
-                    .createdAt(new Timestamp(System.currentTimeMillis()))
                     .isCertified(false)
                     .score(50)              // 기본값 50
                     .certificationImg(apartCertificateImg)
@@ -75,9 +74,6 @@ public class MemberDto {
         private Long hoId;
         private String hoName;
 
-        private Timestamp createdAt;
-        private Timestamp updatedAt;
-        private Timestamp deletedAt;
         private String certificationImg;
         private Time notificationStart;
         private Time notificationEnd;
@@ -158,7 +154,6 @@ public class MemberDto {
                     .password(req.getPassword())
                     .birthDate(req.getBirthDate())
                     .phoneNumber(req.getPhoneNumber())
-                    .createdAt(new Timestamp(System.currentTimeMillis()))
                     .isCertified(isCertified)
                     .score(50)              // 기본값 50
                     .certificationImg(req.getApartCertificateImg())

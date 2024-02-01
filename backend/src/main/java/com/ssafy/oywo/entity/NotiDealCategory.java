@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder                        // 추가
 @AllArgsConstructor             // 추가
 @NoArgsConstructor
-public class NotiDealCategory {
+public class NotiDealCategory extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -15,7 +15,7 @@ import java.util.List;
 @Builder                    // 추가
 @AllArgsConstructor         // 추가
 @NoArgsConstructor
-public class Ho {
+public class Ho extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

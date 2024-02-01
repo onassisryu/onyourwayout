@@ -5,12 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "members_notification")
 @Getter
 @NoArgsConstructor
-public class MembersNotification {
+public class MembersNotification extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +26,7 @@ public class MembersNotification {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ColumnDefault("false")
     private boolean isRead;
 
     @Builder

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "chat_message")
 @Getter
 @NoArgsConstructor
-public class ChatMessage {
+public class ChatMessage extends BaseTimeEntity {
 
 
     @Id

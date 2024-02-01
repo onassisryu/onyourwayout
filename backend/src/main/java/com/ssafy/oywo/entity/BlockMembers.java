@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "block_members")
 @Getter
 @NoArgsConstructor
-public class BlockMembers {
+public class BlockMembers extends BaseTimeEntity{
 
 
     @Id
