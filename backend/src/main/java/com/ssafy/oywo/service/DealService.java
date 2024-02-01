@@ -26,7 +26,7 @@ public interface DealService {
     // 거래 수정
     DealDto.Response updateDeal(Long id, DealDto.Request dto);
     // 거래 수락 and 수락 취소
-    DealDto.Response acceptDeal(Long id, DealDto.Request dto);
+    DealDto.Response acceptDeal(Long id, Long acceptId);
     // 거래 완료
     DealDto.Response closeDeal(Long id);
     // 거래 리뷰

@@ -69,23 +69,6 @@ public class DealDto {
         }
     }
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class CloseRequest {
-        private Long id;
-        private Deal.DealStatus dealStatus;
-        private LocalDateTime deletedAt;
-
-        public Deal toAcceptEntity() {
-            Deal deal = Deal.builder()
-                    .dealStatus(dealStatus)
-                    .build();
-            return deal;
-        }
-    }
-
 
 
     @Getter

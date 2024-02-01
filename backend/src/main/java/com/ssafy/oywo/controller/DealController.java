@@ -116,9 +116,9 @@ public class DealController {
             @PathVariable Long id,
             @RequestBody DealDto.Request dto) throws Exception {
 
-        System.out.println("id + dto = " + id + dto);
-        DealDto.Response response = dealService.acceptDeal(id, dto);
-        System.out.println("response.getDealStatus() == Deal.DealStatus.OPEN = " + (response.getDealStatus() == Deal.DealStatus.ING));
+//        System.out.println("acceptId = " + acceptId);
+
+        DealDto.Response response = dealService.acceptDeal(id, dto.getAcceptId());
         if (response.getDealStatus() == Deal.DealStatus.ING) {
             return ResponseEntity.ok("거래가 수락되었습니다.");
         } else {

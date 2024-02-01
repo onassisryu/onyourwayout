@@ -262,26 +262,18 @@ public class DealServiceImpl implements DealService{
 
     // 수락 and 수락 취소
     @Override
-    public DealDto.Response acceptDeal(Long id, DealDto.Request dto) {
+    public DealDto.Response acceptDeal(Long id, Long acceptId) {
         Deal deal = dealRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
         );
 
-        Member acceptUser = memberRepository.findById(dto.getAcceptId()).orElseThrow(
-                () -> new IllegalArgumentException("해당 사용자 아이디가 존재하지 않음")
-        );
-
-        System.out.println("deal.getDealStatus() == Deal.DealStatus.OPEN = " + (deal.getDealStatus() == Deal.DealStatus.OPEN));
-        System.out.println("dto.getAcceptId() = " + dto.getAcceptId());
         // 거래 상태 확인
         // 수락
         if (deal.getDealStatus() == Deal.DealStatus.OPEN) {
             // 수락자 확인
 //            System.out.println("acceptUser = " + acceptUser);
 //            System.out.println("acceptUserId = " + acceptUser.getId());
-            System.out.println("requestId = " + deal.getRequestId());
-
-            if (deal.getRequestId().equals(dto.getAcceptId())) {
+            if (deal.getRequestId().equals(acceptId)) {
                 throw new IllegalStateException("요청자와 수락자는 같을 수 없음");
             }
 
@@ -307,7 +299,7 @@ public class DealServiceImpl implements DealService{
 //                    .build();
 //            // 엔티티 갱신
 //            deal.update(acceptDto);
-            deal.setAcceptId(dto.getAcceptId());
+            deal.setAcceptId(acceptId);
             deal.setDealStatus(Deal.DealStatus.ING);
 //            updateDto.update()
 

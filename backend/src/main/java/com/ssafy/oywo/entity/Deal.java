@@ -99,9 +99,4 @@ public class Deal extends BaseTimeEntity {
         if (dto.getDealImages() != null) this.dealImages = dto.getDealImages();
     }
 
-    // 거래 완료 로직
-    public void closeUpdate(DealDto.CloseRequest dto) {
-        this.dealStatus = dto.getDealStatus();
-    }
-
 }
