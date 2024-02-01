@@ -34,7 +34,7 @@ const SettingsTitle = styled(GlobalText)`
 `;
 
 const AllSelectionButton = styled(GlobalButton)`
-  background-color: #DCDCDC;
+  background-color: ${props => props.theme.color.white};
   margin-bottom: 5px;
 `;
 
@@ -42,6 +42,7 @@ const AllSelection = styled(GlobalText)`
   font-size: ${theme.fontSize.short};
   color: ${theme.color.gray};
   font-weight: 900;
+  padding: 5px;
 `;
 
 const CategoryComponent = styled(GlobalContainer)`
@@ -63,6 +64,7 @@ const CategoryText = styled(GlobalText)<{selected: boolean}>`
   font-size: ${theme.fontSize.small};
   font-weight: bold;
   color: ${({ selected }) => selected ? `${theme.color.primary}` : `${theme.color.gray}`};
+  padding: 7px;
 `;
 
 const DistinctLine = styled.View`

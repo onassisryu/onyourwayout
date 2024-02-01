@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled, { css } from '@emotion/native';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
-import { notificationIcon_white } from '~/icons';
+
 import { 
     TouchableOpacity, 
     Text,
@@ -168,7 +168,7 @@ const MainComponent = ({ navigation }: { navigation?: any }) => {
       <View>
         <NotificationBar>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}> 
-            <IconImage source={notificationIcon_white}/> 
+            {/* <IconImage source={notificationIcon_white}/>  */}
             <NotificationText>{ recentNotification }</NotificationText>
           </View>
           <TabsContainer>
