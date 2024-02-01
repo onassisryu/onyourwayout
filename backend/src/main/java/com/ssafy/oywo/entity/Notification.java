@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
@@ -14,7 +16,9 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notification {
+@SQLDelete(sql = "UPDATE notification SET deleted_at = NOW() WHERE uuid = ?")
+@SQLRestriction("deleted_at IS NULL")
+public class Notification extends BaseTimeEntity {
 
     public enum NotificationType {
         CHAT, NOTI_DONG, NOTI_BLOCK, NOTI_APT

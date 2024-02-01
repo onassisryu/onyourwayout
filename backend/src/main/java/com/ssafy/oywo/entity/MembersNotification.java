@@ -1,16 +1,18 @@
 package com.ssafy.oywo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "members_notification")
-@Getter
+@Getter @Setter
 @NoArgsConstructor
-public class MembersNotification {
+@SQLDelete(sql = "UPDATE members_notification SET deleted_at = NOW() WHERE uuid = ?")
+@SQLRestriction("deleted_at IS NULL")
+public class MembersNotification extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +27,7 @@ public class MembersNotification {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ColumnDefault("false")
     private boolean isRead;
 
     @Builder

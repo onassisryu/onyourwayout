@@ -190,7 +190,6 @@ public class MemberServiceImpl implements MemberService {
                     .birthDate(memberDto.getBirthDate())
                     .password(memberDto.getPassword())
                     .score(member.get().getScore())
-                    .updatedAt(new Timestamp(System.currentTimeMillis()))
                     .build();;
             existedMember=memberRepository.save(existedMember);
             return MemberDto.Response.of(existedMember);
