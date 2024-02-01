@@ -18,7 +18,10 @@ import {ThemeProvider} from '@emotion/react';
 import theme from '@/Theme';
 
 //fcm
-import messaging from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging'
+import { Alert, PermissionsAndroid } from 'react-native';
+
+PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)
 // 앱이 백그라운드에 있을때
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('[Background Remote Message]', remoteMessage);
@@ -35,11 +38,31 @@ import NoticeSettings from '@screens/NoticeSettings';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { json } from 'stream/consumers';
 
 const App = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
   const queryClient = new QueryClient();
+
+  console.log("App Loading....")
+
+  // 토큰 발급
+  const getFcmToken = async () => {
+    const fcmToken = await messaging().getToken()
+    console.log('[FCM Token] ', fcmToken)
+  }
+
+  useEffect(() => {
+    getFcmToken() // 토큰 발급
+    // 앱이 켜져있을때
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('[Remote Message] ', JSON.stringify(remoteMessage));
+      Alert.alert('message 수신', JSON.stringify(remoteMessage))
+    })
+    return unsubscribe
+  }, [])
 
   const BottomTab = () => {
     return (
