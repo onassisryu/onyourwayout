@@ -11,14 +11,14 @@ import DefaultButton from '@/components/DefaultButton';
 import GoBack from '@/components/Signup/GoBack';
 import SignupHeadtext from '@/components/Signup/SignupHeadtext';
 import {SignupBodyContainer} from '@/components/Signup/SignupBodyContainer';
-import {
-  launchCamera,
-  launchImageLibrary,
-  CameraOptions,
-  ImagePickerResponse,
-  ImageLibraryOptions,
-  Asset,
-} from 'react-native-image-picker';
+// import {
+//   launchCamera,
+//   launchImageLibrary,
+//   CameraOptions,
+//   ImagePickerResponse,
+//   ImageLibraryOptions,
+//   Asset,
+// } from 'react-native-image-picker';
 const InputContainer = styled.View`
   width: 100%;
   position: relative;

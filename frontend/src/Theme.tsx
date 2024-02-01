@@ -7,6 +7,7 @@ const color = {
   gray: '#B2B2B2',
   gray100: '#DCDCDC',
   gray200: '#C4C4C4',
+  gray300: '#ABABAB',
 };
 const font = {
   primary: 'PretendardVariable',

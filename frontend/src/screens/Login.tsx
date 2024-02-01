@@ -75,6 +75,7 @@ const Login = ({navigation}: any) => {
           if (resp.data !== null && resp.data != '') {
             handleLoginSuccess();
             setUserData(resp.data); // 받아온 데이터를 Recoil 상태에 저장
+            // navigation.navigate('main');
             console.log('로그인 성공');
           } else {
             Alert.alert('로그인 실패', '아이디나 비밀번호를 확인하세요.');
@@ -149,7 +150,7 @@ const Login = ({navigation}: any) => {
             `}>
             |
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Signup6')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Signup1')}>
             <Text>회원가입</Text>
           </TouchableOpacity>
         </View>

@@ -1,19 +1,35 @@
 import React from 'react';
-import {Button, TouchableOpacity, Text} from 'react-native';
-import styled from '@emotion/native';
-import {useRecoilValue} from 'recoil'; // useRecoilValue 훅 추가
-import {GlobalContainer} from '@/GlobalStyles';
+import {TouchableOpacity, Text, View} from 'react-native';
+import styled, {css} from '@emotion/native';
+import {useRecoilValue} from 'recoil';
+import {GlobalContainer, GlobalText} from '@/GlobalStyles';
 import {isLoggedInState, userDataState} from '../recoil/atoms';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
+
 const MyHeader = styled(Header)`
   justify-content: flex-end;
 `;
-const StyledText = styled.Text`
-  font-size: 30px;
-  margin-bottom: 10px;
+const NicknameText = styled(GlobalText)`
+  color: ${props => props.theme.color.black};
+  font-size: 27px;
+  font-weight: bold;
 `;
-
+const CertifiedText = styled(GlobalText)`
+  color: ${props => props.theme.color.primary};
+  font-size: 12px;
+  font-weight: bold;
+`;
+const ApartText = styled(GlobalText)`
+  color: ${props => props.theme.color.gray300};
+  font-size: 12px;
+  font-weight: bold;
+`;
+const StyledText = styled(GlobalText)`
+  font-family: ${props => props.theme.font.clover};
+  color: ${props => props.theme.color.primary};
+  font-size: 27px;
+`;
 const My = ({navigation}: any) => {
   const isLoggedIn = useRecoilValue(isLoggedInState); // isLoggedInState 상태 가져오기
   const userData = useRecoilValue(userDataState); // userDataState 상태 가져오기
@@ -31,9 +47,53 @@ const My = ({navigation}: any) => {
           </Text>
         </TouchableOpacity>
       </MyHeader>
-      <StyledText>Mypage</StyledText>
-      <StyledText>로그인 여부 : {isLoggedIn.toString()}</StyledText>
-      <StyledText>{userData.memberInfo.nickname}</StyledText>
+      {userData && (
+        <View
+          style={css`
+            width: 100%;
+            padding: 0 32px;
+          `}>
+          <View
+            style={css`
+              flex-direction: row;
+            `}>
+            <View
+              style={css`
+                flex-direction: row;
+                align-items: center;
+              `}>
+              <Text>그림</Text>
+            </View>
+            <View>
+              <View
+                style={css`
+                  flex-direction: row;
+                  align-items: center;
+                `}>
+                <NicknameText>{userData.memberInfo.nickname}</NicknameText>
+                <CertifiedText>{userData.memberInfo.certified ? '세대원 인증' : '세대원 미인증'}</CertifiedText>
+              </View>
+              <View>
+                <ApartText>싸피아파트, 1201동 303호</ApartText>
+              </View>
+            </View>
+          </View>
+
+          <View>
+            <Text>나의 이웃지수</Text>
+            <StyledText>{userData.memberInfo.score}</StyledText>
+          </View>
+          <View>
+            <Text>나의 활동</Text>
+          </View>
+          <View>
+            <Text>나의 인증</Text>
+          </View>
+          <View>
+            <Text>나의 뭐시기</Text>
+          </View>
+        </View>
+      )}
     </GlobalContainer>
   );
 };
