@@ -87,6 +87,7 @@ public class DealServiceImpl implements DealService{
 
     //동별 거래 전체 조회 + 거래 유형 필터
     @Override
+    @Transactional(readOnly = true)
     public List<DealDto.Response> getDealsByDong(Long dongId, DealType dealType) {
         // 로그인 사용자 id
         Long loginUserId = getLoginUserId();
@@ -110,6 +111,7 @@ public class DealServiceImpl implements DealService{
 
     // 동별 거래 건 수 조회
     @Override
+    @Transactional(readOnly = true)
     public Long countDealsByDong(Long dongId, DealType dealType) {
         // 로그인 사용자 id
         Long loginUserId = getLoginUserId();
@@ -125,6 +127,7 @@ public class DealServiceImpl implements DealService{
 
     // 사용자별 거래(요청 or 수행) 전체 조회
     @Override
+    @Transactional(readOnly = true)
     public List<DealDto.Response> getDealsByMemberId(String requestOrAccept,Long memberId) {
         // 로그인 사용자 id
         Long loginUserId = getLoginUserId();
@@ -234,7 +237,6 @@ public class DealServiceImpl implements DealService{
                 () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
         );
 
-        System.out.println("dto.getDealType() = " + dto.getDealType());
 //        DealDto.Request updateDto = DealDto.Request.builder()
 //                .id(deal.getId())
 //                .title(dto.getTitle())
@@ -260,12 +262,15 @@ public class DealServiceImpl implements DealService{
 
 
 
-    // 수락 and 수락 취소
+    // 수락 and 수락 취소 (수행자)
     @Override
-    public DealDto.Response acceptDeal(Long id, Long acceptId) {
+    public DealDto.Response acceptDeal(Long id) {
         Deal deal = dealRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
         );
+
+        // 로그인 사용자 id
+        Long loginUserId = getLoginUserId();
 
         // 거래 상태 확인
         // 수락
@@ -273,7 +278,7 @@ public class DealServiceImpl implements DealService{
             // 수락자 확인
 //            System.out.println("acceptUser = " + acceptUser);
 //            System.out.println("acceptUserId = " + acceptUser.getId());
-            if (deal.getRequestId().equals(acceptId)) {
+            if (deal.getRequestId().equals(loginUserId)) {
                 throw new IllegalStateException("요청자와 수락자는 같을 수 없음");
             }
 
@@ -299,7 +304,7 @@ public class DealServiceImpl implements DealService{
 //                    .build();
 //            // 엔티티 갱신
 //            deal.update(acceptDto);
-            deal.setAcceptId(acceptId);
+            deal.setAcceptId(loginUserId);
             deal.setDealStatus(Deal.DealStatus.ING);
 //            updateDto.update()
 
@@ -335,7 +340,7 @@ public class DealServiceImpl implements DealService{
     }
 
 
-    // 거래 완료
+    // 거래 완료(요청자)
     @Override
     public DealDto.Response closeDeal(Long id) {
         Deal deal = dealRepository.findById(id).orElseThrow(
@@ -385,7 +390,6 @@ public class DealServiceImpl implements DealService{
     }
 
 
-    @Transactional
     // 거래 리뷰
     @Override
     public MemberDto.Response reviewDeal(Long id, String gb) {
@@ -455,7 +459,7 @@ public class DealServiceImpl implements DealService{
 
 
 
-    // 삭제 (CANCLE)
+    // 삭제 (CANCEL)
     @Override
     public void deleteDeal(Long id) {
         Deal deal = dealRepository.findById(id).orElseThrow(
@@ -495,6 +499,7 @@ public class DealServiceImpl implements DealService{
                 ))
                 .complaintType(dealComplaint.getComplaintType())
                 .content(dealComplaint.getContent())
+                .isRead(false)
                 .build();
 
         dealComplaintRepository.save(complaint);

@@ -109,16 +109,15 @@ public class DealController {
 
 
     /**
-     * 거래 최종수락 and 수락 취소 --> 수정 필요!
+     * 거래 최종수락 and 수락 취소 (수행자)
      */
     @PutMapping("/accept/{id}")
     public ResponseEntity<?> acceptDeal(
-            @PathVariable Long id,
-            @RequestBody DealDto.Request dto) throws Exception {
+            @PathVariable Long id) throws Exception {
 
 //        System.out.println("acceptId = " + acceptId);
 
-        DealDto.Response response = dealService.acceptDeal(id, dto.getAcceptId());
+        DealDto.Response response = dealService.acceptDeal(id);
         if (response.getDealStatus() == Deal.DealStatus.ING) {
             return ResponseEntity.ok("거래가 수락되었습니다.");
         } else {
@@ -159,7 +158,7 @@ public class DealController {
 
 
     /**
-     * 거래 삭제 (CANCLE)
+     * 거래 삭제 (CANCEL)
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDeal(

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "deal")
@@ -67,24 +68,18 @@ public class Deal extends BaseTimeEntity {
     private List<DealImage> dealImages = new ArrayList<>();
 
 
-    // 수정/수락 로직
+    // 수정 로직
     public void update(DealDto.Request dto) {
 
-        if (dto.getAcceptId() != null) {
-            this.acceptId = dto.getAcceptId();
-        } else {
-            this.acceptId = null;
-        }
-
+//        if (dto.getAcceptId() != null || !dto.getItem().isEmpty()) this.acceptId = dto.getAcceptId();
         if (dto.getTitle() != null) this.title = dto.getTitle();
         if (dto.getContent() != null) this.content = dto.getContent();
 
         if (dto.getCash() == 0) {
             this.item = dto.getItem();
-            this.cash = dto.getCash();
             this.rewardType = RewardType.ITEM;
 
-        } else if (dto.getItem() == null || dto.getItem().isEmpty()){
+        } else if (dto.getItem() == null || !dto.getItem().isEmpty()){
             this.cash = dto.getCash();
             this.item = null;
             this.rewardType = RewardType.CASH;
@@ -92,8 +87,8 @@ public class Deal extends BaseTimeEntity {
         if (dto.getCash() != 0 && dto.getItem() != null)
             throw new IllegalArgumentException("두 보상을 동시에 선택할 수 없음");
 
-        if (dto.getComplaint() > 0) this.complaint = dto.getComplaint();
-        if (dto.getDealStatus() != null) this.dealStatus = dto.getDealStatus();
+//        if (dto.getComplaint() > 0) this.complaint = dto.getComplaint();
+//        if (dto.getDealStatus() != null) this.dealStatus = dto.getDealStatus();
         if (dto.getDealType() != null) this.dealType = dto.getDealType();
         if (dto.getExpireAtStr() != null) this.expireAt = LocalDateTime.parse(dto.getExpireAtStr(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         if (dto.getDealImages() != null) this.dealImages = dto.getDealImages();
