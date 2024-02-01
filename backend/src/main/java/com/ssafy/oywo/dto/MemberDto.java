@@ -1,12 +1,12 @@
 package com.ssafy.oywo.dto;
 
-import com.ssafy.oywo.entity.Ho;
-import com.ssafy.oywo.entity.Member;
+import com.ssafy.oywo.entity.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,6 @@ public class MemberDto {
                     .password(password)
                     .birthDate(birthDate)
                     .phoneNumber(phoneNumber)
-                    .createdAt(new Timestamp(System.currentTimeMillis()))
                     .isCertified(false)
                     .score(50)              // 기본값 50
                     .certificationImg(apartCertificateImg)
@@ -54,45 +53,83 @@ public class MemberDto {
 
     // 회원 정보와 회원이 등록한 집 정보를 담은 class
     @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class Response{
         private Long id;
         private String nickname;
         private String username;
+        private String password;
         private Date birthDate;
         private String phoneNumber;
         private int score;
+        private String profileImg;
+        private int penaltyCount;
         private boolean isCertified;
+        private String fcmToken;
+
 
         private Long dongId;
         private String dongName;
         private Long hoId;
         private String hoName;
 
-        private List<String> roles=new ArrayList<>();
-        public Response(Member member, Ho ho){
-            this.id=member.getId();
-            this.nickname=member.getNickname();
-            this.username=member.getUsername();
-            this.birthDate=member.getBirthDate();
-            this.phoneNumber=member.getPhoneNumber();
-            this.score=member.getScore();
-            this.roles=member.getRoles();
-            this.isCertified=member.isCertified();
-            this.dongId=ho.getDong().getId();
-            this.dongName=ho.getDong().getName();
-            this.hoId=ho.getId();
-            this.hoName=ho.getName();
+        private String certificationImg;
+        private Time notificationStart;
+        private Time notificationEnd;
+        private List<ChatRoom> chatRooms;
+        private List<NotiDong> notiDongs;
+        private List<NotiDealCategory> notiDealCategories;
+        private List<MembersNotification> membersNotifications;
+
+        public static Response of(Member member, Ho ho){
+            return Response.builder()
+                    .id(member.getId())
+                    .username(member.getUsername())
+                    .nickname(member.getNickname())
+                    .birthDate(member.getBirthDate())
+                    .phoneNumber(member.getPhoneNumber())
+                    .score(member.getScore())
+                    .isCertified(member.isCertified())
+                    .dongId(ho.getDong().getId())
+                    .dongName(ho.getDong().getName())
+                    .hoId(ho.getId())
+                    .hoName(ho.getName())
+                    .build();
+        }
+        public static Response of(Member member){
+            return Response.builder()
+                    .id(member.getId())
+                    .nickname(member.getNickname())
+                    .username(member.getUsername())
+                    .birthDate(member.getBirthDate())
+                    .phoneNumber(member.getPhoneNumber())
+                    .score(member.getScore())
+                    .isCertified(member.isCertified())
+                    .notificationStart(member.getNotificationStart())
+                    .notificationEnd(member.getNotificationEnd())
+                    .notiDealCategories(member.getNotiDealCategories())
+                    .notiDongs(member.getNotiDongs())
+                    .build();
         }
 
-        public Response(Member member){
-            this.id=member.getId();
-            this.nickname=member.getNickname();
-            this.username=member.getUsername();
-            this.birthDate=member.getBirthDate();
-            this.phoneNumber=member.getPhoneNumber();
-            this.score=member.getScore();
-            this.roles=member.getRoles();
-            this.isCertified=member.isCertified();
+        public Member toEntity(){
+            return Member.builder()
+                    .id(id)
+                    .nickname(nickname)
+                    .username(username)
+                    .password(password)
+                    .birthDate(birthDate)
+                    .phoneNumber(phoneNumber)
+                    .score(score)
+                    .fcmToken(fcmToken)
+                    .isCertified(isCertified)
+                    .notificationStart(notificationStart)
+                    .notificationEnd(notificationEnd)
+                    .notiDealCategories(notiDealCategories)
+                    .notiDongs(notiDongs)
+                    .build();
         }
     }
     @Data
@@ -118,7 +155,6 @@ public class MemberDto {
                     .password(req.getPassword())
                     .birthDate(req.getBirthDate())
                     .phoneNumber(req.getPhoneNumber())
-                    .createdAt(new Timestamp(System.currentTimeMillis()))
                     .isCertified(isCertified)
                     .score(50)              // 기본값 50
                     .certificationImg(req.getApartCertificateImg())
@@ -128,5 +164,71 @@ public class MemberDto {
             return member;
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class TotalInfo{
+        private Long id;
+        private String nickname;
+        private String username;
+        private String password;
+        private Date birthDate;
+        private String phoneNumber;
+        private int score;
+        private String profileImg;
+        private int penaltyCount;
+        private boolean isCertified;
+        private String fcmToken;
+        private String inviteCode;
+
+        private Long aptId;
+        private String aptName;
+        private Long dongId;
+        private String dongName;
+        private Long hoId;
+        private String hoName;
+
+        private Timestamp createdAt;
+        private Timestamp updatedAt;
+        private Timestamp deletedAt;
+        private String certificationImg;
+        private Time notificationStart;
+        private Time notificationEnd;
+        private List<ChatRoom> chatRooms;
+        private List<NotiDong> notiDongs;
+        private List<NotiDealCategory> notiDealCategories;
+        private List<MembersNotification> membersNotifications;
+
+
+
+        public TotalInfo toTotalInfo(Response response,DongDto.Response dong,HoDto ho) {
+            TotalInfo totalInfo=TotalInfo.builder()
+                    .id(response.getId())
+                    .nickname(response.getNickname())
+                    .username(response.getUsername())
+                    .birthDate(response.getBirthDate())
+                    .phoneNumber(response.getPhoneNumber())
+                    .score(response.getScore())
+                    .profileImg(response.getProfileImg())
+                    .penaltyCount(response.getPenaltyCount())
+                    .isCertified(response.isCertified())
+                    .fcmToken(response.getFcmToken())
+                    .chatRooms(response.getChatRooms())
+                    .notiDongs(response.getNotiDongs())
+                    .notiDealCategories(response.getNotiDealCategories())
+                    .membersNotifications(response.getMembersNotifications())
+                    .hoId(ho.getId())
+                    .hoName(ho.getName())
+                    .dongId(dong.getDongId())
+                    .dongName(dong.getName())
+                    .aptId(dong.getApartment().getId())
+                    .aptName(dong.getApartment().getName())
+                    .build();
+            return totalInfo;
+        }
+
+        }
 
 }

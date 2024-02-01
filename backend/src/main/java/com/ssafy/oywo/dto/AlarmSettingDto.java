@@ -12,7 +12,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.sql.Time;
 import java.util.List;
 
-public class AlarmDto {
+
+public class AlarmSettingDto {
 
 
     /**
@@ -22,7 +23,7 @@ public class AlarmDto {
     @NoArgsConstructor
     @Getter
     @Builder
-    public static class Setting{
+    public static class Request{
         private Long memberId;              // 사용자 id
 
         private boolean isNotiDongAll;        // 모든 동 알림 여부

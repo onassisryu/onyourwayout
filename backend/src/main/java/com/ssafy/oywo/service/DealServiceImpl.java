@@ -340,7 +340,7 @@ public class DealServiceImpl implements DealService{
                 .build()
         );
 
-        return new MemberDto.Response(member);
+        return MemberDto.Response.of(member);
     }
 
 

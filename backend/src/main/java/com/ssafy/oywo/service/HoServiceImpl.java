@@ -1,5 +1,6 @@
 package com.ssafy.oywo.service;
 
+import com.ssafy.oywo.dto.HoDto;
 import com.ssafy.oywo.entity.Ho;
 import com.ssafy.oywo.repository.HoRepository;
 import lombok.RequiredArgsConstructor;
