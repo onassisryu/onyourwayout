@@ -1,16 +1,15 @@
 // import 내용
 import React, { useState, useEffect } from 'react';
 import styled from '@emotion/native';
-import { NavigationProp } from '@react-navigation/native';
 import { xdeleteIcon } from '~/icons';
-import theme from '@/Theme';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  View,
   TouchableOpacity,
-  ImageSourcePropType,
+  Modal,
+  View,
+  Text,
   Switch,
-  TextInput
+  Button,
 } from 'react-native';
 import { GlobalText, GlobalContainer, GlobalButton } from '@/GlobalStyles';
 
@@ -19,12 +18,11 @@ const SettingsComponent = styled(GlobalContainer)`
   align-items: initial;
   margin-left: 30px;
   margin-right: 30px;
-
 `;
 
 const SettingsTitle = styled(GlobalText)`
-  font-size: ${theme.fontSize.medium};
-  color: ${theme.color.black};
+  font-size: ${props => props.theme.fontSize.medium};
+  color: ${props => props.theme.color.black};
   font-weight: bold;
   margin-bottom: 15px;
 `;
@@ -33,22 +31,20 @@ const KeywordInput = styled.TextInput`
   border: 1px solid #00D282;
   border-radius: 15px;
   padding: 10px;
-  color: ${theme.color.gray};
   margin-bottom: 10px;
-  color: ${theme.color.black}
 `;
 
 const KeywordButton = styled(GlobalButton)`
   position: absolute;
-  right: 10px;
-  top: 40px;
+  right: 15px;
+  top: 50px;
   background-color: white;
-  color: ${theme.color.primary};
+  color: ${props => props.theme.color.primary};
   margin-left: 10px;
 `;
 
 const KeywordButtonText = styled(GlobalText)`
-  color: ${theme.color.primary};
+  color: ${props => props.theme.color.primary};
   font-weight: bold;
 `;
 
@@ -69,8 +65,8 @@ const KeywordsubContainer = styled(GlobalContainer)`
 `;
 
 const KeywordList = styled(GlobalText)`
-  font-size: ${theme.fontSize.medium};
-  color: ${theme.color.primary};
+  font-size: ${props => props.theme.fontSize.medium};
+  color: ${props => props.theme.color.primary};
   font-weight: 900;
   padding: 10px;
 `;
@@ -82,64 +78,100 @@ const KeywordDelete = styled.Image`
   margin-right: 5px;
 `;
 
+
 const NoticeSettingsKeyword = () => {
    
-  const [inputKeyword, setInputKeyword] = useState('알림 받을 키워드를 입력해주세요');
+  const placeholderText = '알림 받을 키워드를 입력해주세요';
+  const [inputKeyword, setInputKeyword] = useState(placeholderText);
   const [keywords, setKeywords] = useState<string[]>([]);
 
+  // 사용자가 키워드 입력란에 입력하는 글자
   const handleKeywordChange = (text: string) => {
-    if (text === '') {
-      setInputKeyword('알림 받을 키워드를 입력해주세요');
-    } else {
-      setInputKeyword(text);
-    }
+    setInputKeyword(text || placeholderText);
   };
-
+  
+  // 사용자가 '등록' 버튼을 누르면 입력한 키워드를 키워드 목록에 추가하고, 입력란을 초기화
   const handleKeywordSubmit = () => {
-    if (inputKeyword && inputKeyword !== '알림 받을 키워드를 입력해주세요') {
+    if (inputKeyword && inputKeyword !== placeholderText) {
       setKeywords([...keywords, inputKeyword]);
+      setInputKeyword(placeholderText);
     }
-    setInputKeyword('알림 받을 키워드를 입력해주세요');
   };
-
-
+  
+  // 사용자가 키워드 입력란을 누르면, 초기 안내 메시지를 지움
   const handleInputFocus = () => {
-    if (inputKeyword === '알림 받을 키워드를 입력해주세요') {
+    if (inputKeyword === placeholderText) {
       setInputKeyword('');
     }
   };
+  
+  const [modalVisible, setModalVisible] = useState(false);
+  const [keywordToDelete, setKeywordToDelete] = useState('')
+  const [doNotShowAgain, setDoNotShowAgain] = useState(false);
+
+  const handleDoNotShowAgainChange = (newValue: boolean) => {
+    setDoNotShowAgain(newValue);
+  };
 
   const handleKeywordDelete = (keywordToDelete: string) => {
-    setKeywords(keywords.filter(keyword => keyword !== keywordToDelete));
+    setKeywordToDelete(keywordToDelete);
+    setModalVisible(true);
   };
+
+  const handleDeleteConfirm = () => {
+    setKeywords(keywords.filter(keyword => keyword !== keywordToDelete));
+    setModalVisible(false);
+  };
+
+  
 
   return (
     <SettingsComponent>
       <SettingsTitle> 거래 키워드 </SettingsTitle>
-      
-        <KeywordInput
-          value={inputKeyword === '알림 받을 키워드를 입력해주세요' ? '' : inputKeyword}
-          onChangeText={handleKeywordChange}
-          onFocus={handleInputFocus}
-          placeholder='알림 받을 키워드를 입력해주세요'
-          placeholderTextColor={theme.color.gray}
-        />
-        <KeywordButton onPress={handleKeywordSubmit}>
-          <KeywordButtonText>등록</KeywordButtonText>
-        </KeywordButton>
+      <KeywordInput
+        value={inputKeyword === placeholderText ? '' : inputKeyword}
+        onChangeText={handleKeywordChange}
+        onFocus={handleInputFocus}
+        placeholder={placeholderText}
+        placeholderTextColor={'#B2B2B2'}
+      />
+      <KeywordButton onPress={handleKeywordSubmit}>
+        <KeywordButtonText>등록</KeywordButtonText>
+      </KeywordButton>
+      <KeywordContainer>
+        {keywords.map((keyword, index) => (
+          <KeywordsubContainer key={keyword}>
+            <KeywordList key={index}>{keyword}</KeywordList>
+            <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center' }} onPress={() => handleKeywordDelete(keyword)}>
+              <KeywordDelete source={xdeleteIcon}/>
+            </TouchableOpacity>   
+          </KeywordsubContainer>
+        ))}
+      </KeywordContainer>
 
-        
-            <KeywordContainer>
-              {keywords.map((keyword, index) => (
-              <KeywordsubContainer>
-                <KeywordList>{keyword}</KeywordList>
-                <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center' }} onPress={() => handleKeywordDelete(keyword)}>
-                  <KeywordDelete source={xdeleteIcon}/>
-                </TouchableOpacity>   
-              </KeywordsubContainer>
-            ))}
-            </KeywordContainer>
-
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View>
+          <Text>정말로 삭제하시겠습니까?</Text>
+          <Switch
+            onValueChange={handleDoNotShowAgainChange}
+            value={doNotShowAgain}
+          />
+          <Text>다시 보지 않기</Text>
+          <Button
+            onPress={handleDeleteConfirm}
+            title="삭제"
+          />
+          <Button
+            onPress={() => setModalVisible(false)}
+            title="취소"
+          />
+        </View>
+      </Modal>
     </SettingsComponent>
   );
 };
