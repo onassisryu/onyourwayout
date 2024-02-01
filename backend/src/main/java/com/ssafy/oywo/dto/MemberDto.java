@@ -69,6 +69,7 @@ public class MemberDto {
         private boolean isCertified;
         private String fcmToken;
 
+
         private Long dongId;
         private String dongName;
         private Long hoId;
@@ -163,5 +164,71 @@ public class MemberDto {
             return member;
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class TotalInfo{
+        private Long id;
+        private String nickname;
+        private String username;
+        private String password;
+        private Date birthDate;
+        private String phoneNumber;
+        private int score;
+        private String profileImg;
+        private int penaltyCount;
+        private boolean isCertified;
+        private String fcmToken;
+        private String inviteCode;
+
+        private Long aptId;
+        private String aptName;
+        private Long dongId;
+        private String dongName;
+        private Long hoId;
+        private String hoName;
+
+        private Timestamp createdAt;
+        private Timestamp updatedAt;
+        private Timestamp deletedAt;
+        private String certificationImg;
+        private Time notificationStart;
+        private Time notificationEnd;
+        private List<ChatRoom> chatRooms;
+        private List<NotiDong> notiDongs;
+        private List<NotiDealCategory> notiDealCategories;
+        private List<MembersNotification> membersNotifications;
+
+
+
+        public TotalInfo toTotalInfo(Response response,DongDto.Response dong,HoDto ho) {
+            TotalInfo totalInfo=TotalInfo.builder()
+                    .id(response.getId())
+                    .nickname(response.getNickname())
+                    .username(response.getUsername())
+                    .birthDate(response.getBirthDate())
+                    .phoneNumber(response.getPhoneNumber())
+                    .score(response.getScore())
+                    .profileImg(response.getProfileImg())
+                    .penaltyCount(response.getPenaltyCount())
+                    .isCertified(response.isCertified())
+                    .fcmToken(response.getFcmToken())
+                    .chatRooms(response.getChatRooms())
+                    .notiDongs(response.getNotiDongs())
+                    .notiDealCategories(response.getNotiDealCategories())
+                    .membersNotifications(response.getMembersNotifications())
+                    .hoId(ho.getId())
+                    .hoName(ho.getName())
+                    .dongId(dong.getDongId())
+                    .dongName(dong.getName())
+                    .aptId(dong.getApartment().getId())
+                    .aptName(dong.getApartment().getName())
+                    .build();
+            return totalInfo;
+        }
+
+        }
 
 }

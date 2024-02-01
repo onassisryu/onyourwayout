@@ -1,11 +1,14 @@
 package com.ssafy.oywo.controller;
 
+import com.ssafy.oywo.dto.DongDto;
+import com.ssafy.oywo.dto.HoDto;
 import com.ssafy.oywo.dto.JwtToken;
 import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.entity.Apartment;
 import com.ssafy.oywo.entity.Dong;
 import com.ssafy.oywo.entity.Ho;
 import com.ssafy.oywo.entity.Member;
+import com.ssafy.oywo.service.DongService;
 import com.ssafy.oywo.service.HoService;
 import com.ssafy.oywo.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,10 +22,8 @@ import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+
 
 @Slf4j
 @RestController
@@ -32,6 +33,7 @@ public class MemberController {
 
     private final MemberService memberSerivce;
     private final HoService hoService;
+    private final DongService dongService;
     /**
      * 로그인
      * 인증 불필요
@@ -51,10 +53,20 @@ public class MemberController {
             log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
             MemberDto.Response memberResponse=memberSerivce.getMemberInfo(username,password);
+            MemberDto.TotalInfo totalMemberInfo=new MemberDto.TotalInfo();
+
+
+            // 사용자 id로 아파트, 동, 호를 저장한다.
+            Long hoId=memberSerivce.getHoIdByMemberId(memberResponse.getId());
+            Ho ho=hoService.getHoById(hoId).orElseThrow(()->new NoSuchElementException("찾을 수 없는 호입니다"));
+            HoDto hoDto=HoDto.builder().name(ho.getName()).id(ho.getId()).name(ho.getName()).build();
+            DongDto.Response dongResponse=dongService.getDongByHoId(hoId);
+
+            totalMemberInfo = totalMemberInfo.toTotalInfo(memberResponse,dongResponse,hoDto);
 
             HashMap<String,Object> payload=new HashMap<>();
             payload.put("token",jwtToken);
-            payload.put("memberInfo",memberResponse);
+            payload.put("memberInfo",totalMemberInfo);
             System.out.println(payload);
             return ResponseEntity.ok(payload);
 
