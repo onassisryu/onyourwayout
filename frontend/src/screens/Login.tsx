@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {useSetRecoilState} from 'recoil';
-import {isLoggedInState} from '../recoil/atoms';
+import {isLoggedInState, userDataState} from '../recoil/atoms';
 import React, {useState, useEffect} from 'react';
 import {Text, Alert, View, Keyboard, TouchableWithoutFeedback, Image, TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
@@ -8,6 +8,7 @@ import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import DefaultButton from '@/components/DefaultButton';
 import theme from '@/Theme';
 import Ionic from 'react-native-vector-icons/Ionicons';
+import Ant from 'react-native-vector-icons/AntDesign';
 
 interface StyledInputProps {
   isnotValue?: boolean;
@@ -60,6 +61,7 @@ const Login = ({navigation}: any) => {
   const handleLoginSuccess = () => {
     setIsLoggedIn(true); // Recoil 상태를 업데이트하여 로그인 상태를 true로 변경
   };
+  const setUserData = useSetRecoilState(userDataState); // useSetRecoilState 훅으로 상태 업데이트 함수 가져오기
   function login() {
     if (username.trim() === '') {
       Alert.alert('아이디 입력 확인', '아이디가 입력되지 않았습니다.');
@@ -71,7 +73,8 @@ const Login = ({navigation}: any) => {
         .then(function (resp) {
           console.log(resp.data);
           if (resp.data !== null && resp.data != '') {
-            handleLoginSuccess;
+            handleLoginSuccess();
+            setUserData(resp.data); // 받아온 데이터를 Recoil 상태에 저장
             console.log('로그인 성공');
           } else {
             Alert.alert('로그인 실패', '아이디나 비밀번호를 확인하세요.');
@@ -81,6 +84,8 @@ const Login = ({navigation}: any) => {
         })
         .catch(function (err) {
           console.log(`Error Message: ${err}`);
+          console.log(username);
+          console.log(password);
         });
     }
   }
@@ -100,6 +105,11 @@ const Login = ({navigation}: any) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Container>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text>
+            <Ant name="arrowleft" size={40} color="black" />
+          </Text>
+        </TouchableOpacity>
         <StyledText
           style={css`
             margin-top: 60px;

@@ -1,41 +1,40 @@
 import React from 'react';
-import {Button} from 'react-native';
+import {Button, TouchableOpacity, Text} from 'react-native';
 import styled from '@emotion/native';
-import Styled from 'styled-components/native';
-import {GlobalContainer, GlobalButton} from '@/GlobalStyles';
-const Container = styled(GlobalContainer)`
-  justify-content: center;
-  align-items: center;
+import {useRecoilValue} from 'recoil'; // useRecoilValue 훅 추가
+import {GlobalContainer} from '@/GlobalStyles';
+import {isLoggedInState, userDataState} from '../recoil/atoms';
+import Header from '@/components/Header';
+import Ant from 'react-native-vector-icons/AntDesign';
+const MyHeader = styled(Header)`
+  justify-content: flex-end;
 `;
-
 const StyledText = styled.Text`
   font-size: 30px;
   margin-bottom: 10px;
 `;
 
-const StyledText2 = styled.Text`
-  font-size: 30px;
-  margin-bottom: 10px;
-  font-weight: 400;
-  font-family: 'DancingScript-Bold';
-`;
-
-const StyledText3 = Styled.Text`
-  font-size: 30px;
-  margin-bottom: 10px;
-  font-weight: 400;
-  font-family:'DancingScript-Bold';
-`;
-
 const My = ({navigation}: any) => {
+  const isLoggedIn = useRecoilValue(isLoggedInState); // isLoggedInState 상태 가져오기
+  const userData = useRecoilValue(userDataState); // userDataState 상태 가져오기
+  if (!isLoggedIn) {
+    // isLoggedIn이 false이면 로그인 페이지로 이동
+    navigation.navigate('Login');
+    return null; // 로그인 페이지로 이동하면 현재 컴포넌트는 렌더링하지 않음
+  }
   return (
-    <Container>
-      <StyledText>My</StyledText>
-      <StyledText2>My</StyledText2>
-      <StyledText3>My</StyledText3>
-      <Button title="go to the list screen" />
-      <Button title="Login" onPress={() => navigation.navigate('Login')} />
-    </Container>
+    <GlobalContainer>
+      <MyHeader>
+        <TouchableOpacity onPress={() => navigation.navigate('MySetting')}>
+          <Text>
+            <Ant name="setting" size={30} color="black" />
+          </Text>
+        </TouchableOpacity>
+      </MyHeader>
+      <StyledText>Mypage</StyledText>
+      <StyledText>로그인 여부 : {isLoggedIn.toString()}</StyledText>
+      <StyledText>{userData.memberInfo.nickname}</StyledText>
+    </GlobalContainer>
   );
 };
 
