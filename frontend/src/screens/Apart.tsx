@@ -1,7 +1,6 @@
 import React from 'react';
 import {Button} from 'react-native';
 import styled from '@emotion/native';
-import Header from '@/components/Header';
 
 const Container = styled.View`
   justify-content: center;
@@ -16,9 +15,8 @@ const StyledText = styled.Text`
 const Apart = () => {
   return (
     <Container>
-      <Header>
-
-      </Header>
+      <StyledText>Apart</StyledText>
+      <Button title="go to the list screen" />
     </Container>
   );
 };
