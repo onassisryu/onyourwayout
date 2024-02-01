@@ -468,7 +468,7 @@ public class DealServiceImpl implements DealService{
             throw new IllegalStateException("거래 삭제 불가능: 해당 거래의 요청자와 현재 로그인 사용자가 다름");
         }
 
-        deal.setDealStatus(Deal.DealStatus.CANCLE);
+        deal.setDealStatus(Deal.DealStatus.CANCEL);
         // 상태관리
         dealRepository.save(deal);
         // 삭제 로직
