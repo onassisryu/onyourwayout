@@ -17,12 +17,12 @@ import {QueryClient, QueryClientProvider} from 'react-query';
 import {ThemeProvider} from '@emotion/react';
 import theme from '@/Theme';
 
-// //fcm
-// import messaging from '@react-native-firebase/messaging';
-// // 앱이 백그라운드에 있을때
-// messaging().setBackgroundMessageHandler(async remoteMessage => {
-//   console.log('[Background Remote Message]', remoteMessage);
-// });
+//fcm
+import messaging from '@react-native-firebase/messaging';
+// 앱이 백그라운드에 있을때
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('[Background Remote Message]', remoteMessage);
+});
 
 //page
 import Home from '@screens/Home';

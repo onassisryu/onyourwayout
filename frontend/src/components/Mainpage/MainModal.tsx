@@ -8,10 +8,9 @@ import {
     ImageSourcePropType,
     TouchableWithoutFeedback,
 } from 'react-native';
-import FontAwesome5 from '../SvgIcon';
 
 
-const ButtonContainer = styled(GlobalButton)`
+const AddButton = styled(GlobalButton)`
   position: absolute;
 
   bottom: 1px;
@@ -21,7 +20,11 @@ const ButtonContainer = styled(GlobalButton)`
   background-color: #00D282;
 `;
 
-
+const PlusText = styled(GlobalText)`
+  color: white;
+  font-size: 45px;
+  line-height: 40px;
+`;
 
 
 const ModalBackground = styled(GlobalContainer)`
@@ -76,8 +79,8 @@ const MainPlusButton = ({navigation}: any) => {
   return (
     <>
       <ButtonContainer onPress={() => setModalVisible(true)}>
-        <FontAwesome5 name="puppy" size={25} color="white" />
-      </ButtonContainer> 
+        <FontAwesome5 name="plus" size={25} color="white" />
+      </ButtonContainer>
       <Modal
         animationType="fade"
         transparent={true}
@@ -90,7 +93,7 @@ const MainPlusButton = ({navigation}: any) => {
           <ModalBackground style={{zIndex: 1}}>
             <ModalComponent>
               <ModalSubComponent onPress={() => {}}>
-                {/* <ModalImage source={outImage} /> */}
+                <ModalImage source={outImage} />
                 <ModalText> 나가요잉 </ModalText>
               </ModalSubComponent>
               <DistinctLine></DistinctLine>
@@ -99,7 +102,7 @@ const MainPlusButton = ({navigation}: any) => {
                   navigation.navigate('DoIt1');
                   setModalVisible(false);
                 }}>
-                {/* <ModalImage source={inImage} /> */}
+                <ModalImage source={inImage} />
                 <ModalText> 해줘요잉 </ModalText>
               </ModalSubComponent>
             </ModalComponent>
@@ -110,5 +113,37 @@ const MainPlusButton = ({navigation}: any) => {
   );
 };
 
+    return (
+        <View>
+          <AddButton onPress={() => setModalVisible(true)}>
+            <PlusText>+</PlusText>
+          </AddButton>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+                setModalVisible(false);
+            }}
+        >
+            <TouchableWithoutFeedback style={{ position: 'absolute', bottom: 20, right: 20 }} onPress={() => setModalVisible(false)}>
+                <ModalBackground>
+                <ModalComponent>
+                    <ModalSubComponent onPress={() => {}}>
+                    <ModalImage source={outImage}/> 
+                    <ModalText> 나가요잉 </ModalText>
+                    </ModalSubComponent>
+                    <DistinctLine></DistinctLine>
+                    <ModalSubComponent onPress={() => {}}>
+                    <ModalImage source={inImage}/> 
+                    <ModalText> 해줘요잉 </ModalText>
+                    </ModalSubComponent>
+                </ModalComponent>
+                </ModalBackground>
+            </TouchableWithoutFeedback>
+          </Modal>
+        </View>
+    )
+        }
 
-export default MainPlusButton;
+export default MainModal;
