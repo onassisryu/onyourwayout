@@ -117,7 +117,7 @@ public class AlarmController {
 
             // 전체 동 알림 여부 확인
             if(alarmDto.isNotiDongAll()){
-                modifiedMember=modifiedMember.builder().isNotiDongAll(true).build();
+                modifiedMember=modifiedMember.toBuilder().isNotiDongAll(true).build();
             }
             else{
                 List<NotiDong> dongList=new ArrayList<>();
@@ -126,12 +126,12 @@ public class AlarmController {
                 for (Long dongId:alarmDto.getDongIdList()){
                     dongList.add(NotiDong.builder().member(modifiedMember).dongId(dongId).build());
                 }
-                modifiedMember=modifiedMember.builder().notiDongs(dongList).build();
+                modifiedMember=modifiedMember.toBuilder().notiDongs(dongList).build();
             }
             // 전체 카테고리 알림 여부 확인
             if (alarmDto.isNotiDongAll()){
                 // 사용자 정보 전체 카테고리 알림으로 수정
-                modifiedMember=modifiedMember.builder().isNotiCategoryAll(true).build();
+                modifiedMember=modifiedMember.toBuilder().isNotiCategoryAll(true).build();
             }
             else{
                 List<NotiDealCategory> notiDealCategoryList=new ArrayList<>();
@@ -140,12 +140,12 @@ public class AlarmController {
                 for (DealType dealType:alarmDto.getDealTypeList()){
                     notiDealCategoryList.add(NotiDealCategory.builder().member(modifiedMember).dealType(dealType).build());
                 }
-                modifiedMember=modifiedMember.builder().notiDealCategories(notiDealCategoryList).build();
+                modifiedMember=modifiedMember.toBuilder().notiDealCategories(notiDealCategoryList).build();
             }
 
             // 시작 시간과 마지막 시간 설정
-            modifiedMember=modifiedMember.builder().notificationStart(alarmDto.getNotificationStart()).build();
-            modifiedMember=modifiedMember.builder().notificationEnd(alarmDto.getNotificationEnd()).build();
+            modifiedMember=modifiedMember.toBuilder().notificationStart(alarmDto.getNotificationStart()).build();
+            modifiedMember=modifiedMember.toBuilder().notificationEnd(alarmDto.getNotificationEnd()).build();
 
             MemberDto.Response memberResult=memberService.modify(modifiedMember);
             payload.put("memberId",memberResult.getId());

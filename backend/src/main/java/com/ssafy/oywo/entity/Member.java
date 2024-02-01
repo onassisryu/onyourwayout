@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "member")
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @ToString
 @NoArgsConstructor
