@@ -67,19 +67,17 @@ public class Deal extends BaseTimeEntity {
     private List<DealImage> dealImages = new ArrayList<>();
 
 
-    // 수정 로직
+    // 수정/수락 로직
     public void update(DealDto.Request dto) {
 
         if (dto.getAcceptId() != null) {
-            System.out.println("dto.getAcceptId() = " + dto.getAcceptId());
             this.acceptId = dto.getAcceptId();
+        } else {
+            this.acceptId = null;
         }
 
-        this.title = dto.getTitle();
-
-        if (dto.getContent() != null) {
-            this.content = dto.getContent();
-        }
+        if (dto.getTitle() != null) this.title = dto.getTitle();
+        if (dto.getContent() != null) this.content = dto.getContent();
 
         if (dto.getCash() == 0) {
             this.item = dto.getItem();
@@ -91,47 +89,19 @@ public class Deal extends BaseTimeEntity {
             this.item = null;
             this.rewardType = RewardType.CASH;
         }
-
-//        if (dto.getItem() != null || !dto.getItem().isEmpty()) {
-//            this.item = dto.getItem();
-//            this.cash = 0;
-//            this.rewardType = RewardType.ITEM;
-//
-//        } else if (dto.getCash() != 0) {
-//            this.cash = dto.getCash();
-//            this.item = null;
-//            this.rewardType = RewardType.CASH;
-//        }
-
-        if (dto.getCash() != 0 && dto.getItem() != null) {
+        if (dto.getCash() != 0 && dto.getItem() != null)
             throw new IllegalArgumentException("두 보상을 동시에 선택할 수 없음");
-        }
 
-
-//        if (dto.getRewardType() != null || !dto.getItem().isEmpty()) {
-//            this.rewardType = dto.getRewardType();
-//        }
-
-        if (dto.getComplaint() > 0) {
-            this.complaint = dto.getComplaint();
-        }
-
-        // dealStatus 갱신
-        this.dealStatus = dto.getDealStatus();
-        this.dealType = dto.getDealType();
-
-//            if (DealStatus.CLOSE.equals(dto.getDealStatus())) {
-//                this.deletedAt = LocalDateTime.now();
-//            }
-
-
-        if (dto.getExpireAtStr() != null) {
-            this.expireAt = LocalDateTime.parse(dto.getExpireAtStr(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        }
-
-        if (dto.getDealImages() != null) {
-            this.dealImages = dto.getDealImages();
-        }
-
+        if (dto.getComplaint() > 0) this.complaint = dto.getComplaint();
+        if (dto.getDealStatus() != null) this.dealStatus = dto.getDealStatus();
+        if (dto.getDealType() != null) this.dealType = dto.getDealType();
+        if (dto.getExpireAtStr() != null) this.expireAt = LocalDateTime.parse(dto.getExpireAtStr(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        if (dto.getDealImages() != null) this.dealImages = dto.getDealImages();
     }
+
+    // 거래 완료 로직
+    public void closeUpdate(DealDto.CloseRequest dto) {
+        this.dealStatus = dto.getDealStatus();
+    }
+
 }

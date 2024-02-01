@@ -18,23 +18,18 @@ public class DealDto {
     @Builder
     public static class Request {
         private Long id;
-        @NonNull
         private String title;
         private String content;
-        @NonNull
         private Long requestId;
         private Long acceptId;
         private int cash;
         private String item;
         private Deal.RewardType rewardType;
         private int complaint;
-        @NonNull
         private Deal.DealStatus dealStatus;
-        @NonNull
         private DealType dealType;
         private String expireAtStr;
         private List<DealImage> dealImages;
-        private LocalDateTime deletedAt;
 
         /*
         Dto -> Entity
@@ -70,6 +65,23 @@ public class DealDto {
                     .dealImages(dealImages)
                     .build();
             System.out.println("rewardType = " + rewardType);
+            return deal;
+        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class CloseRequest {
+        private Long id;
+        private Deal.DealStatus dealStatus;
+        private LocalDateTime deletedAt;
+
+        public Deal toAcceptEntity() {
+            Deal deal = Deal.builder()
+                    .dealStatus(dealStatus)
+                    .build();
             return deal;
         }
     }

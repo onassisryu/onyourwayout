@@ -3,6 +3,7 @@ package com.ssafy.oywo.service;
 import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.entity.Deal;
+import com.ssafy.oywo.entity.DealComplaint;
 import com.ssafy.oywo.entity.DealType;
 import com.ssafy.oywo.entity.Member;
 
@@ -25,14 +26,15 @@ public interface DealService {
     // 거래 수정
     DealDto.Response updateDeal(Long id, DealDto.Request dto);
     // 거래 수락 and 수락 취소
-    DealDto.Response acceptDeal(Long id, Long acceptId);
+    DealDto.Response acceptDeal(Long id, DealDto.Request dto);
     // 거래 완료
     DealDto.Response closeDeal(Long id);
     // 거래 리뷰
     MemberDto.Response reviewDeal(Long id, String gb);
     // 거래 삭제
     void deleteDeal(Long id);
-
+    // 거래 신고
+    void complaintDeal(Long id, DealComplaint dealComplaint);
 
 
     // 거래 신고

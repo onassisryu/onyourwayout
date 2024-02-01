@@ -2,10 +2,7 @@ package com.ssafy.oywo.controller;
 
 import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.dto.MemberDto;
-import com.ssafy.oywo.entity.Deal;
-import com.ssafy.oywo.entity.DealType;
-import com.ssafy.oywo.entity.Dong;
-import com.ssafy.oywo.entity.Member;
+import com.ssafy.oywo.entity.*;
 import com.ssafy.oywo.service.DealService;
 import com.ssafy.oywo.service.DongService;
 import lombok.RequiredArgsConstructor;
@@ -54,11 +51,12 @@ public class DealController {
      * 동별 거래 건 수 조회
      */
     @GetMapping("/dong/count")
-    public Long countDealsByDong (
+    public ResponseEntity<?> countDealsByDong (
             @RequestParam(name = "dong", defaultValue = "") Long dongId,
             @RequestParam(name = "dealType", defaultValue = "") DealType dealType) {
 
-        return dealService.countDealsByDong(dongId, dealType);
+        Long dealsByDongCnt = dealService.countDealsByDong(dongId, dealType);
+        return ResponseEntity.ok("현재 " + dongId + "동에 " + dealsByDongCnt + "건의 (" + dealType +") 해줘요잉이 있습니다.");
     }
 
 
@@ -118,8 +116,9 @@ public class DealController {
             @PathVariable Long id,
             @RequestBody DealDto.Request dto) throws Exception {
 
-        DealDto.Response response = dealService.acceptDeal(id, dto.getAcceptId());
-
+        System.out.println("id + dto = " + id + dto);
+        DealDto.Response response = dealService.acceptDeal(id, dto);
+        System.out.println("response.getDealStatus() == Deal.DealStatus.OPEN = " + (response.getDealStatus() == Deal.DealStatus.ING));
         if (response.getDealStatus() == Deal.DealStatus.ING) {
             return ResponseEntity.ok("거래가 수락되었습니다.");
         } else {
@@ -139,8 +138,8 @@ public class DealController {
     public ResponseEntity<?> closeDeal(
             @PathVariable Long id) throws Exception {
 
-        dealService.closeDeal(id);
-        return ResponseEntity.ok("해당 거래가 완료되었습니다.");
+
+        return ResponseEntity.ok(" 해당 거래가 완료되었습니다." + dealService.closeDeal(id));
     }
 
 
@@ -160,7 +159,7 @@ public class DealController {
 
 
     /**
-     * 거래 삭제 -- 완료아닌 삭제도 상태관리?
+     * 거래 삭제 (CANCLE)
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDeal(
@@ -172,14 +171,15 @@ public class DealController {
 
 
     /**
-     * 거래 신고 -- 수정필요
+     * 거래 신고
      */
     @PutMapping("/complain/{id}")
     public ResponseEntity<?> complainDeal(
             @PathVariable Long id,
-            @RequestBody DealDto.Request dto) throws Exception {
+            @RequestBody DealComplaint dealComplaint) throws Exception {
 
-        return ResponseEntity.ok("신고내역 테이블 필요!!!!");
+        dealService.complaintDeal(id, dealComplaint);
+        return ResponseEntity.ok("해당 거래 신고됨");
     }
 
 }
