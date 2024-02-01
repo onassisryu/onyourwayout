@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 
@@ -12,6 +16,8 @@ import java.math.BigDecimal;
 @Table(name = "apartment")
 @Getter
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE apartment SET deleted_at = NOW() WHERE uuid = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class Apartment extends BaseTimeEntity {
 
     @Id

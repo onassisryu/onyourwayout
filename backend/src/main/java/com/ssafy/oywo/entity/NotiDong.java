@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "noti_dong")
@@ -12,6 +14,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE noti_dong SET deleted_at = NOW() WHERE uuid = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class NotiDong extends BaseTimeEntity{
 
     @Id

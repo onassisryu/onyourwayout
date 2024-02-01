@@ -2,10 +2,9 @@ package com.ssafy.oywo.entity;
 
 import com.ssafy.oywo.dto.DealDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -15,10 +14,12 @@ import java.util.List;
 
 @Entity
 @Table(name = "deal")
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SQLDelete(sql = "UPDATE deal SET deleted_at = NOW() WHERE uuid = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class Deal extends BaseTimeEntity {
     public enum RewardType {
         CASH, ITEM

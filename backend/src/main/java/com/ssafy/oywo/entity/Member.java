@@ -4,6 +4,8 @@ package com.ssafy.oywo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE member SET deleted_at = NOW() WHERE uuid = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class Member extends BaseTimeEntity implements UserDetails {
 
     @Getter
