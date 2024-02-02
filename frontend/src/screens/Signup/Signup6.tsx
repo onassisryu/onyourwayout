@@ -19,6 +19,11 @@ import {
   ImageLibraryOptions,
   Asset,
 } from 'react-native-image-picker';
+
+import ff from 'images/convstore.png';
+import {PermissionsAndroid} from 'react-native';
+import {options} from 'axios';
+
 const InputContainer = styled.View`
   width: 100%;
   position: relative;
@@ -48,6 +53,25 @@ const Signup6 = ({navigation}: any) => {
   useEffect(() => {
     setIsDisabled(!name);
   }, [name]);
+
+  const showPicker = async () => {
+    const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('You can use the camera');
+    } else {
+      console.log('Camera permission denied');
+    }
+    const granted2 = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+    if (granted2 === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('You can use the camera');
+    } else {
+      console.log('Camera permission denied');
+    }
+
+    if (granted === PermissionsAndroid.RESULTS.GRANTED && granted2 === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('사용가능');
+    }
+  };
 
   const handleClearInput = () => {
     setName('');
@@ -133,6 +157,20 @@ const Signup6 = ({navigation}: any) => {
       setImg(uris[0]);
     }
   };
+  const [selectImage, setSelectImage] = useState('');
+  ////////////////////
+  const ImagePicker = () => {
+    let options = {
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    launchImageLibrary(options, (response: ImagePickerResponse) => {
+      setSelectImage(response.assets[0].uri);
+      console.log('Response = ', response.assets[0].uri);
+    });
+  };
   return (
     <GlobalContainer>
       <Header>
@@ -144,11 +182,21 @@ const Signup6 = ({navigation}: any) => {
           <View>
             <Button title="show camera app" onPress={showCamera}></Button>
             <Button title="show photo app" color={'green'} onPress={showPhoto}></Button>
+            <Button title="show photo app" color={'green'} onPress={showPicker}></Button>
           </View>
 
           <Text style={style.text}>{img.uri}</Text>
-
           <Image source={img} style={style.img}></Image>
+
+          <TouchableOpacity
+            onPress={() => {
+              ImagePicker();
+            }}
+            style={{height: 50, width: 100, backgroundColor: 'red'}}>
+            <Text>사진테스트버튼</Text>
+          </TouchableOpacity>
+
+          <Image source={{uri: selectImage}} style={{width: 200, height: 200}}></Image>
         </View>
 
         <NextButton

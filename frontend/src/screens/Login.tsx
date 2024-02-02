@@ -98,72 +98,74 @@ const Login = ({navigation}: any) => {
   }, [password]);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Container>
-        <StyledText
-          style={css`
-            margin-top: 60px;
-            margin-bottom: 60px;
-          `}>
-          나온김에
-        </StyledText>
-        <StyledInput
-          placeholder="아이디 입력"
-          placeholderTextColor={theme.color.gray200}
-          value={username}
-          onChangeText={text => setusername(text)}
-          isnotValue={isnotValueid}
-        />
+    <>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Container>
+          <StyledText
+            style={css`
+              margin-top: 60px;
+              margin-bottom: 60px;
+            `}>
+            나온김에
+          </StyledText>
+          <StyledInput
+            placeholder="아이디 입력"
+            placeholderTextColor={theme.color.gray200}
+            value={username}
+            onChangeText={text => setusername(text)}
+            isnotValue={isnotValueid}
+          />
 
-        <StyledInput
-          placeholder="비밀번호 입력"
-          placeholderTextColor={theme.color.gray200}
-          value={password}
-          onChangeText={text => setPassword(text)}
-          secureTextEntry
-          isnotValue={isnotValuepassword}
-        />
+          <StyledInput
+            placeholder="비밀번호 입력"
+            placeholderTextColor={theme.color.gray200}
+            value={password}
+            onChangeText={text => setPassword(text)}
+            secureTextEntry
+            isnotValue={isnotValuepassword}
+          />
 
-        <LoginButton title="로그인" color="primary" size="lg" disabled={isDisabled} onPress={() => login()} />
+          <LoginButton title="로그인" color="primary" size="lg" disabled={isDisabled} onPress={() => login()} />
 
-        <View
-          style={css`
-            flex-direction: row;
-            margin-top: 20px;
-          `}>
-          <Text>비밀번호 찾기 </Text>
+          <View
+            style={css`
+              flex-direction: row;
+              margin-top: 20px;
+            `}>
+            <Text>비밀번호 찾기 </Text>
+            <Text
+              style={css`
+                margin-right: 20px;
+                margin-left: 20px;
+              `}>
+              |
+            </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Signup6')}>
+              <Text>회원가입</Text>
+            </TouchableOpacity>
+          </View>
+
           <Text
             style={css`
-              margin-right: 20px;
-              margin-left: 20px;
+              margin-top: 60px;
             `}>
-            |
+            SNS 계정으로 간편로그인하세요.
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Signup6')}>
-            <Text>회원가입</Text>
-          </TouchableOpacity>
-        </View>
 
-        <Text
-          style={css`
-            margin-top: 60px;
-          `}>
-          SNS 계정으로 간편로그인하세요.
-        </Text>
-
-        <View
-          style={css`
-            flex-direction: row;
-            justify-content: space-between;
-            margin-top: 20px;
-            width: 70%;
-          `}>
-          <Image source={require('../../assets/icons/login_KAKAO.png')} />
-          <Image source={require('../../assets/icons/login_NAVER.png')} />
-          <Image source={require('../../assets/icons/login_GOOGLE.png')} />
-        </View>
-      </Container>
-    </TouchableWithoutFeedback>
+          <View
+            style={css`
+              flex-direction: row;
+              justify-content: space-between;
+              margin-top: 20px;
+              width: 70%;
+            `}>
+            <Image source={require('../../assets/icons/login_KAKAO.png')} />
+            <Image source={require('../../assets/icons/login_NAVER.png')} />
+            <Image source={require('../../assets/icons/login_GOOGLE.png')} />
+          </View>
+        </Container>
+      </TouchableWithoutFeedback>
+    </>
   );
 };
 
