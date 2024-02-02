@@ -9,6 +9,7 @@ import {TouchableOpacity, Text} from 'react-native';
 import Ant from 'react-native-vector-icons/AntDesign';
 import styled from '@emotion/native';
 import SvgIcon from '@components/SvgIcon';
+import GoBack from '@components/Signup/GoBack';
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -49,11 +50,7 @@ const DoIt = ({navigation}: Props) => {
   return (
     <GlobalContainer>
       <Header>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text>
-            <Ant name="arrowleft" size={40} color="black" />
-          </Text>
-        </TouchableOpacity>
+        <GoBack />
       </Header>
       <MainTextContainer>
         <MainText>이웃에게 어떤 일을</MainText>
@@ -63,7 +60,7 @@ const DoIt = ({navigation}: Props) => {
         <GlobalContainer>
           <TypeButton onPress={() => navigation.navigate('홈')}>
             <SvgIcon name="puppy" size={100}></SvgIcon>
-            <GlobalText>반려동물 산책</GlobalText>
+            <GlobalText style={{fontWeight: 'bold'}}>반려동물 산책</GlobalText>
           </TypeButton>
           <TypeButton onPress={() => navigation.navigate('홈')}>
             <GlobalText>장보기</GlobalText>
@@ -79,8 +76,6 @@ const DoIt = ({navigation}: Props) => {
         </GlobalContainer>
       </MainButtonContainer>
       <DefaultButton onPress={() => navigation.navigate('홈')} color="primary" title="test" />
-      <GlobalText style={{fontSize: 100}}>DoIt</GlobalText>
-      <GlobalText style={{fontSize: 100}}>DoIt</GlobalText>
       <GlobalText style={{fontSize: 100}}>DoIt</GlobalText>
     </GlobalContainer>
   );

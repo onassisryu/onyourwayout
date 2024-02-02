@@ -6,6 +6,9 @@ export const GlobalContainer = styled.View`
   font-size: ${theme.fontSize.medium};
   margin: 0;
   padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: ${theme.color.black};
   box-sizing: border-box;
   background-color: white;
