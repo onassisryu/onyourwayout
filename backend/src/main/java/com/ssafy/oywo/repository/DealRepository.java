@@ -62,7 +62,7 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " JOIN ho.dong dong " +
             " JOIN ho.member hoMember " +
             " WHERE dong.apartment.id = :apartmentId" +
-            " AND (:dongId IS NULL OR dong.id = :dongId) " +
+            " AND (:dongId IS NULL OR dong.id = :dongId)) " +
             " AND (:dealType IS NULL OR d.dealType IN :dealType) " +
             " AND d.dealStatus = :dealStatus")
     List<Deal> findDealsByDongIdAndDealType(
@@ -96,12 +96,12 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " JOIN ho.member hoMember " +
             " WHERE dong.apartment.id = :apartmentId " +
             " AND (:dongId IS NULL OR dong.id = :dongId)) " +
-            " AND (:dealType IS NULL OR d.dealType = :dealType) " +
+            " AND (:dealType IS NULL OR d.dealType IN :dealType) " +
             " AND d.dealStatus = :dealStatus")
     Long countDealsByDongIdAndDealType(
             @Param("apartmentId") Long apartmentId,
             @Param("dongId") @Nullable Long dongId,
-            @Param("dealType") @Nullable DealType dealType,
+            @Param("dealType") @Nullable List<DealType> dealType,
             @Param("dealStatus") Deal.DealStatus dealStatus
     );
 

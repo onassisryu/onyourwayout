@@ -17,7 +17,7 @@ public interface DealService {
     List<DealDto.Response> getDealsByDong(Long dongId, List<DealType> dealType);
 //    List<DealDto.Response> getDealsByDong(Long dongId, DealType dealType);
     // 동 별 거래 건수 조회
-    Long countDealsByDong(Long dongId, DealType dealType);
+    Long countDealsByDong(Long dongId, List<DealType> dealType);
     // 사용자별 거래(요청 or 수행) 전체 조회
     List<DealDto.Response> getDealsByMemberId(String requestOrAccept,Long memberId);
     // 거래 생성

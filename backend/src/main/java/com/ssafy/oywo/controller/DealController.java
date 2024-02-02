@@ -23,7 +23,6 @@ import java.util.List;
 public class DealController {
 
     private final DealService dealService;
-    private DongService dongService;
 
 
     /**
@@ -60,14 +59,12 @@ public class DealController {
     @GetMapping("/dong/count")
     public ResponseEntity<?> countDealsByDong (
             @RequestParam(name = "dong", defaultValue = "") Long dongId,
-            @RequestParam(name = "dealType", defaultValue = "") DealType dealType) {
+            @RequestParam(name = "dealType", defaultValue = "") List<DealType> dealType) {
 
         Long dealsByDongCnt = dealService.countDealsByDong(dongId, dealType);
-        if (dongId != null) {
-            return ResponseEntity.ok("현재 dongId =" + dongId + "에 " + dealsByDongCnt + "건의 (" + dealType +") 해줘요잉이 있습니다.");
-        } else {
-            return ResponseEntity.ok("현재 아파트에 " + dealsByDongCnt + "건의 (" + dealType +") 해줘요잉이 있습니다.");
-        }
+
+        return ResponseEntity.ok(dealsByDongCnt + "건의 " + " 해줘요잉이 있습니다.");
+
     }
 
 

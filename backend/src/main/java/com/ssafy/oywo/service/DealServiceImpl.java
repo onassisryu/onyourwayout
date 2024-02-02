@@ -121,7 +121,7 @@ public class DealServiceImpl implements DealService{
     // 동별 거래 건 수 조회
     @Override
     @Transactional(readOnly = true)
-    public Long countDealsByDong(Long dongId, DealType dealType) {
+    public Long countDealsByDong(Long dongId, List<DealType> dealType) {
         // 로그인 사용자 id
         Long loginUserId = getLoginUserId();
         // 내 아파트 id 구하기
