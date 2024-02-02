@@ -23,6 +23,7 @@ import {
 import ff from 'images/convstore.png';
 import {PermissionsAndroid} from 'react-native';
 import {options} from 'axios';
+import ImageUploadtoS3 from '@/components/Utils/S3';
 
 const InputContainer = styled.View`
   width: 100%;
@@ -166,9 +167,16 @@ const Signup6 = ({navigation}: any) => {
         path: 'images',
       },
     };
-    launchImageLibrary(options, (response: ImagePickerResponse) => {
+    launchImageLibrary(options, async (response: ImagePickerResponse) => {
       setSelectImage(response.assets[0].uri);
       console.log('Response = ', response.assets[0].uri);
+      ImageUploadtoS3(response.assets[0].uri, 'img', 'test.jpg')
+        .then((result: any) => {
+          console.log('result', result);
+        })
+        .catch((err: any) => {
+          console.log('err', err);
+        });
     });
   };
   return (
