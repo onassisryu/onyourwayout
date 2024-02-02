@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "deal")
@@ -64,8 +65,18 @@ public class Deal extends BaseTimeEntity {
 
     private LocalDateTime expireAt;
 
-    @OneToMany(mappedBy = "dealId")
+    @OneToMany(mappedBy = "deal", cascade = CascadeType.ALL)
     private List<DealImage> dealImages = new ArrayList<>();
+
+
+    //== 연관관계 설정 메서드==//
+    public void addDealImage(DealImage dealImage) {
+        if (dealImages == null) {
+            dealImages = new ArrayList<>();
+        }
+        dealImages.add(dealImage);
+        dealImage.setDeal(this);
+    }
 
 
     // 수정 로직
@@ -75,18 +86,19 @@ public class Deal extends BaseTimeEntity {
         if (dto.getTitle() != null) this.title = dto.getTitle();
         if (dto.getContent() != null) this.content = dto.getContent();
 
-        if (dto.getCash() == 0) {
+        if (dto.getCash() != 0 && dto.getItem() != null)
+            throw new IllegalArgumentException("두 보상을 동시에 선택할 수 없음");
+
+        if (dto.getItem() != null) {
+            this.cash = 0;
             this.item = dto.getItem();
             this.rewardType = RewardType.ITEM;
 
-        } else if (dto.getItem() == null || !dto.getItem().isEmpty()){
+        } else if (dto.getCash() != 0) {
             this.cash = dto.getCash();
             this.item = null;
             this.rewardType = RewardType.CASH;
         }
-        if (dto.getCash() != 0 && dto.getItem() != null)
-            throw new IllegalArgumentException("두 보상을 동시에 선택할 수 없음");
-
 //        if (dto.getComplaint() > 0) this.complaint = dto.getComplaint();
 //        if (dto.getDealStatus() != null) this.dealStatus = dto.getDealStatus();
         if (dto.getDealType() != null) this.dealType = dto.getDealType();

@@ -56,7 +56,11 @@ public class DealController {
             @RequestParam(name = "dealType", defaultValue = "") DealType dealType) {
 
         Long dealsByDongCnt = dealService.countDealsByDong(dongId, dealType);
-        return ResponseEntity.ok("현재 " + dongId + "동에 " + dealsByDongCnt + "건의 (" + dealType +") 해줘요잉이 있습니다.");
+        if (dongId != null) {
+            return ResponseEntity.ok("현재 dongId =" + dongId + "에 " + dealsByDongCnt + "건의 (" + dealType +") 해줘요잉이 있습니다.");
+        } else {
+            return ResponseEntity.ok("현재 아파트에 " + dealsByDongCnt + "건의 (" + dealType +") 해줘요잉이 있습니다.");
+        }
     }
 
 

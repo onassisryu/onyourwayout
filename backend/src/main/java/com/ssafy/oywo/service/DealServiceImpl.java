@@ -3,10 +3,7 @@ package com.ssafy.oywo.service;
 import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.entity.*;
-import com.ssafy.oywo.repository.DealComplaintRepository;
-import com.ssafy.oywo.repository.DealRepository;
-import com.ssafy.oywo.repository.DongRepository;
-import com.ssafy.oywo.repository.MemberRepository;
+import com.ssafy.oywo.repository.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PreRemove;
@@ -35,8 +32,8 @@ public class DealServiceImpl implements DealService{
 
     private final DealRepository dealRepository;
     private final DealComplaintRepository dealComplaintRepository;
+    private final DealImageRepository dealImageRepository;
     private final MemberRepository memberRepository;
-    private final MemberService memberService;
     private final DongRepository dongRepository;
 
 
@@ -67,15 +64,15 @@ public class DealServiceImpl implements DealService{
         List<Deal> filteredDeals;
 
         if (dealType == DealType.RECYCLE) {
-            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.RECYCLE, Deal.DealStatus.CLOSE);
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.RECYCLE, Deal.DealStatus.OPEN);
         } else if (dealType == DealType.PET) {
-            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.PET, Deal.DealStatus.CLOSE);
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.PET, Deal.DealStatus.OPEN);
         } else if (dealType == DealType.SHOP) {
-            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.SHOP, Deal.DealStatus.CLOSE);
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.SHOP, Deal.DealStatus.OPEN);
         } else if (dealType == DealType.ETC) {
-            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.ETC, Deal.DealStatus.CLOSE);
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.ETC, Deal.DealStatus.OPEN);
         } else {
-            filteredDeals = dealRepository.findDealsByApartmentId(myAptId);
+            filteredDeals = dealRepository.findDealsByApartmentId(myAptId, Deal.DealStatus.OPEN);
         }
 
         System.out.println("filteredDeals = " + filteredDeals);
@@ -98,11 +95,24 @@ public class DealServiceImpl implements DealService{
 
         List<Deal> dealsByDong = new ArrayList<>();
 
-        for (Dong dong : dongs) {
-            List<Deal> dongDeals = dealRepository.findDealsByDongIdAndDealType(
-                    myAptId, dong.getId(), dealType, Deal.DealStatus.CLOSE);
-            dealsByDong.addAll(dongDeals);
+//        List<Deal> dongDeals = new ArrayList<>();
+        if (dongId != null) {
+            for (Dong dong : dongs) {
+                log.info("myAptId:{}", myAptId);
+                log.info("dongs:{}, dong.getId:{} ", dongs.stream().toList(), dong.getId());
+                if (Objects.equals(dong.getId(), dongId)) {
+                    log.info("Objects.equals(dong.getId(), dongId):{}", Objects.equals(dong.getId(), dongId));
+                    dealsByDong = dealRepository.findDealsByDongIdAndDealType(
+                            myAptId, dong.getId(), dealType, Deal.DealStatus.OPEN);
+
+                }
+            }
+        } else {
+            dealsByDong = dealRepository.findDealsByApartmentIdAndDealType(
+                    myAptId, dealType, Deal.DealStatus.OPEN);
         }
+
+//        dealsByDong.addAll(dongDeals);
         return dealsByDong
                 .stream()
                 .map(DealDto.Response::new)
@@ -120,8 +130,28 @@ public class DealServiceImpl implements DealService{
         // 내 아파트 동 리스트
         List<Dong> dongs = dongRepository.findByApartmentId(myAptId);
 
+        Long dealsByDongCnt = null;
+        if (dongId != null) {
+            for (Dong dong : dongs) {
+                log.info("myAptId:{}", myAptId);
+                log.info("dongs:{}, dong.getId:{} ", dongs.stream().toList(), dong.getId());
+                if (Objects.equals(dong.getId(), dongId)) {
+                    log.info("Objects.equals(dong.getId(), dongId):{}", Objects.equals(dong.getId(), dongId));
+                    dealsByDongCnt = dealRepository.countDealsByDongIdAndDealType(
+                            myAptId, dongId, dealType, Deal.DealStatus.OPEN);
 
-        return dealRepository.countDealsByDongIdAndDealType(myAptId, dongId, dealType, Deal.DealStatus.CLOSE);
+                }
+            }
+        } else {
+            dealsByDongCnt = dealRepository.countDealsByDongIdAndDealType(
+                    myAptId, dongId, dealType, Deal.DealStatus.OPEN);
+        }
+        return dealsByDongCnt;
+
+
+
+
+//        return dealRepository.countDealsByDongIdAndDealType(myAptId, dongId, dealType, Deal.DealStatus.OPEN);
     }
 
 
@@ -134,13 +164,13 @@ public class DealServiceImpl implements DealService{
 
         List<Deal> memberDeals;
         if (requestOrAccept.equals("request")) {
-            if (!memberId.equals(loginUserId)) {
+            if (memberId != null) {
                 memberDeals = dealRepository.findDealsByRequestId(memberId);
             } else {
                 memberDeals = dealRepository.findDealsByRequestId(loginUserId);
             }
         } else if (requestOrAccept.equals("accept")) {
-            if (!memberId.equals(loginUserId)) {
+            if (memberId != null) {
                 memberDeals = dealRepository.findDealsByAcceptId(memberId);
             } else {
                 memberDeals = dealRepository.findDealsByAcceptId(loginUserId);
@@ -171,8 +201,19 @@ public class DealServiceImpl implements DealService{
 
         Deal deal = dto.toEntity();
 
+
         try {
             dealRepository.save(deal);
+
+            if (deal.getDealImages() != null) {
+                // 이미지 저장로직
+                List<DealImage> dealImages = dto.getDealImages();
+                for (DealImage dealImage : dealImages) {
+                    deal.addDealImage(dealImage);
+                }
+                dealImageRepository.saveAll(dealImages);
+            }
+
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             throw new RuntimeException("거래 생성 중 데이터 무결성 위반 발생", e);
@@ -257,7 +298,42 @@ public class DealServiceImpl implements DealService{
         deal.update(dto);
 //        dealRepository.save(deal);
 
+        // 이미지 수정
+        List<DealImage> dealImages = dealImageRepository.findByDealId(id);
+        List<DealImage> updatedImages = new ArrayList<>();
+        for (DealImage dealImage : deal.getDealImages()) {
+            DealImage existingImage = findImageByUrl(dealImages, dealImage.getImgUrl());
+
+            if (existingImage != null) {
+                existingImage.setImgUrl(dealImage.getImgUrl());
+                updatedImages.add(existingImage);
+            } else {
+                updatedImages.add(DealImage.builder()
+                                .imgUrl(dealImage.getImgUrl())
+                                .build());
+            }
+        }
+
+//            if (dto.getDealImages() != null) {
+//                List<DealImage> updatedImages = dto.getDealImages().stream()
+//                        .map(imgUrl -> DealImage.builder().imgUrl(imgUrl).build())
+//                        .collect(Collectors.toList());
+        // 기존 이미지 제거
+        dealImages.clear();
+        // 이미지 추가
+        dealImages.addAll(updatedImages);
+
         return new DealDto.Response(deal);
+    }
+
+
+
+    // 이미지 url로 찾기
+    private DealImage findImageByUrl(List<DealImage> images, String imgUrl) {
+        return images.stream()
+                .filter(image -> imgUrl.equals(image.getImgUrl()))
+                .findFirst()
+                .orElse(null);
     }
 
 

@@ -8,7 +8,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DealDto {
 
@@ -50,6 +52,12 @@ public class DealDto {
                 item = null;
             }
 
+//            // 이미지 저장
+//            List<DealImage> dealImageList = dealImages.stream()
+//                    .map(imgUrl -> DealImage.builder().imgUrl(imgUrl).build())
+//                    .collect(Collectors.toList());
+
+
             Deal deal = Deal.builder()
                     .title(title)
                     .content(content)
@@ -63,10 +71,17 @@ public class DealDto {
                     .dealType(dealType)
                     .expireAt(expireAt)
                     .dealImages(dealImages)
+//                    .dealImages(dealImageList)
                     .build();
-            System.out.println("rewardType = " + rewardType);
+
             return deal;
         }
+
+//        private void addDealImagesToDeal(Deal deal) {
+//            List<DealImage> dealImages = dto.getDealImages();
+////            for (DealImage dealImage : dealImages) {
+////                deal.addDealImage(dealImage);
+//        }
     }
 
 
@@ -85,7 +100,8 @@ public class DealDto {
         private Deal.DealStatus dealStatus;
         private DealType dealType;
         private LocalDateTime expireAt;
-        private List<DealImage> dealImages;
+//        private List<DealImage> dealImages;
+        private List<DealImageResponse> dealImages;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
         private LocalDateTime deletedAt;
@@ -106,10 +122,31 @@ public class DealDto {
             this.dealStatus = entity.getDealStatus();
             this.dealType = entity.getDealType();
             this.expireAt = entity.getExpireAt();
-            this.dealImages = entity.getDealImages();
+
+            if (entity.getDealImages() != null) {
+                this.dealImages = entity.getDealImages()
+                        .stream()
+                        .map(DealImageResponse::new)
+                        .collect(Collectors.toList());
+            } else {
+                this.dealImages = Collections.emptyList();
+            }
+
             this.createdAt = entity.getCreatedAt();
             this.modifiedAt = entity.getModifiedAt();
 
+        }
+    }
+
+
+    @Getter
+    public static class DealImageResponse {
+        private Long id;
+        private String imgUrl;
+
+        public DealImageResponse(DealImage dealImage) {
+            this.id = dealImage.getId();
+            this.imgUrl = dealImage.getImgUrl();
         }
     }
 }
