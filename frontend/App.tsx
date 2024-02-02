@@ -87,7 +87,7 @@ const App = () => {
         <Tab.Screen name="위치" component={Location} />
         <Tab.Screen name="아파트" component={Apart} />
         <Tab.Screen name="채팅" component={Chat} />
-        <Tab.Screen name="내정보" component={My} />
+        <Tab.Screen name="내정보" component={Signup6} />
       </Tab.Navigator>
     );
   };
