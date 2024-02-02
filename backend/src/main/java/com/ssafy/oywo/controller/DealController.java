@@ -42,10 +42,17 @@ public class DealController {
     @GetMapping("/dong/list")
     public List<DealDto.Response> getDealsByDong (
             @RequestParam(name = "dong", defaultValue = "") Long dongId,
-            @RequestParam(name = "dealType", defaultValue = "") DealType dealType) {
+            @RequestParam(name = "dealType", defaultValue = "") List<DealType> dealType) {
 
         return dealService.getDealsByDong(dongId, dealType);
     }
+//    @GetMapping("/dong/list")
+//    public List<DealDto.Response> getDealsByDong (
+//            @RequestParam(name = "dong", defaultValue = "") Long dongId,
+//            @RequestParam(name = "dealType", defaultValue = "") DealType dealType) {
+//
+//        return dealService.getDealsByDong(dongId, dealType);
+//    }
 
     /**
      * 동별 거래 건 수 조회

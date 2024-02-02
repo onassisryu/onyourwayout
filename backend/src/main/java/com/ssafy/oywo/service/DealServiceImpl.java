@@ -85,7 +85,7 @@ public class DealServiceImpl implements DealService{
     //동별 거래 전체 조회 + 거래 유형 필터
     @Override
     @Transactional(readOnly = true)
-    public List<DealDto.Response> getDealsByDong(Long dongId, DealType dealType) {
+    public List<DealDto.Response> getDealsByDong(Long dongId, List<DealType> dealType) {
         // 로그인 사용자 id
         Long loginUserId = getLoginUserId();
         // 내 아파트 id 구하기
@@ -101,15 +101,14 @@ public class DealServiceImpl implements DealService{
                 log.info("myAptId:{}", myAptId);
                 log.info("dongs:{}, dong.getId:{} ", dongs.stream().toList(), dong.getId());
                 if (Objects.equals(dong.getId(), dongId)) {
-                    log.info("Objects.equals(dong.getId(), dongId):{}", Objects.equals(dong.getId(), dongId));
-                    dealsByDong = dealRepository.findDealsByDongIdAndDealType(
-                            myAptId, dong.getId(), dealType, Deal.DealStatus.OPEN);
+                    dealsByDong.addAll(dealRepository.findDealsByDongIdAndDealType(
+                            myAptId, dong.getId(), dealType, Deal.DealStatus.OPEN));
 
                 }
             }
         } else {
-            dealsByDong = dealRepository.findDealsByApartmentIdAndDealType(
-                    myAptId, dealType, Deal.DealStatus.OPEN);
+            dealsByDong.addAll(dealRepository.findDealsByDongIdAndDealType(
+                    myAptId, null, dealType, Deal.DealStatus.OPEN));
         }
 
 //        dealsByDong.addAll(dongDeals);

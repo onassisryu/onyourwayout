@@ -14,7 +14,8 @@ public interface DealService {
     // 거래 전체 조회 + 거래유형 필터(QueryString)
     List<DealDto.Response> getDeals(DealType dealType);
     //동별 거래 전체 조회 + 거래 유형 필터
-    List<DealDto.Response> getDealsByDong(Long dongId, DealType dealType);
+    List<DealDto.Response> getDealsByDong(Long dongId, List<DealType> dealType);
+//    List<DealDto.Response> getDealsByDong(Long dongId, DealType dealType);
     // 동 별 거래 건수 조회
     Long countDealsByDong(Long dongId, DealType dealType);
     // 사용자별 거래(요청 or 수행) 전체 조회
