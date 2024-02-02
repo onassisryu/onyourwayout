@@ -99,7 +99,6 @@ const App = () => {
           <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name="Bottom" component={BottomTab} />
             <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="홈" component={Home} />
             <Stack.Screen name="Notice" component={Notice} />
             <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
             <Stack.Screen name="DoIt1" component={DoIt1} />

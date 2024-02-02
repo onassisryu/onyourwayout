@@ -6,21 +6,23 @@ import {NavigationProp} from '@react-navigation/native';
 import DefaultButton from '@/components/DefaultButton';
 import Header from '@/components/Header';
 import GoBack from '@components/Signup/GoBack';
-import {RouteProp} from '@react-navigation/native';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import styled from '@emotion/native';
 import theme from '@/Theme';
 import {useEffect} from 'react';
 import SvgIcon from '@/components/SvgIcon';
+
 type RootStackParamList = {
-  DoIt: {
+  DoIt2: {
     type: string;
     icon: 'puppy' | 'puppyOff' | 'bags' | 'bagsOff' | 'building' | 'buildingOff' | 'shopping' | 'shoppingOff';
   };
 };
-type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'DoIt'>;
+
+type DoItScreenRouteProp = RouteProp<RootStackParamList, 'DoIt2'>;
+
 interface Props {
   navigation: NavigationProp<any>;
-  route: ProfileScreenRouteProp;
 }
 
 const StyledInput = styled.TextInput`
@@ -45,17 +47,18 @@ const IconWrapper = styled.View`
   top: 25px;
 `;
 
-const DoIt = ({navigation: {navigate}, route}: Props) => {
+const DoIt2 = ({navigation}: Props) => {
   const [title, setTitle] = useState('');
+  const {params} = useRoute<DoItScreenRouteProp>();
   useEffect(() => {
     handleTitle();
   }, []);
   const handleTitle = () => {
     let text = '';
-    if (route.params.type === '반려동물') {
-      text = route.params.type + ' 산책 해주세요';
+    if (params.type === '반려동물') {
+      text = params.type + ' 산책 해주세요';
     } else {
-      text = route.params.type + ' 해주세요';
+      text = params.type + ' 해주세요';
     }
     setTitle(text);
   };
@@ -73,13 +76,13 @@ const DoIt = ({navigation: {navigate}, route}: Props) => {
         <StyledInputContainer>
           <StyledInput placeholder={title} placeholderTextColor={theme.color.gray100} defaultValue="" />
           <IconWrapper>
-            <SvgIcon name={route.params.icon} size={40} />
+            <SvgIcon name={params.icon} size={40} />
           </IconWrapper>
         </StyledInputContainer>
-        <DefaultButton onPress={() => navigate('홈')} color="primary" title="test" />
+        <DefaultButton onPress={() => navigation.navigate('위치')} color="primary" title="test" />
       </ScrollView>
     </>
   );
 };
 
-export default DoIt;
+export default DoIt2;

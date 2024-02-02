@@ -59,7 +59,7 @@ const TypeButtonText = styled(GlobalText)<{selected: boolean}>`
   bottom: 20px;
   color: ${({selected}) => (selected ? '#27D894' : '#B2B2B2')};
 `;
-const DoIt = ({navigation}: Props) => {
+const DoIt1 = ({navigation}: Props) => {
   const [selectedButton, setSelectedButton] = useState<string>('');
 
   const handleButtonClick = (buttonName: string) => {
@@ -119,9 +119,13 @@ const DoIt = ({navigation}: Props) => {
             <TypeButtonText selected={selectedButton === '기타'}>기타</TypeButtonText>
           </TypeButton>
         </GlobalContainer>
+        <GlobalButton
+          onPress={() => {
+            navigation.navigate('홈');
+          }}></GlobalButton>
       </MainButtonContainer>
     </GlobalContainer>
   );
 };
 
-export default DoIt;
+export default DoIt1;
