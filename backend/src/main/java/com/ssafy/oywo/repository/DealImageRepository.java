@@ -1,9 +1,6 @@
 package com.ssafy.oywo.repository;
 
-import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.entity.DealImage;
-import com.ssafy.oywo.entity.DealType;
-import jakarta.persistence.PreRemove;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

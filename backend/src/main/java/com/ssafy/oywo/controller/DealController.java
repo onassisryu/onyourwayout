@@ -1,17 +1,12 @@
 package com.ssafy.oywo.controller;
 
 import com.ssafy.oywo.dto.DealDto;
-import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.entity.*;
 import com.ssafy.oywo.service.DealService;
-import com.ssafy.oywo.service.DongService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +30,7 @@ public class DealController {
         return dealService.getDeals(dealType);
     }
 
+
     /**
      * 동별 거래 전체 조회 + 거래 유형 필터
      */
@@ -45,13 +41,7 @@ public class DealController {
 
         return dealService.getDealsByDong(dongId, dealType);
     }
-//    @GetMapping("/dong/list")
-//    public List<DealDto.Response> getDealsByDong (
-//            @RequestParam(name = "dong", defaultValue = "") Long dongId,
-//            @RequestParam(name = "dealType", defaultValue = "") DealType dealType) {
-//
-//        return dealService.getDealsByDong(dongId, dealType);
-//    }
+
 
     /**
      * 동별 거래 건 수 조회
@@ -64,9 +54,7 @@ public class DealController {
         Long dealsByDongCnt = dealService.countDealsByDong(dongId, dealType);
 
         return ResponseEntity.ok(dealsByDongCnt + "건의 " + " 해줘요잉이 있습니다.");
-
     }
-
 
 
     /**
@@ -79,8 +67,6 @@ public class DealController {
 
         return dealService.getDealsByMemberId(requestOrAccept, memberId);
     }
-
-
 
 
     /**
@@ -123,8 +109,6 @@ public class DealController {
     public ResponseEntity<?> acceptDeal(
             @PathVariable Long id) throws Exception {
 
-//        System.out.println("acceptId = " + acceptId);
-
         DealDto.Response response = dealService.acceptDeal(id);
         if (response.getDealStatus() == Deal.DealStatus.ING) {
             return ResponseEntity.ok("거래가 수락되었습니다.");
@@ -132,10 +116,6 @@ public class DealController {
             return ResponseEntity.ok("거래수락이 취소되었습니다.");
         }
     }
-//    @PostMapping("/deal/accept/{id}")
-//    public ResponseEntity<?> acceptDeal(@PathVariable Long id, @RequestBody Long acceptId) {
-//        return ResponseEntity.ok(dealService.acceptDeal(id, acceptId));
-//    }
 
 
     /**
@@ -160,9 +140,6 @@ public class DealController {
 
         return ResponseEntity.ok(dealService.reviewDeal(id, gb));
     }
-
-
-
 
 
     /**

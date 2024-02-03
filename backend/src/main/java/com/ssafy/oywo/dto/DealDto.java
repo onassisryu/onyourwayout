@@ -3,7 +3,6 @@ package com.ssafy.oywo.dto;
 import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.entity.DealImage;
 import com.ssafy.oywo.entity.DealType;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;

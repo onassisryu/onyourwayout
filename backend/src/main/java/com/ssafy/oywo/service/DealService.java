@@ -2,10 +2,8 @@ package com.ssafy.oywo.service;
 
 import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.dto.MemberDto;
-import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.entity.DealComplaint;
 import com.ssafy.oywo.entity.DealType;
-import com.ssafy.oywo.entity.Member;
 
 import java.util.List;
 
@@ -13,9 +11,8 @@ public interface DealService {
 
     // 거래 전체 조회 + 거래유형 필터(QueryString)
     List<DealDto.Response> getDeals(DealType dealType);
-    //동별 거래 전체 조회 + 거래 유형 필터
+    // 동 별 거래 전체 조회 + 거래 유형 필터
     List<DealDto.Response> getDealsByDong(Long dongId, List<DealType> dealType);
-//    List<DealDto.Response> getDealsByDong(Long dongId, DealType dealType);
     // 동 별 거래 건수 조회
     Long countDealsByDong(Long dongId, List<DealType> dealType);
     // 사용자별 거래(요청 or 수행) 전체 조회
@@ -37,6 +34,4 @@ public interface DealService {
     // 거래 신고
     void complaintDeal(Long id, DealComplaint dealComplaint);
 
-
-    // 거래 신고
 }

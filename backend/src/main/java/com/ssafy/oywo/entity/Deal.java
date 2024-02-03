@@ -6,13 +6,11 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+
 
 @Entity
 @Table(name = "deal")
@@ -82,7 +80,6 @@ public class Deal extends BaseTimeEntity {
     // 수정 로직
     public void update(DealDto.Request dto) {
 
-//        if (dto.getAcceptId() != null || !dto.getItem().isEmpty()) this.acceptId = dto.getAcceptId();
         if (dto.getTitle() != null) this.title = dto.getTitle();
         if (dto.getContent() != null) this.content = dto.getContent();
 
@@ -99,8 +96,7 @@ public class Deal extends BaseTimeEntity {
             this.item = null;
             this.rewardType = RewardType.CASH;
         }
-//        if (dto.getComplaint() > 0) this.complaint = dto.getComplaint();
-//        if (dto.getDealStatus() != null) this.dealStatus = dto.getDealStatus();
+
         if (dto.getDealType() != null) this.dealType = dto.getDealType();
         if (dto.getExpireAtStr() != null) this.expireAt = LocalDateTime.parse(dto.getExpireAtStr(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         if (dto.getDealImages() != null) this.dealImages = dto.getDealImages();
