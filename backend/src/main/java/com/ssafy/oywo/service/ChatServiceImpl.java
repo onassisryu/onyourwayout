@@ -24,6 +24,8 @@ public class ChatServiceImpl implements ChatService{
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
     private final ChatMessageRepository chatMessageRepository;
+
+    @Transactional
     @Override
     public ChatRoomDto.Response createChatRoomByUsername(String memberUsername, String otherUsername) {
         List<ChatRoom> memberRoomList=chatRoomRepository.getChatRoomByUsername(memberUsername)
@@ -57,8 +59,13 @@ public class ChatServiceImpl implements ChatService{
             List<ChatRoom> otherRoomResult=new ArrayList<>(other.getChatRooms());
             otherRoomResult.add(createdRoom);
 
-            member.builder().chatRooms(memberRoomResult).build();
-            other.builder().chatRooms(otherRoomResult).build();
+            member=member.toBuilder().chatRooms(memberRoomResult).build();
+            other=other.toBuilder().chatRooms(otherRoomResult).build();
+
+            System.out.println(member);
+            System.out.println(other);
+            memberRepository.save(member);
+            memberRepository.save(other);
 
             response=new ChatRoomDto.Response().toDto(createdRoom);
         }

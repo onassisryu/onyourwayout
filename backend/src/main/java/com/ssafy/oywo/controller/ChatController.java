@@ -38,7 +38,7 @@ public class ChatController {
     // 두 사용자의 username으로
     // 이미 등록된 채팅방이 있다면 반환
     // 없다면 새로운 채팅방을 만들어서 반환
-    @PostMapping("chat/room")
+    @PostMapping("/chat/room")
     public ChatRoomDto.Response createChatRoom(@RequestBody ChatRoomDto.Request chatRoomRequest){
         // 채팅방을 이용할 두 유저
         String memberUsername=chatRoomRequest.getMemberUsername();

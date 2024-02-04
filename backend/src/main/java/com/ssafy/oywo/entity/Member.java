@@ -19,14 +19,13 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "member")
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @ToString
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member implements UserDetails {
-
     @Getter
     public enum RoleType{
         ROLE_USER("USER"), ROLE_ADMIN("ADMIN");
