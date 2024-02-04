@@ -178,8 +178,7 @@ public class MemberServiceImpl implements MemberService {
 
         if (member.isPresent()){
             Member existedMember=member.get()
-                    .builder()
-                    .id(id)
+                    .toBuilder()
                     .username(memberDto.getUsername())
                     .nickname(memberDto.getNickname())
                     .phoneNumber(memberDto.getPhoneNumber())
@@ -302,7 +301,7 @@ public class MemberServiceImpl implements MemberService {
     public void saveFcmToken(Long memberId, String fcmToken) {
         Member member=memberRepository.findById(memberId)
                 .orElseThrow(()->new EntityNotFoundException("없는 사용자 입니다."));
-        member=member.builder().id(memberId).fcmToken(fcmToken).build();
+        member=member.toBuilder().fcmToken(fcmToken).build();
         memberRepository.save(member);
     }
 
