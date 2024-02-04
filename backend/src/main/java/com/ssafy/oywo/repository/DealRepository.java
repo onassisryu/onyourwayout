@@ -99,6 +99,12 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     List<Deal> findDealsByAcceptId(@Param("memberId") Long memberId);
 
 
+    // 신고 수 5개 이상인 거래
+    @Query("SELECT d FROM Deal d " +
+            "WHERE d.complaint >= 5 " +
+            "ORDER BY d.complaint DESC")
+    List<Deal> findDealsByComplaintDesc();
+
 
 //    List<Deal> findAllByOrderByModifiedAtDesc();
 }
