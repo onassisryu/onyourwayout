@@ -87,23 +87,15 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     );
 
 
-
     // member_id로 사용자별 요청한(requestId) 전체 거래 들고오기
-    @Query("SELECT d FROM Deal d " +
-            "WHERE d.requestId = :memberId")
     List<Deal> findDealsByRequestId(@Param("memberId") Long memberId);
 
-
     // member_id로 사용자별 수행한(acceptId) 전체 거래 들고오기
-    @Query("SELECT d FROM Deal d " +
-            "WHERE d.acceptId = :memberId")
-    List<Deal> findDealsByAcceptId(@Param("memberId") Long memberId);
-
+    List<Deal> findDealsByAcceptId(Long memberId);
 
     // 수락 기능 제한
     List<Deal> findDealsByAcceptIdAndDealStatus(Long acceptId, Deal.DealStatus dealStatus);
 
     // 현재 수락한 해줘요잉 개수
     Long countDealsByAcceptIdAndDealStatus(Long acceptId, Deal.DealStatus dealStatus);
-
 }

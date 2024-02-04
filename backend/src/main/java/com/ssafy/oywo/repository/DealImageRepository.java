@@ -11,6 +11,5 @@ import java.util.List;
 @Repository
 public interface DealImageRepository extends JpaRepository<DealImage, Long> {
 
-    @Query("SELECT i FROM DealImage i WHERE i.deal.id = :dealId")
-    List<DealImage> findByDealId(@Param("dealId") Long dealId);
+    List<DealImage> findByDealId(Long dealId);
 }
