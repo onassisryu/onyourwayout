@@ -26,10 +26,11 @@ public class ChatController {
     private final ChatService chatService;
     private final SimpMessageSendingOperations sendingOperations;
 
-    @MessageMapping("/{roomId}")    // /send/{roomId}를 통해 여기로 전송되면 메서드 호출 -> StompConfig prefixes에서 적용한건 앞에 생략
-    @SendTo("/room/{roomId}")       // 여길 구독하고 있는 곳으로 메시지 전송
-    public ChatMessageDto messageHandler(@DestinationVariable Long roomId, ChatMessageDto message){
-//        sendingOperations.convertAndSend("/room/"+roomId,message);
+    @MessageMapping("/room")    // /send/{roomId}를 통해 여기로 전송되면 메서드 호출 -> StompConfig prefixes에서 적용한건 앞에 생략
+    //@SendTo("/room/{roomId}")       // 여길 구독하고 있는 곳으로 메시지 전송
+    public ChatMessageDto messageHandler(ChatMessageDto message){
+        // /room/{roomId}를 구독하는 클라이언트로 메시지 객체가 전달
+        sendingOperations.convertAndSend("/room/"+message.getChatRoomId(),message);
         // chatService 호출로 message를 보낸다.
         chatService.saveChatMessage(message);
         return message;
@@ -43,6 +44,7 @@ public class ChatController {
         // 채팅방을 이용할 두 유저
         String memberUsername=chatRoomRequest.getMemberUsername();
         String otherUsername=chatRoomRequest.getOtherUsername();
+
         return chatService.createChatRoomByUsername(memberUsername,otherUsername);
     }
     

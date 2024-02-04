@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "chat_message")
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE chat_message SET deleted_at = NOW() WHERE uuid = ?")

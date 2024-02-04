@@ -2,12 +2,8 @@ package com.ssafy.oywo.service;
 
 import com.ssafy.oywo.dto.ChatMessageDto;
 import com.ssafy.oywo.dto.ChatRoomDto;
-import com.ssafy.oywo.entity.ChatMessage;
-import com.ssafy.oywo.entity.ChatRoom;
-import com.ssafy.oywo.entity.Member;
-import com.ssafy.oywo.repository.ChatMessageRepository;
-import com.ssafy.oywo.repository.ChatRoomRepository;
-import com.ssafy.oywo.repository.MemberRepository;
+import com.ssafy.oywo.entity.*;
+import com.ssafy.oywo.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,25 +19,20 @@ import java.util.*;
 public class ChatServiceImpl implements ChatService{
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
+    private final HoRepository hoRepository;
     private final ChatMessageRepository chatMessageRepository;
 
     @Transactional
     @Override
     public ChatRoomDto.Response createChatRoomByUsername(String memberUsername, String otherUsername) {
-        List<ChatRoom> memberRoomList=chatRoomRepository.getChatRoomByUsername(memberUsername)
-                .orElseThrow(()->new NoSuchElementException("등록되지 않은 사용자입니다."));
-        List<ChatRoom> otherRoomList=chatRoomRepository.getChatRoomByUsername(otherUsername)
-                .orElseThrow(()->new NoSuchElementException("등록되지 않은 사용자입니다."));
 
-        HashSet<ChatRoom> commonRoom=new HashSet<>();
-        commonRoom.addAll(memberRoomList);
-        commonRoom.addAll(otherRoomList);
-
-        // 공통된 채팅방이 있다면
         ChatRoomDto.Response response=null;
-        if (commonRoom.size()>0){
-            ArrayList<ChatRoom> list=new ArrayList(commonRoom);
-            response=new ChatRoomDto.Response().toDto(list.get(0));
+
+        Long commonRoomId= chatRoomRepository.getCommonChatRoom(memberUsername,otherUsername);
+
+
+        if (commonRoomId!=null){
+            response=new ChatRoomDto.Response().toDto(ChatRoom.builder().id(commonRoomId).build());
         }
 
         // 공통된 채팅방이 없다면
@@ -76,23 +67,33 @@ public class ChatServiceImpl implements ChatService{
     // 해당 멤버의 채팅방리스트를 구하고, 채팅방 구성원 정보를 받아서 보낸다.
     @Override
     public List<ChatRoomDto.Response> getChatRoomById(Long memberId) {
-        List<ChatRoom> roomList = chatRoomRepository.getChatRoomById(memberId).get();
+        // 사용자 uuid로 채팅방 리스트를 가져온다.
+        List<ChatRoom> roomList = chatRoomRepository.getChatRoomById(memberId)
+                .orElseThrow(()->new NoSuchElementException("존재하는 채팅방이 없습니다."));
         List<ChatRoomDto.Response> result =new ArrayList<>();
 
+        // 채팅방 상대 정보를 가져온다.
         for (ChatRoom chatRoom:roomList){
             Long chatRoomId= chatRoom.getId();
-            List<Member> memberList=chatRoomRepository.getChatRoomMembers(chatRoomId);
-            String chatRoomName="";
-            // 사용자 닉네임으로 채팅방 이름 설정
-            for (Member member:memberList){
-                chatRoomName+=member.getNickname()+" ";
-            }
+            Long otherMemberId=chatRoomRepository.getChatRoomMembers(chatRoomId, memberId);
+
+            // otherMemberId 어떻게 받아와지는지 확인하기
+            System.out.println("=====otherMemberId========="+otherMemberId);
+            String nickname=memberRepository.findById(memberId).get().getNickname();
+
+            // 상대방 닉네임, 사는 곳 정보 불러오기
+            Long hoId=memberRepository.findHoAptIdsByMemberId(otherMemberId);
+            Ho ho=hoRepository.findById(hoId).orElseThrow(
+                    ()->new NoSuchElementException("존재하지 않는 호입니다.")
+            );
+
+
             ChatRoomDto.Response room=ChatRoomDto.Response.builder()
-                    .name(chatRoomName)
                     .id(chatRoomId)
                     .createdAt(chatRoom.getCreatedAt())
                     .build();
 
+            room=room.toBuilder().oppNickName(nickname).dong(ho.getDong()).hoName(ho.getName()).build();
             result.add(room);
         }
         return result;
@@ -103,6 +104,6 @@ public class ChatServiceImpl implements ChatService{
     public void saveChatMessage(ChatMessageDto message) {
         ChatRoom chatRoom=chatRoomRepository.findById(message.getChatRoomId())
                 .orElseThrow(()->new NoSuchElementException("채팅방을 찾을 수 없습니다."));
-        chatMessageRepository.save(message.toEntity().builder().chatRoom(chatRoom).build());
+        chatMessageRepository.save(message.toEntity().toBuilder().chatRoom(chatRoom).build());
     }
 }
