@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @ToString
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE member SET deleted_at = NOW() WHERE uuid = ?")
