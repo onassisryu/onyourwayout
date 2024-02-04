@@ -70,6 +70,7 @@ public class MemberDto {
         private String fcmToken;
         private Boolean isNotiDongAll;
         private Boolean isNotiCategoryAll;
+        private List<String> roles=new ArrayList<>();
 
         private Long dongId;
         private String dongName;
@@ -133,6 +134,7 @@ public class MemberDto {
                     .phoneNumber(phoneNumber)
                     .score(score)
                     .fcmToken(fcmToken)
+                    .roles(roles)
                     .isCertified(isCertified)
                     .notificationStart(notificationStart)
                     .notificationEnd(notificationEnd)
