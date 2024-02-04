@@ -249,6 +249,21 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberDto.Response getMemberInfo(String username, String password) {
         Member member=memberRepository.findByUsernameAndPassword(username,password);
+        List<NotiDong> notiDongs=new ArrayList<>();
+        List<NotiDealCategory> notiDealCategories=new ArrayList<>();
+
+        for (NotiDong notiDong:member.getNotiDongs()){
+            if (notiDong.getDeletedAt()==null){
+                notiDongs.add(notiDong);
+            }
+        }
+
+        for (NotiDealCategory category:member.getNotiDealCategories()){
+            if (category.getDeletedAt()==null){
+                notiDealCategories.add(category);
+            }
+        }
+        member=member.toBuilder().notiDongs(notiDongs).notiDealCategories(notiDealCategories).build();
         return MemberDto.Response.of(member);
     }
 
@@ -256,7 +271,23 @@ public class MemberServiceImpl implements MemberService {
     public MemberDto.Response getMemberInfo(Long id) {
         Optional<Member> member=memberRepository.findById(id);
         if (member.isPresent()){
-            return MemberDto.Response.of(member.get());
+            Member m=member.get();
+            List<NotiDong> notiDongs=new ArrayList<>();
+            List<NotiDealCategory> notiDealCategories=new ArrayList<>();
+
+            for (NotiDong notiDong:m.getNotiDongs()){
+                if (notiDong.getDeletedAt()==null){
+                    notiDongs.add(notiDong);
+                }
+            }
+
+            for (NotiDealCategory category:m.getNotiDealCategories()){
+                if (category.getDeletedAt()==null){
+                    notiDealCategories.add(category);
+                }
+            }
+            m=m.toBuilder().notiDongs(notiDongs).notiDealCategories(notiDealCategories).build();
+            return MemberDto.Response.of(m);
         }
         return null;
     }
@@ -292,7 +323,7 @@ public class MemberServiceImpl implements MemberService {
     public void removeFcmToken(String username) {
         Member member=memberRepository.findByUsername(username)
                 .orElseThrow(NoSuchElementException::new);
-        member=member.builder().id(member.getId()).fcmToken(null).build();
+        member=member.toBuilder().fcmToken(null).build();
         memberRepository.save(member);
     }
 

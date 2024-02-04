@@ -191,6 +191,8 @@ public class MemberDto {
         private boolean isCertified;
         private String fcmToken;
         private String inviteCode;
+        private Boolean isNotiDongAll;
+        private Boolean isNotiCategoryAll;
 
         private Long aptId;
         private String aptName;
@@ -227,6 +229,8 @@ public class MemberDto {
                     .chatRooms(response.getChatRooms())
                     .notiDongs(response.getNotiDongs())
                     .notiDealCategories(response.getNotiDealCategories())
+                    .isNotiCategoryAll(response.getIsNotiCategoryAll())
+                    .isNotiDongAll(response.getIsNotiDongAll())
                     .membersNotifications(response.getMembersNotifications())
                     .hoId(ho.getId())
                     .hoName(ho.getName())
