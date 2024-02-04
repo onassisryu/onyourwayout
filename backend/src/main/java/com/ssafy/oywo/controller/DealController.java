@@ -21,9 +21,11 @@ public class DealController {
 
 
     /**
-     * 거래 전체 조회 + 거래유형 필터(QueryString) - close거래 제외   --> 수정필요(동 별)
+     * 거래 전체 조회 + 거래유형 필터(QueryString) - only ING
+     * @param dealType 거래 유형
+     * @return 거래 리스트
      */
-    @GetMapping("/list")     // 'localhost:8080/deal/list?dealType=PET'
+    @GetMapping("/list")
     public List<DealDto.Response> getDeals(
             @RequestParam(name = "dealType", defaultValue = "") DealType dealType) {
 
@@ -33,6 +35,9 @@ public class DealController {
 
     /**
      * 동별 거래 전체 조회 + 거래 유형 필터
+     * @param dongId 동 아이디
+     * @param dealType 거래 유형
+     * @return 거래 리스트
      */
     @GetMapping("/dong/list")
     public List<DealDto.Response> getDealsByDong (
@@ -45,6 +50,9 @@ public class DealController {
 
     /**
      * 동별 거래 건 수 조회
+     * @param dongId 거래 아이디
+     * @param dealType 거래 유형
+     * @return 거래 건 수
      */
     @GetMapping("/dong/count")
     public ResponseEntity<?> countDealsByDong (
@@ -57,8 +65,13 @@ public class DealController {
     }
 
 
+
     /**
-     * 사용자별 거래(요청 or 수행) 전체 조회 --> 수정 필요(ing 표시?)
+     * 사용자별 거래(요청 or 수행) 전체 조회
+     * @param requestOrAccept "request" or "accept
+     * @param memberId 회원 아이디
+     * @return 거래 리스트
+     * @throws Exception
      */
     @GetMapping("/user/list")     // 'localhost:8080/deal/user/list?type=request&memberId=1'
     public List<DealDto.Response> getDealsByMemberId(
@@ -69,8 +82,12 @@ public class DealController {
     }
 
 
+
     /**
      * 거래 생성
+     * @param dto 거래 생성 정보
+     * @return 거래 정보
+     * @throws Exception
      */
     @PostMapping
     public ResponseEntity<?> createDeal(
@@ -80,8 +97,11 @@ public class DealController {
     }
 
 
+
     /**
      * 거래 하나 조회
+     * @param id 거래 아이디
+     * @return 거래 정보
      */
     @GetMapping("/{id}")
     public ResponseEntity<?> getDeal(@PathVariable Long id) {
@@ -90,8 +110,13 @@ public class DealController {
     }
 
 
+
     /**
      * 거래 수정
+     * @param id 거래 아이디
+     * @param dto 거래 수정 정보
+     * @return 거래 정보
+     * @throws Exception
      */
     @PutMapping("/{id}")
     public ResponseEntity<?> updateDeal(
@@ -102,8 +127,12 @@ public class DealController {
     }
 
 
+
     /**
      * 거래 최종수락 and 수락 취소 (수행자)
+     * @param id 거래 아이디
+     * @return 거래 수락 메시지
+     * @throws Exception
      */
     @PutMapping("/accept/{id}")
     public ResponseEntity<?> acceptDeal(
@@ -118,8 +147,12 @@ public class DealController {
     }
 
 
+
     /**
      * 거래 완료(요청자)
+     * @param id 거래 아이디
+     * @return 거래 완료 메시지
+     * @throws Exception
      */
     @PutMapping("/close/{id}")
     public ResponseEntity<?> closeDeal(
@@ -130,8 +163,13 @@ public class DealController {
     }
 
 
+
     /**
      * 거래 상대방 리뷰
+     * @param id 거래 아이디
+     * @param gb "good" or "bad"
+     * @return 거래 정보
+     * @throws Exception
      */
     @PutMapping("/review/{id}/{gb}")
     public ResponseEntity<?> reviewDeal(
@@ -142,8 +180,12 @@ public class DealController {
     }
 
 
+
     /**
      * 거래 삭제 (CANCEL)
+     * @param id 거래 아이디
+     * @return 거래 삭제 메시지
+     * @throws Exception
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDeal(
@@ -154,8 +196,13 @@ public class DealController {
     }
 
 
+
     /**
      * 거래 신고
+     * @param id 거래 아이디
+     * @param dealComplaint 신고 유형 선택
+     * @return 거래 신고 메시지
+     * @throws Exception
      */
     @PutMapping("/complain/{id}")
     public ResponseEntity<?> complainDeal(
