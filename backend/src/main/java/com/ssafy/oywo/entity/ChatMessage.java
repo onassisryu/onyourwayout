@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "chat_message")
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessage {

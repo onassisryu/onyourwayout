@@ -29,17 +29,5 @@ public class ChatRoom {
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatMessage> chatMessages = new ArrayList<>();
 
-    @Override
-    public int hashCode(){
-        return Objects.hash(id);
-    }
 
-    @Override
-    public boolean equals(Object o){
-        if (o.getClass()== ChatRoom.class){
-            ChatRoom other=(ChatRoom) o;
-            return other.getId()==this.getId();
-        }
-        return false;
-    }
 }
