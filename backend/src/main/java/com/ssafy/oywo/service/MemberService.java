@@ -21,6 +21,9 @@ public interface MemberService {
 
     public MemberDto.Response modify(Member member);
     public MemberDto.Response modify(Long id, MemberDto.Request memberDto);
+
+    public MemberDto.Response modifyWithAlarm(Member member);
+
     public void logout(String username);
 
     public MemberDto.Response getMemberInfo(String username, String password);

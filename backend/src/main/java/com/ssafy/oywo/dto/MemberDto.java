@@ -68,7 +68,8 @@ public class MemberDto {
         private int penaltyCount;
         private boolean isCertified;
         private String fcmToken;
-
+        private Boolean isNotiDongAll;
+        private Boolean isNotiCategoryAll;
 
         private Long dongId;
         private String dongName;
@@ -87,6 +88,7 @@ public class MemberDto {
             return Response.builder()
                     .id(member.getId())
                     .username(member.getUsername())
+                    .password(member.getPassword())
                     .nickname(member.getNickname())
                     .birthDate(member.getBirthDate())
                     .phoneNumber(member.getPhoneNumber())
@@ -99,9 +101,14 @@ public class MemberDto {
                     .build();
         }
         public static Response of(Member member){
+            System.out.println("===========RESPONSE==============");
+            System.out.println(member);
+            System.out.println(member.isNotiDongAll());
+
             return Response.builder()
                     .id(member.getId())
                     .nickname(member.getNickname())
+                    .password(member.getPassword())
                     .username(member.getUsername())
                     .birthDate(member.getBirthDate())
                     .phoneNumber(member.getPhoneNumber())
@@ -111,6 +118,8 @@ public class MemberDto {
                     .notificationEnd(member.getNotificationEnd())
                     .notiDealCategories(member.getNotiDealCategories())
                     .notiDongs(member.getNotiDongs())
+                    .isNotiDongAll(member.isNotiDongAll())
+                    .isNotiCategoryAll(member.isNotiCategoryAll())
                     .build();
         }
 
