@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.util.Optional;
 
 public interface S3UploadService {
-    String upload(MultipartFile multipartFile, String dirName) throws IOException;
+    String upload(MultipartFile multipartFile, String dirName, Long id) throws IOException;
 
-    String upload(File uploadFile, String dirName);
+    String upload(File uploadFile, String dirName, Long id);
 
     String putS3(File uploadFile, String fileName);
 
