@@ -34,7 +34,7 @@ const NicknameText = styled(GlobalText)`
 const CertifiedText = styled(GlobalText)`
   margin-top: 2px;
   color: ${props => props.theme.color.primary};
-  font-size: 11px;
+  font-size: 13px;
   font-weight: bold;
 `;
 const ApartText = styled(GlobalText)`
@@ -124,8 +124,7 @@ const My = ({navigation}: any) => {
                     flex-direction: row;
                     align-items: center;
                   `}>
-                  {/* <NicknameText>{userData.memberInfo.nickname}</NicknameText> */}
-                  <NicknameText>닉네임</NicknameText>
+                  <NicknameText>{userData.memberInfo.nickname}</NicknameText>
 
                   {userData.memberInfo.certified ? (
                     <CertifiedText>세대원 인증</CertifiedText>
@@ -173,10 +172,10 @@ const My = ({navigation}: any) => {
                   flex-direction: row;
                   justify-content: space-around;
                 `}>
-                <InnerContainerBox>
+                <InnerContainerBox onPress={() => navigation.navigate('Activity')}>
                   <Text>내가 한일</Text>
                 </InnerContainerBox>
-                <InnerContainerBox>
+                <InnerContainerBox onPress={() => navigation.navigate('Activity')}>
                   <Text>내가 맡긴일</Text>
                 </InnerContainerBox>
               </View>
@@ -187,19 +186,19 @@ const My = ({navigation}: any) => {
                 title="아파트 정보 인증"
                 iconType="MaterialCommunityIcons"
                 icon="office-building-marker-outline"
-                onPress={() => navigation.navigate('MySetting')}
+                onPress={() => navigation.navigate('ApartCertification')}
               />
               <Mypagelist
                 title="초대 코드 발급"
                 iconType="Ant"
                 icon="solution1"
-                onPress={() => navigation.navigate('MySetting')}
+                onPress={() => navigation.navigate('InvitationCode')}
               />
               <Mypagelist
                 title="계좌 인증"
                 iconType="MaterialCommunityIcons"
                 icon="checkbook"
-                onPress={() => navigation.navigate('MySetting')}
+                onPress={() => navigation.navigate('BankAccount')}
               />
             </InnerContainer>
             <InnerContainer>
@@ -208,7 +207,7 @@ const My = ({navigation}: any) => {
                 title="고객센터"
                 iconType="MaterialIcons"
                 icon="headset-mic"
-                onPress={() => navigation.navigate('MySetting')}
+                onPress={() => navigation.navigate('ServiceCenter')}
               />
               <Mypagelist
                 title="환경설정"

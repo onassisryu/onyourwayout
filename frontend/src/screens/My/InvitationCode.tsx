@@ -2,13 +2,10 @@ import React from 'react';
 import styled, {css} from '@emotion/native';
 import {GlobalContainer} from '@/GlobalStyles';
 import Header from '@/components/Header';
-import {userDataState} from '@/recoil/atoms';
-import {useRecoilValue} from 'recoil';
 import GoBack from '@/components/Signup/GoBack';
 import MypageButton from '@/components/Mypage/MypageButton';
 import {MypageBodyContainer} from '@/components/Mypage/MypageBodyContainer';
 import {View} from 'react-native';
-import axios from 'axios';
 const BodyContainer = styled(MypageBodyContainer)`
   justify-content: center;
   align-items: center;
@@ -24,35 +21,14 @@ const StyledText = styled.Text`
   margin-bottom: 10px;
 `;
 
-function doActivity(userId: number, accessToken: string) {
-  axios
-    .get(`http://i10a302.p.ssafy.io:8080/deal/user/list?type=request/memberId=${userId}`, {
-      headers: {
-        Authorization: `${accessToken}`,
-      },
-    })
-    .then(function (resp) {
-      console.log(resp.data);
-    })
-    .catch(function (error) {
-      console.error('Error fetching data:', error);
-    });
-}
-
-const Activity = () => {
-  const userData = useRecoilValue(userDataState); // userDataState 상태 가져오기
-  const userId = userData.memberInfo.id;
-  const accessToken = `${userData.token.accessToken}`;
-  console.log(userId);
-  console.log(accessToken);
-  doActivity(userId, accessToken);
+const InvitationCode = () => {
   return (
     <GlobalContainer>
       <Header>
         <GoBack />
       </Header>
       <BodyContainer>
-        <HeadText>나의 활동내역</HeadText>
+        <HeadText>나의 초대 코드</HeadText>
         <View
           style={css`
             justify-content: center;
@@ -73,4 +49,4 @@ const Activity = () => {
   );
 };
 
-export default Activity;
+export default InvitationCode;

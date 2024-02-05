@@ -27,6 +27,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 });
 
 //page
+import {Screens} from '@screens/Screens';
 import Home from '@screens/Home';
 import Location from '@screens/Location';
 import Chat from '@screens/Chat';
@@ -43,6 +44,11 @@ import Signup3 from '@/screens/Signup/Signup3';
 import Signup4 from '@/screens/Signup/Signup4';
 import Signup5 from '@/screens/Signup/Signup5';
 import Signup6 from '@/screens/Signup/Signup6';
+// import Activity from '@/screens/My/Activity';
+// import ApartCertification from '@/screens/My/ApartCertification';
+// import BankAccount from '@/screens/My/BankAccount';
+// import InvitationCode from '@/screens/My/InvitationCode';
+// import ServiceCenter from '@/screens/My/ServiceCenter';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -127,6 +133,9 @@ const App = () => {
             <Stack.Screen name="Signup5" component={Signup5} />
             <Stack.Screen name="Signup6" component={Signup6} />
             <Stack.Screen name="MySetting" component={MySetting} />
+            {Screens.map(screen => (
+              <Stack.Screen key={screen.name} name={screen.name} component={screen.component} />
+            ))}
           </Stack.Navigator>
         </ThemeProvider>
       </NavigationContainer>
