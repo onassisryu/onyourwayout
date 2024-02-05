@@ -67,6 +67,7 @@ public class MemberDto {
         private String profileImg;
         private int penaltyCount;
         private boolean isCertified;
+        private String inviteCode;
         private String fcmToken;
         private Boolean isNotiDongAll;
         private Boolean isNotiCategoryAll;
@@ -99,6 +100,7 @@ public class MemberDto {
                     .dongName(ho.getDong().getName())
                     .hoId(ho.getId())
                     .hoName(ho.getName())
+                    .inviteCode(ho.getInviteCode())
                     .build();
         }
         public static Response of(Member member){
@@ -240,6 +242,7 @@ public class MemberDto {
                     .dongName(dong.getName())
                     .aptId(dong.getApartment().getId())
                     .aptName(dong.getApartment().getName())
+                    .inviteCode(ho.getInviteCode())
                     .build();
             return totalInfo;
         }

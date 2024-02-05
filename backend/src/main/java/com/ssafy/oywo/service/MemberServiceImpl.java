@@ -326,5 +326,24 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(member);
     }
 
+    @Override
+    public HashMap<String, Object> findHoByInviteCode(String inviteCode) {
+        HashMap<String,Object> payload=new HashMap<>();
+        Optional<Ho> ho=hoRepository.findByInviteCode(inviteCode);
+
+        if (ho.isPresent()){
+            payload.put("hoId",ho.get().getId());
+            payload.put("hoName",ho.get().getName());
+            payload.put("dongId",ho.get().getDong().getId());
+            payload.put("dongName",ho.get().getDong().getName());
+            payload.put("apartName",ho.get().getDong().getApartment().getName());
+            payload.put("apartId",ho.get().getDong().getApartment().getId());
+            return payload;
+        }
+        return null;
+
+
+    }
+
 
 }
