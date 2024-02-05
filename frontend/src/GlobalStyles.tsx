@@ -9,6 +9,7 @@ export const GlobalContainer = styled.View`
   color: ${theme.color.black};
   box-sizing: border-box;
   background-color: white;
+  height: 100%;
 `;
 
 export const GlobalText = styled.Text`

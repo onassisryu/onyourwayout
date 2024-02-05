@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios, {get} from 'axios';
 import {useSetRecoilState} from 'recoil';
-import {isLoggedInState, userDataState} from '../recoil/atoms';
+import {isLoggedInState, userDataState} from '@/recoil/atoms';
 import React, {useState, useEffect} from 'react';
 import {Text, Alert, View, Keyboard, TouchableWithoutFeedback, Image, TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
@@ -8,6 +8,7 @@ import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import DefaultButton from '@/components/DefaultButton';
 import theme from '@/Theme';
 import Ant from 'react-native-vector-icons/AntDesign';
+import {getStorage, setStorage} from '@/storage/common_storage';
 
 interface StyledInputProps {
   isnotValue?: boolean;
@@ -51,46 +52,72 @@ const LoginButton = styled(DefaultButton)`
 `;
 
 const Login = ({navigation}: any) => {
-  const [username, setusername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setusername] = useState('a@gmail');
+  const [password, setPassword] = useState('1234');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isnotValueid, setIsnotValueid] = useState(true);
   const [isnotValuepassword, setIsnotValuepassword] = useState(true);
+
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true); // Recoil 상태를 업데이트하여 로그인 상태를 true로 변경
+  const setUserData = useSetRecoilState(userDataState);
+
+  const handleLogin = () => {
+    console.log('자동로그인');
+    setIsLoggedIn(true);
   };
-  const setUserData = useSetRecoilState(userDataState); // useSetRecoilState 훅으로 상태 업데이트 함수 가져오기
-  function login() {
+
+  //로그인 상태 체크
+  useEffect(() => {
+    getStorage('token').then(token => {
+      if (token) {
+        console.log('리프레시 토큰이 있습니다.', token);
+        getStorage('autoLogin').then(auto => {
+          if (auto) {
+            handleLogin();
+            getStorage('user').then(auto => {
+              setUserData(auto);
+              if (auto) {
+                navigation.navigate('Bottom', {screen: 'Main'});
+              }
+            });
+          }
+        });
+      }
+    });
+  }, []);
+
+  async function login() {
     if (username.trim() === '') {
       Alert.alert('아이디 입력 확인', '아이디가 입력되지 않았습니다.');
     } else if (password.trim() === '') {
       Alert.alert('비밀번호 입력 확인', '비밀번호가 입력되지 않았습니다.');
     } else {
-      axios
-        .post('http://i10a302.p.ssafy.io:8080/members/signin', {username: username, password: password})
-        .then(function (resp) {
-          console.log(resp.data);
-          if (resp.data !== null && resp.data != '') {
-            handleLoginSuccess();
-            setUserData(resp.data); // 받아온 데이터를 Recoil 상태에 저장
-            Keyboard.dismiss();
-            navigation.navigate('홈');
-            console.log('로그인 성공');
-          } else {
-            Alert.alert('로그인 실패', '아이디나 비밀번호를 확인하세요.');
-            setusername('');
-            setPassword('');
-          }
-        })
-        .catch(function (err) {
-          console.log(`Error Message: ${err}`);
-          console.log(username);
-          console.log(password);
-        });
+      try {
+        const response = await axios.post('http://i10a302.p.ssafy.io:8080/members/signin', {username, password});
+        if (response.data !== null && response.data !== '') {
+          const token = response.data.token.accessToken;
+          const refreshToken = response.data.token.refreshToken;
+          const user = response.data.memberInfo;
+          await setStorage('token', token);
+          await setStorage('refreshToken', refreshToken);
+          await setStorage('autoLogin', 'true');
+          await setStorage('user', user);
+
+          Keyboard.dismiss();
+          navigation.navigate('Bottom', {screen: 'Main'});
+          console.log('로그인 성공');
+        } else {
+          Alert.alert('로그인 실패', '아이디나 비밀번호를 확인하세요.');
+          setusername('');
+          setPassword('');
+        }
+      } catch (error) {
+        console.log(`Error Message: ${error}`);
+        console.log(username);
+        console.log(password);
+      }
     }
   }
-
   useEffect(() => {
     setIsDisabled(!(username && password)); // 아이디와 비밀번호가 입력되지 않은 경우 버튼을 비활성화
   }, [username, password]);

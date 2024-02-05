@@ -27,7 +27,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 });
 
 //page
-import Home from '@screens/Home';
+import {Screens} from '@screens/Screens';
+import Main from '@screens/Main';
 import Location from '@screens/Location';
 import Chat from '@screens/Chat';
 import Apart from '@screens/Apart';
@@ -43,6 +44,12 @@ import Signup3 from '@/screens/Signup/Signup3';
 import Signup4 from '@/screens/Signup/Signup4';
 import Signup5 from '@/screens/Signup/Signup5';
 import Signup6 from '@/screens/Signup/Signup6';
+import Test from '@/screens/Test';
+// import Activity from '@/screens/My/Activity';
+// import ApartCertification from '@/screens/My/ApartCertification';
+// import BankAccount from '@/screens/My/BankAccount';
+// import InvitationCode from '@/screens/My/InvitationCode';
+// import ServiceCenter from '@/screens/My/ServiceCenter';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -86,7 +93,7 @@ const App = () => {
           tabBarIcon: ({focused, size, color}) => {
             let iconName!: string;
 
-            if (route.name === '홈') {
+            if (route.name === 'Main') {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === '위치') {
               iconName = focused ? 'location' : 'location-outline';
@@ -101,7 +108,7 @@ const App = () => {
             return <Ionic name={iconName!} size={size} color={color} />;
           },
         })}>
-        <Tab.Screen name="홈" component={Home} />
+        <Tab.Screen name="Main" component={Main} />
         <Tab.Screen name="위치" component={Location} />
         <Tab.Screen name="아파트" component={Apart} />
         <Tab.Screen name="채팅" component={Chat} />
@@ -114,7 +121,7 @@ const App = () => {
       <NavigationContainer>
         <ThemeProvider theme={theme}>
           <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
-          <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Navigator initialRouteName="Login" screenOptions={{headerShown: false}}>
             <Stack.Screen name="Bottom" component={BottomTab} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Notice" component={Notice} />
@@ -127,6 +134,10 @@ const App = () => {
             <Stack.Screen name="Signup5" component={Signup5} />
             <Stack.Screen name="Signup6" component={Signup6} />
             <Stack.Screen name="MySetting" component={MySetting} />
+            <Stack.Screen name="Test" component={Test} />
+            {Screens.map(screen => (
+              <Stack.Screen key={screen.name} name={screen.name} component={screen.component} />
+            ))}
           </Stack.Navigator>
         </ThemeProvider>
       </NavigationContainer>
