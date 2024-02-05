@@ -55,7 +55,7 @@ public class MemberDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
+    @Builder(toBuilder = true)
     public static class Response{
         private Long id;
         private String nickname;
@@ -96,6 +96,7 @@ public class MemberDto {
                     .phoneNumber(member.getPhoneNumber())
                     .score(member.getScore())
                     .isCertified(member.isCertified())
+                    .roles(member.getRoles())
                     .dongId(ho.getDong().getId())
                     .dongName(ho.getDong().getName())
                     .hoId(ho.getId())
@@ -123,6 +124,7 @@ public class MemberDto {
                     .notiDongs(member.getNotiDongs())
                     .isNotiDongAll(member.isNotiDongAll())
                     .isNotiCategoryAll(member.isNotiCategoryAll())
+                    .roles(member.getRoles())
                     .build();
         }
 

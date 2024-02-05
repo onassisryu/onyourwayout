@@ -263,6 +263,7 @@ public class MemberServiceImpl implements MemberService {
             }
         }
         member=member.toBuilder().notiDongs(notiDongs).notiDealCategories(notiDealCategories).build();
+        System.out.println("roles======"+member.getRoles());
         return MemberDto.Response.of(member);
     }
 
