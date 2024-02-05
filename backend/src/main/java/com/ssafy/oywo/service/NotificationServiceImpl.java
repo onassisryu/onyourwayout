@@ -3,6 +3,7 @@ package com.ssafy.oywo.service;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.ssafy.oywo.dto.NotificationDto;
+import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.entity.MembersNotification;
 import com.ssafy.oywo.entity.Notification;
 import com.ssafy.oywo.repository.MemberRepository;
@@ -30,31 +31,38 @@ public class NotificationServiceImpl implements NotificationService {
     public String sendNotificationByMemberId(NotificationDto.Request notificationDto, List<Long> memberId) {
         Notification notification = notificationDto.toEntity();
         notification = notificationRepository.save(notification);
-        for(Long id : memberId){
-            String token = memberRepository.findById(id).isPresent() ? memberRepository.findById(id).get().getFcmToken() : null;
-            if(token == null) continue;
+        List<Member> members = memberRepository.findAllById(memberId);
 
-            Message message = Message.builder()
+        sendMessage(notification, members);
+        return "메시지 보내기 성공";
+    }
+
+    //알림 메시지로 member들에게 알림을 보내는 메소드
+    private void sendMessage(Notification notification, List<Member> members){
+        for(Member member : members){
+            String token = member.getFcmToken();
+            if(token == null) continue;     //fcmToken이 없으면 메시지 보내지 않음
+
+            Message message = Message.builder() //메시지 생성
                     .setToken(token)
                     .setNotification(com.google.firebase.messaging.Notification.builder()
-                            .setTitle(notificationDto.getTitle())
-                            .setBody(notificationDto.getMessage())
+                            .setTitle(notification.getTitle())
+                            .setBody(notification.getMessage())
                             .build()
                     )
                     .build();
             try{
                 firebaseMessaging.send(message);
                 membersNotificationRepository.save(MembersNotification.builder()
-                                .member(memberRepository.findById(id).get())
+                                .member(member)
                                 .notification(notification)
                         .build()
                 );
             }catch (Exception e){
                 log.error(e.getMessage());
-                return "메시지 보내기 실패";
+                throw new RuntimeException("메시지 보내기 실패");
             }
         }
-        return "메시지 보내기 성공";
     }
 
     @Override
