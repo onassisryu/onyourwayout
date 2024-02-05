@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
@@ -64,14 +63,12 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(name = "phone_number", unique = true, nullable = false)
     private String phoneNumber;
 
-    @ColumnDefault("50")
     private int score;
 
     private String fcmToken;
 
     private String profileImg;
 
-    @ColumnDefault("0")
     private int penaltyCount;
 
     private Timestamp pauseStartAt;
