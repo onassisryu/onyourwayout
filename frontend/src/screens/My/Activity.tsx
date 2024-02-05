@@ -8,7 +8,7 @@ import GoBack from '@/components/Signup/GoBack';
 import MypageButton from '@/components/Mypage/MypageButton';
 import {MypageBodyContainer} from '@/components/Mypage/MypageBodyContainer';
 import {View} from 'react-native';
-import axiosAuth from '@/axios/axios_auth';
+import axiosAuth from '@/axios/axiosAuth';
 
 const BodyContainer = styled(MypageBodyContainer)`
   justify-content: center;

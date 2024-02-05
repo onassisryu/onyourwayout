@@ -1,5 +1,4 @@
 import {atom, AtomEffect} from 'recoil';
-import {getStorage, setStorage} from '@/storage/common_storage';
 
 let userData: any = {};
 export const tokenState = atom({
@@ -19,6 +18,10 @@ export const userSignUpDataState = atom({
 
 export const isLoggedInState = atom({
   key: 'isLoggedInState',
+  default: false,
+});
+export const loadingState = atom({
+  key: 'loadingState',
   default: false,
 });
 
