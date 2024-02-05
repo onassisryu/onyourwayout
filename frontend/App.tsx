@@ -6,6 +6,7 @@
  */
 
 import React, {useEffect} from 'react';
+import {StatusBar} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
@@ -112,10 +113,10 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <NavigationContainer>
         <ThemeProvider theme={theme}>
+          <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
           <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name="Bottom" component={BottomTab} />
             <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="홈" component={Home} />
             <Stack.Screen name="Notice" component={Notice} />
             <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
             <Stack.Screen name="DoIt1" component={DoIt1} />

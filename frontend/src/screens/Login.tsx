@@ -7,7 +7,6 @@ import styled, {css} from '@emotion/native';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import DefaultButton from '@/components/DefaultButton';
 import theme from '@/Theme';
-import Ionic from 'react-native-vector-icons/Ionicons';
 import Ant from 'react-native-vector-icons/AntDesign';
 
 interface StyledInputProps {
@@ -75,7 +74,8 @@ const Login = ({navigation}: any) => {
           if (resp.data !== null && resp.data != '') {
             handleLoginSuccess();
             setUserData(resp.data); // 받아온 데이터를 Recoil 상태에 저장
-            // navigation.navigate('main');
+            Keyboard.dismiss();
+            navigation.navigate('홈');
             console.log('로그인 성공');
           } else {
             Alert.alert('로그인 실패', '아이디나 비밀번호를 확인하세요.');
@@ -106,11 +106,11 @@ const Login = ({navigation}: any) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Container>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        {/* <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text>
             <Ant name="arrowleft" size={40} color="black" />
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <StyledText
           style={css`
             margin-top: 60px;

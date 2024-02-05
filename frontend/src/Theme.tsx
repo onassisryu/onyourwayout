@@ -4,10 +4,11 @@ const color = {
   white: '#FFFFFF',
   black: '#262626',
   primary: '#00D282',
-  gray: '#B2B2B2',
+  lightgray: '#F9F9F9',
   gray100: '#DCDCDC',
   gray200: '#C4C4C4',
   gray300: '#ABABAB',
+  gray: '#B2B2B2',
 };
 const font = {
   primary: 'PretendardVariable',
