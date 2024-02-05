@@ -25,4 +25,10 @@ public class ChatRoom extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatMessage> chatMessages = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "chat_user_list",
+            joinColumns = @JoinColumn(name = "chat_room_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id"))
+    private List<Member> members = new ArrayList<>();
 }

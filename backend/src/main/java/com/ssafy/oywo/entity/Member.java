@@ -90,12 +90,6 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     private String certificationImg;
 
-    @OneToMany
-    @JoinTable(name = "chat_user_list",
-            joinColumns = @JoinColumn(name = "member_id"),
-            inverseJoinColumns = @JoinColumn(name = "chat_room_id"))
-    private List<ChatRoom> chatRooms = new ArrayList<>();
-
     @OneToMany(mappedBy = "member")
     private List<NotiDong> notiDongs = new ArrayList<>();
 
