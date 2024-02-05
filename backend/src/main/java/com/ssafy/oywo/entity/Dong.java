@@ -23,7 +23,7 @@ public class Dong extends BaseTimeEntity{
     @Column(name = "uuid")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "apt_id")
     private Apartment apartment;
 

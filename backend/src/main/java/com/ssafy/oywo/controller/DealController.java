@@ -77,7 +77,7 @@ public class DealController {
      * @return 거래 리스트
      * @throws Exception
      */
-    @GetMapping("/user/list")     // 'localhost:8080/deal/user/list?type=request&memberId=1'
+    @GetMapping("/user/list")
     public List<DealDto.Response> getDealsByMemberId(
             @RequestParam(name = "type") String requestOrAccept,
             @RequestParam(name = "memberId", required = false) Long memberId) throws Exception {

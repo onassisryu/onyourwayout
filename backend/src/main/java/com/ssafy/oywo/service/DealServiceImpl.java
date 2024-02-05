@@ -10,7 +10,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
@@ -31,7 +30,6 @@ public class DealServiceImpl implements DealService{
     private final DealComplaintRepository dealComplaintRepository;
     private final DealImageRepository dealImageRepository;
     private final MemberRepository memberRepository;
-    private final DongRepository dongRepository;
 
 
     // 현재 로그인한 사용자 정보를 가져옴
@@ -88,31 +86,9 @@ public class DealServiceImpl implements DealService{
         // 내 아파트 id 구하기
         Long myAptId = dealRepository.findHoAptIdsByMemberId(loginUserId);
         log.info("myAptId : {}", myAptId);
-        // 내 아파트 동 리스트
-        List<Dong> dongs = dongRepository.findByApartmentId(myAptId);
-        for (Dong dong : dongs) {
-            log.info("myDongInMyApt: {}", dong.getId());
-        }
 
-//        List<Deal> dealsByDong = new ArrayList<>();
         List<Deal> dealsByDong = dealRepository.findDealsByDongIdAndDealType(
                 myAptId, dongId, dealType, Deal.DealStatus.OPEN);
-//        if (dongId != null) {
-//            for (Dong dong : dongs) {
-//                log.info("myAptId:{}", myAptId);
-//                log.info("dongs:{}, dong.getId:{} ", dongs.stream().toList(), dong.getId());
-//                if (Objects.equals(dong.getId(), dongId)) {
-//                    dealsByDong.add((Deal) dealRepository.findDealsByDongIdAndDealType(
-//                            myAptId, dongId, dealType, Deal.DealStatus.OPEN));
-//
-//                }
-//            }
-//        } else {
-//            List<Deal> dealsByDongIdAndDealType = dealRepository.findDealsByDongIdAndDealType(
-//                    myAptId, dongId, dealType, Deal.DealStatus.OPEN);
-//            log.info("dealsByDongIdAndDealType: {}", dealsByDongIdAndDealType);
-//            dealsByDong.add((Deal) dealsByDongIdAndDealType);
-//        }
 
         log.info("dealsByDong: {}", dealsByDong);
         return dealsByDong
@@ -131,27 +107,9 @@ public class DealServiceImpl implements DealService{
         // 내 아파트 id 구하기
         Long myAptId = dealRepository.findHoAptIdsByMemberId(loginUserId);
         log.info("myAptId : {}", myAptId);
-        // 내 아파트 동 리스트
-        List<Dong> dongs = dongRepository.findByApartmentId(myAptId);
 
-        Long dealsByDongCnt = null;
-        if (dongId != null) {
-            for (Dong dong : dongs) {
-                log.info("myAptId:{}", myAptId);
-                log.info("dongs:{}, dong.getId:{} ", dongs.stream().toList(), dong.getId());
-                if (Objects.equals(dong.getId(), dongId)) {
-                    log.info("Objects.equals(dong.getId(), dongId):{}", Objects.equals(dong.getId(), dongId));
-                    dealsByDongCnt = dealRepository.countDealsByDongIdAndDealType(
-                            myAptId, dongId, dealType, Deal.DealStatus.OPEN);
-
-                }
-            }
-
-        } else {
-            dealsByDongCnt = dealRepository.countDealsByDongIdAndDealType(
+        return dealRepository.countDealsByDongIdAndDealType(
                     myAptId, dongId, dealType, Deal.DealStatus.OPEN);
-        }
-        return dealsByDongCnt;
     }
 
 
@@ -305,7 +263,7 @@ public class DealServiceImpl implements DealService{
                     image.setDeletedAt(null);
                     dealImageStrList.remove(image.getImgUrl());
                 }
-//                List<String> newDealImageStrList = dealImageStrList;
+
             }
 
             if (!dealImageStrList.isEmpty()) {
