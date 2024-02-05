@@ -58,4 +58,11 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
             @Param("dealStatus") Deal.DealStatus dealStatus
     );
 
+
+
+    @Query("SELECT m FROM Member m " +
+            "JOIN m.hos ho " +
+            "JOIN ho.dong dong " +
+            "WHERE dong.id = :dongId")
+    List<Member> findMembersByDong(Long dongId);
 }

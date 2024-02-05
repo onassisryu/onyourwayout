@@ -3,9 +3,8 @@ package com.ssafy.oywo.service;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.ssafy.oywo.dto.NotificationDto;
-import com.ssafy.oywo.entity.Member;
-import com.ssafy.oywo.entity.MembersNotification;
-import com.ssafy.oywo.entity.Notification;
+import com.ssafy.oywo.entity.*;
+import com.ssafy.oywo.repository.DongRepository;
 import com.ssafy.oywo.repository.MemberRepository;
 import com.ssafy.oywo.repository.MembersNotificationRepository;
 import com.ssafy.oywo.repository.NotificationRepository;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -26,16 +26,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final MembersNotificationRepository membersNotificationRepository;
     private final MemberRepository memberRepository;
     private final FirebaseMessaging firebaseMessaging;
+    private final DongRepository dongRepository;
 
-    @Override
-    public String sendNotificationByMemberId(NotificationDto.Request notificationDto, List<Long> memberId) {
-        Notification notification = notificationDto.toEntity();
-        notification = notificationRepository.save(notification);
-        List<Member> members = memberRepository.findAllById(memberId);
-
-        sendMessage(notification, members);
-        return "메시지 보내기 성공";
-    }
 
     //알림 메시지로 member들에게 알림을 보내는 메소드
     private void sendMessage(Notification notification, List<Member> members){
@@ -63,6 +55,26 @@ public class NotificationServiceImpl implements NotificationService {
                 throw new RuntimeException("메시지 보내기 실패");
             }
         }
+    }
+
+    @Override
+    public String sendNotificationByMemberId(NotificationDto.Request notificationDto, List<Long> memberId) {
+        Notification notification = notificationDto.toEntity();
+        notification = notificationRepository.save(notification);
+        List<Member> members = memberRepository.findAllById(memberId);
+
+        sendMessage(notification, members);
+        return "메시지 보내기 성공";
+    }
+
+    public String sendNotificationByDeal(Deal deal){
+        Dong dong = dongRepository.findById(deal.getId()).orElseThrow(()->new NoSuchElementException("해당 동이 없습니다."));
+
+        Notification notification = Notification.builder()
+                .title("해줘요잉 알림")
+                .message("가 등록되었습니다.")
+                .build();
+        return "메시지 보내기 성공";
     }
 
     @Override
