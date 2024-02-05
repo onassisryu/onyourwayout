@@ -15,10 +15,21 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
 
     Member findByUsernameAndPassword(String username,String password);
 
-    @Query("SELECT hoApt.id FROM Ho hoApt " +
+    @Query("SELECT hoAptApt.id FROM Ho hoApt " +
             "JOIN hoApt.member hoAptMember " +
             "JOIN hoApt.dong hoAptDong " +
             "JOIN hoAptDong.apartment hoAptApt " +
             "WHERE hoAptMember.id = :memberId")
     Long findHoAptIdsByMemberId(@Param("memberId") Long memberId);
+
+
+    // 정지 중 사용자
+    @Query("SELECT m From Member m " +
+            "WHERE m.pauseStartAt <= current_timestamp " +
+            "AND m.pauseEndAt >= current_timestamp")
+    List<Member> findSuspendedMembers();
+
+    List<Member> findByCertifiedIsFalse();
+
+    Optional<Member> findByIdAndCertifiedIsFalse(Long memberId);
 }
