@@ -38,7 +38,7 @@ public class ChatServiceImpl implements ChatService{
         // 공통된 채팅방이 없다면
         // 새로운 채팅방을 만들어 저장한다.
         else{
-            ChatRoom newChatRoom=ChatRoom.builder().createdAt(new Timestamp(System.currentTimeMillis())).build();
+            ChatRoom newChatRoom=ChatRoom.builder().build();
             ChatRoom createdRoom=chatRoomRepository.save(newChatRoom);
 
             // 새로운 채팅방을 사용자에게 저장한다.

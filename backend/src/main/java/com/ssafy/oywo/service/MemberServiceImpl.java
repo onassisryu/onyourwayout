@@ -220,6 +220,7 @@ public class MemberServiceImpl implements MemberService {
         return MemberDto.Response.of(member);
     }
 
+    @Transactional
     @Override
     public MemberDto.Response modify(Member member){
         for (int i=0;i<member.getNotiDongs().size();i++){

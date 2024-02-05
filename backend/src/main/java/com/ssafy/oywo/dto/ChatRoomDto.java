@@ -7,6 +7,7 @@ import com.ssafy.oywo.entity.Ho;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class ChatRoomDto {
     @Builder(toBuilder = true)
     public static class Response{
         private Long id;
-        private Timestamp createdAt;
+        private LocalDateTime createdAt;
         private String oppNickName;             // 상대방 닉네임
         private Dong dong;                       // 상대방 동
         private String hoName;
@@ -38,7 +39,6 @@ public class ChatRoomDto {
         public Response toDto(ChatRoom chatRoom){
             return Response.builder()
                     .id(chatRoom.getId())
-                    .createdAt(chatRoom.getCreatedAt())
                     .chatMessages(chatRoom.getChatMessages())
                     .build();
         }

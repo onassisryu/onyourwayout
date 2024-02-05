@@ -23,7 +23,6 @@ public class ChatMessageDto {
         return ChatMessage.builder()
                 .imgUrl(imgURL)
                 .senderId(sendId)
-                .createdAt(createdAt)
                 .build();
 
     }

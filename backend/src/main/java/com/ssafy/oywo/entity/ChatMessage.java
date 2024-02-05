@@ -38,7 +38,5 @@ public class ChatMessage extends BaseTimeEntity {
     @Column(name="img_url")
     private String imgUrl;
 
-    @Column(name="created_at")
-    private Timestamp createdAt;
 
 }

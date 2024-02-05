@@ -8,6 +8,7 @@ import com.ssafy.oywo.entity.NotiDealCategory;
 import com.ssafy.oywo.entity.NotiDong;
 import com.ssafy.oywo.service.MemberService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,9 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@AllArgsConstructor
-@RestController
 @RequiredArgsConstructor
+@RestController
 @RequestMapping("/alarm")
 public class AlarmController {
 
@@ -94,8 +94,8 @@ public class AlarmController {
         memberEntity=memberEntity.toBuilder().notificationEnd(alarmDto.getNotificationEnd()).build();
 
         // member entity로 사용자 알림 정보 수정
-        MemberDto.Response memberResponse=memberSerivce.modify(memberEntity);
-
+        MemberDto.Response memberResponse=memberSerivce.modifyWithAlarm(memberEntity);
+        System.out.println(memberResponse);
         // 사용자 아이디, 설정한 동 정보, 설정한 카테고리 유형, 시작시간과 마지막 시간 정보 response
         payload.put("memberId",memberResponse.getId());
         payload.put("dongInfo",memberResponse.getNotiDongs());
