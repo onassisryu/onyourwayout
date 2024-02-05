@@ -20,8 +20,8 @@ public class ChatRoomDto {
     @Getter
     @Builder
     public static class Request{
-        private String memberUsername;
-        private String otherUsername;
+        private String memberNickname;
+        private String otherNickname;
     }
 
     @AllArgsConstructor

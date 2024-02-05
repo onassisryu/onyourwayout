@@ -19,21 +19,28 @@ import java.util.*;
 public class ChatServiceImpl implements ChatService{
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
+    private final ApartRepository apartRepository;
     private final HoRepository hoRepository;
     private final ChatMessageRepository chatMessageRepository;
 
     @Transactional
     @Override
-    public ChatRoomDto.Response createChatRoomByUsername(String memberUsername, String otherUsername) {
+    public ChatRoomDto.Response createChatRoomByUsername(String memberNickname, String otherNickname) {
 
         ChatRoomDto.Response response=null;
 
-        Long commonRoomId= chatRoomRepository.getCommonChatRoom(memberUsername,otherUsername);
+        Long commonRoomId= chatRoomRepository.getCommonChatRoom(memberNickname,otherNickname);
+
+        // 상대방의 정보를 담는다.
+        Member otherMember=memberRepository.findByNickname(otherNickname)
+                .orElseThrow(()->new NoSuchElementException("알 수 없는 사용자입니다."));
+        Long hoId=memberRepository.findHoAptIdsByMemberId(otherMember.getId());
+        Ho ho=hoRepository.findById(hoId)
+                .orElseThrow(()->new NoSuchElementException("채팅 상대방 : 알 수 없는 호입니다."));
 
 
         if (commonRoomId!=null){
-            response=new ChatRoomDto.Response().toDto(ChatRoom.builder().id(commonRoomId).build())
-                    .toBuilder().build();
+            response=new ChatRoomDto.Response().toDto(ChatRoom.builder().id(commonRoomId).build());
         }
 
         // 공통된 채팅방이 없다면
@@ -43,8 +50,8 @@ public class ChatServiceImpl implements ChatService{
             ChatRoom createdRoom=chatRoomRepository.save(newChatRoom);
 
             // 새로운 채팅방을 사용자에게 저장한다.
-            Member member=memberRepository.findByUsername(memberUsername).get();
-            Member other=memberRepository.findByUsername(otherUsername).get();
+            Member member=memberRepository.findByNickname(memberNickname).get();
+            Member other=memberRepository.findByNickname(otherNickname).get();
 
             List<ChatRoom> memberRoomResult=new ArrayList<>(member.getChatRooms());
             memberRoomResult.add(createdRoom);
@@ -54,14 +61,16 @@ public class ChatServiceImpl implements ChatService{
             member=member.toBuilder().chatRooms(memberRoomResult).build();
             other=other.toBuilder().chatRooms(otherRoomResult).build();
 
-            System.out.println(member);
-            System.out.println(other);
             memberRepository.save(member);
             memberRepository.save(other);
 
             response=new ChatRoomDto.Response().toDto(createdRoom);
         }
-
+        response=response.toBuilder()
+                .oppNickName(otherMember.getNickname())
+                .dong(ho.getDong())
+                .hoName(ho.getName())
+                .build();
         return response;
     }
 

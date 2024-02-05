@@ -10,12 +10,15 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member,Long> {
     Optional<Member> findByUsername(String username);
+
+    Optional<Member> findByNickname(String nickname);
+
     boolean existsByUsername(String username);
     Optional<Member> findById(Long id);
 
     Member findByUsernameAndPassword(String username,String password);
 
-    @Query("SELECT hoAptApt.id FROM Ho hoApt " +
+    @Query("SELECT hoApt.id FROM Ho hoApt " +
             "JOIN hoApt.member hoAptMember " +
             "JOIN hoApt.dong hoAptDong " +
             "JOIN hoAptDong.apartment hoAptApt " +

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ChatService {
 
-    public ChatRoomDto.Response createChatRoomByUsername(String memberUsername,String otherUsername);
+    public ChatRoomDto.Response createChatRoomByUsername(String memberNickname,String otherNickname);
     public List<ChatRoomDto.Response> getChatRoomById(Long memberId);
     public void saveChatMessage(ChatMessageDto message);
 

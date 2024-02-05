@@ -42,10 +42,10 @@ public class ChatController {
     @PostMapping("/chat/room")
     public ChatRoomDto.Response createChatRoom(@RequestBody ChatRoomDto.Request chatRoomRequest){
         // 채팅방을 이용할 두 유저
-        String memberUsername=chatRoomRequest.getMemberUsername();
-        String otherUsername=chatRoomRequest.getOtherUsername();
+        String memberNickname=chatRoomRequest.getMemberNickname();
+        String otherNickname=chatRoomRequest.getOtherNickname();
 
-        return chatService.createChatRoomByUsername(memberUsername,otherUsername);
+        return chatService.createChatRoomByUsername(memberNickname,otherNickname);
     }
     
     // 사용자의 uuid로 채팅방 목록 불러오기 + 채팅방 내 구성원 정보도 함께

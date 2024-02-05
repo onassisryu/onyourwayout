@@ -16,10 +16,10 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom,Long> {
     Optional<List<ChatRoom>> getChatRoomByUsername(
             @Param("username") String username);
 
-    @Query(value = "select o.chat_room_id from (select c.chat_room_id from chat_user_list c where c.member_id in (select uuid from member where email= :othername)) o " +
+    @Query(value = "select o.chat_room_id from (select c.chat_room_id from chat_user_list c where c.member_id in (select uuid from member where nickname= :othername)) o " +
             "where o.chat_room_id in (" +
-            "select c.chat_room_id from member m join chat_user_list c on m.uuid=c.member_id where m.email= :username)",nativeQuery = true)
-    Long getCommonChatRoom(@Param("username") String username, @Param("othername") String othername);
+            "select c.chat_room_id from member m join chat_user_list c on m.uuid=c.member_id where m.nickname= :nickname)",nativeQuery = true)
+    Long getCommonChatRoom(@Param("nickname") String nickname, @Param("othername") String othername);
 
     @Query("SELECT m.chatRooms FROM Member m WHERE m.id= :id")
     Optional<List<ChatRoom>> getChatRoomById(@Param("id") Long id);
