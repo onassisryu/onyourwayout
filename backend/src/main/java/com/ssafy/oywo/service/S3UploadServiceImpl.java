@@ -33,16 +33,17 @@ public class S3UploadServiceImpl implements S3UploadService{
      * @return
      * @throws IOException
      */
-    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
+    public String upload(MultipartFile multipartFile, String dirName, Long id) throws IOException {
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패"));
-        return upload(uploadFile, dirName);
+        return upload(uploadFile, dirName, id);
     }
 
-    public String upload(File uploadFile, String dirName) {
-        String uuid = UUID.randomUUID().toString();
+    public String upload(File uploadFile, String dirName, Long id) {
+        String uuid = UUID.nameUUIDFromBytes(uploadFile.getName().getBytes()).toString();
+//        String uuid = UUID.randomUUID().toString();
 //        String fileName = dirName + "/" + uploadFile.getName();
-        String fileName = dirName + "/" + uuid + ".jpg";
+        String fileName = dirName + "/" + id.toString() + "/" + uuid + ".jpg";
         String uploadImageUrl = putS3(uploadFile, fileName);
 
         removeNewFile(uploadFile);  // 로컬에 생성된 File 삭제 (MultipartFile -> File 전환 하며 로컬에 파일 생성됨)
