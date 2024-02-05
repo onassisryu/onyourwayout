@@ -19,6 +19,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -89,27 +90,35 @@ public class DealServiceImpl implements DealService{
         log.info("myAptId : {}", myAptId);
         // 내 아파트 동 리스트
         List<Dong> dongs = dongRepository.findByApartmentId(myAptId);
+        for (Dong dong : dongs) {
+            log.info("myDongInMyApt: {}", dong.getId());
+        }
 
         List<Deal> dealsByDong = new ArrayList<>();
+//        List<Deal> dealsByDong = dealRepository.findDealsByDongIdAndDealType(
+//                myAptId, dongId, dealType, Deal.DealStatus.OPEN);
         if (dongId != null) {
             for (Dong dong : dongs) {
                 log.info("myAptId:{}", myAptId);
                 log.info("dongs:{}, dong.getId:{} ", dongs.stream().toList(), dong.getId());
                 if (Objects.equals(dong.getId(), dongId)) {
                     dealsByDong.addAll(dealRepository.findDealsByDongIdAndDealType(
-                            myAptId, dong.getId(), dealType, Deal.DealStatus.OPEN));
+                            myAptId, dongId, dealType, Deal.DealStatus.OPEN));
 
                 }
             }
         } else {
-            dealsByDong.addAll(dealRepository.findDealsByDongIdAndDealType(
-                    myAptId, null, dealType, Deal.DealStatus.OPEN));
+            List<Deal> dealsByDongIdAndDealType = dealRepository.findDealsByDongIdAndDealType(
+                    myAptId, dongId, dealType, Deal.DealStatus.OPEN);
+            log.info("dealsByDongIdAndDealType: {}", dealsByDongIdAndDealType);
+            dealsByDong.addAll(dealsByDongIdAndDealType);
         }
 
+        log.info("dealsByDong: {}", dealsByDong);
         return dealsByDong
                 .stream()
                 .map(DealDto.Response::new)
-                .toList();
+                .collect(Collectors.toList());
     }
 
 
@@ -291,22 +300,21 @@ public class DealServiceImpl implements DealService{
             deal.getDealImages().clear();
 
             // 이미지 수정
-            List<String> newDealImageStrList = new ArrayList<String>();
             for (DealImage image : originDealImageList) {
-                if (!dealImageStrList.contains(image.getImgUrl())) {
-                    newDealImageStrList.add(image.getImgUrl());
-                } else {
+                if (dealImageStrList.contains(image.getImgUrl())) {
                     image.setDeletedAt(null);
+                    dealImageStrList.remove(image.getImgUrl());
                 }
+//                List<String> newDealImageStrList = dealImageStrList;
             }
 
-            if (!newDealImageStrList.isEmpty()) {
+            if (!dealImageStrList.isEmpty()) {
                 // DealImage 저장
                 List<DealImage> newDealImages = new ArrayList<>();
-                for (String newDealImageStr : newDealImageStrList) {
+                for (String dealImageStr : dealImageStrList) {
                     DealImage dealImage = DealImage.builder()
                             .deal(deal)
-                            .imgUrl(newDealImageStr)
+                            .imgUrl(dealImageStr)
                             .build();
                     newDealImages.add(dealImage);
                 }
@@ -443,18 +451,21 @@ public class DealServiceImpl implements DealService{
             throw new IllegalArgumentException("good or bad 를 넣어야 합니다.");
         }
 
-        memberRepository.save(
-                Member.builder()
-                        .id(member.getId())
-                        .nickname(member.getNickname())
-                        .username(member.getUsername())
-                        .birthDate(member.getBirthDate())
-                        .phoneNumber(member.getPhoneNumber())
-                        .score(score)
-                        .roles(member.getRoles())
-                        .password(member.getPassword())
-                .build()
-        );
+        member.setScore(score);
+        memberRepository.save(member);
+//
+//        memberRepository.save(
+//                Member.builder()
+//                        .id(member.getId())
+//                        .nickname(member.getNickname())
+//                        .username(member.getUsername())
+//                        .birthDate(member.getBirthDate())
+//                        .phoneNumber(member.getPhoneNumber())
+//                        .score(score)
+//                        .roles(member.getRoles())
+//                        .password(member.getPassword())
+//                .build()
+//        );
 
         return MemberDto.Response.of(member);
     }

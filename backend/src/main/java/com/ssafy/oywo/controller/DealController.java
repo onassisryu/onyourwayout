@@ -109,7 +109,7 @@ public class DealController {
     @PostMapping
     public ResponseEntity<?> createDeal(
             @RequestPart DealDto.Request dto,
-            @RequestPart List<MultipartFile> dealImageFileList) throws Exception {
+            @RequestPart(required = false) List<MultipartFile> dealImageFileList) throws Exception {
 
         List<String> dealImageStrList = new ArrayList<String>();
         // 이미지 업로드
@@ -148,7 +148,7 @@ public class DealController {
     public ResponseEntity<?> updateDeal(
             @PathVariable Long id,
             @RequestPart DealDto.Request dto,
-            @RequestPart List<MultipartFile> dealImageFileList) throws Exception {
+            @RequestPart(required = false) List<MultipartFile> dealImageFileList) throws Exception {
 
         List<String> dealImageStrList = new ArrayList<String>();
         // 이미지 업로드

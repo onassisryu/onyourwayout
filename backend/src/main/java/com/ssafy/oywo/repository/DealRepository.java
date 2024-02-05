@@ -2,11 +2,11 @@ package com.ssafy.oywo.repository;
 
 import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.entity.DealType;
-import jakarta.annotation.Nullable;
-import org.springframework.data.domain.Pageable;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -83,7 +83,8 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             "(SELECT hoMember.id FROM Ho ho " +
             " JOIN ho.dong dong " +
             " JOIN ho.member hoMember " +
-            " WHERE dong.apartment.id = :apartmentId" +
+            " JOIN dong.apartment apt " +
+            " WHERE apt.id = :apartmentId " +
             " AND (:dongId IS NULL OR dong.id = :dongId)) " +
             " AND (:dealType IS NULL OR d.dealType IN :dealType) " +
             " AND d.dealStatus = :dealStatus")

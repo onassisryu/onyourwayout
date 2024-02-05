@@ -23,7 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @SQLDelete(sql = "UPDATE deal SET deleted_at = NOW() WHERE uuid = ?")
-@SQLRestriction("deleted_at IS NULL AND dealStatus != 'CANCEL'")
+@SQLRestriction("deleted_at IS NULL")
 public class Deal extends BaseTimeEntity {
     public enum RewardType {
         CASH, ITEM
