@@ -5,6 +5,8 @@ import {NavigationProp} from '@react-navigation/native';
 import theme from '@/Theme';
 import {View, TouchableOpacity, ImageSourcePropType} from 'react-native';
 import {GlobalText} from '@/GlobalStyles';
+import GoBack from '@/components/Signup/GoBack';
+import Header from '@/components/Header';
 
 const HeaderContainer = styled.View`
   flex-direction: row;
@@ -12,14 +14,12 @@ const HeaderContainer = styled.View`
   align-items: center;
   height: 60px;
   background-color: white;
-  padding-left: 15px;
-  padding-right: 15px;
+  padding: 0 10px;
 `;
 
-const BackImage = styled.Image<{source?: ImageSourcePropType}>`
+const BackImage = styled.View`
   width: 25px;
   height: 25px;
-  resize-mode: contain;
 `;
 
 const NoticeTitle = styled(GlobalText)`
@@ -29,21 +29,13 @@ const NoticeTitle = styled(GlobalText)`
   padding-bottom: 5px;
 `;
 
-interface Props {
-  navigation: NavigationProp<any>;
-}
-
-const backImage = require('icons/back.png');
-
-const NoticeSettingsHeader = ({navigation}: Props) => {
+const NoticeSettingsHeader = () => {
   return (
-    <HeaderContainer>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <BackImage source={backImage}></BackImage>
-      </TouchableOpacity>
+    <Header>
+      <GoBack />
       <NoticeTitle> 알림설정 </NoticeTitle>
       <BackImage />
-    </HeaderContainer>
+    </Header>
   );
 };
 

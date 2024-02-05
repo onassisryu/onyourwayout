@@ -5,6 +5,7 @@ import {NavigationProp} from '@react-navigation/native';
 import theme from '@/Theme';
 import moment from 'moment';
 import 'moment/locale/ko';
+import {GlobalContainer} from '@/GlobalStyles';
 import {View, TouchableOpacity, ImageSourcePropType} from 'react-native';
 import {GlobalText} from '@/GlobalStyles';
 
@@ -12,7 +13,6 @@ const TabContainer = styled.View`
   flex-direction: row;
   justify-content: space-around;
   height: 30px;
-  background-color: white;
 `;
 
 const Tab = styled.TouchableOpacity<{selected: boolean}>`
@@ -110,7 +110,7 @@ const NoticeTab = () => {
   }, []);
 
   return (
-    <View>
+    <GlobalContainer>
       <TabContainer>
         <Tab selected={selectedTab === '새소식'} onPress={() => setSelectedTab('새소식')}>
           <TabText selected={selectedTab === '새소식'}>새소식</TabText>
@@ -133,7 +133,7 @@ const NoticeTab = () => {
           <DistinctLine></DistinctLine>
         </NoticeCard>
       ))}
-    </View>
+    </GlobalContainer>
   );
 };
 

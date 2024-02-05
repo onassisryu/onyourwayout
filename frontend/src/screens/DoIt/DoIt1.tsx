@@ -3,10 +3,6 @@ import {css} from '@emotion/native';
 import {ScrollView} from 'react-native';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import {NavigationProp} from '@react-navigation/native';
-import DefaultButton from '@/components/DefaultButton';
-
-import {TouchableOpacity, Text} from 'react-native';
-import Ant from 'react-native-vector-icons/AntDesign';
 import styled from '@emotion/native';
 import SvgIcon from '@components/SvgIcon';
 import Header from '@/components/Header';
@@ -21,10 +17,13 @@ const MainText = styled(GlobalText)`
   font-size: 25px;
   font-style: normal;
   font-weight: 700;
+  text-align: center;
 `;
 const MainTextContainer = styled(GlobalContainer)`
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  text-align: center;
   flex-shrink: 0;
   margin-top: 80px;
   height: 100px;
@@ -81,6 +80,7 @@ const DoIt1 = ({navigation}: Props) => {
     <GlobalContainer
       style={css`
         justify-content: flex-start;
+        align-items: center;
         height: 100%;
       `}>
       <Header>

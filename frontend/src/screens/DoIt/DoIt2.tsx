@@ -11,13 +11,7 @@ import styled from '@emotion/native';
 import theme from '@/Theme';
 import {useEffect} from 'react';
 import SvgIcon from '@/components/SvgIcon';
-
-type RootStackParamList = {
-  DoIt2: {
-    type: string;
-    icon: 'puppy' | 'puppyOff' | 'bags' | 'bagsOff' | 'building' | 'buildingOff' | 'shopping' | 'shoppingOff';
-  };
-};
+import {RootStackParamList} from '@/@types';
 
 type DoItScreenRouteProp = RouteProp<RootStackParamList, 'DoIt2'>;
 
