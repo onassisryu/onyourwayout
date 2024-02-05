@@ -60,6 +60,15 @@ const Signup5 = ({navigation}: any) => {
     padding: 10px;
     background-color: ${({disabled}) => (disabled ? theme.color.gray200 : theme.color.primary)};
   `;
+
+  const NextButton2 = styled(DefaultButton)`
+    width: 100%;
+    font-size: 18px;
+    height: 50px;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: ${({disabled}) => (disabled ? theme.color.gray200 : theme.color.primary)};
+  `;
   return (
     <GlobalContainer>
       <Header>
@@ -86,6 +95,13 @@ const Signup5 = ({navigation}: any) => {
           color="primary"
           size="lg"
           disabled={isDisabled}
+          onPress={() => navigation.navigate('Signup6')}
+        />
+        <NextButton2
+          title="초대코드 없음"
+          color="primary"
+          size="lg"
+          disabled={!isDisabled}
           onPress={() => navigation.navigate('Signup6')}
         />
       </SignupBodyContainer>

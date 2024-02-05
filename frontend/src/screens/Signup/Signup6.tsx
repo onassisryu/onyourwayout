@@ -148,7 +148,7 @@ const Signup6 = ({navigation}: any) => {
 
           <Text style={style.text}>{img.uri}</Text>
 
-          <Image source={img} style={style.img}></Image>
+          <Image source={img} width={10} height={10}></Image>
         </View>
 
         <NextButton

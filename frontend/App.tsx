@@ -6,6 +6,7 @@
  */
 
 import React, {useEffect} from 'react';
+import {StatusBar} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
@@ -31,6 +32,7 @@ import Location from '@screens/Location';
 import Chat from '@screens/Chat';
 import Apart from '@screens/Apart';
 import My from '@screens/My';
+import MySetting from '@screens/MySetting';
 import Login from '@screens/Login';
 import Notice from '@screens/Notice';
 import NoticeSettings from '@screens/NoticeSettings';
@@ -51,6 +53,22 @@ const App = () => {
   const Tab = createBottomTabNavigator();
   const queryClient = new QueryClient();
   const isLoggedIn = useRecoilValue(isLoggedInState);
+  console.log('App Loading....');
+  // 토큰 발급
+  const getFcmToken = async () => {
+    const fcmToken = await messaging().getToken();
+    console.log('[FCM Token] ', fcmToken);
+  };
+
+  useEffect(() => {
+    getFcmToken(); // 토큰 발급
+    // 앱이 켜져있을때
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('[Remote Message] ', JSON.stringify(remoteMessage));
+    });
+    return unsubscribe;
+  }, []);
+
   const BottomTab = () => {
     return (
       <Tab.Navigator
@@ -96,6 +114,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <NavigationContainer>
         <ThemeProvider theme={theme}>
+          <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
           <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name="Bottom" component={BottomTab} />
             <Stack.Screen name="Login" component={Login} />
@@ -109,6 +128,7 @@ const App = () => {
             <Stack.Screen name="Signup4" component={Signup4} />
             <Stack.Screen name="Signup5" component={Signup5} />
             <Stack.Screen name="Signup6" component={Signup6} />
+            <Stack.Screen name="MySetting" component={MySetting} />
           </Stack.Navigator>
         </ThemeProvider>
       </NavigationContainer>
