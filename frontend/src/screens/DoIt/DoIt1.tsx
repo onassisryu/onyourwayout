@@ -75,6 +75,9 @@ const DoIt1 = ({navigation}: Props) => {
     }
 
     navigation.navigate('DoIt2', {type: buttonName, icon: iconName});
+    setTimeout(() => {
+      setSelectedButton('');
+    }, 250); // 이동 후 0.25초 뒤에 초기화
   };
   return (
     <GlobalContainer

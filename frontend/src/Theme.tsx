@@ -5,6 +5,7 @@ const color = {
   black: '#262626',
   primary: '#00D282',
   lightgray: '#F9F9F9',
+  gray0: '#E9E9E9',
   gray100: '#DCDCDC',
   gray200: '#C4C4C4',
   gray300: '#ABABAB',
