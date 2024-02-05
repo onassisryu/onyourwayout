@@ -81,6 +81,19 @@ public class DealController {
         return dealService.getDealsByMemberId(requestOrAccept, memberId);
     }
 
+    /**
+     * 요청자/수락자 현재 거래 조회
+     * @param requestId 요청자 아이디
+     * @param acceptId 수락자 아이디
+     * @return 거래 정보
+     */
+    @GetMapping("/user/{requestId}/{acceptId}")
+    public ResponseEntity<?> getDealByStatusING(
+            @PathVariable Long requestId, @PathVariable Long acceptId) {
+        return ResponseEntity.ok(dealService.getDealByStatusING(requestId, acceptId));
+    }
+
+
 
 
     /**

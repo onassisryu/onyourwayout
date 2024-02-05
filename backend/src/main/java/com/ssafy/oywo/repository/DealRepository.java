@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DealRepository extends JpaRepository<Deal, Long> {
@@ -93,9 +94,14 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     // member_id로 사용자별 수행한(acceptId) 전체 거래 들고오기
     List<Deal> findDealsByAcceptId(Long memberId);
 
+    // reuqest_id와 accept_id로 현재 거래 들고오기(최신 1개)
+    Optional<Deal> findTopByRequestIdAndAcceptIdAndDealStatusOrderByModifiedAtDesc(Long requestId, Long acceptId, Deal.DealStatus dealStatus);
     // 수락 기능 제한
     List<Deal> findDealsByAcceptIdAndDealStatus(Long acceptId, Deal.DealStatus dealStatus);
 
     // 현재 수락한 해줘요잉 개수
     Long countDealsByAcceptIdAndDealStatus(Long acceptId, Deal.DealStatus dealStatus);
+
+    // 신고 수에 따른 거래 내림차순
+    List<Deal> findDealsByOrderByComplaintDesc();
 }

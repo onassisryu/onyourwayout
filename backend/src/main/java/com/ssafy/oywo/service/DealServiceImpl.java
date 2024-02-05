@@ -176,6 +176,14 @@ public class DealServiceImpl implements DealService{
     }
 
 
+    // 요청자/수행자 현재 거래 조회
+    @Override
+    public DealDto.Response getDealByStatusING(Long requestId, Long acceptId) {
+        Deal deal = dealRepository.findTopByRequestIdAndAcceptIdAndDealStatusOrderByModifiedAtDesc(requestId, acceptId, Deal.DealStatus.ING)
+                .orElseThrow(() -> new IllegalArgumentException("현재 진행 중인 거래가 없습니다."));
+        return new DealDto.Response(deal);
+    }
+
 
     // 거래 생성
     @Override

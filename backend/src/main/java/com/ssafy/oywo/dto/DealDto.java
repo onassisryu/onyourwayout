@@ -1,6 +1,7 @@
 package com.ssafy.oywo.dto;
 
 import com.ssafy.oywo.entity.Deal;
+import com.ssafy.oywo.entity.DealComplaint;
 import com.ssafy.oywo.entity.DealImage;
 import com.ssafy.oywo.entity.DealType;
 import lombok.*;
@@ -151,7 +152,7 @@ public class DealDto {
             this.dealStatus = entity.getDealStatus();
             this.dealType = entity.getDealType();
             this.expireAt = entity.getExpireAt();
-            this.dealImages = entity.getDealImages();
+//            this.dealImages = entity.getDealImages();
             this.createdAt = entity.getCreatedAt();
             this.modifiedAt = entity.getModifiedAt();
             this.complaints = complaints;
