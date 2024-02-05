@@ -262,4 +262,13 @@ public class DealController {
     }
 
 
+//    @GetMapping("/recommend")
+//    public ResponseEntity<?> recommend(
+//            @RequestParam List<Member> members,
+//            @RequestParam Member currentMember,
+//            @RequestParam List<Deal> deals) {
+//
+//    }
+
+
 }
