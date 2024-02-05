@@ -105,3 +105,6 @@ yarn-error.log
 
 #firebase
 **/firebase/*.json
+
+#springboot env
+application-aws.yml
