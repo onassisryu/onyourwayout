@@ -1,4 +1,6 @@
-import {atom} from 'recoil';
+import {atom, AtomEffect} from 'recoil';
+import {getStorage, setStorage} from '@/storage/token_storage';
+
 export const tokenState = atom({
   key: 'tokenState',
   default: '',
@@ -6,15 +8,31 @@ export const tokenState = atom({
 
 export const isLoggedInState = atom({
   key: 'isLoggedInState',
-  default: false, // 기본적으로 로그인되어 있지 않음
+  default: false,
 });
 
 export const userDataState = atom({
-  key: 'userDataState', // 고유한 식별자
-  default: null, // 초기값
+  key: 'userDataState',
+  default: null,
 });
 
 export const userSignUpDataState = atom({
   key: 'userSignUpDataState',
   default: null,
 });
+
+function persistAtom<T>(key: string): AtomEffect<T> {
+  return ({setSelf, onSet}) => {
+    const loadPersisted = async () => {
+      const savedValue = await getStorage('user');
+      if (savedValue !== null) {
+        setSelf(JSON.parse(savedValue));
+      }
+    };
+
+    loadPersisted();
+    onSet(newValue => {
+      setStorage('user', newValue);
+    });
+  };
+}

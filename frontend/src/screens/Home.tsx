@@ -9,6 +9,9 @@ import MainDoList from '@components/Mainpage/MainDoList';
 import MainModal from '@/components/Mainpage/MainModal';
 import {useRecoilValue} from 'recoil';
 import {isLoggedInState, userDataState} from '../recoil/atoms';
+import {getStorage, setStorage} from '@/storage/token_storage';
+import {useEffect} from 'react';
+
 const Home = ({navigation}: any) => {
   const isLoggedIn = useRecoilValue(isLoggedInState); // isLoggedInState 상태 가져오기
   if (!isLoggedIn) {
