@@ -55,5 +55,4 @@ public class ChatController {
         return new ResponseEntity(payload, HttpStatus.OK);
     }
 
-
 }

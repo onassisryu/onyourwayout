@@ -89,7 +89,7 @@ public class ChatServiceImpl implements ChatService{
 
             // otherMemberId 어떻게 받아와지는지 확인하기
             System.out.println("=====otherMemberId========="+otherMemberId);
-            String nickname=memberRepository.findById(memberId).get().getNickname();
+            String nickname=memberRepository.findById(otherMemberId).get().getNickname();
 
             // 상대방 닉네임, 사는 곳 정보 불러오기
             Long hoId=memberRepository.findHoAptIdsByMemberId(otherMemberId);
