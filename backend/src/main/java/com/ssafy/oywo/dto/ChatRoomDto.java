@@ -39,6 +39,7 @@ public class ChatRoomDto {
         public Response toDto(ChatRoom chatRoom){
             return Response.builder()
                     .id(chatRoom.getId())
+                    .createdAt(chatRoom.getCreatedAt())
                     .chatMessages(chatRoom.getChatMessages())
                     .build();
         }

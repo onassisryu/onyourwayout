@@ -32,7 +32,8 @@ public class ChatServiceImpl implements ChatService{
 
 
         if (commonRoomId!=null){
-            response=new ChatRoomDto.Response().toDto(ChatRoom.builder().id(commonRoomId).build());
+            response=new ChatRoomDto.Response().toDto(ChatRoom.builder().id(commonRoomId).build())
+                    .toBuilder().build();
         }
 
         // 공통된 채팅방이 없다면
