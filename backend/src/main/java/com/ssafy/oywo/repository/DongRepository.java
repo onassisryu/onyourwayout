@@ -17,7 +17,7 @@ public interface DongRepository extends JpaRepository<Dong, Long> {
     List<Dong> findByApartment(Apartment apartment);
     Optional<Dong> findById(Long id);
 
-    // 아파트 id로 동 정보 가녀도기
+    // 아파트 id로 동 정보 가져오기
     List<Dong> findByApartmentId(Long aptId);
 
 }
