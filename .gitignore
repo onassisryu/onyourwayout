@@ -105,3 +105,7 @@ yarn-error.log
 
 #firebase
 **/firebase/*.json
+
+#springboot env
+**/application.yml
+application.yml
