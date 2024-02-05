@@ -15,7 +15,7 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
 
     Member findByUsernameAndPassword(String username,String password);
 
-    @Query("SELECT hoAptApt.id FROM Ho hoApt " +
+    @Query("SELECT hoApt.id FROM Ho hoApt " +
             "JOIN hoApt.member hoAptMember " +
             "JOIN hoApt.dong hoAptDong " +
             "JOIN hoAptDong.apartment hoAptApt " +
