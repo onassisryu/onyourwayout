@@ -23,6 +23,7 @@ import java.util.Optional;
 @Slf4j
 @AllArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/alarm")
 public class AlarmController {
 
@@ -31,7 +32,7 @@ public class AlarmController {
     // 사용자 uuid로 설정한 알림 확인
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getAlarm(@PathVariable Long id){
-        System.out.println(id);
+
         MemberDto.Response member=memberSerivce.getMemberInfo(id);
 
         // 존재하지 않는 사용자인 경우
@@ -39,10 +40,18 @@ public class AlarmController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(member,HttpStatus.OK);
+        HashMap<String,Object> payload=new HashMap<>();
+        payload.put("memberId",member.getId());
+        payload.put("dongInfo",member.getNotiDongs());
+        payload.put("categories",member.getNotiDealCategories());
+        payload.put("notificationStart",member.getNotificationStart());
+        payload.put("notificationEnd",member.getNotificationEnd());
+
+        return new ResponseEntity<>(payload,HttpStatus.OK);
     }
 
     // 알림 설정
+    @Transactional
     @PostMapping("/set")
     public ResponseEntity<?> setAlarm(@RequestBody AlarmSettingDto.Request alarmDto){
         HashMap<String,Object> payload=new HashMap<>();
@@ -85,7 +94,16 @@ public class AlarmController {
         memberEntity=memberEntity.toBuilder().notificationEnd(alarmDto.getNotificationEnd()).build();
 
         // member entity로 사용자 알림 정보 수정
-        MemberDto.Response memberResponse=memberSerivce.modifyWithAlarm(memberEntity);
-        return new ResponseEntity<>(memberResponse.of(memberEntity), HttpStatus.OK);
+        MemberDto.Response memberResponse=memberSerivce.modify(memberEntity);
+
+        // 사용자 아이디, 설정한 동 정보, 설정한 카테고리 유형, 시작시간과 마지막 시간 정보 response
+        payload.put("memberId",memberResponse.getId());
+        payload.put("dongInfo",memberResponse.getNotiDongs());
+        payload.put("categories",memberResponse.getNotiDealCategories());
+        payload.put("notificationStart",memberResponse.getNotificationStart());
+        payload.put("notificationEnd",memberResponse.getNotificationEnd());
+
+        return new ResponseEntity<>(payload, HttpStatus.OK);
     }
+
 }
