@@ -1,0 +1,33 @@
+{"memberInfo": {"accountNonExpired": true
+"accountNonLocked": true
+"authorities": [[Object]]
+"birthDate": "2022-10-11"
+"certificationImg": null
+"certified": true
+"chatRooms": []
+"createdAt": "2024-01-30T23:05:50.664+00:00"
+"credentialsNonExpired": true
+"deletedAt": null
+"enabled": true
+"fcmToken": "et1nOVSFTxWac_j1EaarWn:APA91bEdlmDiJRQGU5YVtlp8OwDgX9jguZn-QeDQc3T0x6jEeh3WxWpLD0ST1o6TmEe6R-_HQK5Zdv5dQXxPCYrDjjFY4nFwJhYhm3T2x2rYqMC_cKsYDprW8k9uL_GiqV6VKW5_i6hG"
+"id": 4
+"membersNotifications": []
+"nickname": "b"
+"notiCategoryAll": false
+"notiDealCategories": []
+"notiDongAll": false
+"notiDongs": []
+"notificationEnd": null
+"notificationStart": null
+"password": "1234"
+"pauseEndAt": null
+"pauseStartAt": null
+"penaltyCount": 0
+"profileImg": null
+"roles": ["USER"]
+"score": 50
+"updatedAt": null
+"username": "b@gmail"}
+"token": {"accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNjgwMzM1N30.9DRQRvGj0kW8fkxuL_NxWJ5-Vk6x4Rsh_fLodFiPZzo"
+"grantType": "Bearer"
+"refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNjgyMTM1N30.42tLfqAGiokjmBtaOypQaiBZQ3l0mp2FUh7wTugsExM"}}
