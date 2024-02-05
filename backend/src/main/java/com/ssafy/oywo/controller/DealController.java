@@ -31,7 +31,7 @@ public class DealController {
      */
     @GetMapping("/list")
     public List<DealDto.Response> getDeals(
-            @RequestParam(name = "dealType", defaultValue = "") DealType dealType) {
+            @RequestParam(name = "dealType", required = false) DealType dealType) {
 
         return dealService.getDeals(dealType);
     }
@@ -45,8 +45,8 @@ public class DealController {
      */
     @GetMapping("/dong/list")
     public List<DealDto.Response> getDealsByDong (
-            @RequestParam(name = "dong", defaultValue = "") Long dongId,
-            @RequestParam(name = "dealType", defaultValue = "") List<DealType> dealType) {
+            @RequestParam(name = "dong", required = false) Long dongId,
+            @RequestParam(name = "dealType", required = false) List<DealType> dealType) {
 
         return dealService.getDealsByDong(dongId, dealType);
     }
@@ -60,8 +60,8 @@ public class DealController {
      */
     @GetMapping("/dong/count")
     public ResponseEntity<?> countDealsByDong (
-            @RequestParam(name = "dong", defaultValue = "") Long dongId,
-            @RequestParam(name = "dealType", defaultValue = "") List<DealType> dealType) {
+            @RequestParam(name = "dong", required = false) Long dongId,
+            @RequestParam(name = "dealType", required = false) List<DealType> dealType) {
 
         Long dealsByDongCnt = dealService.countDealsByDong(dongId, dealType);
 
@@ -80,7 +80,7 @@ public class DealController {
     @GetMapping("/user/list")     // 'localhost:8080/deal/user/list?type=request&memberId=1'
     public List<DealDto.Response> getDealsByMemberId(
             @RequestParam(name = "type") String requestOrAccept,
-            @RequestParam(name = "memberId", defaultValue = "") Long memberId) throws Exception {
+            @RequestParam(name = "memberId", required = false) Long memberId) throws Exception {
 
         return dealService.getDealsByMemberId(requestOrAccept, memberId);
     }

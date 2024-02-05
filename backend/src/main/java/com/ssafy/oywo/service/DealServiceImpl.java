@@ -94,25 +94,25 @@ public class DealServiceImpl implements DealService{
             log.info("myDongInMyApt: {}", dong.getId());
         }
 
-        List<Deal> dealsByDong = new ArrayList<>();
-//        List<Deal> dealsByDong = dealRepository.findDealsByDongIdAndDealType(
-//                myAptId, dongId, dealType, Deal.DealStatus.OPEN);
-        if (dongId != null) {
-            for (Dong dong : dongs) {
-                log.info("myAptId:{}", myAptId);
-                log.info("dongs:{}, dong.getId:{} ", dongs.stream().toList(), dong.getId());
-                if (Objects.equals(dong.getId(), dongId)) {
-                    dealsByDong.addAll(dealRepository.findDealsByDongIdAndDealType(
-                            myAptId, dongId, dealType, Deal.DealStatus.OPEN));
-
-                }
-            }
-        } else {
-            List<Deal> dealsByDongIdAndDealType = dealRepository.findDealsByDongIdAndDealType(
-                    myAptId, dongId, dealType, Deal.DealStatus.OPEN);
-            log.info("dealsByDongIdAndDealType: {}", dealsByDongIdAndDealType);
-            dealsByDong.addAll(dealsByDongIdAndDealType);
-        }
+//        List<Deal> dealsByDong = new ArrayList<>();
+        List<Deal> dealsByDong = dealRepository.findDealsByDongIdAndDealType(
+                myAptId, dongId, dealType, Deal.DealStatus.OPEN);
+//        if (dongId != null) {
+//            for (Dong dong : dongs) {
+//                log.info("myAptId:{}", myAptId);
+//                log.info("dongs:{}, dong.getId:{} ", dongs.stream().toList(), dong.getId());
+//                if (Objects.equals(dong.getId(), dongId)) {
+//                    dealsByDong.add((Deal) dealRepository.findDealsByDongIdAndDealType(
+//                            myAptId, dongId, dealType, Deal.DealStatus.OPEN));
+//
+//                }
+//            }
+//        } else {
+//            List<Deal> dealsByDongIdAndDealType = dealRepository.findDealsByDongIdAndDealType(
+//                    myAptId, dongId, dealType, Deal.DealStatus.OPEN);
+//            log.info("dealsByDongIdAndDealType: {}", dealsByDongIdAndDealType);
+//            dealsByDong.add((Deal) dealsByDongIdAndDealType);
+//        }
 
         log.info("dealsByDong: {}", dealsByDong);
         return dealsByDong

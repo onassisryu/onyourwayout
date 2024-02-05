@@ -26,7 +26,7 @@ public class Ho extends BaseTimeEntity {
     @Column(name = "uuid")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dong_id")
     private Dong dong;
 
