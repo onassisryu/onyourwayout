@@ -38,18 +38,14 @@ import Login from '@screens/Login';
 import Notice from '@screens/Notice';
 import NoticeSettings from '@screens/NoticeSettings';
 import DoIt1 from '@/screens/DoIt/DoIt1';
+import DoIt2 from '@/screens/DoIt/DoIt2';
 import Signup1 from '@/screens/Signup/Signup1';
 import Signup2 from '@/screens/Signup/Signup2';
 import Signup3 from '@/screens/Signup/Signup3';
 import Signup4 from '@/screens/Signup/Signup4';
 import Signup5 from '@/screens/Signup/Signup5';
 import Signup6 from '@/screens/Signup/Signup6';
-import Test from '@/screens/Test';
-// import Activity from '@/screens/My/Activity';
-// import ApartCertification from '@/screens/My/ApartCertification';
-// import BankAccount from '@/screens/My/BankAccount';
-// import InvitationCode from '@/screens/My/InvitationCode';
-// import ServiceCenter from '@/screens/My/ServiceCenter';
+import GoOut1 from '@/screens/GoOut/GoOut1';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -108,6 +104,7 @@ const App = () => {
             return <Ionic name={iconName!} size={size} color={color} />;
           },
         })}>
+
         <Tab.Screen name="Main" component={Main} />
         <Tab.Screen name="위치" component={Location} />
         <Tab.Screen name="아파트" component={Apart} />
@@ -126,7 +123,9 @@ const App = () => {
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Notice" component={Notice} />
             <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
+            <Stack.Screen name="GoOut1" component={GoOut1} />
             <Stack.Screen name="DoIt1" component={DoIt1} />
+            <Stack.Screen name="DoIt2" component={DoIt2} />
             <Stack.Screen name="Signup1" component={Signup1} />
             <Stack.Screen name="Signup2" component={Signup2} />
             <Stack.Screen name="Signup3" component={Signup3} />

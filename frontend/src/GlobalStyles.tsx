@@ -6,12 +6,21 @@ export const GlobalContainer = styled.View`
   font-size: ${theme.fontSize.medium};
   margin: 0;
   padding: 0;
+  display: flex;
   color: ${theme.color.black};
   box-sizing: border-box;
   background-color: white;
   height: 100%;
 `;
-
+export const GlobalComponent = styled.View`
+  font-family: ${theme.font.primary};
+  font-size: ${theme.fontSize.medium};
+  margin: 0;
+  padding: 0;
+  display: flex;
+  color: ${theme.color.black};
+  box-sizing: border-box;
+`;
 export const GlobalText = styled.Text`
   font-family: ${theme.font.primary};
   font-size: ${theme.fontSize.medium};

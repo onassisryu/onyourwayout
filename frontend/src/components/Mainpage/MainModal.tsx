@@ -80,7 +80,11 @@ const MainPlusButton = ({navigation}: any) => {
         <TouchableWithoutFeedback onPress={() => setModalVisible(false)} style={{zIndex: 1}}>
           <ModalBackground style={{zIndex: 1}}>
             <ModalComponent>
-              <ModalSubComponent onPress={() => {}}>
+              <ModalSubComponent
+                onPress={() => {
+                  navigation.navigate('GoOut1');
+                  setModalVisible(false);
+                }}>
                 <ModalImage source={outImage} />
                 <ModalText> 나가요잉 </ModalText>
               </ModalSubComponent>
