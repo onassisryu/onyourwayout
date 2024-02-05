@@ -31,7 +31,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<MemberDto.Response> getNonCertifiedMembers() {
-        List<Member> nonCertifiedMembers = memberRepository.findByCertifiedIsFalse();
+        List<Member> nonCertifiedMembers = memberRepository.findMembersByIsCertifiedIsFalse();
 
         return nonCertifiedMembers.stream()
                 .map(MemberDto.Response::of)
@@ -40,12 +40,13 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public MemberDto.Response getNonCertifiedMember(Long memberId) {
-        Member member = memberRepository.findByIdAndCertifiedIsFalse(memberId)
+        Member member = memberRepository.findByIdAndIsCertifiedIsFalse(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("비인증 회원이 존재하지 않음"));
 
         return MemberDto.Response.of(member);
     }
 
+    @Transactional
     @Override
     public boolean verifyCertification(Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -61,7 +62,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<DealDto.Response> getDealsWithComplaint() {
 
-        List<Deal> deals = dealRepository.findDealsByComplaintDesc();
+        List<Deal> deals = dealRepository.findDealsByOrderByComplaintDesc();
 
         return deals.stream()
                 .map(DealDto.Response::new)

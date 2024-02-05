@@ -28,7 +28,8 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
             "AND m.pauseEndAt >= current_timestamp")
     List<Member> findSuspendedMembers();
 
-    List<Member> findByCertifiedIsFalse();
+    List<Member> findMembersByIsCertifiedIsFalse();
+//    List<Member> findMembersByIsCertified(boolean isCertified);
 
-    Optional<Member> findByIdAndCertifiedIsFalse(Long memberId);
+    Optional<Member> findByIdAndIsCertifiedIsFalse(Long memberId);
 }
