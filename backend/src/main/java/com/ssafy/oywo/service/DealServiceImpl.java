@@ -188,7 +188,7 @@ public class DealServiceImpl implements DealService{
 
     // 거래 생성
     @Override
-    public DealDto.Response createDeal(DealDto.Request dto) {
+    public DealDto.Response createDeal(DealDto.Request dto, List<String> dealImageStrList) {
         validateRequest(dto);
 
         // 로그인된 사용자의 id 가져오기
@@ -205,18 +205,20 @@ public class DealServiceImpl implements DealService{
         try {
             dealRepository.save(deal);
 
-            // 이미지 업로드
-
-
-//            if (dto.getDealImageFileList() != null) {
-//                // 이미지 저장로직
-//                for (MultipartFile dealImageFile : dealImageFileList) {
-//                    String dealImageStr =
-//                    List<DealImage> dealImages = DealImage.builder().deal(deal).imgUrl().build();
-//                    deal.addDealImage(dealImage);
-//                }
-//                dealImageRepository.saveAll(dealImages);
-//            }
+            // 이미지String 저장
+            if (dealImageStrList != null) {
+                // DealImage 저장
+                List<DealImage> dealImages = new ArrayList<>();
+                for (String dealImageStr : dealImageStrList) {
+                    DealImage dealImage = DealImage.builder()
+                                                            .deal(deal)
+                                                            .imgUrl(dealImageStr)
+                                                            .build();
+                    dealImages.add(dealImage);
+                }
+                dealImageRepository.saveAll(dealImages);
+                deal.setDealImages(dealImages);
+            }
 
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
@@ -277,34 +279,41 @@ public class DealServiceImpl implements DealService{
 
     // 거래 수정
     @Override
-    public DealDto.Response updateDeal(Long id, DealDto.Request dto) {
+    public DealDto.Response updateDeal(Long id, DealDto.Request dto, List<String> dealImageStrList) {
         Deal deal = dealRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
         );
 
         deal.update(dto);
 
-        // 이미지 수정
-        List<DealImage> dealImages = dealImageRepository.findByDealId(id);
-        List<DealImage> updatedImages = new ArrayList<>();
-        for (DealImage dealImage : deal.getDealImages()) {
-            DealImage existingImage = findImageByUrl(dealImages, dealImage.getImgUrl());
+        if (deal.getDealImages() != null) {
+            List<DealImage> originDealImageList = dealImageRepository.findByDealId(id);
+            deal.getDealImages().clear();
 
-            if (existingImage != null) {
-                existingImage.setImgUrl(dealImage.getImgUrl());
-                updatedImages.add(existingImage);
-            } else {
-                updatedImages.add(DealImage.builder()
-                                .imgUrl(dealImage.getImgUrl())
-                                .build());
+            // 이미지 수정
+            List<String> newDealImageStrList = new ArrayList<String>();
+            for (DealImage image : originDealImageList) {
+                if (!dealImageStrList.contains(image.getImgUrl())) {
+                    newDealImageStrList.add(image.getImgUrl());
+                } else {
+                    image.setDeletedAt(null);
+                }
+            }
+
+            if (!newDealImageStrList.isEmpty()) {
+                // DealImage 저장
+                List<DealImage> newDealImages = new ArrayList<>();
+                for (String newDealImageStr : newDealImageStrList) {
+                    DealImage dealImage = DealImage.builder()
+                            .deal(deal)
+                            .imgUrl(newDealImageStr)
+                            .build();
+                    newDealImages.add(dealImage);
+                }
+                dealImageRepository.saveAll(newDealImages);
+                deal.setDealImages(newDealImages);
             }
         }
-
-        // 기존 이미지 제거
-        dealImages.clear();
-        // 이미지 추가
-        dealImages.addAll(updatedImages);
-
         return new DealDto.Response(deal);
     }
 
@@ -469,7 +478,7 @@ public class DealServiceImpl implements DealService{
         // 상태관리
         dealRepository.save(deal);
         // 삭제 로직
-        dealRepository.deleteById(id);
+//        dealRepository.deleteById(id);
     }
 
 

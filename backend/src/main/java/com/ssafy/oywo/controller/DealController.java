@@ -4,11 +4,14 @@ import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.entity.*;
 import com.ssafy.oywo.service.DealService;
 
+import com.ssafy.oywo.service.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -18,6 +21,7 @@ import java.util.List;
 public class DealController {
 
     private final DealService dealService;
+    private final S3UploadService s3UploadService;
 
 
     /**
@@ -104,9 +108,18 @@ public class DealController {
      */
     @PostMapping
     public ResponseEntity<?> createDeal(
-            @RequestBody DealDto.Request dto) throws Exception {
+            @RequestPart DealDto.Request dto,
+            @RequestPart List<MultipartFile> dealImageFileList) throws Exception {
 
-        return ResponseEntity.ok(dealService.createDeal(dto));
+        List<String> dealImageStrList = new ArrayList<String>();
+        // 이미지 업로드
+        if (dealImageFileList != null) {
+            for (MultipartFile dealImageFile : dealImageFileList) {
+                String dealImageStr = s3UploadService.upload(dealImageFile, "DealImage");
+                dealImageStrList.add(dealImageStr);
+            }
+        }
+        return ResponseEntity.ok(dealService.createDeal(dto, dealImageStrList));
     }
 
 
@@ -134,9 +147,18 @@ public class DealController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateDeal(
             @PathVariable Long id,
-            @RequestBody DealDto.Request dto) throws Exception {
+            @RequestPart DealDto.Request dto,
+            @RequestPart List<MultipartFile> dealImageFileList) throws Exception {
 
-        return ResponseEntity.ok(dealService.updateDeal(id, dto));
+        List<String> dealImageStrList = new ArrayList<String>();
+        // 이미지 업로드
+        if (dealImageFileList != null) {
+            for (MultipartFile dealImageFile : dealImageFileList) {
+                String dealImageStr = s3UploadService.upload(dealImageFile, "DealImage");
+                dealImageStrList.add(dealImageStr);
+            }
+        }
+        return ResponseEntity.ok(dealService.updateDeal(id, dto, dealImageStrList));
     }
 
 
