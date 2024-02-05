@@ -41,9 +41,28 @@ public class AlarmController {
         }
 
         HashMap<String,Object> payload=new HashMap<>();
+        List<NotiDong> notiDongList=new ArrayList<>();
+        List<NotiDealCategory> notiDealCategoryList=new ArrayList<>();
+
+        for (NotiDong notiDong: member.getNotiDongs()){
+            NotiDong dong=new NotiDong();
+            notiDongList.add(dong.builder()
+                            .dongId(notiDong.getDongId())
+                    .build());
+        }
+
+        for (NotiDealCategory notiDealCategory:member.getNotiDealCategories()){
+            NotiDealCategory category=new NotiDealCategory();
+            notiDealCategoryList.add(
+                    category.builder()
+                            .dealType(notiDealCategory.getDealType())
+                            .build()
+            );
+        }
+
         payload.put("memberId",member.getId());
-        payload.put("dongInfo",member.getNotiDongs());
-        payload.put("categories",member.getNotiDealCategories());
+        payload.put("notiDongs",notiDongList);
+        payload.put("categories",notiDealCategoryList);
         payload.put("notificationStart",member.getNotificationStart());
         payload.put("notificationEnd",member.getNotificationEnd());
 
@@ -92,14 +111,31 @@ public class AlarmController {
         // 시작 시간과 마지막 시간 설정
         memberEntity=memberEntity.toBuilder().notificationStart(alarmDto.getNotificationStart()).build();
         memberEntity=memberEntity.toBuilder().notificationEnd(alarmDto.getNotificationEnd()).build();
-
         // member entity로 사용자 알림 정보 수정
         MemberDto.Response memberResponse=memberSerivce.modifyWithAlarm(memberEntity);
-        System.out.println(memberResponse);
-        // 사용자 아이디, 설정한 동 정보, 설정한 카테고리 유형, 시작시간과 마지막 시간 정보 response
+
+        List<NotiDong> notiDongList=new ArrayList<>();
+        List<NotiDealCategory> notiDealCategoryList=new ArrayList<>();
+
+        for (NotiDong notiDong: memberResponse.getNotiDongs()){
+            NotiDong dong=new NotiDong();
+            notiDongList.add(dong.builder()
+                    .dongId(notiDong.getDongId())
+                    .build());
+        }
+
+        for (NotiDealCategory notiDealCategory:memberResponse.getNotiDealCategories()){
+            NotiDealCategory category=new NotiDealCategory();
+            notiDealCategoryList.add(
+                    category.builder()
+                            .dealType(notiDealCategory.getDealType())
+                            .build()
+            );
+        }
+
         payload.put("memberId",memberResponse.getId());
-        payload.put("dongInfo",memberResponse.getNotiDongs());
-        payload.put("categories",memberResponse.getNotiDealCategories());
+        payload.put("notiDongs",notiDongList);
+        payload.put("categories",notiDealCategoryList);
         payload.put("notificationStart",memberResponse.getNotificationStart());
         payload.put("notificationEnd",memberResponse.getNotificationEnd());
 
