@@ -445,7 +445,7 @@ public class DealServiceImpl implements DealService{
 
         deal.setDealStatus(Deal.DealStatus.CANCEL);
         // 상태관리
-        dealRepository.save(deal);
+//        dealRepository.save(deal);
         // 삭제 로직
 //        dealRepository.deleteById(id);
     }
@@ -476,6 +476,8 @@ public class DealServiceImpl implements DealService{
         dealRepository.save(deal);
     }
 
+
+    // 나가요잉 거래 추천
     @Override
     public List<DealDto.Response> recommendDeal(List<DealType> dealType) {
         // 로그인 사용자 id

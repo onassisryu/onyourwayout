@@ -141,6 +141,7 @@ public class DealController {
      * 거래 수정
      * @param id 거래 아이디
      * @param dto 거래 수정 정보
+     * @param dealImageFileList 이미지 파일 리스트
      * @return 거래 정보
      * @throws Exception
      */
@@ -249,9 +250,14 @@ public class DealController {
     }
 
 
+    /**
+     * 나가요잉 추천
+     * @param dealType 거래 유형
+     * @return 거래 추천 리스트
+     */
     @GetMapping("/out-recommend")
     public ResponseEntity<?> recommendDeal(
-            @RequestParam(name = "dealType", defaultValue = "") List<DealType> dealType) {
+            @RequestParam(name = "dealType", required = false) List<DealType> dealType) {
         return ResponseEntity.ok(dealService.recommendDeal(dealType));
     }
 
