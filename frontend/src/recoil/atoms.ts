@@ -1,19 +1,15 @@
 import {atom, AtomEffect} from 'recoil';
-import {getStorage, setStorage} from '@/storage/token_storage';
+import {getStorage, setStorage} from '@/storage/common_storage';
 
+let userData: any = {};
 export const tokenState = atom({
   key: 'tokenState',
   default: '',
 });
 
-export const isLoggedInState = atom({
-  key: 'isLoggedInState',
-  default: false,
-});
-
 export const userDataState = atom({
   key: 'userDataState',
-  default: null,
+  default: userData,
 });
 
 export const userSignUpDataState = atom({
@@ -21,18 +17,26 @@ export const userSignUpDataState = atom({
   default: null,
 });
 
-function persistAtom<T>(key: string): AtomEffect<T> {
-  return ({setSelf, onSet}) => {
-    const loadPersisted = async () => {
-      const savedValue = await getStorage('user');
-      if (savedValue !== null) {
-        setSelf(JSON.parse(savedValue));
-      }
-    };
+export const isLoggedInState = atom({
+  key: 'isLoggedInState',
+  default: false,
+});
 
-    loadPersisted();
-    onSet(newValue => {
-      setStorage('user', newValue);
-    });
-  };
-}
+// function persistAtom<T>(key: string): AtomEffect<T> {
+//   let storageKey = '';
+//   if (key === 'userDataState') storageKey = 'user';
+//   else storageKey = key;
+//   return ({setSelf, onSet}) => {
+//     const loadPersisted = async () => {
+//       const savedValue = await getStorage(storageKey);
+//       if (savedValue) {
+//         setSelf(savedValue);
+//       }
+//     };
+
+//     loadPersisted();
+//     onSet(newValue => {
+//       setStorage(storageKey, JSON.stringify(newValue));
+//     });
+//   };
+// }

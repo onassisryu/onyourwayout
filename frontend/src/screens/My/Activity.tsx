@@ -35,8 +35,7 @@ const data = {
 
 const Activity = () => {
   const userData = useRecoilValue(userDataState); // userDataState 상태 가져오기
-  const userId = userData.memberInfo.id;
-  const accessToken = `${userData.token.accessToken}`;
+  const userId = userData.id;
 
   useEffect(() => {
     axiosAuth
@@ -45,7 +44,6 @@ const Activity = () => {
         console.log('성공', resp.data);
       })
       .catch(error => {
-        console.log(`Bearer ${accessToken}`);
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   }, []);
