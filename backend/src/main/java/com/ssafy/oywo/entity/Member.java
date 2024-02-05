@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "member")
 @Builder
-@Getter
+@Getter @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor

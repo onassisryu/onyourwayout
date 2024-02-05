@@ -94,7 +94,7 @@ public class DealDto {
         private Long acceptId;
         private int cash;
         private String item;
-        private final Deal.RewardType rewardType;
+        private Deal.RewardType rewardType;
         private int complaint;
         private Deal.DealStatus dealStatus;
         private DealType dealType;
@@ -104,6 +104,8 @@ public class DealDto {
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
         private LocalDateTime deletedAt;
+
+        private List<DealComplaint> complaints;
 
         /*
         Entity -> Dto
@@ -134,6 +136,25 @@ public class DealDto {
             this.createdAt = entity.getCreatedAt();
             this.modifiedAt = entity.getModifiedAt();
 
+        }
+
+        public Response (Deal entity, List<DealComplaint> complaints) {
+            this.id = entity.getId();
+            this.title = entity.getTitle();
+            this.content = entity.getContent();
+            this.requestId = entity.getRequestId();
+            this.acceptId = entity.getAcceptId();
+            this.cash = entity.getCash();
+            this.item = entity.getItem();
+            this.rewardType = entity.getRewardType();
+            this.complaint = entity.getComplaint();
+            this.dealStatus = entity.getDealStatus();
+            this.dealType = entity.getDealType();
+            this.expireAt = entity.getExpireAt();
+            this.dealImages = entity.getDealImages();
+            this.createdAt = entity.getCreatedAt();
+            this.modifiedAt = entity.getModifiedAt();
+            this.complaints = complaints;
         }
     }
 
