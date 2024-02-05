@@ -11,7 +11,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 @Table(name = "noti_dong")
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE noti_dong SET deleted_at = NOW() WHERE uuid = ?")

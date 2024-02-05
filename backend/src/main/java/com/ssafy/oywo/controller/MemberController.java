@@ -59,7 +59,8 @@ public class MemberController {
             // 사용자 id로 아파트, 동, 호를 저장한다.
             Long hoId=memberSerivce.getHoIdByMemberId(memberResponse.getId());
             Ho ho=hoService.getHoById(hoId).orElseThrow(()->new NoSuchElementException("찾을 수 없는 호입니다"));
-            HoDto hoDto=HoDto.builder().name(ho.getName()).id(ho.getId()).name(ho.getName()).build();
+            System.out.println("InviteCode "+ho.getInviteCode());
+            HoDto hoDto=HoDto.builder().name(ho.getName()).id(ho.getId()).inviteCode(ho.getInviteCode()).build();
             DongDto.Response dongResponse=dongService.getDongByHoId(hoId);
 
             totalMemberInfo = totalMemberInfo.toTotalInfo(memberResponse,dongResponse,hoDto);
@@ -67,7 +68,7 @@ public class MemberController {
             HashMap<String,Object> payload=new HashMap<>();
             payload.put("token",jwtToken);
             payload.put("memberInfo",totalMemberInfo);
-            System.out.println(payload);
+
             return ResponseEntity.ok(payload);
 
         }catch (HttpClientErrorException.Unauthorized e){
@@ -195,6 +196,15 @@ public class MemberController {
         payload.put("apartment",apartment);
 
         return new ResponseEntity<>(payload,HttpStatus.OK);
+    }
+
+    @GetMapping("/verify/{code}")
+    public ResponseEntity<?> verifyInviteCode(@PathVariable("code") String inviteCode){
+        HashMap<String,Object> payload=memberSerivce.findHoByInviteCode(inviteCode);
+        if (payload==null){
+            return new ResponseEntity<>("유효하지 않은 초대코드입니다.",HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(memberSerivce.findHoByInviteCode(inviteCode),HttpStatus.OK);
     }
 
 }

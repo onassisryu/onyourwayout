@@ -1,6 +1,8 @@
 package com.ssafy.oywo.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -20,12 +22,14 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "member")
-@Builder
-@Getter @Setter
+@Builder(toBuilder = true)
+@Getter
+@Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE member SET deleted_at = NOW() WHERE uuid = ?")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @SQLRestriction("deleted_at IS NULL")
 public class Member extends BaseTimeEntity implements UserDetails {
 

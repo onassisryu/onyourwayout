@@ -67,8 +67,11 @@ public class MemberDto {
         private String profileImg;
         private int penaltyCount;
         private boolean isCertified;
+        private String inviteCode;
         private String fcmToken;
-
+        private Boolean isNotiDongAll;
+        private Boolean isNotiCategoryAll;
+        private List<String> roles=new ArrayList<>();
 
         private Long dongId;
         private String dongName;
@@ -87,6 +90,7 @@ public class MemberDto {
             return Response.builder()
                     .id(member.getId())
                     .username(member.getUsername())
+                    .password(member.getPassword())
                     .nickname(member.getNickname())
                     .birthDate(member.getBirthDate())
                     .phoneNumber(member.getPhoneNumber())
@@ -96,12 +100,18 @@ public class MemberDto {
                     .dongName(ho.getDong().getName())
                     .hoId(ho.getId())
                     .hoName(ho.getName())
+                    .inviteCode(ho.getInviteCode())
                     .build();
         }
         public static Response of(Member member){
+            System.out.println("===========RESPONSE==============");
+            System.out.println(member);
+            System.out.println(member.isNotiDongAll());
+
             return Response.builder()
                     .id(member.getId())
                     .nickname(member.getNickname())
+                    .password(member.getPassword())
                     .username(member.getUsername())
                     .birthDate(member.getBirthDate())
                     .phoneNumber(member.getPhoneNumber())
@@ -111,6 +121,8 @@ public class MemberDto {
                     .notificationEnd(member.getNotificationEnd())
                     .notiDealCategories(member.getNotiDealCategories())
                     .notiDongs(member.getNotiDongs())
+                    .isNotiDongAll(member.isNotiDongAll())
+                    .isNotiCategoryAll(member.isNotiCategoryAll())
                     .build();
         }
 
@@ -124,6 +136,7 @@ public class MemberDto {
                     .phoneNumber(phoneNumber)
                     .score(score)
                     .fcmToken(fcmToken)
+                    .roles(roles)
                     .isCertified(isCertified)
                     .notificationStart(notificationStart)
                     .notificationEnd(notificationEnd)
@@ -182,6 +195,8 @@ public class MemberDto {
         private boolean isCertified;
         private String fcmToken;
         private String inviteCode;
+        private Boolean isNotiDongAll;
+        private Boolean isNotiCategoryAll;
 
         private Long aptId;
         private String aptName;
@@ -218,6 +233,8 @@ public class MemberDto {
                     .chatRooms(response.getChatRooms())
                     .notiDongs(response.getNotiDongs())
                     .notiDealCategories(response.getNotiDealCategories())
+                    .isNotiCategoryAll(response.getIsNotiCategoryAll())
+                    .isNotiDongAll(response.getIsNotiDongAll())
                     .membersNotifications(response.getMembersNotifications())
                     .hoId(ho.getId())
                     .hoName(ho.getName())
@@ -225,6 +242,7 @@ public class MemberDto {
                     .dongName(dong.getName())
                     .aptId(dong.getApartment().getId())
                     .aptName(dong.getApartment().getName())
+                    .inviteCode(ho.getInviteCode())
                     .build();
             return totalInfo;
         }
