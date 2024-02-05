@@ -8,6 +8,7 @@ import com.ssafy.oywo.entity.NotiDealCategory;
 import com.ssafy.oywo.entity.NotiDong;
 import com.ssafy.oywo.service.MemberService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/alarm")
 public class AlarmController {
@@ -31,7 +32,7 @@ public class AlarmController {
     // 사용자 uuid로 설정한 알림 확인
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getAlarm(@PathVariable Long id){
-        System.out.println(id);
+
         MemberDto.Response member=memberSerivce.getMemberInfo(id);
 
         // 존재하지 않는 사용자인 경우
@@ -39,10 +40,37 @@ public class AlarmController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(member,HttpStatus.OK);
+        HashMap<String,Object> payload=new HashMap<>();
+        List<NotiDong> notiDongList=new ArrayList<>();
+        List<NotiDealCategory> notiDealCategoryList=new ArrayList<>();
+
+        for (NotiDong notiDong: member.getNotiDongs()){
+            NotiDong dong=new NotiDong();
+            notiDongList.add(dong.builder()
+                            .dongId(notiDong.getDongId())
+                    .build());
+        }
+
+        for (NotiDealCategory notiDealCategory:member.getNotiDealCategories()){
+            NotiDealCategory category=new NotiDealCategory();
+            notiDealCategoryList.add(
+                    category.builder()
+                            .dealType(notiDealCategory.getDealType())
+                            .build()
+            );
+        }
+
+        payload.put("memberId",member.getId());
+        payload.put("notiDongs",notiDongList);
+        payload.put("categories",notiDealCategoryList);
+        payload.put("notificationStart",member.getNotificationStart());
+        payload.put("notificationEnd",member.getNotificationEnd());
+
+        return new ResponseEntity<>(payload,HttpStatus.OK);
     }
 
     // 알림 설정
+    @Transactional
     @PostMapping("/set")
     public ResponseEntity<?> setAlarm(@RequestBody AlarmSettingDto.Request alarmDto){
         HashMap<String,Object> payload=new HashMap<>();
@@ -83,9 +111,35 @@ public class AlarmController {
         // 시작 시간과 마지막 시간 설정
         memberEntity=memberEntity.toBuilder().notificationStart(alarmDto.getNotificationStart()).build();
         memberEntity=memberEntity.toBuilder().notificationEnd(alarmDto.getNotificationEnd()).build();
-
         // member entity로 사용자 알림 정보 수정
         MemberDto.Response memberResponse=memberSerivce.modifyWithAlarm(memberEntity);
-        return new ResponseEntity<>(memberResponse.of(memberEntity), HttpStatus.OK);
+
+        List<NotiDong> notiDongList=new ArrayList<>();
+        List<NotiDealCategory> notiDealCategoryList=new ArrayList<>();
+
+        for (NotiDong notiDong: memberResponse.getNotiDongs()){
+            NotiDong dong=new NotiDong();
+            notiDongList.add(dong.builder()
+                    .dongId(notiDong.getDongId())
+                    .build());
+        }
+
+        for (NotiDealCategory notiDealCategory:memberResponse.getNotiDealCategories()){
+            NotiDealCategory category=new NotiDealCategory();
+            notiDealCategoryList.add(
+                    category.builder()
+                            .dealType(notiDealCategory.getDealType())
+                            .build()
+            );
+        }
+
+        payload.put("memberId",memberResponse.getId());
+        payload.put("notiDongs",notiDongList);
+        payload.put("categories",notiDealCategoryList);
+        payload.put("notificationStart",memberResponse.getNotificationStart());
+        payload.put("notificationEnd",memberResponse.getNotificationEnd());
+
+        return new ResponseEntity<>(payload, HttpStatus.OK);
     }
+
 }

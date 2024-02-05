@@ -99,6 +99,11 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<MembersNotification> membersNotifications = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(name = "chat_user_list",
+            joinColumns = @JoinColumn(name = "member_id"),
+            inverseJoinColumns = @JoinColumn(name = "chat_room_id"))
+    private List<ChatRoom> chatRooms = new ArrayList<>();
 
     // 이전 코드
     @ElementCollection(fetch = FetchType.EAGER)

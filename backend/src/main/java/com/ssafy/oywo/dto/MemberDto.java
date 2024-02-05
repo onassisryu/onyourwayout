@@ -101,6 +101,7 @@ public class MemberDto {
                     .hoId(ho.getId())
                     .hoName(ho.getName())
                     .inviteCode(ho.getInviteCode())
+                    .roles(member.getRoles())
                     .build();
         }
         public static Response of(Member member){
@@ -123,6 +124,7 @@ public class MemberDto {
                     .notiDongs(member.getNotiDongs())
                     .isNotiDongAll(member.isNotiDongAll())
                     .isNotiCategoryAll(member.isNotiCategoryAll())
+                    .roles(member.getRoles())
                     .build();
         }
 
@@ -142,6 +144,7 @@ public class MemberDto {
                     .notificationEnd(notificationEnd)
                     .notiDealCategories(notiDealCategories)
                     .notiDongs(notiDongs)
+                    .roles(roles)
                     .build();
         }
     }
