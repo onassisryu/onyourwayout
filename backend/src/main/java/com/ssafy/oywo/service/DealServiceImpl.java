@@ -492,4 +492,24 @@ public class DealServiceImpl implements DealService{
         dealComplaintRepository.save(complaint);
         dealRepository.save(deal);
     }
+
+    @Override
+    public List<DealDto.Response> recommendDeal(List<DealType> dealType) {
+        // 로그인 사용자 id
+        Long loginUserId = getLoginUserId();
+        // 우리 동 id 구하기
+        Long myDongId = dealRepository.findDongIdByMemberId(loginUserId);
+        log.info("myDongId : {}", myDongId);
+        // 우리 동 거래 requestId 리스트
+        List<Member> requestMembers = memberRepository.findDealsByRequestIdByDongIdAndDealTypeAndDealStatus(myDongId, dealType, Deal.DealStatus.OPEN);
+
+        for (Member requestMember : requestMembers) {
+            Long closedDealsCnt = dealRepository.countDealsByRequestIdAndDealStatus(requestMember.getId(), Deal.DealStatus.CLOSE);
+
+//            int memberScore = memberRepository.findById(requestMember.getId().map(Member::getScore).orElse(0);
+        }
+
+
+        return null;
+    }
 }

@@ -226,4 +226,12 @@ public class DealController {
         return ResponseEntity.ok("해당 거래 신고됨");
     }
 
+
+    @GetMapping("/out-recommend")
+    public ResponseEntity<?> recommendDeal(
+            @RequestParam(name = "dealType", defaultValue = "") List<DealType> dealType) {
+        return ResponseEntity.ok(dealService.recommendDeal(dealType));
+    }
+
+
 }

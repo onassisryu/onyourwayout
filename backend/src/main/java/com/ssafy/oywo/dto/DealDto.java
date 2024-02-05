@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ public class DealDto {
         private DealType dealType;
         private String expireAtStr;
         private List<DealImage> dealImages;
+        private List<String> dealImageStrList;
 
         /*
         Dto -> Entity
@@ -52,13 +54,22 @@ public class DealDto {
                 item = null;
             }
 
-//            // 이미지 저장
-//            List<DealImage> dealImageList = dealImages.stream()
-//                    .map(imgUrl -> DealImage.builder().imgUrl(imgUrl).build())
+            // 이미지 저장
+            List<DealImage> dealImageList = new ArrayList<DealImage>();
+//            dealImageStrList.stream()
+//                    .map(dealImageStr -> DealImage.builder().imgUrl(dealImageStr).build())
 //                    .collect(Collectors.toList());
+
+//            for (String dealImageStr : dealImageStrList) {
+//                dealImageList.add(s -> DealImage.builder()
+//                                                .deal()
+//                                                .imgUrl(s)
+//                                                .build());
+//            }
 
 
             Deal deal = Deal.builder()
+                    .id(id)
                     .title(title)
                     .content(content)
                     .requestId(requestId)
@@ -70,6 +81,7 @@ public class DealDto {
                     .dealStatus(dealStatus)
                     .dealType(dealType)
                     .expireAt(expireAt)
+//                    .dealImages()
                     .dealImages(dealImages)
 //                    .dealImages(dealImageList)
                     .build();
