@@ -27,7 +27,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 });
 
 //page
-import Home from '@screens/Home';
+import Main from '@/screens/Main';
 import Location from '@screens/Location';
 import Chat from '@screens/Chat';
 import Apart from '@screens/Apart';
@@ -44,6 +44,7 @@ import Signup3 from '@/screens/Signup/Signup3';
 import Signup4 from '@/screens/Signup/Signup4';
 import Signup5 from '@/screens/Signup/Signup5';
 import Signup6 from '@/screens/Signup/Signup6';
+import GoOut1 from '@/screens/GoOut/GoOut1';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -102,7 +103,7 @@ const App = () => {
             return <Ionic name={iconName!} size={size} color={color} />;
           },
         })}>
-        <Tab.Screen name="홈" component={Home} />
+        <Tab.Screen name="홈" component={Main} />
         <Tab.Screen name="위치" component={Location} />
         <Tab.Screen name="아파트" component={Apart} />
         <Tab.Screen name="채팅" component={Chat} />
@@ -120,6 +121,7 @@ const App = () => {
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Notice" component={Notice} />
             <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
+            <Stack.Screen name="GoOut1" component={GoOut1} />
             <Stack.Screen name="DoIt1" component={DoIt1} />
             <Stack.Screen name="DoIt2" component={DoIt2} />
             <Stack.Screen name="Signup1" component={Signup1} />

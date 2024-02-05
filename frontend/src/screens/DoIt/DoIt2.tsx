@@ -12,6 +12,8 @@ import theme from '@/Theme';
 import {useEffect} from 'react';
 import SvgIcon from '@/components/SvgIcon';
 import {RootStackParamList} from '@/@types';
+import moment from 'moment';
+import 'moment/locale/ko';
 
 type DoItScreenRouteProp = RouteProp<RootStackParamList, 'DoIt2'>;
 
@@ -40,12 +42,28 @@ const IconWrapper = styled.View`
   left: 15px;
   top: 25px;
 `;
+type DealProps = {
+  title: string;
+  constents: string;
+  dealType: string;
+  expireAtStr: string;
+  cash: number;
+  item: string;
+};
 
 const DoIt2 = ({navigation}: Props) => {
-  const [title, setTitle] = useState('');
+  const [deal, setDeal] = useState<DealProps>({
+    title: '',
+    constents: '', //내용
+    dealType: '', //거래유형
+    expireAtStr: '', //만료시간
+    cash: 0,
+    item: '',
+  });
   const {params} = useRoute<DoItScreenRouteProp>();
   useEffect(() => {
     handleTitle();
+    console.log(moment().fromNow());
   }, []);
   const handleTitle = () => {
     let text = '';
@@ -54,7 +72,7 @@ const DoIt2 = ({navigation}: Props) => {
     } else {
       text = params.type + ' 해주세요';
     }
-    setTitle(text);
+    setDeal({...deal, title: text});
   };
 
   return (
@@ -68,7 +86,7 @@ const DoIt2 = ({navigation}: Props) => {
           padding: 0 20px;
         `}>
         <StyledInputContainer>
-          <StyledInput placeholder={title} placeholderTextColor={theme.color.gray100} defaultValue="" />
+          <StyledInput placeholder={deal.title} placeholderTextColor={theme.color.gray100} defaultValue="" />
           <IconWrapper>
             <SvgIcon name={params.icon} size={40} />
           </IconWrapper>
