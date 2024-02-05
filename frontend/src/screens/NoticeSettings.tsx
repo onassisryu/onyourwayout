@@ -1,22 +1,23 @@
 import React from 'react';
 import {View} from 'react-native';
-import styled from '@emotion/native';
-import { NavigationProp } from '@react-navigation/native';
+import {GlobalContainer} from '@/GlobalStyles';
+import styled, {css} from '@emotion/native';
+import {NavigationProp} from '@react-navigation/native';
 
-import NoticeSettingsHeader from '@components/NoticeSettingspage/NoticeSettingsHeader'
-import NoticeSettingsContent from '@/components/NoticeSettingspage/NoticeSettingsContent'
+import NoticeSettingsHeader from '@components/NoticeSettingspage/NoticeSettingsHeader';
+import NoticeSettingsCategory from '@/components/NoticeSettingspage/NoticeSettingsCategory';
+import NoticeSettingsContent from '@/components/NoticeSettingspage/NoticeSettingsContent';
 
-interface Props {
-    navigation: NavigationProp<any>;
-}
-  
-const NoticeSettings = ({navigation} : Props) => {
+const NoticeSettings = () => {
   return (
-    <View>
-      <NoticeSettingsHeader navigation={navigation}></NoticeSettingsHeader>
+    <GlobalContainer
+      style={css`
+        height: 100%;
+      `}>
+      <NoticeSettingsHeader></NoticeSettingsHeader>
       <NoticeSettingsContent></NoticeSettingsContent>
-    </View>
-
+      <NoticeSettingsCategory></NoticeSettingsCategory>
+    </GlobalContainer>
   );
 };
 
