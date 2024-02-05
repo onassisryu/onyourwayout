@@ -5,6 +5,7 @@ import com.ssafy.oywo.entity.DealComplaint;
 import com.ssafy.oywo.entity.DealImage;
 import com.ssafy.oywo.entity.DealType;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,8 +33,8 @@ public class DealDto {
         private Deal.DealStatus dealStatus;
         private DealType dealType;
         private String expireAtStr;
-        private List<DealImage> dealImages;
-        private List<String> dealImageStrList;
+//        private List<DealImage> dealImages;
+        private List<MultipartFile> dealImageFileList;
 
         /*
         Dto -> Entity
@@ -55,19 +56,6 @@ public class DealDto {
             }
 
             // 이미지 저장
-            List<DealImage> dealImageList = new ArrayList<DealImage>();
-//            dealImageStrList.stream()
-//                    .map(dealImageStr -> DealImage.builder().imgUrl(dealImageStr).build())
-//                    .collect(Collectors.toList());
-
-//            for (String dealImageStr : dealImageStrList) {
-//                dealImageList.add(s -> DealImage.builder()
-//                                                .deal()
-//                                                .imgUrl(s)
-//                                                .build());
-//            }
-
-
             Deal deal = Deal.builder()
                     .id(id)
                     .title(title)
@@ -82,7 +70,7 @@ public class DealDto {
                     .dealType(dealType)
                     .expireAt(expireAt)
 //                    .dealImages()
-                    .dealImages(dealImages)
+//                    .dealImages(dealImageFileList)
 //                    .dealImages(dealImageList)
                     .build();
 

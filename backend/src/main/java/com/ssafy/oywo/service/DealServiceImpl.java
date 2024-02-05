@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
@@ -204,14 +205,18 @@ public class DealServiceImpl implements DealService{
         try {
             dealRepository.save(deal);
 
-            if (deal.getDealImages() != null) {
-                // 이미지 저장로직
-                List<DealImage> dealImages = dto.getDealImages();
-                for (DealImage dealImage : dealImages) {
-                    deal.addDealImage(dealImage);
-                }
-                dealImageRepository.saveAll(dealImages);
-            }
+            // 이미지 업로드
+
+
+//            if (dto.getDealImageFileList() != null) {
+//                // 이미지 저장로직
+//                for (MultipartFile dealImageFile : dealImageFileList) {
+//                    String dealImageStr =
+//                    List<DealImage> dealImages = DealImage.builder().deal(deal).imgUrl().build();
+//                    deal.addDealImage(dealImage);
+//                }
+//                dealImageRepository.saveAll(dealImages);
+//            }
 
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
