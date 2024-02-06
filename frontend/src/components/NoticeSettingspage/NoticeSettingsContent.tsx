@@ -7,26 +7,30 @@ import {GlobalText, GlobalContainer, GlobalButton} from '@/GlobalStyles';
 const SettingsContainer = styled(GlobalContainer)`
   justify-content: initial;
   align-items: initial;
+  height: initial;
   margin: 0 20px;
 `;
+
 const SettingComponent = styled(GlobalContainer)`
   padding-top: 20px;
   padding-bottom: 10px;
   border-bottom-width: 1px;
   border-bottom-color: #b2b2b2;
+  height: initial;
 `;
 
 const SettingsTitle = styled(GlobalText)`
-  font-size: ${theme.fontSize.subtitle};
-  color: ${theme.color.black};
+  font-size: ${props => props.theme.fontSize.subtitle};
+  color: ${props => props.theme.color.black};
   font-weight: bold;
   margin-bottom: 15px;
 `;
+
 const SettingsContent = styled(GlobalText)`
   flex-direction: row;
   justify-content: space-between;
-  font-size: ${theme.fontSize.medium};
-  color: ${theme.color.black};
+  font-size: ${props => props.theme.fontSize.medium};
+  color: ${props => props.theme.color.black};
   font-weight: bold;
 `;
 const SettingsSubcomponent = styled(GlobalContainer)`
@@ -35,6 +39,7 @@ const SettingsSubcomponent = styled(GlobalContainer)`
   align-items: center;
   margin-bottom: 15px;
   padding: 0 15px;
+  height: initial;
 `;
 
 const NoticeSettingsSound = () => {

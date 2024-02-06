@@ -8,7 +8,7 @@ import {NavigationProp} from '@react-navigation/native';
 import {View, TouchableOpacity, ImageSourcePropType} from 'react-native';
 
 // 헤더 컨테이너
-const HeaderContainer2 = styled(Header)`
+const HeaderContainer = styled(Header)`
   flex-direction: row;
   justify-content: center;
   background-color: white;
@@ -64,12 +64,12 @@ const NotificationIcon = ({navigation}: Props) => {
 const MainHeader = ({navigation}: Props) => {
   return (
     <View>
-      <HeaderContainer2>
+      <HeaderContainer>
         <StyledText>나온김에</StyledText>
         <IconsContainer>
           <NotificationIcon navigation={navigation} />
         </IconsContainer>
-      </HeaderContainer2>
+      </HeaderContainer>
     </View>
   );
 };

@@ -22,13 +22,10 @@ const Home = ({navigation}: any) => {
       style={css`
         width: '100%';
       `}>
-      <ScrollView
-        style={css`
-          width: '100%';
-        `}>
+      <ScrollView>
         <MainHeader navigation={navigation} />
         <MainComponent />
-        <MainDoList />
+        <MainDoList navigation={navigation} />
       </ScrollView>
       <MainModal navigation={navigation} />
     </GlobalContainer>

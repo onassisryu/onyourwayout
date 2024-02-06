@@ -43,6 +43,8 @@ import Signup3 from '@/screens/Signup/Signup3';
 import Signup4 from '@/screens/Signup/Signup4';
 import Signup5 from '@/screens/Signup/Signup5';
 import Signup6 from '@/screens/Signup/Signup6';
+import DoItList from '@/screens/DoItList';
+import DoItListDetail from '@screens/DoItListDetail';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -127,6 +129,8 @@ const App = () => {
             <Stack.Screen name="Signup5" component={Signup5} />
             <Stack.Screen name="Signup6" component={Signup6} />
             <Stack.Screen name="MySetting" component={MySetting} />
+            <Stack.Screen name="DoItList" component={DoItList} />
+            <Stack.Screen name="DoItListDetail" component={DoItListDetail} />
           </Stack.Navigator>
         </ThemeProvider>
       </NavigationContainer>

@@ -7,8 +7,9 @@ import {TouchableOpacity} from 'react-native';
 import theme from '@/Theme';
 import GoBack from '@/components/Signup/GoBack';
 import Feather from 'react-native-vector-icons/Feather';
+import Header from '@components/Header';
 
-const HeaderContainer = styled(GlobalContainer)`
+const HeaderContainer = styled(Header)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
