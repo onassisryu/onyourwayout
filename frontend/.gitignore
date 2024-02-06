@@ -41,7 +41,7 @@ DerivedData
 *.ipa
 
 *.xcuserstate
-
+.env
  
 
 # Android/IntelliJ
