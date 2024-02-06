@@ -1,5 +1,6 @@
 package com.ssafy.oywo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -19,8 +20,9 @@ public class DealImage extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deal_id")
+    @JsonIgnore
     private Deal deal;
 
     @Column(nullable = false, unique = true)

@@ -2,10 +2,11 @@ package com.ssafy.oywo.repository;
 
 import com.ssafy.oywo.entity.Deal;
 import com.ssafy.oywo.entity.DealType;
-import jakarta.annotation.Nullable;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,12 +16,19 @@ import java.util.Optional;
 public interface DealRepository extends JpaRepository<Deal, Long> {
 
     // apt_id 가져오기
-    @Query("SELECT hoAptApt.id FROM Ho hoApt " +
-            "JOIN hoApt.member hoAptMember " +
-            "JOIN hoApt.dong hoAptDong " +
-            "JOIN hoAptDong.apartment hoAptApt " +
-            "WHERE hoAptMember.id = :memberId")
+    @Query("SELECT hoApt.id FROM Ho ho " +
+            "JOIN ho.member hoMember " +
+            "JOIN ho.dong hoDong " +
+            "JOIN hoDong.apartment hoApt " +
+            "WHERE hoMember.id = :memberId")
     Long findHoAptIdsByMemberId(@Param("memberId") Long memberId);
+
+    // dong_id 가져오기
+    @Query("SELECT hoDong.id FROM Ho ho " +
+            "JOIN ho.member hoMember " +
+            "JOIN ho.dong hoDong " +
+            "WHERE hoMember.id = :memberId")
+    Long findDongIdByMemberId(@Param("memberId") Long memberId);
 
 
     // apt_id로  전체 거래 들고오기
@@ -53,15 +61,32 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     );
 
 
+    // dong_id로 필터링된(dealType) 거래 들고오기(OPEN 거래만)
+    @Query("SELECT d FROM Deal d " +
+            "WHERE d.requestId IN " +
+            "(SELECT hoMember.id FROM Ho ho " +
+            " JOIN ho.dong dong " +
+            " JOIN ho.member hoMember " +
+            " WHERE dong.id = :dongId) " +
+            " AND (:dealType IS NULL OR d.dealType IN :dealType) " +
+            " AND d.dealStatus = :dealStatus" )
+    List<Deal> findDealsByDongIdAndDealTypeAndDealStatus(
+            @Param("dongId") Long dongId,
+            @Param("dealType") @Nullable List<DealType> dealType,
+            @Param("dealStatus") Deal.DealStatus dealStatus
+    );
+
+
     // 각 동별 거래 조회
     @Query("SELECT d FROM Deal d " +
             "WHERE d.requestId IN " +
             "(SELECT hoMember.id FROM Ho ho " +
             " JOIN ho.dong dong " +
             " JOIN ho.member hoMember " +
-            " WHERE dong.apartment.id = :apartmentId" +
-            " AND (:dongId IS NULL OR dong.id = :dongId)) " +
-            " AND (:dealType IS NULL OR d.dealType IN :dealType) " +
+            " JOIN dong.apartment apt " +
+            " WHERE (ho.dong.apartment.id = :apartmentId)" +
+            " AND (:dongId IS NULL OR ho.dong.id = :dongId))" +
+            " AND (:dealType IS NULL OR d.dealType IN :dealType)" +
             " AND d.dealStatus = :dealStatus")
     List<Deal> findDealsByDongIdAndDealType(
             @Param("apartmentId") Long apartmentId,
@@ -69,6 +94,7 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             @Param("dealType") @Nullable List<DealType> dealType,
             @Param("dealStatus") Deal.DealStatus dealStatus
     );
+
 
     // 동별 거래 건수
     @Query("SELECT COUNT(d) FROM Deal d " +
@@ -104,4 +130,11 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
 
     // 신고 수에 따른 거래 내림차순
     List<Deal> findDealsByOrderByComplaintDesc();
+
+    // RequestId의 완료된 거래
+    Long countDealsByRequestIdAndDealStatus(Long requestId, Deal.DealStatus dealStatus);
+
+    // created_at으로 조회
+    List<Deal> findDealsByOrderByCreatedAtDesc();
+
 }

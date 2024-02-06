@@ -5,9 +5,11 @@ import com.ssafy.oywo.entity.DealComplaint;
 import com.ssafy.oywo.entity.DealImage;
 import com.ssafy.oywo.entity.DealType;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +33,8 @@ public class DealDto {
         private Deal.DealStatus dealStatus;
         private DealType dealType;
         private String expireAtStr;
-        private List<DealImage> dealImages;
+//        private List<DealImage> dealImages;
+//        private List<MultipartFile> dealImageFileList;
 
         /*
         Dto -> Entity
@@ -52,13 +55,9 @@ public class DealDto {
                 item = null;
             }
 
-//            // 이미지 저장
-//            List<DealImage> dealImageList = dealImages.stream()
-//                    .map(imgUrl -> DealImage.builder().imgUrl(imgUrl).build())
-//                    .collect(Collectors.toList());
-
-
+            // 이미지 저장
             Deal deal = Deal.builder()
+                    .id(id)
                     .title(title)
                     .content(content)
                     .requestId(requestId)
@@ -70,7 +69,8 @@ public class DealDto {
                     .dealStatus(dealStatus)
                     .dealType(dealType)
                     .expireAt(expireAt)
-                    .dealImages(dealImages)
+//                    .dealImages()
+//                    .dealImages(dealImageFileList)
 //                    .dealImages(dealImageList)
                     .build();
 
@@ -100,8 +100,7 @@ public class DealDto {
         private Deal.DealStatus dealStatus;
         private DealType dealType;
         private LocalDateTime expireAt;
-//        private List<DealImage> dealImages;
-        private List<DealImageResponse> dealImages;
+        private List<DealImage> dealImages;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
         private LocalDateTime deletedAt;
@@ -124,15 +123,16 @@ public class DealDto {
             this.dealStatus = entity.getDealStatus();
             this.dealType = entity.getDealType();
             this.expireAt = entity.getExpireAt();
+            this.dealImages = entity.getDealImages();
 
-            if (entity.getDealImages() != null) {
-                this.dealImages = entity.getDealImages()
-                        .stream()
-                        .map(DealImageResponse::new)
-                        .collect(Collectors.toList());
-            } else {
-                this.dealImages = Collections.emptyList();
-            }
+//            if (entity.getDealImages() != null) {
+//                this.dealImages = entity.getDealImages()
+//                        .stream()
+//                        .map(DealImageResponse::new)
+//                        .collect(Collectors.toList());
+//            } else {
+//                this.dealImages = Collections.emptyList();
+//            }
 
             this.createdAt = entity.getCreatedAt();
             this.modifiedAt = entity.getModifiedAt();
@@ -152,7 +152,7 @@ public class DealDto {
             this.dealStatus = entity.getDealStatus();
             this.dealType = entity.getDealType();
             this.expireAt = entity.getExpireAt();
-//            this.dealImages = entity.getDealImages();
+            this.dealImages = entity.getDealImages();
             this.createdAt = entity.getCreatedAt();
             this.modifiedAt = entity.getModifiedAt();
             this.complaints = complaints;
@@ -160,14 +160,14 @@ public class DealDto {
     }
 
 
-    @Getter
-    public static class DealImageResponse {
-        private Long id;
-        private String imgUrl;
-
-        public DealImageResponse(DealImage dealImage) {
-            this.id = dealImage.getId();
-            this.imgUrl = dealImage.getImgUrl();
-        }
-    }
+//    @Getter
+//    public static class DealImageResponse {
+//        private Long id;
+//        private String imgUrl;
+//
+//        public DealImageResponse(DealImage dealImage) {
+//            this.id = dealImage.getId();
+//            this.imgUrl = dealImage.getImgUrl();
+//        }
+//    }
 }

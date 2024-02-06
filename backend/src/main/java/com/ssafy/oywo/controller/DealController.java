@@ -4,11 +4,14 @@ import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.entity.*;
 import com.ssafy.oywo.service.DealService;
 
+import com.ssafy.oywo.service.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -18,6 +21,7 @@ import java.util.List;
 public class DealController {
 
     private final DealService dealService;
+    private final S3UploadService s3UploadService;
 
 
     /**
@@ -27,7 +31,7 @@ public class DealController {
      */
     @GetMapping("/list")
     public List<DealDto.Response> getDeals(
-            @RequestParam(name = "dealType", defaultValue = "") DealType dealType) {
+            @RequestParam(name = "dealType", required = false) DealType dealType) {
 
         return dealService.getDeals(dealType);
     }
@@ -41,8 +45,8 @@ public class DealController {
      */
     @GetMapping("/dong/list")
     public List<DealDto.Response> getDealsByDong (
-            @RequestParam(name = "dong", defaultValue = "") Long dongId,
-            @RequestParam(name = "dealType", defaultValue = "") List<DealType> dealType) {
+            @RequestParam(name = "dong", required = false) Long dongId,
+            @RequestParam(name = "dealType", required = false) List<DealType> dealType) {
 
         return dealService.getDealsByDong(dongId, dealType);
     }
@@ -56,8 +60,8 @@ public class DealController {
      */
     @GetMapping("/dong/count")
     public ResponseEntity<?> countDealsByDong (
-            @RequestParam(name = "dong", defaultValue = "") Long dongId,
-            @RequestParam(name = "dealType", defaultValue = "") List<DealType> dealType) {
+            @RequestParam(name = "dong", required = false) Long dongId,
+            @RequestParam(name = "dealType", required = false) List<DealType> dealType) {
 
         Long dealsByDongCnt = dealService.countDealsByDong(dongId, dealType);
 
@@ -73,10 +77,10 @@ public class DealController {
      * @return 거래 리스트
      * @throws Exception
      */
-    @GetMapping("/user/list")     // 'localhost:8080/deal/user/list?type=request&memberId=1'
+    @GetMapping("/user/list")
     public List<DealDto.Response> getDealsByMemberId(
             @RequestParam(name = "type") String requestOrAccept,
-            @RequestParam(name = "memberId", defaultValue = "") Long memberId) throws Exception {
+            @RequestParam(name = "memberId", required = false) Long memberId) throws Exception {
 
         return dealService.getDealsByMemberId(requestOrAccept, memberId);
     }
@@ -104,9 +108,18 @@ public class DealController {
      */
     @PostMapping
     public ResponseEntity<?> createDeal(
-            @RequestBody DealDto.Request dto) throws Exception {
+            @RequestPart DealDto.Request dto,
+            @RequestPart(required = false) List<MultipartFile> dealImageFileList) throws Exception {
 
-        return ResponseEntity.ok(dealService.createDeal(dto));
+        List<String> dealImageStrList = new ArrayList<String>();
+        // 이미지 업로드
+        if (dealImageFileList != null) {
+            for (MultipartFile dealImageFile : dealImageFileList) {
+                String dealImageStr = s3UploadService.upload(dealImageFile, "DealImage");
+                dealImageStrList.add(dealImageStr);
+            }
+        }
+        return ResponseEntity.ok(dealService.createDeal(dto, dealImageStrList));
     }
 
 
@@ -128,15 +141,25 @@ public class DealController {
      * 거래 수정
      * @param id 거래 아이디
      * @param dto 거래 수정 정보
+     * @param dealImageFileList 이미지 파일 리스트
      * @return 거래 정보
      * @throws Exception
      */
     @PutMapping("/{id}")
     public ResponseEntity<?> updateDeal(
             @PathVariable Long id,
-            @RequestBody DealDto.Request dto) throws Exception {
+            @RequestPart DealDto.Request dto,
+            @RequestPart(required = false) List<MultipartFile> dealImageFileList) throws Exception {
 
-        return ResponseEntity.ok(dealService.updateDeal(id, dto));
+        List<String> dealImageStrList = new ArrayList<String>();
+        // 이미지 업로드
+        if (dealImageFileList != null) {
+            for (MultipartFile dealImageFile : dealImageFileList) {
+                String dealImageStr = s3UploadService.upload(dealImageFile, "DealImage");
+                dealImageStrList.add(dealImageStr);
+            }
+        }
+        return ResponseEntity.ok(dealService.updateDeal(id, dto, dealImageStrList));
     }
 
 
@@ -225,5 +248,27 @@ public class DealController {
         dealService.complaintDeal(id, dealComplaint);
         return ResponseEntity.ok("해당 거래 신고됨");
     }
+
+
+    /**
+     * 나가요잉 추천
+     * @param dealType 거래 유형
+     * @return 거래 추천 리스트
+     */
+    @GetMapping("/out-recommend")
+    public ResponseEntity<?> recommendDeal(
+            @RequestParam(name = "dealType", required = false) List<DealType> dealType) {
+        return ResponseEntity.ok(dealService.recommendDeal(dealType));
+    }
+
+
+//    @GetMapping("/recommend")
+//    public ResponseEntity<?> recommend(
+//            @RequestParam List<Member> members,
+//            @RequestParam Member currentMember,
+//            @RequestParam List<Deal> deals) {
+//
+//    }
+
 
 }

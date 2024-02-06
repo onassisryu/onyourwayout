@@ -20,11 +20,11 @@ public interface DealService {
     // 요청자/수락자 현재 거래 조회
     DealDto.Response getDealByStatusING(Long requestId, Long acceptId);
     // 거래 생성
-    DealDto.Response createDeal(DealDto.Request dto);
+    DealDto.Response createDeal(DealDto.Request dto, List<String> dealImageStrList);
     // 거래 하나 조회
     DealDto.Response getDeal(Long id);
     // 거래 수정
-    DealDto.Response updateDeal(Long id, DealDto.Request dto);
+    DealDto.Response updateDeal(Long id, DealDto.Request dto, List<String> dealImageStrList);
     // 거래 수락 and 수락 취소
     DealDto.Response acceptDeal(Long id);
     // 거래 완료
@@ -36,4 +36,5 @@ public interface DealService {
     // 거래 신고
     void complaintDeal(Long id, DealComplaint dealComplaint);
 
+    List<DealDto.Response> recommendDeal(List<DealType> dealType);
 }
