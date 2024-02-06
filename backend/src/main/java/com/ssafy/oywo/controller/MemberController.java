@@ -80,7 +80,7 @@ public class MemberController {
     /**
      * 회원가입
      * 인증 불필요
-     * @param memberDto
+     * @param
      * @return
      *
      * "username", "nickname", "password", "phoneNumber", "dongId", "hoName", "inviteCode" 필수
