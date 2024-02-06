@@ -115,7 +115,7 @@ public class DealController {
         // 이미지 업로드
         if (dealImageFileList != null) {
             for (MultipartFile dealImageFile : dealImageFileList) {
-                String dealImageStr = s3UploadService.upload(dealImageFile, "DealImage");
+                String dealImageStr = s3UploadService.upload(dealImageFile, "DealImage", dto.getId());
                 dealImageStrList.add(dealImageStr);
             }
         }
@@ -155,7 +155,7 @@ public class DealController {
         // 이미지 업로드
         if (dealImageFileList != null) {
             for (MultipartFile dealImageFile : dealImageFileList) {
-                String dealImageStr = s3UploadService.upload(dealImageFile, "DealImage");
+                String dealImageStr = s3UploadService.upload(dealImageFile, "DealImage", dto.getId());
                 dealImageStrList.add(dealImageStr);
             }
         }
