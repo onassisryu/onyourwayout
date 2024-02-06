@@ -70,6 +70,7 @@ const My = ({navigation}: any) => {
   const userData = useRecoilValue(userDataState); // userDataState 상태 가져오기
   const scorePercent = `${userData.score}%`;
   useEffect(() => {
+    console.log('isLoggedIn', isLoggedIn);
     console.log('userData', userData);
     if (!isLoggedIn) {
       navigation.navigate('Login');

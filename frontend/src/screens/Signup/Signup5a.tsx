@@ -1,6 +1,6 @@
 // 초대코드
 import React, {useEffect, useState} from 'react';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, Text, View} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {GlobalContainer} from '@/GlobalStyles';
 import Header from '@/components/Header';
@@ -34,36 +34,17 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
   ${({visible}) => !visible && 'opacity: 0;'};
 `;
 
-const Signup5 = ({navigation}: any) => {
+const Signup5 = ({navigation, route}: any) => {
   const [name, setName] = useState('');
   const [value, setValue] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
+  const {responseData} = route.params;
 
   useEffect(() => {
     setIsDisabled(!value);
   }, [value]);
 
-  const handleClearInput = () => {
-    setName('');
-  };
-
-  const handleInputFocus = () => {
-    setIsFocused(true);
-  };
-
-  const handleInputBlur = () => {
-    setIsFocused(false);
-  };
-
-  const setUserSignUpData = useSetRecoilState(userSignUpDataState);
-  const userSignUpData = useRecoilValue(userSignUpDataState);
-  const updateInviteCode = (inviteCode: string) => {
-    setUserSignUpData(prevState => ({
-      ...prevState,
-      inviteCode: inviteCode,
-    }));
-  };
   const NextButton = styled(DefaultButton)`
     width: 100%;
     font-size: 18px;
@@ -82,48 +63,41 @@ const Signup5 = ({navigation}: any) => {
     background-color: ${({disabled}) => (disabled ? theme.color.gray200 : theme.color.primary)};
   `;
 
-  function Code(value: string) {
+  const data = {
+    username: 'b@gmail',
+    nickname: 'b',
+    password: '1234',
+    birthDate: '2022-10-11',
+    phoneNumber: '010-1111-1121',
+    inviteCode: '1d4b6978710c347ea32c6181e2f7f029',
+  };
+
+  const userSignUpData = useRecoilValue(userSignUpDataState);
+  function signUpFinish() {
+    console.log(userSignUpData);
     axiosBasic
-      .get(`/members/verify/${value}`)
+      .post('/members/signup', userSignUpData)
       .then(resp => {
-        console.log('성공', resp.data);
-        updateInviteCode(value);
-        navigation.navigate('Signup5a', {responseData: resp.data});
+        // console.log('성공', resp.data);
+        console.log('회원가입 성공');
+        navigation.navigate('login');
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   }
-
   return (
     <GlobalContainer>
       <Header>
         <GoBack />
       </Header>
       <SignupBodyContainer>
-        <SignupHeadtext title="초대코드를 입력해주세요"></SignupHeadtext>
-        <InputContainer>
-          <StyledInput
-            placeholder="초대코드"
-            placeholderTextColor={theme.color.gray200}
-            onChangeText={text => setValue(text)}
-            value={value}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-          />
-          <IconWrapper onPress={handleClearInput} visible={isFocused && name.length > 0}>
-            <Ant name="closecircleo" size={20} color={theme.color.gray200} />
-          </IconWrapper>
-        </InputContainer>
-
-        <NextButton title="다음" color="primary" size="lg" disabled={isDisabled} onPress={() => Code(value)} />
-        <NextButton2
-          title="초대코드 없음"
-          color="primary"
-          size="lg"
-          disabled={!isDisabled}
-          onPress={() => navigation.navigate('Signup6')}
-        />
+        <View>
+          <Text>{responseData.apartName}</Text>
+          <Text>{responseData.dongName}</Text>
+          <Text>{responseData.hoName}</Text>
+        </View>
+        <NextButton2 title="가입 완료" color="primary" size="lg" onPress={() => signUpFinish()} />
       </SignupBodyContainer>
     </GlobalContainer>
   );

@@ -8,10 +8,10 @@ import {loadingState} from '@/recoil/atoms';
 //   else console.log('loading end');
 //   loadingStatus(status);
 // };
-const axiosAuth = axios.create({
+const axiosBasic = axios.create({
   baseURL: 'http://i10a302.p.ssafy.io:8080',
 });
-axiosAuth.interceptors.request.use(
+axiosBasic.interceptors.request.use(
   config => {
     return config;
   },
@@ -20,7 +20,7 @@ axiosAuth.interceptors.request.use(
   }
 );
 
-axiosAuth.interceptors.response.use(
+axiosBasic.interceptors.response.use(
   response => {
     return response;
   },
@@ -29,4 +29,4 @@ axiosAuth.interceptors.response.use(
   }
 );
 
-export default axiosAuth;
+export default axiosBasic;
