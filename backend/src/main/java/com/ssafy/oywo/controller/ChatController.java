@@ -79,6 +79,19 @@ public class ChatController {
             }
 
             String imgUrl=s3UploadService.upload(tempFile,"ChatImage",senderId);
+
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(tempFile); // 파일 삭제시 전부 아웃풋 닫아줘야함 (방금 생성한 임시 파일을 지워주는 과정
+                fileOutputStream.close(); // 아웃풋 닫아주기
+                if (tempFile.delete()) {
+                    log.info("File delete success"); // tempFile.delete()를 통해 삭제
+                } else {
+                    log.info("File delete fail");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             return imgUrl;
         } catch (IOException e) {
             throw new RuntimeException(e);
