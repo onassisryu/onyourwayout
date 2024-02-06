@@ -10,6 +10,8 @@ import GoBack from '@/components/Signup/GoBack';
 import SignupHeadtext from '@/components/Signup/SignupHeadtext';
 import {SignupBodyContainer} from '@/components/Signup/SignupBodyContainer';
 import NextButton from '@/components/Signup/NextButton';
+import {userSignUpDataState} from '@/recoil/atoms';
+import {useSetRecoilState, useRecoilValue} from 'recoil';
 
 const InputContainer = styled.View`
   width: 100%;
@@ -33,16 +35,16 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
 `;
 
 const Signup2 = ({navigation}: any) => {
-  const [name, setName] = useState('');
+  const [value, setValue] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    setIsDisabled(!name);
-  }, [name]);
+    setIsDisabled(!value);
+  }, [value]);
 
   const handleClearInput = () => {
-    setName('');
+    setValue('');
   };
 
   const handleInputFocus = () => {
@@ -53,6 +55,22 @@ const Signup2 = ({navigation}: any) => {
     setIsFocused(false);
   };
 
+  const setUserSignUpData = useSetRecoilState(userSignUpDataState);
+  const userSignUpData = useRecoilValue(userSignUpDataState);
+
+  const updateBirthDate = (birthDate: string) => {
+    setUserSignUpData(prevState => ({
+      ...prevState,
+      birthDate: birthDate,
+    }));
+  };
+
+  function SetValue() {
+    updateBirthDate(value);
+    console.log(userSignUpData);
+    navigation.navigate('Signup3');
+  }
+
   return (
     <GlobalContainer>
       <Header>
@@ -62,29 +80,22 @@ const Signup2 = ({navigation}: any) => {
         <SignupHeadtext title="생년월일을 입력해주세요"></SignupHeadtext>
         <InputContainer>
           <StyledInput
-            placeholder="YYYY.MM.DD"
+            placeholder="생년월일 입력"
             placeholderTextColor={theme.color.gray200}
-            onChangeText={text => setName(text)}
-            value={name}
+            onChangeText={text => setValue(text)}
+            value={value}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
           />
-          <IconWrapper onPress={handleClearInput} visible={isFocused && name.length > 0}>
+          <IconWrapper onPress={handleClearInput} visible={isFocused && value.length > 0}>
             <Ant name="closecircleo" size={20} color={theme.color.gray200} />
           </IconWrapper>
         </InputContainer>
 
-        <NextButton
-          title="다음"
-          color="primary"
-          size="lg"
-          disabled={isDisabled}
-          onPress={() => navigation.navigate('Signup3')}
-        />
+        <NextButton title="다음" color="primary" size="lg" disabled={isDisabled} onPress={() => SetValue()} />
       </SignupBodyContainer>
     </GlobalContainer>
   );
 };
 
-// 8자리 확인
 export default Signup2;

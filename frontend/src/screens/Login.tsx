@@ -177,7 +177,7 @@ const Login = ({navigation}: any) => {
             `}>
             |
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Signup1')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Signup0')}>
             <Text>회원가입</Text>
           </TouchableOpacity>
         </View>

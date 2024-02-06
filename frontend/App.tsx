@@ -39,11 +39,13 @@ import Notice from '@screens/Notice';
 import NoticeSettings from '@screens/NoticeSettings';
 import DoIt1 from '@/screens/DoIt/DoIt1';
 import DoIt2 from '@/screens/DoIt/DoIt2';
+import Signup0 from '@/screens/Signup/Signup0';
 import Signup1 from '@/screens/Signup/Signup1';
 import Signup2 from '@/screens/Signup/Signup2';
 import Signup3 from '@/screens/Signup/Signup3';
 import Signup4 from '@/screens/Signup/Signup4';
 import Signup5 from '@/screens/Signup/Signup5';
+import Signup5a from '@/screens/Signup/Signup5a';
 import Signup6 from '@/screens/Signup/Signup6';
 import GoOut1 from '@/screens/GoOut/GoOut1';
 
@@ -104,7 +106,6 @@ const App = () => {
             return <Ionic name={iconName!} size={size} color={color} />;
           },
         })}>
-
         <Tab.Screen name="Main" component={Main} />
         <Tab.Screen name="위치" component={Location} />
         <Tab.Screen name="아파트" component={Apart} />
@@ -126,14 +127,15 @@ const App = () => {
             <Stack.Screen name="GoOut1" component={GoOut1} />
             <Stack.Screen name="DoIt1" component={DoIt1} />
             <Stack.Screen name="DoIt2" component={DoIt2} />
+            <Stack.Screen name="Signup0" component={Signup0} />
             <Stack.Screen name="Signup1" component={Signup1} />
             <Stack.Screen name="Signup2" component={Signup2} />
             <Stack.Screen name="Signup3" component={Signup3} />
             <Stack.Screen name="Signup4" component={Signup4} />
             <Stack.Screen name="Signup5" component={Signup5} />
+            <Stack.Screen name="Signup5a" component={Signup5a} />
             <Stack.Screen name="Signup6" component={Signup6} />
             <Stack.Screen name="MySetting" component={MySetting} />
-            <Stack.Screen name="Test" component={Test} />
             {Screens.map(screen => (
               <Stack.Screen key={screen.name} name={screen.name} component={screen.component} />
             ))}
