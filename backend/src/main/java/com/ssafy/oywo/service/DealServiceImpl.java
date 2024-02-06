@@ -485,7 +485,7 @@ public class DealServiceImpl implements DealService{
         log.info("myDongId : {}", myDongId);
         // 우리 동 거래 requestId 리스트
         List<Member> requestMembers = memberRepository.findDealsByRequestIdByDongIdAndDealTypeAndDealStatus(myDongId, dealType, Deal.DealStatus.OPEN);
-        log.info("requestMembers : {}", requestMembers.stream().map(m -> MemberDto.Response.of(m)).collect(Collectors.toList()));
+        log.info("requestMembers : {}", requestMembers.stream().map(Member::getUsername).collect(Collectors.toList()));
         // 추천 리스트
         List<Deal> recommendedDeals = new ArrayList<>();
 
@@ -496,24 +496,30 @@ public class DealServiceImpl implements DealService{
             long requestMemberId = requestMember.getId();
             // 이웃 지수
             memberScore.put(requestMember, requestMember.getScore());
+            log.info("memberScore : {}", memberScore);
             // 거래 완료 수
             long dealCloseCnt = dealRepository.countDealsByRequestIdOrAcceptIdAndDealStatus(requestMemberId, requestMemberId, Deal.DealStatus.CLOSE);
             closedDealsCnt.put(requestMember, dealCloseCnt);
+            log.info("closedDealsCnt : {}", closedDealsCnt);
             // 나와 거래한 빈도
             long totalDealCnt = dealRepository.countDealsByRequestIdOrAcceptId(loginUserId, loginUserId);
             long dealsWithPartnerCnt = dealRepository.countDealsByRequestIdAndAcceptId(loginUserId, requestMemberId)
                                         + dealRepository.countDealsByRequestIdAndAcceptId(requestMemberId, loginUserId);
             double dealsFrequencyWithMember = (double) dealsWithPartnerCnt/ totalDealCnt;
+            if (Double.isNaN(dealsFrequencyWithMember)) {
+                dealsFrequencyWithMember = 0;
+            }
+            log.info("dealsFrequencyWithMember : {}", dealsFrequencyWithMember);
 
-            // 종합
-            double overallScore = (memberScore.get(requestMember) * 5)
-                                    + (closedDealsCnt.get(requestMember) * 3)
-                                    + (dealsFrequencyWithMember * 2);
+            // 종합 평가
+            double overallScore = (memberScore.get(requestMember) * 0.5)
+                                    + (closedDealsCnt.get(requestMember) * 0.3)
+                                    + (dealsFrequencyWithMember * 0.2);
             overallScores.put(requestMember, overallScore);
             log.info("overallScore : {}", overallScore);
         }
 
-        // 종합 평가로 상대방 정렬
+        // 종합 평가 기준으로 상대방 정렬
         List<Member> sortedMembers  = requestMembers.stream()
                 .sorted((m1, m2) -> Double.compare(overallScores.get(m2), overallScores.get(m1)))
                 .collect(Collectors.toList());

@@ -246,24 +246,13 @@ public class DealController {
     /**
      * 나가요잉 추천
      * @param dealType 거래 유형
-     * @return 거래 추천 리스트
+     * @return 거래 추천 리스트 3개
      */
     @GetMapping("/out-recommend")
     public ResponseEntity<?> recommendDeal(
             @RequestParam(name = "dealType", required = false) List<DealType> dealType) {
         return ResponseEntity.ok(dealService.recommendDeal(dealType));
     }
-
-
-
-
-//    @GetMapping("/recommend")
-//    public ResponseEntity<?> recommend(
-//            @RequestParam List<Member> members,
-//            @RequestParam Member currentMember,
-//            @RequestParam List<Deal> deals) {
-//
-//    }
 
 
 }

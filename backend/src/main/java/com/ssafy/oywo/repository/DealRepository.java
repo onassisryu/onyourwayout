@@ -39,12 +39,13 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " JOIN ho.dong dong " +
             " JOIN dong.apartment apt " +
             " WHERE apt.id = :apartmentId)" +
-            " AND d.dealStatus = :dealStatus")
+            " AND d.dealStatus = :dealStatus" +
+            " AND d.expireAt > CURRENT_TIMESTAMP")
     List<Deal> findDealsByApartmentId(@Param("apartmentId") Long apartmentId,
                                       @Param("dealStatus") Deal.DealStatus dealStatus);
 
 
-    // apt_id로 필터링된(dealType) 거래 들고오기(OPEN 거래만)
+    // apt_id로 필터링된(dealType) 거래 들고오기(OPEN/만료 안된 거래만)
     @Query("SELECT d FROM Deal d " +
             "WHERE d.requestId IN " +
             "(SELECT hoMember.id FROM Ho ho " +
@@ -53,7 +54,8 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " JOIN dong.apartment apt " +
             " WHERE apt.id = :apartmentId) " +
             " AND (:dealType IS NULL OR d.dealType = :dealType) " +
-            " AND d.dealStatus = :dealStatus" )
+            " AND d.dealStatus = :dealStatus" +
+            " AND d.expireAt > CURRENT_TIMESTAMP")
     List<Deal> findDealsByApartmentIdAndDealType(
             @Param("apartmentId") Long apartmentId,
             @Param("dealType") @Nullable DealType dealType,
@@ -69,7 +71,8 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " JOIN ho.member hoMember " +
             " WHERE dong.id = :dongId) " +
             " AND (:dealType IS NULL OR d.dealType IN :dealType) " +
-            " AND d.dealStatus = :dealStatus" )
+            " AND d.dealStatus = :dealStatus" +
+            " AND d.expireAt > CURRENT_TIMESTAMP")
     List<Deal> findDealsByDongIdAndDealTypeAndDealStatus(
             @Param("dongId") Long dongId,
             @Param("dealType") @Nullable List<DealType> dealType,
@@ -87,7 +90,8 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " WHERE (ho.dong.apartment.id = :apartmentId)" +
             " AND (:dongId IS NULL OR ho.dong.id = :dongId))" +
             " AND (:dealType IS NULL OR d.dealType IN :dealType)" +
-            " AND d.dealStatus = :dealStatus")
+            " AND d.dealStatus = :dealStatus" +
+            " AND d.expireAt > current_timestamp ")
     List<Deal> findDealsByDongIdAndDealType(
             @Param("apartmentId") Long apartmentId,
             @Param("dongId") @Nullable Long dongId,
@@ -105,7 +109,8 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " WHERE dong.apartment.id = :apartmentId " +
             " AND (:dongId IS NULL OR dong.id = :dongId)) " +
             " AND (:dealType IS NULL OR d.dealType IN :dealType) " +
-            " AND d.dealStatus = :dealStatus")
+            " AND d.dealStatus = :dealStatus" +
+            " AND d.expireAt > current_timestamp")
     Long countDealsByDongIdAndDealType(
             @Param("apartmentId") Long apartmentId,
             @Param("dongId") @Nullable Long dongId,
@@ -121,7 +126,12 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     List<Deal> findDealsByAcceptId(Long memberId);
 
     // reuqest_id와 accept_id로 현재 거래 들고오기(최신 1개)
-    Optional<Deal> findTopByRequestIdAndAcceptIdAndDealStatusOrderByModifiedAtDesc(Long requestId, Long acceptId, Deal.DealStatus dealStatus);
+    Optional<Deal> findTopByRequestIdAndAcceptIdAndDealStatusOrderByModifiedAtDesc(
+            Long requestId,
+            Long acceptId,
+            Deal.DealStatus dealStatus
+    );
+
     // 수락 기능 제한
     List<Deal> findDealsByAcceptIdAndDealStatus(Long acceptId, Deal.DealStatus dealStatus);
 
@@ -142,11 +152,12 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
 
     // 전체 거래 수
     Long countDealsByRequestIdOrAcceptId(Long requestId, Long acceptId);
-    // 전체 거래
+    // 전체 거래 조회
     @Query("SELECT d FROM Deal d " +
             "WHERE (d.requestId = :requestId) " +
             "AND (:dealType IS NULL OR d.dealType IN :dealType) " +
-            "AND d.dealStatus = :dealStatus")
+            "AND d.dealStatus = :dealStatus " +
+            "AND d.expireAt > CURRENT_TIMESTAMP")
     List<Deal> findDealsByRequestIdAndDealTypeAndDealStatus(
             @Param("requestId") Long requestId,
             @Param("dealType") List<DealType> dealType,
