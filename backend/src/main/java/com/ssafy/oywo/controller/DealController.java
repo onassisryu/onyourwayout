@@ -111,15 +111,8 @@ public class DealController {
             @RequestPart DealDto.Request dto,
             @RequestPart(required = false) List<MultipartFile> dealImageFileList) throws Exception {
 
-        List<String> dealImageStrList = new ArrayList<String>();
-        // 이미지 업로드
-        if (dealImageFileList != null) {
-            for (MultipartFile dealImageFile : dealImageFileList) {
-                String dealImageStr = s3UploadService.upload(dealImageFile, "DealImage", dto.getId());
-                dealImageStrList.add(dealImageStr);
-            }
-        }
-        return ResponseEntity.ok(dealService.createDeal(dto, dealImageStrList));
+
+        return ResponseEntity.ok(dealService.createDeal(dto, dealImageFileList));
     }
 
 
@@ -155,7 +148,7 @@ public class DealController {
         // 이미지 업로드
         if (dealImageFileList != null) {
             for (MultipartFile dealImageFile : dealImageFileList) {
-                String dealImageStr = s3UploadService.upload(dealImageFile, "DealImage", dto.getId());
+                String dealImageStr = s3UploadService.upload(dealImageFile, "DealImage", id);
                 dealImageStrList.add(dealImageStr);
             }
         }
