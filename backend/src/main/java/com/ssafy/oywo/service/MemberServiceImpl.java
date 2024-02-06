@@ -372,6 +372,17 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
+    public Long getLoginUserId() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Long loginUserId = memberRepository.findByUsername(username)
+                .map(Member::getId)
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
+
+        log.info("loginUserName: {}, loginUserId: {}", username, loginUserId);
+        return loginUserId;
+    }
+
     @Override
     public boolean isExistUserName(String userName) {
         Optional<Member> member=memberRepository.findByUsername(userName);
