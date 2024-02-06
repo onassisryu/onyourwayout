@@ -137,4 +137,18 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     // created_at으로 조회
     List<Deal> findDealsByOrderByCreatedAtDesc();
 
+    // 완료된 거래
+    Long countDealsByRequestIdOrAcceptIdAndDealStatus(Long requestId, Long acceptId, Deal.DealStatus dealStatus);
+
+    // 전체 거래 수
+    Long countDealsByRequestIdOrAcceptId(Long requestId, Long acceptId);
+    // 전체 거래
+    List<Deal> findDealsByRequestIdOrAcceptIdAndDealStatus(Long requestId, Long acceptId, Deal.DealStatus dealStatus);
+    // 요청자로서 거래 수
+    Long countDealsByRequestId(Long memberId);
+    // 수락자로서 거래 수
+    Long countDealsByAcceptId(Long memberId);
+    // 특정 사용자끼리 거래 수
+    Long countDealsByRequestIdAndAcceptId(Long requestId, Long acceptId);
+
 }
