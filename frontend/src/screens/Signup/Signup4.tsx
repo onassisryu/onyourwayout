@@ -1,4 +1,4 @@
-// 아이디
+// 패스워드
 import React, {useEffect, useState} from 'react';
 import {TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
@@ -6,10 +6,13 @@ import {GlobalContainer} from '@/GlobalStyles';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
 import theme from '@/Theme';
-import DefaultButton from '@/components/DefaultButton';
 import GoBack from '@/components/Signup/GoBack';
 import SignupHeadtext from '@/components/Signup/SignupHeadtext';
 import {SignupBodyContainer} from '@/components/Signup/SignupBodyContainer';
+import NextButton from '@/components/Signup/NextButton';
+import {userSignUpDataState} from '@/recoil/atoms';
+import {useSetRecoilState, useRecoilValue} from 'recoil';
+
 const InputContainer = styled.View`
   width: 100%;
   position: relative;
@@ -31,17 +34,17 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
   ${({visible}) => !visible && 'opacity: 0;'};
 `;
 
-const Signup4 = ({navigation}: any) => {
-  const [name, setName] = useState('');
+const Signup2 = ({navigation}: any) => {
+  const [value, setValue] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    setIsDisabled(!name);
-  }, [name]);
+    setIsDisabled(!value);
+  }, [value]);
 
   const handleClearInput = () => {
-    setName('');
+    setValue('');
   };
 
   const handleInputFocus = () => {
@@ -52,46 +55,48 @@ const Signup4 = ({navigation}: any) => {
     setIsFocused(false);
   };
 
-  const NextButton = styled(DefaultButton)`
-    width: 100%;
-    font-size: 18px;
-    height: 50px;
-    margin-top: 20px;
-    padding: 10px;
-    background-color: ${({disabled}) => (disabled ? theme.color.gray200 : theme.color.primary)};
-  `;
+  const setUserSignUpData = useSetRecoilState(userSignUpDataState);
+  const userSignUpData = useRecoilValue(userSignUpDataState);
+
+  const updatePassword = (password: string) => {
+    setUserSignUpData(prevState => ({
+      ...prevState,
+      password: password,
+    }));
+  };
+
+  function SetValue() {
+    updatePassword(value);
+    console.log(userSignUpData);
+    navigation.navigate('Signup5');
+  }
+
   return (
     <GlobalContainer>
       <Header>
         <GoBack />
       </Header>
       <SignupBodyContainer>
-        <SignupHeadtext title="가입하실 아이디를 알려주세요"></SignupHeadtext>
+        <SignupHeadtext title="사용하실 비밀번호를 입력해주세요"></SignupHeadtext>
         <InputContainer>
           <StyledInput
-            placeholder="아이디입력"
+            placeholder="비밀번호 입력"
             placeholderTextColor={theme.color.gray200}
-            onChangeText={text => setName(text)}
-            value={name}
+            onChangeText={text => setValue(text)}
+            value={value}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
+            secureTextEntry
           />
-          <IconWrapper onPress={handleClearInput} visible={isFocused && name.length > 0}>
+          <IconWrapper onPress={handleClearInput} visible={isFocused && value.length > 0}>
             <Ant name="closecircleo" size={20} color={theme.color.gray200} />
           </IconWrapper>
         </InputContainer>
 
-        <NextButton
-          title="다음"
-          color="primary"
-          size="lg"
-          disabled={isDisabled}
-          onPress={() => navigation.navigate('Signup5')}
-        />
+        <NextButton title="다음" color="primary" size="lg" disabled={isDisabled} onPress={() => SetValue()} />
       </SignupBodyContainer>
     </GlobalContainer>
   );
 };
 
-// 아이디 중복테스트
-export default Signup4;
+export default Signup2;

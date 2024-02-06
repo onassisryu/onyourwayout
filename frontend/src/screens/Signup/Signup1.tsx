@@ -1,12 +1,18 @@
-// 이름
+// 아이디
 import React, {useEffect, useState} from 'react';
-import {Text, View, TouchableOpacity} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {GlobalContainer} from '@/GlobalStyles';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
 import theme from '@/Theme';
-import DefaultButton from '@/components/DefaultButton';
+import GoBack from '@/components/Signup/GoBack';
+import SignupHeadtext from '@/components/Signup/SignupHeadtext';
+import {SignupBodyContainer} from '@/components/Signup/SignupBodyContainer';
+import NextButton from '@/components/Signup/NextButton';
+import {userSignUpDataState} from '@/recoil/atoms';
+import {useSetRecoilState, useRecoilValue} from 'recoil';
+
 const InputContainer = styled.View`
   width: 100%;
   position: relative;
@@ -29,16 +35,16 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
 `;
 
 const Signup1 = ({navigation}: any) => {
-  const [name, setName] = useState('');
+  const [value, setValue] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    setIsDisabled(!name);
-  }, [name]);
+    setIsDisabled(!value);
+  }, [value]);
 
   const handleClearInput = () => {
-    setName('');
+    setValue('');
   };
 
   const handleInputFocus = () => {
@@ -49,63 +55,45 @@ const Signup1 = ({navigation}: any) => {
     setIsFocused(false);
   };
 
-  const NextButton = styled(DefaultButton)`
-    width: 100%;
-    font-size: 18px;
-    height: 50px;
-    margin-top: 20px;
-    padding: 10px;
-    background-color: ${({disabled}) => (disabled ? theme.color.gray200 : theme.color.primary)};
-  `;
+  const setUserSignUpData = useSetRecoilState(userSignUpDataState);
+  const userSignUpData = useRecoilValue(userSignUpDataState);
+
+  const updateUserName = (username: string) => {
+    setUserSignUpData(prevState => ({
+      ...prevState,
+      username: username,
+    }));
+  };
+
+  function SetValue() {
+    updateUserName(value);
+    console.log(userSignUpData);
+    navigation.navigate('Signup2');
+  }
+
   return (
     <GlobalContainer>
       <Header>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text>
-            <Ant name="arrowleft" size={40} color="black" />
-          </Text>
-        </TouchableOpacity>
+        <GoBack />
       </Header>
-      <View
-        style={css`
-          width: 100%;
-          padding: 0 32px;
-        `}>
-        <View
-          style={css`
-            width: 100%;
-          `}>
-          <Text
-            style={css`
-              margin-top: 20px;
-              font-size: 20px;
-              font-weight: 900;
-              color: black;
-            `}>
-            이름을 입력해주세요
-          </Text>
-        </View>
+      <SignupBodyContainer>
+        <SignupHeadtext title="사용하실 아이디를 입력해주세요"></SignupHeadtext>
         <InputContainer>
           <StyledInput
-            placeholder="이름 입력"
+            placeholder="아이디 입력"
             placeholderTextColor={theme.color.gray200}
-            onChangeText={text => setName(text)}
-            value={name}
+            onChangeText={text => setValue(text)}
+            value={value}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
           />
-          <IconWrapper onPress={handleClearInput} visible={isFocused && name.length > 0}>
+          <IconWrapper onPress={handleClearInput} visible={isFocused && value.length > 0}>
             <Ant name="closecircleo" size={20} color={theme.color.gray200} />
           </IconWrapper>
         </InputContainer>
-        <NextButton
-          title="다음"
-          color="primary"
-          size="lg"
-          disabled={isDisabled}
-          onPress={() => navigation.navigate('Signup2')}
-        />
-      </View>
+
+        <NextButton title="다음" color="primary" size="lg" disabled={isDisabled} onPress={() => SetValue()} />
+      </SignupBodyContainer>
     </GlobalContainer>
   );
 };

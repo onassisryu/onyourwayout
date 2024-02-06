@@ -1,4 +1,4 @@
-// 초대코드
+// 닉네임
 import React, {useEffect, useState} from 'react';
 import {TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
@@ -6,13 +6,13 @@ import {GlobalContainer} from '@/GlobalStyles';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
 import theme from '@/Theme';
-import DefaultButton from '@/components/DefaultButton';
 import GoBack from '@/components/Signup/GoBack';
 import SignupHeadtext from '@/components/Signup/SignupHeadtext';
 import {SignupBodyContainer} from '@/components/Signup/SignupBodyContainer';
-import axiosBasic from '@/axios/axios';
+import NextButton from '@/components/Signup/NextButton';
 import {userSignUpDataState} from '@/recoil/atoms';
 import {useSetRecoilState, useRecoilValue} from 'recoil';
+
 const InputContainer = styled.View`
   width: 100%;
   position: relative;
@@ -34,8 +34,7 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
   ${({visible}) => !visible && 'opacity: 0;'};
 `;
 
-const Signup5 = ({navigation}: any) => {
-  const [name, setName] = useState('');
+const Signup0 = ({navigation}: any) => {
   const [value, setValue] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
@@ -45,7 +44,7 @@ const Signup5 = ({navigation}: any) => {
   }, [value]);
 
   const handleClearInput = () => {
-    setName('');
+    setValue('');
   };
 
   const handleInputFocus = () => {
@@ -58,41 +57,18 @@ const Signup5 = ({navigation}: any) => {
 
   const setUserSignUpData = useSetRecoilState(userSignUpDataState);
   const userSignUpData = useRecoilValue(userSignUpDataState);
-  const updateInviteCode = (inviteCode: string) => {
+
+  const updateNickName = (nickname: string) => {
     setUserSignUpData(prevState => ({
       ...prevState,
-      inviteCode: inviteCode,
+      nickname: nickname,
     }));
   };
-  const NextButton = styled(DefaultButton)`
-    width: 100%;
-    font-size: 18px;
-    height: 50px;
-    margin-top: 20px;
-    padding: 10px;
-    background-color: ${({disabled}) => (disabled ? theme.color.gray200 : theme.color.primary)};
-  `;
 
-  const NextButton2 = styled(DefaultButton)`
-    width: 100%;
-    font-size: 18px;
-    height: 50px;
-    margin-top: 20px;
-    padding: 10px;
-    background-color: ${({disabled}) => (disabled ? theme.color.gray200 : theme.color.primary)};
-  `;
-
-  function Code(value: string) {
-    axiosBasic
-      .get(`/members/verify/${value}`)
-      .then(resp => {
-        console.log('성공', resp.data);
-        updateInviteCode(value);
-        navigation.navigate('Signup5a', {responseData: resp.data});
-      })
-      .catch(error => {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
-      });
+  function SetValue() {
+    updateNickName(value);
+    console.log(userSignUpData);
+    navigation.navigate('Signup1');
   }
 
   return (
@@ -101,32 +77,25 @@ const Signup5 = ({navigation}: any) => {
         <GoBack />
       </Header>
       <SignupBodyContainer>
-        <SignupHeadtext title="초대코드를 입력해주세요"></SignupHeadtext>
+        <SignupHeadtext title="사용하실 닉네임을 입력해주세요"></SignupHeadtext>
         <InputContainer>
           <StyledInput
-            placeholder="초대코드"
+            placeholder="닉네임 입력"
             placeholderTextColor={theme.color.gray200}
             onChangeText={text => setValue(text)}
             value={value}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
           />
-          <IconWrapper onPress={handleClearInput} visible={isFocused && name.length > 0}>
+          <IconWrapper onPress={handleClearInput} visible={isFocused && value.length > 0}>
             <Ant name="closecircleo" size={20} color={theme.color.gray200} />
           </IconWrapper>
         </InputContainer>
 
-        <NextButton title="다음" color="primary" size="lg" disabled={isDisabled} onPress={() => Code(value)} />
-        <NextButton2
-          title="초대코드 없음"
-          color="primary"
-          size="lg"
-          disabled={!isDisabled}
-          onPress={() => navigation.navigate('Signup6')}
-        />
+        <NextButton title="다음" color="primary" size="lg" disabled={isDisabled} onPress={() => SetValue()} />
       </SignupBodyContainer>
     </GlobalContainer>
   );
 };
 
-export default Signup5;
+export default Signup0;

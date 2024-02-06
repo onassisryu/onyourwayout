@@ -13,7 +13,12 @@ export const userDataState = atom({
 
 export const userSignUpDataState = atom({
   key: 'userSignUpDataState',
-  default: null,
+  default: {
+    username: '',
+    phoneNumber: '',
+    birthDate: '',
+    password: '',
+  },
 });
 
 export const isLoggedInState = atom({

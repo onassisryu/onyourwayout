@@ -16,10 +16,9 @@ import moment from 'moment';
 import 'moment/locale/ko';
 import Feather from 'react-native-vector-icons/Feather';
 import Ant from 'react-native-vector-icons/AntDesign';
-import axios from 'axios';
 import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
-
+import axiosAuth from '@/axios/axiosAuth';
 type DoItScreenRouteProp = RouteProp<RootStackParamList, 'DoIt2'>;
 
 interface Props {
@@ -158,31 +157,27 @@ const DoIt2 = ({navigation}: Props) => {
     outputRange: [0, width / 2.4], // 화면의 반쪽으로 이동
   });
   const userData = useRecoilValue(userDataState);
-  const AccessToken = userData.token.accessToken;
+  const AccessToken = userData.accessToken;
   function MakeDeal() {
-    const headers = {
-      'Authorization': `Bearer ${AccessToken}`,
-      'Content-Type': 'application/json', // 요청의 Content-Type을 명시해줍니다
-    };
-
     const data = {
-      title: 'title12',
-      content: 'content12',
-      item: '라면',
-      dealType: 'PET',
-      expireAtStr: '2025-03-03 00:00:00',
+      dto: {
+        title: 'title2',
+        content: 'content2',
+        cash: 1110,
+        dealType: 'RECYCLE',
+        expireAtStr: '2025-03-03 00:00:00',
+      },
     };
 
     console.log(AccessToken);
-    console.log(deal);
-    axios
-      .post('http://i10a302.p.ssafy.io:8080/deal', deal, {headers})
-      .then(function (resp) {
-        console.log(resp.data);
-        // navigation.navigate(''); //해줘요잉 리스트 상세페이지로 이동
+    console.log(data);
+    axiosAuth
+      .post('/deal', data)
+      .then(resp => {
+        console.log('성공', resp.data);
       })
-      .catch(function (err) {
-        console.log(`Error Message: ${err}`);
+      .catch(error => {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   }
 
