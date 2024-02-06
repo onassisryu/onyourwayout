@@ -57,23 +57,25 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    @Override
-    public String sendNotificationByMemberId(NotificationDto.Request notificationDto, List<Long> memberId) {
-        Notification notification = notificationDto.toEntity();
-        notification = notificationRepository.save(notification);
-        List<Member> members = memberRepository.findAllById(memberId);
-
-        sendMessage(notification, members);
-        return "메시지 보내기 성공";
-    }
-
+    /**
+     * deal이 생성될 때, deal 요청자의 동에 속한 멤버들에게 알림을 보내는 메소드
+     * @param deal
+     * @return
+     */
     public String sendNotificationByDeal(Deal deal){
-        Dong dong = dongRepository.findById(deal.getId()).orElseThrow(()->new NoSuchElementException("해당 동이 없습니다."));
+        Dong dong = dongRepository.findByMemberId(deal.getRequestId()); // deal 요청자의 동 정보 가져오기
+        if(dong == null) throw new NoSuchElementException("해당하는 동이 없습니다.");
+
+        List<Member> members = memberRepository.findByDong(dong.getId()); // deal 요청자의 동에 속한 멤버들 가져오기
+        if(members.isEmpty()) throw new NoSuchElementException("해당하는 멤버가 없습니다.");
+
 
         Notification notification = Notification.builder()
                 .title("해줘요잉 알림")
-                .message("가 등록되었습니다.")
+                .message(dong.getName() + "에 새로운 해줘요잉이 등록되었습니다.")
                 .build();
+
+        sendMessage(notification, members);
         return "메시지 보내기 성공";
     }
 

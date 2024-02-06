@@ -60,9 +60,11 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
 
 
 
+    // 동별 알림 설정된 사용자
     @Query("SELECT m FROM Member m " +
-            "JOIN m.hos ho " +
+            "JOIN m.ho ho " +
             "JOIN ho.dong dong " +
-            "WHERE dong.id = :dongId")
-    List<Member> findMembersByDong(Long dongId);
+            "JOIN dong.apartment " +
+            "WHERE dong.id = :dongId AND (:dongId IN (SELECT d.id FROM m.notiDongs d) OR m.isNotiDongAll = true)")
+    List<Member> findByDong(Long dongId);
 }
