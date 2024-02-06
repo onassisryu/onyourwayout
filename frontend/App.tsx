@@ -27,7 +27,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 });
 
 //page
-import Home from '@screens/Home';
+import {Screens} from '@screens/Screens';
+import Main from '@screens/Main';
 import Location from '@screens/Location';
 import Chat from '@screens/Chat';
 import Apart from '@screens/Apart';
@@ -37,12 +38,14 @@ import Login from '@screens/Login';
 import Notice from '@screens/Notice';
 import NoticeSettings from '@screens/NoticeSettings';
 import DoIt1 from '@/screens/DoIt/DoIt1';
+import DoIt2 from '@/screens/DoIt/DoIt2';
 import Signup1 from '@/screens/Signup/Signup1';
 import Signup2 from '@/screens/Signup/Signup2';
 import Signup3 from '@/screens/Signup/Signup3';
 import Signup4 from '@/screens/Signup/Signup4';
 import Signup5 from '@/screens/Signup/Signup5';
 import Signup6 from '@/screens/Signup/Signup6';
+import GoOut1 from '@/screens/GoOut/GoOut1';
 import DoItList from '@/screens/DoItList';
 import DoItListDetail from '@screens/DoItListDetail';
 
@@ -103,7 +106,7 @@ const App = () => {
             return <Ionic name={iconName!} size={size} color={color} />;
           },
         })}>
-        <Tab.Screen name="홈" component={Home} />
+        <Tab.Screen name="홈" component={Main} />
         <Tab.Screen name="위치" component={Location} />
         <Tab.Screen name="아파트" component={Apart} />
         <Tab.Screen name="채팅" component={Chat} />
@@ -116,12 +119,14 @@ const App = () => {
       <NavigationContainer>
         <ThemeProvider theme={theme}>
           <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
-          <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Navigator initialRouteName="Login" screenOptions={{headerShown: false}}>
             <Stack.Screen name="Bottom" component={BottomTab} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Notice" component={Notice} />
             <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
+            <Stack.Screen name="GoOut1" component={GoOut1} />
             <Stack.Screen name="DoIt1" component={DoIt1} />
+            <Stack.Screen name="DoIt2" component={DoIt2} />
             <Stack.Screen name="Signup1" component={Signup1} />
             <Stack.Screen name="Signup2" component={Signup2} />
             <Stack.Screen name="Signup3" component={Signup3} />
@@ -129,6 +134,9 @@ const App = () => {
             <Stack.Screen name="Signup5" component={Signup5} />
             <Stack.Screen name="Signup6" component={Signup6} />
             <Stack.Screen name="MySetting" component={MySetting} />
+            {Screens.map(screen => (
+              <Stack.Screen key={screen.name} name={screen.name} component={screen.component} />
+            ))}
             <Stack.Screen name="DoItList" component={DoItList} />
             <Stack.Screen name="DoItListDetail" component={DoItListDetail} />
           </Stack.Navigator>

@@ -8,5 +8,6 @@ const Header = styled.View`
   align-items: center;
   padding: 0 10px;
   height: 60px;
+  background-color: white;
 `;
 export default Header;

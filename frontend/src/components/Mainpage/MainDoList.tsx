@@ -14,6 +14,7 @@ const DoListHeader = styled(GlobalContainer)`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  width: 100%;
   height: initial;
 `;
 
@@ -35,6 +36,7 @@ const DoListSeeText = styled(GlobalText)`
 const CategoryComponent = styled(GlobalContainer)`
   display: flex;
   flex-direction: row;
+  width: 100%;
   justify-content: space-between;
   padding: 0 20px;
   height: initial;
@@ -42,7 +44,7 @@ const CategoryComponent = styled(GlobalContainer)`
 
 const Category = styled(GlobalButton)<{selected: boolean}>`
   max-width: 200px;
-  padding: 9px;
+  padding: 9px 7px;
   border-radius: 15px;
   border: ${({selected}) => (selected ? '1px solid #E6FBF4' : '1px solid #B2B2B2')};
   background-color: ${({selected}) => (selected ? '#E6FBF4' : 'white')};
@@ -61,6 +63,7 @@ const DoListCardComponent = styled(ScrollView)`
   padding-right: 20px;
   padding-left: 20px;
   margin-top: 20px;
+  flex-grow: 1;
 `;
 
 const DoListCard = styled.View`

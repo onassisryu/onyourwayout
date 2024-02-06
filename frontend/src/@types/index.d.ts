@@ -17,3 +17,9 @@ interface ITheme {
     normal: string;
   };
 }
+export type RootStackParamList = {
+  DoIt2: {
+    type: string;
+    icon: 'puppy' | 'puppyOff' | 'bags' | 'bagsOff' | 'building' | 'buildingOff' | 'shopping' | 'shoppingOff';
+  };
+};
