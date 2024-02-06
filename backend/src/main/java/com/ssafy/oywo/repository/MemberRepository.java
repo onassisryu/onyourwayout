@@ -69,4 +69,6 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
             "AND (:dongId IN (SELECT d.id FROM m.notiDongs d) OR m.isNotiDongAll = true) " +
             "AND (:dealType IN(SELECT dt.dealType From m.notiDealCategories dt) OR m.isNotiCategoryAll = true)")
     List<Member> findByDongAndCategory(Long dongId, DealType dealType);
+
+    Optional<Member> findByPhoneNumber(String phoneNumber);
 }

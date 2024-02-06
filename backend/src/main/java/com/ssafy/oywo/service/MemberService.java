@@ -37,4 +37,10 @@ public interface MemberService {
     public void removeFcmToken(String username);
 
     public HashMap<String,Object> findHoByInviteCode(String inviteCode);
+
+    public boolean isExistUserName(String userName);
+
+    public boolean isExistNickName(String nickName);
+
+    public boolean isExistPhoneNumber(String phoneNumber);
 }

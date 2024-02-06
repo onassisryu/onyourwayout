@@ -354,5 +354,32 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
+    @Override
+    public boolean isExistUserName(String userName) {
+        Optional<Member> member=memberRepository.findByUsername(userName);
+        if (member.isPresent()){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isExistNickName(String nickName) {
+        Optional<Member> member=memberRepository.findByNickname(nickName);
+        if (member.isPresent()){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isExistPhoneNumber(String phoneNumber) {
+        Optional<Member> member=memberRepository.findByPhoneNumber(phoneNumber);
+        if (member.isPresent()){
+            return true;
+        }
+        return false;
+    }
+
 
 }
