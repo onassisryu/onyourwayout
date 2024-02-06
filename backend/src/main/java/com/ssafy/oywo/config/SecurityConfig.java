@@ -44,6 +44,8 @@ public class SecurityConfig {
                 .requestMatchers("/members/verify/**").permitAll()
                 // apart에 대한 정보 요청은 모두 허가
                 .requestMatchers(HttpMethod.GET,"/apart/**").permitAll()
+                .requestMatchers("/pub/**").permitAll()
+                .requestMatchers("/sub/**").permitAll()
                 // 이 밖에 모든 요청에 대해서 인증을 필요로 한다는 설정
                 .anyRequest().authenticated()
                 .and()
