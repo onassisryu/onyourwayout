@@ -126,6 +126,7 @@ public class MemberServiceImpl implements MemberService {
                 ho.get().builder().member(members).build();
 
                 response=MemberDto.Response.of(member,ho.get());
+                member.setHo(ho.get());
             }
             // 등록되지 않은 호인 경우
             else{
@@ -139,7 +140,7 @@ public class MemberServiceImpl implements MemberService {
                 String newInviteCode=uuid.toString().replaceAll("-","");
                 Ho newHo= Ho.builder().dong(dong).name(hoName).member(members).inviteCode(newInviteCode).build();
                 newHo=hoRepository.save(newHo);
-
+                member.setHo(newHo);
                 response= MemberDto.Response.of(member, newHo);
             }
         }

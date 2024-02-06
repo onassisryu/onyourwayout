@@ -124,16 +124,6 @@ public class DealDto {
             this.dealType = entity.getDealType();
             this.expireAt = entity.getExpireAt();
             this.dealImages = entity.getDealImages();
-
-//            if (entity.getDealImages() != null) {
-//                this.dealImages = entity.getDealImages()
-//                        .stream()
-//                        .map(DealImageResponse::new)
-//                        .collect(Collectors.toList());
-//            } else {
-//                this.dealImages = Collections.emptyList();
-//            }
-
             this.createdAt = entity.getCreatedAt();
             this.modifiedAt = entity.getModifiedAt();
 
