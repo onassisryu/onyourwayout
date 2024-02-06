@@ -12,4 +12,6 @@ import java.util.List;
 public interface DealImageRepository extends JpaRepository<DealImage, Long> {
 
     List<DealImage> findByDealId(Long dealId);
+
+
 }

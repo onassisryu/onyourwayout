@@ -15,9 +15,7 @@ import org.webjars.NotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -470,14 +468,48 @@ public class DealServiceImpl implements DealService{
         log.info("myDongId : {}", myDongId);
         // 우리 동 거래 requestId 리스트
         List<Member> requestMembers = memberRepository.findDealsByRequestIdByDongIdAndDealTypeAndDealStatus(myDongId, dealType, Deal.DealStatus.OPEN);
+        log.info("requestMembers : {}", requestMembers.stream().map(m -> MemberDto.Response.of(m)).collect(Collectors.toList()));
+        // 추천 리스트
+        List<DealDto.Response> recommendedDeals = new ArrayList<>();
 
+        Map<Member, Integer> memberScore = new HashMap<>();
+        Map<Member, Long> closedDealsCnt = new HashMap<>();
+        Map<Member, Double> overallScores = new HashMap<>();
         for (Member requestMember : requestMembers) {
-            Long closedDealsCnt = dealRepository.countDealsByRequestIdAndDealStatus(requestMember.getId(), Deal.DealStatus.CLOSE);
+            long requestMemberId = requestMember.getId();
+            // 이웃 지수
+            memberScore.put(requestMember, requestMember.getScore());
+            // 거래 완료 수
+            long dealCloseCnt = dealRepository.countDealsByRequestIdOrAcceptIdAndDealStatus(requestMemberId, requestMemberId, Deal.DealStatus.CLOSE);
+            closedDealsCnt.put(requestMember, dealCloseCnt);
+            // 나와 거래한 빈도
+            long totalDealCnt = dealRepository.countDealsByRequestIdOrAcceptId(loginUserId, loginUserId);
+            long dealsWithPartnerCnt = dealRepository.countDealsByRequestIdAndAcceptId(loginUserId, requestMemberId)
+                                        + dealRepository.countDealsByRequestIdAndAcceptId(requestMemberId, loginUserId);
+            double dealsFrequencyWithMember = (double) dealsWithPartnerCnt/ totalDealCnt;
 
-//            int memberScore = memberRepository.findById(requestMember.getId().map(Member::getScore).orElse(0);
+            // 종합
+            double overallScore = (memberScore.get(requestMember) * 5)
+                                    + (closedDealsCnt.get(requestMember) * 3)
+                                    + (dealsFrequencyWithMember * 2);
+            overallScores.put(requestMember, overallScore);
+            log.info("overallScore : {}", overallScore);
         }
 
+        // 종합 평가로 상대방 정렬
+        List<Member> sortedMembers  = requestMembers.stream()
+                .sorted((m1, m2) -> Double.compare(overallScores.get(m2), overallScores.get(m1)))
+                .collect(Collectors.toList());
 
-        return null;
+        for (Member sortedMember : sortedMembers) {
+            List<Deal> dealsForMember = dealRepository.findDealsByRequestIdOrAcceptIdAndDealStatus(sortedMember.getId(), sortedMember.getId(), Deal.DealStatus.CLOSE);
+            for (Deal deal : dealsForMember) {
+                DealDto.Response dealDto = new DealDto.Response(deal);
+                recommendedDeals.add(dealDto);
+            }
+        }
+        return recommendedDeals;
     }
+
+
 }
