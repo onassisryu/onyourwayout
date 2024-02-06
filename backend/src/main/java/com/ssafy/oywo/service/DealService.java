@@ -4,6 +4,7 @@ import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.entity.DealComplaint;
 import com.ssafy.oywo.entity.DealType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface DealService {
     // 요청자/수락자 현재 거래 조회
     DealDto.Response getDealByStatusING(Long requestId, Long acceptId);
     // 거래 생성
-    DealDto.Response createDeal(DealDto.Request dto, List<String> dealImageStrList);
+    DealDto.Response createDeal(DealDto.Request dto, List<MultipartFile> dealImageFileList);
     // 거래 하나 조회
     DealDto.Response getDeal(Long id);
     // 거래 수정

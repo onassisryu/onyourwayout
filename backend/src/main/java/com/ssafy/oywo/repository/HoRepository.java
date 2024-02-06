@@ -1,6 +1,7 @@
 package com.ssafy.oywo.repository;
 
 
+import com.ssafy.oywo.entity.Dong;
 import com.ssafy.oywo.entity.Ho;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,5 +16,8 @@ public interface HoRepository extends JpaRepository<Ho,Long> {
 
     Optional<Ho> findById(Long id);
 
-    
+    @Query("SELECT ho FROM Ho ho" +
+            " JOIN Member m on m.ho = ho" +
+            " WHERE m.id = :memberId")
+    Ho findByMemberId(Long memberId);
 }

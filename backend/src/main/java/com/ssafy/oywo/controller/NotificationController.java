@@ -32,11 +32,4 @@ public class NotificationController {
         return ResponseEntity.ok(notifications);
     }
 
-    @PostMapping("/sendByMembersId")
-    public ResponseEntity<?> sendNotificationByMemberId(@RequestBody NotificationDto.Request notificationDto, @RequestParam("memberId") List<Long> memberId) {
-        String result = notificationService.sendNotificationByMemberId(notificationDto, memberId);
-        return ResponseEntity.ok(result);
-    }
-
-
 }

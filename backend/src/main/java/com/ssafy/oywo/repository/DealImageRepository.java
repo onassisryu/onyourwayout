@@ -12,4 +12,9 @@ import java.util.List;
 public interface DealImageRepository extends JpaRepository<DealImage, Long> {
 
     List<DealImage> findByDealId(Long dealId);
+
+    void deleteAllByDealId(Long dealId);
+
+    @Query(value = "select * from deal_image di where di.deal_id = :dealId", nativeQuery = true)
+    List<DealImage> findByDealIdIncludeDeleted(Long dealId);
 }

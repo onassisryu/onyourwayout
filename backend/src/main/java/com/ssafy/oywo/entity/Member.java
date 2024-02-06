@@ -84,8 +84,10 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     private boolean isCertified;
 
+    @ColumnDefault("true")
     private boolean isNotiDongAll;
 
+    @ColumnDefault("true")
     private boolean isNotiCategoryAll;
 
     private String certificationImg;
@@ -98,6 +100,9 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @OneToMany(mappedBy = "member")
     private List<MembersNotification> membersNotifications = new ArrayList<>();
+
+    @ManyToOne
+    private Ho ho;
 
     @ManyToMany
     @JoinTable(name = "chat_user_list",

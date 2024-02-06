@@ -20,4 +20,11 @@ public interface DongRepository extends JpaRepository<Dong, Long> {
     // 아파트 id로 동 정보 가져오기
     List<Dong> findByApartmentId(Long aptId);
 
+    // 멤버 id로 동 정보 가져오기
+    @Query("SELECT d FROM Dong d" +
+            " JOIN Ho ho on ho.dong = d" +
+            " JOIN Member m on m.ho = ho" +
+            " WHERE m.id = :memberId")
+    Dong findByMemberId(Long memberId);
+
 }

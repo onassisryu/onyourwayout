@@ -58,4 +58,15 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
             @Param("dealStatus") Deal.DealStatus dealStatus
     );
 
+
+
+    // 동별 알림 설정된 사용자
+    @Query("SELECT m FROM Member m " +
+            "JOIN m.ho ho " +
+            "JOIN ho.dong dong " +
+            "JOIN dong.apartment apt " +
+            "WHERE apt.id = (select apt.id from Apartment apt Join Dong d on d.apartment = apt where d.id = :dongId) " +
+            "AND (:dongId IN (SELECT d.id FROM m.notiDongs d) OR m.isNotiDongAll = true) " +
+            "AND (:dealType IN(SELECT dt.dealType From m.notiDealCategories dt) OR m.isNotiCategoryAll = true)")
+    List<Member> findByDongAndCategory(Long dongId, DealType dealType);
 }
