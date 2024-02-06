@@ -42,7 +42,6 @@ public class SecurityConfig {
                 .requestMatchers("/members/signup").permitAll()
                 .requestMatchers("/members/refresh").permitAll()
                 .requestMatchers("/members/verify/**").permitAll()
-                .requestMatchers("/members/dup").permitAll()
                 // apart에 대한 정보 요청은 모두 허가
                 .requestMatchers(HttpMethod.GET,"/apart/**").permitAll()
                 .requestMatchers("/pub/**").permitAll()
