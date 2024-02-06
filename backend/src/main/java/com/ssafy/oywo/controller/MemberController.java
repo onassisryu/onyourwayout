@@ -207,4 +207,34 @@ public class MemberController {
         return new ResponseEntity<>(memberSerivce.findHoByInviteCode(inviteCode),HttpStatus.OK);
     }
 
+    // 아이디 중복 여부 확인
+    @GetMapping("/dup/id")
+    public ResponseEntity<?> duplicateUserName(@RequestParam("value") String userName){
+        boolean isExist=memberSerivce.isExistUserName(userName);
+        if (isExist){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // 전화번호 중복 여부 확인
+    @GetMapping("/dup/phone")
+    public ResponseEntity<?> duplicatePhoneNumber(@RequestParam("value") String phoneNumber){
+        boolean isExist= memberSerivce.isExistPhoneNumber(phoneNumber);
+        if (isExist){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // 닉네임 중복 여부 확인
+    @GetMapping("/dup/nickname")
+    public ResponseEntity<?> duplicateNickName(@RequestParam("value") String nickName){
+        boolean isExist= memberSerivce.isExistNickName(nickName);
+        if(isExist){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
