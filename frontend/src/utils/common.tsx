@@ -22,6 +22,7 @@ export const getAccessToken = async (): Promise<string | null> => {
 export const logoutUser = async () => {
   try {
     // 인증 정보 삭제
+    console;
     await removeStorage('token');
     await removeStorage('refreshToken');
     await removeStorage('autoLogin');
