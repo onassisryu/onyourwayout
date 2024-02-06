@@ -208,8 +208,8 @@ public class MemberController {
     }
 
     // 아이디 중복 여부 확인
-    @GetMapping("/dup")
-    public ResponseEntity<?> duplicateUserName(@RequestParam("id") String userName){
+    @GetMapping("/dup/id")
+    public ResponseEntity<?> duplicateUserName(@RequestParam("value") String userName){
         boolean isExist=memberSerivce.isExistUserName(userName);
         if (isExist){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -218,8 +218,8 @@ public class MemberController {
     }
 
     // 전화번호 중복 여부 확인
-    @GetMapping("/dup")
-    public ResponseEntity<?> duplicatePhoneNumber(@RequestParam("phone") String phoneNumber){
+    @GetMapping("/dup/phone")
+    public ResponseEntity<?> duplicatePhoneNumber(@RequestParam("value") String phoneNumber){
         boolean isExist= memberSerivce.isExistPhoneNumber(phoneNumber);
         if (isExist){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -228,8 +228,8 @@ public class MemberController {
     }
 
     // 닉네임 중복 여부 확인
-    @GetMapping("/dup")
-    public ResponseEntity<?> duplicateNickName(@RequestParam("nickname") String nickName){
+    @GetMapping("/dup/nickname")
+    public ResponseEntity<?> duplicateNickName(@RequestParam("value") String nickName){
         boolean isExist= memberSerivce.isExistNickName(nickName);
         if(isExist){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
