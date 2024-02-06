@@ -11,14 +11,7 @@ import {loadingState} from '@/recoil/atoms';
 const axiosAuth = axios.create({
   baseURL: 'http://i10a302.p.ssafy.io:8080',
 });
-axiosAuth.interceptors.request.use(
-  config => {
-    return config;
-  },
-  err => {
-    return Promise.reject(err);
-  }
-);
+
 
 axiosAuth.interceptors.response.use(
   response => {

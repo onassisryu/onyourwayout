@@ -19,13 +19,5 @@ axiosAuth.interceptors.request.use(
   }
 );
 
-axiosAuth.interceptors.response.use(
-  config => {
-    return config;
-  },
-  err => {
-    return Promise.reject(err);
-  }
-);
 
 export default axiosAuth;

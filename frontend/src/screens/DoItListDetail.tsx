@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import { ImageSourcePropType, StatusBar, View, Text } from 'react-native';
+import { ImageSourcePropType, StatusBar, View, Text, ScrollView } from 'react-native';
 import styled from '@emotion/native';
 import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { css } from '@emotion/react';
 import { GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
-import Header from '@components/Header';
+import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
 import Share from 'react-native-vector-icons/Feather';
 import SvgIcon from '@/components/SvgIcon';
@@ -14,37 +14,46 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const Container = styled(GlobalContainer)`
   justify-content: center;
   align-items: flex-start;
-  height: initial
+  height: initial;
+`;
+
+const SubContainer = styled(GlobalContainer)`
+  align-items: flex-start;
+  height: initial;
 `;
 
 const HeaderContainer = styled(Header)`
-  justify-content: space-between;
-  align-items: flex-start;
-  height: 480px;
+  width: 100%;
+  height: 0px;
+
 `;
 
 const GoBackButton = styled(GlobalButton)`
   position: absolute;
   top: 10px;
   left: 10px;
-  margin: 30px 0px 30px 0px;
   background-color: transparent;
+  margin: 30px 0px 30px 0px;
 `;
 
 const ShareButton = styled(GlobalButton)`
   position: absolute;
   top: 10px;
   right: 10px;
-  margin: 30px 0px 30px 0px;
   background-color: transparent;
+  margin: 30px 0px 30px 0px;
 `;
 
-const DoItListImage = styled.ImageBackground`
-  position: absolute;
+const DoItListImage = styled.Image`
   width: 410px;
-  height: 480px;
+  height: 450px;
   resize-mode: contain;
 
+`;
+
+const TotalComponent = styled(ScrollView)`
+  height: 800px
+  
 `;
 
 const SubHeader = styled(GlobalContainer)`
@@ -78,14 +87,13 @@ const TextApart = styled(GlobalText)`
 `;
 
 const DistinctLine = styled.View`
-  width: 90%;
+  width: 370px;
   margin-left: 20px;
   margin-right: 20px;
   border: 1px solid #B2B2B2;
 `;
 
 const ContentComponent = styled(GlobalContainer)`
-  height: initial;
   flex-direction: column;
   align-items: flex-start;
 `;
@@ -114,9 +122,10 @@ const TextContent = styled(GlobalText)`
 
 const InfoComponent = styled(GlobalContainer)`
   flex-direction: row;
+  justify-content: space-between;
   align-items: flex-end;
+  width: 390px;
   height: initial;
-
 `;
 
 const TextInfo = styled(GlobalText)`
@@ -129,7 +138,7 @@ const TextPrice = styled(GlobalText)`
   font-size: ${props => props.theme.fontSize.subtitle};
   color:  ${props => props.theme.color.black};
   font-weight: bold;
-  margin-left: 200px;
+
 `;
 
 const TextReport = styled(GlobalText)`
@@ -139,14 +148,13 @@ const TextReport = styled(GlobalText)`
   text-decoration-line: underline;
 `;
 
-
-
 const ButtonComponent = styled(GlobalContainer)`
+  position: absolute;
+  top: 800px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  padding: 40px 20px 40px 20px;
-  height: 150px;
+  padding: 10px 20px 10px 20px;
+  height: initial;
 `;
 
 const LikeButton = styled(GlobalButton)`
@@ -158,15 +166,13 @@ const LikeButton = styled(GlobalButton)`
   border-bottom-left-radius: 15px;
   border-top-right-radius: 0px;
   border-bottom-right-radius: 0px;
-  border-right-width: 2px;
-  border-right-color: white;
 `;
 
 const AgreeButton = styled(GlobalButton)`
   flex-direction: row;
-
   width: 150px;
   height: 60px;
+  border: white;
   background-color: ${props => props.theme.color.primary};
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
@@ -176,15 +182,14 @@ const AgreeButton = styled(GlobalButton)`
 
 const ChatButton = styled(GlobalButton)`
   flex-direction: row;
-  border: white;
   width: 150px;
   height: 60px;
+  border: white;
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
   background-color: ${props => props.theme.color.primary};
-  border-right
 `;
 
 const ButtonText = styled(GlobalText)`
@@ -239,50 +244,59 @@ const DoItListDetail = ({ route, navigation }: Props) => {
 
   return (
     <Container>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content"/>
-      <HeaderContainer>
-        <DoItListImage source={card.image}/>
+      
+      <HeaderContainer style={{zIndex: 1}}>
+        <StatusBar translucent backgroundColor="transparent" barStyle="light-content"/>
         <GoBackButton onPress={() => navigation.goBack()}>
-          <Ant name="arrowleft" size={35} color="white" />
+          <Ant name="arrowleft" size={35} color="black" />
         </GoBackButton>
         <ShareButton>
-          <Share name="share" size={35} color="white"/>
+          <Share name="share" size={35} color="black"/>
         </ShareButton>
       </HeaderContainer>
 
-      <SubHeader>
-        <SvgIcon name='profile' size={40}/>
-        <ProfileComponent>
-          <TextNickname> {card.nickname}</TextNickname>
-          <TextApart> {card.apart} / {card.uptime} </TextApart>
-        </ProfileComponent>
-      </SubHeader>      
-      <DistinctLine></DistinctLine>
+      <TotalComponent>
+        <View style={{zIndex: -99}}>
+          <DoItListImage source={card.image} />
+        </View>
+        <SubContainer>
+          
+          <SubHeader>
+            <SvgIcon name='profile' size={40}/>
+            <ProfileComponent>
+              <TextNickname> {card.nickname}</TextNickname>
+              <TextApart> {card.apart} / {card.uptime} </TextApart>
+            </ProfileComponent>
+          </SubHeader>      
+          <DistinctLine></DistinctLine>
+          <ContentComponent>
+            <TextTitle numberOfLines={1}>{card.title}</TextTitle>
+            <InfoComponent>
+              <TextCategory>{card.category}</TextCategory>
+              <TextPrice>{card.price}</TextPrice>
+            </InfoComponent> 
+            <TextContent >{card.content}</TextContent>
+            <TextInfo>찜 1 / 조회 208</TextInfo>
+            <TextReport>게시글 신고하기</TextReport>
+          </ContentComponent>
+        </SubContainer>
 
-      <ContentComponent>
-        <TextTitle numberOfLines={1}>{card.title}</TextTitle>
-        <TextCategory>{card.category}</TextCategory>
-        <TextContent>{card.content}</TextContent>
-        <InfoComponent>
-          <TextInfo>찜 1 / 조회 208</TextInfo>
-          <TextPrice>{card.price}</TextPrice>
-        </InfoComponent>
-        <TextReport>게시글 신고하기</TextReport>
-      </ContentComponent>
+      </TotalComponent>
 
-      <ButtonComponent>
-        <LikeButton onPress={PushLike}>
-          <FontAwesome name={name} size={25} color='white'></FontAwesome>
-        </LikeButton>
-        <AgreeButton>
-          <FontAwesome name='handshake-o' size={20} color='white'></FontAwesome>
-          <ButtonText> 수락하기 </ButtonText>
-        </AgreeButton>
-        <ChatButton>
-          <Ionicons name='chatbox-ellipses-outline' size={20} color='white'></Ionicons>
-          <ButtonText> 채팅하기 </ButtonText>
-        </ChatButton>
-      </ButtonComponent>
+        <ButtonComponent>
+          <LikeButton onPress={PushLike}>
+            <FontAwesome name={name} size={25} color='white'></FontAwesome>
+          </LikeButton>
+          <AgreeButton>
+            <FontAwesome name='handshake-o' size={20} color='white'></FontAwesome>
+            <ButtonText> 수락하기 </ButtonText>
+          </AgreeButton>
+          <ChatButton>
+            <Ionicons name='chatbox-ellipses-outline' size={20} color='white'></Ionicons>
+            <ButtonText> 채팅하기 </ButtonText>
+          </ChatButton>
+        </ButtonComponent>
+
     </Container>
   );
 };

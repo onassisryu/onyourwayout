@@ -48,6 +48,7 @@ import Signup6 from '@/screens/Signup/Signup6';
 import GoOut1 from '@/screens/GoOut/GoOut1';
 import DoItList from '@/screens/DoItList';
 import DoItListDetail from '@screens/DoItListDetail';
+import tab from '@/components/Noticepage/NoticeTab';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -69,6 +70,13 @@ const App = () => {
     // 앱이 켜져있을때
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log('[Remote Message] ', JSON.stringify(remoteMessage));
+      // 메시지 오면 띄우는 코드
+      const notice = {
+        id: remoteMessage.messageId,
+        title : remoteMessage.notification?.title,
+        content : remoteMessage.notification?.body
+      }
+      tab.sendNotification(notice)
     });
     return unsubscribe;
   }, []);

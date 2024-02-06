@@ -8,6 +8,9 @@ import 'moment/locale/ko';
 import {GlobalContainer} from '@/GlobalStyles';
 import {View, TouchableOpacity, ImageSourcePropType} from 'react-native';
 import {GlobalText} from '@/GlobalStyles';
+import PushNotification from 'react-native-push-notification';
+import axiosAuth from '@/axios/axiosAuth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TabContainer = styled.View`
   flex-direction: row;
@@ -75,6 +78,37 @@ const DistinctLine = styled.View`
 
 const xImage: ImageSourcePropType = require('icons/x.png');
 
+// 알림 채널 생성
+PushNotification.createChannel(
+  {
+    channelId: "channel-id", // 채널 ID
+    channelName: "My channel", // 채널 이름
+    channelDescription: "A channel to categorise your notifications", // 채널 설명
+    soundName: "default", // 기본 사운드 사용
+    importance: 4, // 알림 중요도 설정. 4는 High를 의미함
+    vibrate: true, // 진동 설정
+  },
+  (created) => console.log(`createChannel returned '${created}'`) // (optional) 채널 생성 성공 여부를 로그에 출력
+);
+
+const sendNotification = (notice: any) => {
+
+  const now = moment();
+  const formattedTime = now.format('A hh:mm');
+  const message = `${notice.content} (${formattedTime})`
+
+  PushNotification.localNotification({
+  /* Android Only Properties */
+    channelId: "channel-id", // 위에서 생성한 채널 ID를 지정
+    /* iOS and Android properties */
+    id: notice.id,
+    title: notice.title,
+    message: message,
+    playSound: true,
+    soundName: 'default',
+  });
+};
+
 const NoticeTab = () => {
   const [selectedTab, setSelectedTab] = useState('새소식');
   const [currentTime, setCurrentTime] = useState(moment());
@@ -84,13 +118,10 @@ const NoticeTab = () => {
 
   // 알림 카드 테스트
   const [notices, setNotices] = useState([
-    {id: 1, title: '[나가요잉]', content: '응응 뿡뿡뿡까까ㅃ까ㅃㅉㅇ롸ㅃㅇ롸ㅃㅉㅇ롸ㅃㅉ오라ㅃ쪼아라로빠쫑ㄹ짜ㅗㄹ'},
-    {id: 2, title: '[두번째 알림]', content: '두번째 알림 내용...'},
-    {id: 3, title: '[세번째 알림]', content: '세번째 알림 내용...'},
-    {id: 4, title: '[세번째 알림]', content: '세번째 알림 내용...'},
-    {id: 5, title: '[세번째 알림]', content: '세번째 알림 내용...'},
-    {id: 6, title: '[세번째 알림]', content: '세번째 알림 내용...'},
+    {id: 1, title: '[나가요잉]', content: '응응 뿡뿡뿡ㅃㅉ오라ㅃ쪼아라로빠쫑ㄹ짜ㅗㄹ'},
+    {id: 2, title: '[나가요잉]', content: '응응 뿡뿡뿡까까ㅃ까ㅃㅉㅇ롸ㅃㅇ롸ㅃㅉㅇ롸ㅃㅉ오라ㅃ쪼아라로빠쫑ㄹ짜ㅗㄹ'}
   ]);
+
 
   // X 누르면 삭제
   const deleteNotice = (id: number) => {
@@ -98,6 +129,9 @@ const NoticeTab = () => {
   };
 
   useEffect(() => {
+    // 앱이 시작될 때 각 알림에 대해 푸시 알림을 보냅니다.
+    notices.forEach(sendNotification);
+
     // 1분마다 화면을 갱신
     const interval = setInterval(() => {
       setCurrentTime(moment());
@@ -107,7 +141,7 @@ const NoticeTab = () => {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [notices]);
 
   return (
     <GlobalContainer>
@@ -137,4 +171,4 @@ const NoticeTab = () => {
   );
 };
 
-export default NoticeTab;
+export default {NoticeTab, sendNotification};

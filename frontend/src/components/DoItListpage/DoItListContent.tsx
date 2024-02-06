@@ -3,6 +3,8 @@ import styled, { css } from '@emotion/native';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import Feather from 'react-native-vector-icons/Feather';
 import { NavigationProp, RouteProp } from '@react-navigation/native';
+import axiosAuth from '@/axios/axiosAuth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { 
     TouchableOpacity, 
@@ -89,22 +91,32 @@ const DistinctLine = styled.View`
   border: 1px solid #B2B2B2;
 `;
 
+interface DealImage {
+  // DealImage에 대한 필드를 정의해주세요.
+  // 예: id, url 등
+}
+
 interface DoListCard {
-    id: number;
-    category: string;
-    image: ImageSourcePropType;
-    title: string;
-    apart: string;
-    uptime: string;
-    nickname: string;
-    content: string;
-    price: string;
-    remaintime: string;
-  };
+  id: number;
+  title: string;
+  content: string;
+  requestId: number;
+  acceptId: number | null;
+  cash: number;
+  item: any; // 'item'의 구조에 따라 적절한 타입을 지정해주세요.
+  rewardType: string;
+  complaint: number;
+  dealStatus: string;
+  dealType: string;
+  expireAt: string;
+  dealImages: DealImage[];
+  createdAt: string;
+  modifiedAt: string;
+  deletedAt: string | null;
+}
 
 interface Props {
     navigation: NavigationProp<any>;
-    route: RouteProp<any>;
     selectedApartCategory: string;
     selectedTypeCategory: string;
     setReportModalVisible: (state: boolean) => void;
@@ -115,86 +127,70 @@ const turtleImage: ImageSourcePropType = require('images/turtle.png');
 const trashImage: ImageSourcePropType = require('images/trash3.png');
 const workImage: ImageSourcePropType = require('images/convstore.png');
 
-const DoItListContent = ({ navigation, route, selectedApartCategory, selectedTypeCategory, setReportModalVisible}: Props) => {
+const DoItListContent = ({ navigation, selectedApartCategory, selectedTypeCategory, setReportModalVisible}: Props) => {
   
-  const doListCards = [
-    { id: 1,
-      category: '반려동물 산책', 
-      image: dogImage, 
-      title: '하잉ㄹㄴㅇㅁㄻ낭ㄹㄴㅇasdasdasdas', 
-      apart: '303동',
-      uptime: '1분 전', 
-      nickname: '박태양', 
-      content: '뽀삐 아파트 산책ㅁㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇsdfasdfafㄻㄴasdadsadㅇㄹ', 
-      price: '10,000원',
-      remaintime: '1시간'
-    },
-    { id: 2,
-      category: '반려동물 산책', 
-      image: turtleImage, 
-      title: '하잉', 
-      apart: '주변 200m',
-      uptime: '1분 전', 
-      nickname: '박태양', 
-      content: '뽀삐 아파트 산책', 
-      price: '10,000원',
-      remaintime: '1시간'
-    },
-    { id: 3,
-      category: '분리수거', 
-      image: trashImage, 
-      title: '하잉', 
-      apart: '주변 500m',
-      uptime: '1분 전', 
-      nickname: '박태양', 
-      content: '뽀삐 아파트 산책', 
-      price: '10,000원',
-      remaintime: '1시간'
-    },
-    { id: 4,
-      category: '심부름', 
-      image: workImage, 
-      title: '하잉', 
-      apart: '303동',
-      uptime: '1분 전', 
-      nickname: '박태양', 
-      content: '뽀삐 아파트 산책', 
-      price: '10,000원',
-      remaintime: '1시간'
-    },
-    { id: 5,
-      category: '기타', 
-      image: turtleImage, 
-      title: '하잉', 
-      apart: '주변 500m',
-      uptime: '1분 전', 
-      nickname: '박태양', 
-      content: '뽀삐 아파트 산책', 
-      price: '10,000원',
-      remaintime: '1시간'
-    },
-  ];
+  const [doListCards, setDoListCards] = useState<DoListCard[]>([
+    {
+      "id": 50,
+      "title": "title2",
+      "content": "content2",
+      "requestId": 13,
+      "acceptId": null,
+      "cash": 1110,
+      "item": null,
+      "rewardType": "CASH",
+      "complaint": 0,
+      "dealStatus": "OPEN",
+      "dealType": "PET",
+      "expireAt": "2025-03-03T00:00:00",
+      "dealImages": [dogImage],
+      "createdAt": "2024-02-02T14:47:35.251175",
+      "modifiedAt": "2024-02-02T14:47:35.251175",
+      "deletedAt": null
+  },
+
+  ]);
+
+  let dong = '303동'
+
+  useEffect(() => {
+    AsyncStorage.getItem('token').then((token) => {
+      axiosAuth.get(`/deal/dong/list?dong=&dealType=`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // 토큰을 Bearer 토큰으로 설정
+        }
+      })
+        .then(response => {
+          console.log(response.data);
+
+          setDoListCards(response.data);
+        })
+
+        .catch(error => console.error(error));
+    });
+  }, []);
+
 
   // 카드 필터링
-let filteredDoItListCards: DoListCard[] = doListCards;
+  let filteredDoItListCards: DoListCard[] = doListCards;
 
-// 아파트 카테고리와 타입 카테고리 둘 다 선택되지 않았으면 모든 카드를 반환
-if (selectedApartCategory !== '' || selectedTypeCategory !== '') {
-  filteredDoItListCards = doListCards.filter(card => {
-    // 아파트 카테고리만 선택되었으면 아파트 카테고리에 맞는 카드만 반환
-    if (selectedApartCategory !== '' && selectedTypeCategory === '') {
-      return card.apart === selectedApartCategory;
-    }
-    // 타입 카테고리만 선택되었으면 타입 카테고리에 맞는 카드만 반환
-    else if (selectedApartCategory === '' && selectedTypeCategory !== '') {
-      return card.category === selectedTypeCategory;
-    }
-    // 아파트 카테고리와 타입 카테고리 둘 다 선택되었으면 둘 다 맞는 카드만 반환
-    else {
-      return card.apart === selectedApartCategory && card.category === selectedTypeCategory;
-    }
-  });
-}
+  // 아파트 카테고리와 타입 카테고리 둘 다 선택되지 않았으면 모든 카드를 반환
+  if (selectedApartCategory !== '' || selectedTypeCategory !== '') {
+    filteredDoItListCards = doListCards.filter(card => {
+      // 아파트 카테고리만 선택되었으면 아파트 카테고리에 맞는 카드만 반환
+      if (selectedApartCategory !== '' && selectedTypeCategory === '') {
+        return dong === selectedApartCategory;
+      }
+      // 타입 카테고리만 선택되었으면 타입 카테고리에 맞는 카드만 반환
+      else if (selectedApartCategory === '' && selectedTypeCategory !== '') {
+        return dong === selectedTypeCategory;
+      }
+      // 아파트 카테고리와 타입 카테고리 둘 다 선택되었으면 둘 다 맞는 카드만 반환
+      else {
+        return dong === selectedApartCategory && card.dealType === selectedTypeCategory;
+      }
+    });
+  }
   
   return (
 
@@ -203,7 +199,7 @@ if (selectedApartCategory !== '' || selectedTypeCategory !== '') {
         <View key={index}>
           <DoItListButton onPress={() => navigation.navigate('DoItListDetail', { card: card })}>
             <DoItListCard>
-              <DoItListImage source={card.image}/>
+              <DoItListImage source={card.dealImages[0]}/>
               <TextComponent>
                 <ReportButton onPress={() => setReportModalVisible(true)} >
                   <Feather name='more-vertical' size= {25} style={css`position: absolute; top: 7px; left: 230px;`}></Feather>
@@ -213,7 +209,7 @@ if (selectedApartCategory !== '' || selectedTypeCategory !== '') {
                   margin-top: 10px;
                 `}>
                   <TextTitle numberOfLines={1}>{card.title}</TextTitle>
-                  <TextApart>{card.apart} / {card.uptime}</TextApart>
+                  <TextApart>{dong} / {card.createdAt}</TextApart>
                   <View style={css`
                     height: 50px;
                     justify-content: center;
@@ -221,7 +217,7 @@ if (selectedApartCategory !== '' || selectedTypeCategory !== '') {
                     <TextContent numberOfLines={2}>{card.content}</TextContent>
                   </View>
                 </View>
-                <TextPrice>{card.price}</TextPrice>
+                <TextPrice>{card.cash}</TextPrice>
               </TextComponent>
             </DoItListCard>
           </DoItListButton>
