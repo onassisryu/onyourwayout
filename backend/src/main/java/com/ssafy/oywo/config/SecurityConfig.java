@@ -41,6 +41,7 @@ public class SecurityConfig {
                 // USER 권한이 있어야 요청할 수 있음
                 .requestMatchers("/members/signup").permitAll()
                 .requestMatchers("/members/refresh").permitAll()
+                .requestMatchers("/members/verify/**").permitAll()
                 // apart에 대한 정보 요청은 모두 허가
                 .requestMatchers(HttpMethod.GET,"/apart/**").permitAll()
                 // 이 밖에 모든 요청에 대해서 인증을 필요로 한다는 설정

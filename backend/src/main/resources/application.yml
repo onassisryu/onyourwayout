@@ -1,5 +1,6 @@
-
 spring:
+  profiles:
+    active: aws
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://i10a302.p.ssafy.io/develop?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
@@ -30,3 +31,9 @@ springdoc:
     path: /swagger-ui.html
   default-consumes-media-type: application/json; charset=UTF-8
   default-produces-media-type: application/json; charset=UTF-8
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-exception: false

@@ -40,7 +40,7 @@ public class JwtTokenProvider {
         long now=(new Date()).getTime();
 
         // Access Token 생성
-        Date accessTokenExpiresIn=new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10);   // 1시간
+        Date accessTokenExpiresIn=new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10 * 24 * 30);   // 1달
         String accessToken= Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth",authorities)
@@ -49,7 +49,7 @@ public class JwtTokenProvider {
                 .compact();
 
         // Refresh Token 생성
-        Date refreshTokenExpiresIn=new Date(System.currentTimeMillis()+1000*60*60*10*24*30);    // 1달
+        Date refreshTokenExpiresIn=new Date(System.currentTimeMillis()+1000*60*60*10*24*30*3);    // 3달
         String refreshToken=Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth",authorities)

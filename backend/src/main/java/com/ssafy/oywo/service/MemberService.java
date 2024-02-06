@@ -8,9 +8,7 @@ import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.entity.RefreshToken;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public interface MemberService {
     public JwtToken signIn(String username, String password);
@@ -18,14 +16,25 @@ public interface MemberService {
     public Optional<RefreshToken> getRefreshToken(String refreshToken);
     public Map<String,String> validateRefreshToken(String refreshToken);
 
-    public Member modify(Member member);
-    public Member modify(Long id, MemberDto.Request memberDto);
+    public MemberDto.Response modify(Member member);
+    public MemberDto.Response modify(Long id, MemberDto.Request memberDto);
+
+    public MemberDto.Response modifyWithAlarm(Member member);
+
     public void logout(String username);
 
-    public Member getMemberInfo(String username, String password);
-    public Optional<Member> getMemberInfo(Long id);
+    public MemberDto.Response getMemberInfo(String username, String password);
+    public MemberDto.Response getMemberInfo(Long id);
 
     public Long getHoIdByMemberId(Long memberId);
-    public Optional<Member> update(Long idx,MemberDto.SignUp memberDto);
 
+    // member id로 Fcm token을 저장
+    public void saveFcmToken(Long memberId, String FcmToken);
+    
+    // member id list로 Fcm token 리스트 반환
+    public List<String> getFcmTokens(List<Long> memberIdList);
+
+    public void removeFcmToken(String username);
+
+    public HashMap<String,Object> findHoByInviteCode(String inviteCode);
 }

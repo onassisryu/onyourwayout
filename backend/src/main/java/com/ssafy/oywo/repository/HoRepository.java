@@ -14,5 +14,6 @@ public interface HoRepository extends JpaRepository<Ho,Long> {
     Optional<Ho> findByDongIdAndName(Long dongId, String name);
 
     Optional<Ho> findById(Long id);
+
     
 }

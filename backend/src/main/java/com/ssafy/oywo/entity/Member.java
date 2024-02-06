@@ -1,8 +1,13 @@
 package com.ssafy.oywo.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,11 +22,16 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "member")
-@Builder
+@Builder(toBuilder = true)
 @Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member implements UserDetails {
+@SQLDelete(sql = "UPDATE member SET deleted_at = NOW() WHERE uuid = ?")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@SQLRestriction("deleted_at IS NULL")
+public class Member extends BaseTimeEntity implements UserDetails {
 
     @Getter
     public enum RoleType{
@@ -54,12 +64,14 @@ public class Member implements UserDetails {
     @Column(name = "phone_number", unique = true, nullable = false)
     private String phoneNumber;
 
+    @ColumnDefault("50")
     private int score;
 
     private String fcmToken;
 
     private String profileImg;
 
+    @ColumnDefault("0")
     private int penaltyCount;
 
     private Timestamp pauseStartAt;
@@ -76,19 +88,7 @@ public class Member implements UserDetails {
 
     private boolean isNotiCategoryAll;
 
-    private Timestamp createdAt;
-
-    private Timestamp updatedAt;
-
-    private Timestamp deletedAt;
-
     private String certificationImg;
-
-    @OneToMany
-    @JoinTable(name = "chat_user_list",
-            joinColumns = @JoinColumn(name = "member_id"),
-            inverseJoinColumns = @JoinColumn(name = "chat_room_id"))
-    private List<ChatRoom> chatRooms = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<NotiDong> notiDongs = new ArrayList<>();
@@ -99,6 +99,14 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<MembersNotification> membersNotifications = new ArrayList<>();
 
+    @ManyToOne
+    private Ho ho;
+
+    @ManyToMany
+    @JoinTable(name = "chat_user_list",
+            joinColumns = @JoinColumn(name = "member_id"),
+            inverseJoinColumns = @JoinColumn(name = "chat_room_id"))
+    private List<ChatRoom> chatRooms = new ArrayList<>();
 
     // 이전 코드
     @ElementCollection(fetch = FetchType.EAGER)

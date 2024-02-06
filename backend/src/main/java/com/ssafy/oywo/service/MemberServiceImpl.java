@@ -2,15 +2,9 @@ package com.ssafy.oywo.service;
 
 import com.ssafy.oywo.dto.JwtToken;
 import com.ssafy.oywo.dto.MemberDto;
-import com.ssafy.oywo.entity.Dong;
-import com.ssafy.oywo.entity.Ho;
-import com.ssafy.oywo.entity.Member;
-import com.ssafy.oywo.entity.RefreshToken;
+import com.ssafy.oywo.entity.*;
 import com.ssafy.oywo.jwt.JwtTokenProvider;
-import com.ssafy.oywo.repository.DongRepository;
-import com.ssafy.oywo.repository.HoRepository;
-import com.ssafy.oywo.repository.MemberRepository;
-import com.ssafy.oywo.repository.RefreshTokenRepository;
+import com.ssafy.oywo.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.swing.text.html.Option;
 import javax.swing.text.html.Option;
@@ -39,6 +34,8 @@ public class MemberServiceImpl implements MemberService {
     private final HoRepository hoRepository;
     private final DongRepository dongRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final NotiDongRepository notiDongRepository;
+    private final NotiDealCategoryRepository notiDealCategoryRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     @Autowired
@@ -46,7 +43,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public JwtToken signIn(String username, String password) {
+    public JwtToken signIn(String username, String password) throws HttpClientErrorException.Unauthorized {
 
         // 1. username + password 를 기반으로 Authentication 객체 생성
         // 이때 authentication 은 인증 여부를 확인하는 authenticated 값이 false
@@ -110,7 +107,7 @@ public class MemberServiceImpl implements MemberService {
                 members.add(member);
                 ho.get().builder().member(members).build();
 
-                response=new MemberDto.Response(member,ho.get());
+                response=MemberDto.Response.of(member,ho.get());
             }
         }
 
@@ -126,9 +123,9 @@ public class MemberServiceImpl implements MemberService {
             if (ho.isPresent()){
                 List<Member> members=ho.get().getMember();
                 members.add(member);
-                hoRepository.save(ho.get().builder().member(members).build());
+                ho.get().builder().member(members).build();
 
-                response=new MemberDto.Response(member,ho.get());
+                response=MemberDto.Response.of(member,ho.get());
             }
             // 등록되지 않은 호인 경우
             else{
@@ -143,7 +140,7 @@ public class MemberServiceImpl implements MemberService {
                 Ho newHo= Ho.builder().dong(dong).name(hoName).member(members).inviteCode(newInviteCode).build();
                 newHo=hoRepository.save(newHo);
 
-                response=new MemberDto.Response(member,newHo);
+                response= MemberDto.Response.of(member, newHo);
             }
         }
         return response;
@@ -175,30 +172,76 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public Member modify(Long id,MemberDto.Request memberDto) {
+    public MemberDto.Response modify(Long id,MemberDto.Request memberDto) {
 
         Optional<Member> member=memberRepository.findById(id);
 
         if (member.isPresent()){
             Member existedMember=member.get()
-                    .builder()
-                    .id(id)
+                    .toBuilder()
                     .username(memberDto.getUsername())
                     .nickname(memberDto.getNickname())
                     .phoneNumber(memberDto.getPhoneNumber())
                     .birthDate(memberDto.getBirthDate())
                     .password(memberDto.getPassword())
-                    .updatedAt(new Timestamp(System.currentTimeMillis()))
+                    .score(member.get().getScore())
                     .build();;
+            existedMember=memberRepository.save(existedMember);
 
-            return memberRepository.save(existedMember);
+
+            Long hoId=memberRepository.findHoAptIdsByMemberId(member.get().getId());
+            Ho ho=hoRepository.findById(hoId)
+                    .orElseThrow(()->new NoSuchElementException("존재하지 않는 호입니다."));
+
+            MemberDto.Response response=MemberDto.Response.of(existedMember,ho);
+
+            return response;
         }
         return null;
     }
+    @Transactional
+    @Override
+    public MemberDto.Response modifyWithAlarm(Member member) {
+        // 기존에 저장된 알림을 가져온다.
+        Member originMember=memberRepository.findById(member.getId())
+                .orElseThrow(()->new NoSuchElementException("존재하지 않는 사용자입니다."));
+        List<NotiDong> originNotiDongs=originMember.getNotiDongs();
+        List<NotiDealCategory> originNotiDealCategories=originMember.getNotiDealCategories();
+        // 기존 알림을 지운다.
+        for (NotiDong notiDong:originNotiDongs){
+            notiDongRepository.delete(notiDong);
+        }
+        for (NotiDealCategory category:originNotiDealCategories){
+            notiDealCategoryRepository.delete(category);
+        }
+        memberRepository.save(member);
+        if (!member.isNotiDongAll()){
+            for (NotiDong notiDong:member.getNotiDongs()){
+                notiDongRepository.save(notiDong);
+            }
+        }
+        if (!member.isNotiCategoryAll()){
+            for (NotiDealCategory category:member.getNotiDealCategories()){
+                notiDealCategoryRepository.save(category);
+            }
+        }
+        return MemberDto.Response.of(member);
+    }
 
     @Transactional
-    public Member modify(Member member){
-        return memberRepository.save(member);
+    @Override
+    public MemberDto.Response modify(Member member){
+        for (int i=0;i<member.getNotiDongs().size();i++){
+            System.out.println(member.getNotiDongs().get(i).getDongId());
+        }
+        Member modifiedMember=memberRepository.save(member);
+        for (int i=0;i<modifiedMember.getNotiDongs().size();i++){
+            System.out.println(modifiedMember.getNotiDongs().get(i).getDongId());
+        }
+        System.out.println(modifiedMember.getNotiDongs());
+
+        //System.out.println(modifiedMember.getNotiDealCategories());
+        return MemberDto.Response.of(modifiedMember);
     }
 
     @Transactional
@@ -212,13 +255,49 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member getMemberInfo(String username, String password) {
-        return memberRepository.findByUsernameAndPassword(username,password);
+    public MemberDto.Response getMemberInfo(String username, String password) {
+        Member member=memberRepository.findByUsernameAndPassword(username,password);
+        List<NotiDong> notiDongs=new ArrayList<>();
+        List<NotiDealCategory> notiDealCategories=new ArrayList<>();
+
+        for (NotiDong notiDong:member.getNotiDongs()){
+            if (notiDong.getDeletedAt()==null){
+                notiDongs.add(notiDong);
+            }
+        }
+
+        for (NotiDealCategory category:member.getNotiDealCategories()){
+            if (category.getDeletedAt()==null){
+                notiDealCategories.add(category);
+            }
+        }
+        member=member.toBuilder().notiDongs(notiDongs).notiDealCategories(notiDealCategories).build();
+        return MemberDto.Response.of(member);
     }
 
     @Override
-    public Optional<Member> getMemberInfo(Long id) {
-        return memberRepository.findById(id);
+    public MemberDto.Response getMemberInfo(Long id) {
+        Optional<Member> member=memberRepository.findById(id);
+        if (member.isPresent()){
+            Member m=member.get();
+            List<NotiDong> notiDongs=new ArrayList<>();
+            List<NotiDealCategory> notiDealCategories=new ArrayList<>();
+
+            for (NotiDong notiDong:m.getNotiDongs()){
+                if (notiDong.getDeletedAt()==null){
+                    notiDongs.add(notiDong);
+                }
+            }
+
+            for (NotiDealCategory category:m.getNotiDealCategories()){
+                if (category.getDeletedAt()==null){
+                    notiDealCategories.add(category);
+                }
+            }
+            m=m.toBuilder().notiDongs(notiDongs).notiDealCategories(notiDealCategories).build();
+            return MemberDto.Response.of(m);
+        }
+        return null;
     }
 
     @Override
@@ -226,9 +305,54 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findHoAptIdsByMemberId(memberId);
     }
 
+    @Transactional
     @Override
-    public Optional<Member> update(Long idx, MemberDto.SignUp memberDto) {
-        return Optional.empty();
+    public void saveFcmToken(Long memberId, String fcmToken) {
+        Member member=memberRepository.findById(memberId)
+                .orElseThrow(()->new EntityNotFoundException("없는 사용자 입니다."));
+        member=member.toBuilder().fcmToken(fcmToken).build();
+        memberRepository.save(member);
     }
+
+    @Transactional
+    @Override
+    public List<String> getFcmTokens(List<Long> memberIdList) {
+        List<String> fcmTokens=new ArrayList<>();
+        for(Long id:memberIdList){
+            Optional<Member> member=memberRepository.findById(id);
+            if (member.isPresent()){
+                fcmTokens.add(member.get().getFcmToken());
+            }
+        }
+        return fcmTokens;
+    }
+
+    @Override
+    public void removeFcmToken(String username) {
+        Member member=memberRepository.findByUsername(username)
+                .orElseThrow(NoSuchElementException::new);
+        member=member.toBuilder().fcmToken(null).build();
+        memberRepository.save(member);
+    }
+
+    @Override
+    public HashMap<String, Object> findHoByInviteCode(String inviteCode) {
+        HashMap<String,Object> payload=new HashMap<>();
+        Optional<Ho> ho=hoRepository.findByInviteCode(inviteCode);
+
+        if (ho.isPresent()){
+            payload.put("hoId",ho.get().getId());
+            payload.put("hoName",ho.get().getName());
+            payload.put("dongId",ho.get().getDong().getId());
+            payload.put("dongName",ho.get().getDong().getName());
+            payload.put("apartName",ho.get().getDong().getApartment().getName());
+            payload.put("apartId",ho.get().getDong().getApartment().getId());
+            return payload;
+        }
+        return null;
+
+
+    }
+
 
 }
