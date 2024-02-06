@@ -89,7 +89,7 @@ const App = () => {
           tabBarIcon: ({focused, size, color}) => {
             let iconName!: string;
 
-            if (route.name === 'Main') {
+            if (route.name === '홈') {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === '위치') {
               iconName = focused ? 'location' : 'location-outline';
@@ -104,8 +104,7 @@ const App = () => {
             return <Ionic name={iconName!} size={size} color={color} />;
           },
         })}>
-
-        <Tab.Screen name="Main" component={Main} />
+        <Tab.Screen name="홈" component={Main} />
         <Tab.Screen name="위치" component={Location} />
         <Tab.Screen name="아파트" component={Apart} />
         <Tab.Screen name="채팅" component={Chat} />
@@ -133,7 +132,6 @@ const App = () => {
             <Stack.Screen name="Signup5" component={Signup5} />
             <Stack.Screen name="Signup6" component={Signup6} />
             <Stack.Screen name="MySetting" component={MySetting} />
-            <Stack.Screen name="Test" component={Test} />
             {Screens.map(screen => (
               <Stack.Screen key={screen.name} name={screen.name} component={screen.component} />
             ))}

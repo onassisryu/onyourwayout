@@ -102,6 +102,8 @@ const Login = ({navigation}: any) => {
           await setStorage('refreshToken', refreshToken);
           await setStorage('autoLogin', 'true');
           await setStorage('user', user);
+          setIsLoggedIn(true);
+          setUserData(user);
 
           Keyboard.dismiss();
           navigation.navigate('Bottom', {screen: 'Main'});
