@@ -84,8 +84,10 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     private boolean isCertified;
 
+    @ColumnDefault("true")
     private boolean isNotiDongAll;
 
+    @ColumnDefault("true")
     private boolean isNotiCategoryAll;
 
     private String certificationImg;

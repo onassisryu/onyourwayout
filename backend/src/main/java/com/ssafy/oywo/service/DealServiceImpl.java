@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,9 @@ public class DealServiceImpl implements DealService{
     private final DealImageRepository dealImageRepository;
     private final MemberRepository memberRepository;
     private final HoRepository hoRepository;
+
+    private final NotificationService notificationService;
+    private final S3UploadService s3UploadService;
 
 
     // 현재 로그인한 사용자 정보를 가져옴
@@ -156,7 +160,7 @@ public class DealServiceImpl implements DealService{
 
     // 거래 생성
     @Override
-    public DealDto.Response createDeal(DealDto.Request dto, List<String> dealImageStrList) {
+    public DealDto.Response createDeal(DealDto.Request dto, List<MultipartFile> dealImageFileList) {
         validateRequest(dto);
 
         // 로그인된 사용자의 id 가져오기
@@ -171,7 +175,16 @@ public class DealServiceImpl implements DealService{
 
 
         try {
-            dealRepository.save(deal);
+            Deal dealSaved =  dealRepository.save(deal);
+
+            List<String> dealImageStrList = new ArrayList<String>();
+            // 이미지 업로드
+            if (dealImageFileList != null) {
+                for (MultipartFile dealImageFile : dealImageFileList) {
+                    String dealImageStr = s3UploadService.upload(dealImageFile, "DealImage", dealSaved.getId());
+                    dealImageStrList.add(dealImageStr);
+                }
+            }
 
             // 이미지String 저장
             if (dealImageStrList != null) {
@@ -185,8 +198,11 @@ public class DealServiceImpl implements DealService{
                     dealImages.add(dealImage);
                 }
                 dealImageRepository.saveAll(dealImages);
-                deal.setDealImages(dealImages);
+//                deal.setDealImages(dealImages);
             }
+
+            // 알림 보내기
+            notificationService.sendNotificationByDeal(deal);
 
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
@@ -255,8 +271,9 @@ public class DealServiceImpl implements DealService{
         deal.update(dto);
 
         if (deal.getDealImages() != null) {
-            List<DealImage> originDealImageList = dealImageRepository.findByDealId(id);
-            deal.getDealImages().clear();
+            List<DealImage> originDealImageList = dealImageRepository.findByDealIdIncludeDeleted(id); // 삭제된 이미지까지 포함
+            dealImageRepository.deleteAllByDealId(id); // 이미지 삭제
+
 
             // 이미지 수정
             for (DealImage image : originDealImageList) {
