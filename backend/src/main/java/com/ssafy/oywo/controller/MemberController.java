@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -87,8 +88,9 @@ public class MemberController {
     @Operation(summary = "사용자 회원가입",description = "사용자 회원가입을 진행합니다." +
             "phoneNumber는 중복 입력을 할 수 없습니다. 초대 코드가 있다면 넣고, 없다면 빈 문자열로 요청해야 합니다.")
     @PostMapping("/signup")
-    public ResponseEntity<MemberDto.Response> signUp(@RequestBody MemberDto.Request memberDto) {
-        MemberDto.Response savedMemberDto = memberSerivce.signUp(memberDto);
+    public ResponseEntity<MemberDto.Response> signUp(@RequestPart MemberDto.Request dto,
+                                                     @RequestPart(required = false)MultipartFile certiImage) {
+        MemberDto.Response savedMemberDto = memberSerivce.signUp(dto,certiImage);
         return ResponseEntity.ok(savedMemberDto);
     }
 
