@@ -30,6 +30,7 @@ public class DealServiceImpl implements DealService{
     private final DealComplaintRepository dealComplaintRepository;
     private final DealImageRepository dealImageRepository;
     private final MemberRepository memberRepository;
+    private final HoRepository hoRepository;
 
 
     // 현재 로그인한 사용자 정보를 가져옴
@@ -284,15 +285,6 @@ public class DealServiceImpl implements DealService{
     }
 
 
-    // 이미지 url로 찾기
-    private DealImage findImageByUrl(List<DealImage> images, String imgUrl) {
-        return images.stream()
-                .filter(image -> imgUrl.equals(image.getImgUrl()))
-                .findFirst()
-                .orElse(null);
-    }
-
-
 
     // 수락 and 수락 취소 (수행자)
     @Override
@@ -410,22 +402,10 @@ public class DealServiceImpl implements DealService{
         }
 
         member.setScore(score);
-        memberRepository.save(member);
-//
-//        memberRepository.save(
-//                Member.builder()
-//                        .id(member.getId())
-//                        .nickname(member.getNickname())
-//                        .username(member.getUsername())
-//                        .birthDate(member.getBirthDate())
-//                        .phoneNumber(member.getPhoneNumber())
-//                        .score(score)
-//                        .roles(member.getRoles())
-//                        .password(member.getPassword())
-//                .build()
-//        );
+        Long hoId = memberRepository.findHoAptIdsByMemberId(member.getId());
+        Ho ho = hoRepository.findById(hoId).orElseThrow(() -> new IllegalArgumentException("해당 호 없음"));
 
-        return MemberDto.Response.of(member);
+        return MemberDto.Response.of(member, ho);
     }
 
 
@@ -460,6 +440,9 @@ public class DealServiceImpl implements DealService{
 
         // 로그인 사용자 id
         Long loginUserId = getLoginUserId();
+        if (deal.getRequestId().equals(loginUserId)) {
+            throw new IllegalStateException("거래 신고 불가능: 해당 거래의 요청자와 현재 로그인 사용자가 같음");
+        }
         deal.setComplaint(deal.getComplaint() + 1);
 
         DealComplaint complaint = DealComplaint.builder()
