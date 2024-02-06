@@ -10,6 +10,8 @@ public interface ChatService {
 
     public ChatRoomDto.Response createChatRoomByUsername(String memberNickname,String otherNickname);
     public List<ChatRoomDto.Response> getChatRoomById(Long memberId);
+
+    public ChatRoomDto.Response getDetailChatRoom(Long roomId, Long memberId);
     public void saveChatMessage(ChatMessageDto message);
 
 }

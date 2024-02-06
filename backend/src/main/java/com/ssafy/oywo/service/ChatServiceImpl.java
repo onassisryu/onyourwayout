@@ -67,6 +67,7 @@ public class ChatServiceImpl implements ChatService{
             response=new ChatRoomDto.Response().toDto(createdRoom);
         }
         response=response.toBuilder()
+                .oppId(otherMember.getId())
                 .oppNickName(otherMember.getNickname())
                 .dong(ho.getDong())
                 .hoName(ho.getName())
@@ -87,8 +88,6 @@ public class ChatServiceImpl implements ChatService{
             Long chatRoomId= chatRoom.getId();
             Long otherMemberId=chatRoomRepository.getChatRoomMembers(chatRoomId, memberId);
 
-            // otherMemberId 어떻게 받아와지는지 확인하기
-            System.out.println("=====otherMemberId========="+otherMemberId);
             String nickname=memberRepository.findById(otherMemberId).get().getNickname();
 
             // 상대방 닉네임, 사는 곳 정보 불러오기
@@ -103,17 +102,52 @@ public class ChatServiceImpl implements ChatService{
                     .createdAt(chatRoom.getCreatedAt())
                     .build();
 
-            room=room.toBuilder().oppNickName(nickname).dong(ho.getDong()).hoName(ho.getName()).build();
+            room=room.toBuilder()
+                    .oppNickName(nickname)
+                    .dong(ho.getDong())
+                    .hoName(ho.getName())
+                    .oppId(otherMemberId)
+                    .build();
+
             result.add(room);
         }
         return result;
     }
-    
+
+    @Override
+    public ChatRoomDto.Response getDetailChatRoom(Long roomId, Long memberId) {
+        Optional<ChatRoom> chatRoom=chatRoomRepository.findById(roomId);
+        ChatRoomDto.Response response=null;
+        if (chatRoom.isPresent()){
+            // 채팅 상대 정보 가져오기
+            Long otherMemberId=chatRoomRepository.getChatRoomMembers(roomId,memberId);
+            // 상대방 닉네임, 사는 곳 정보 불러오기
+            String nickname=memberRepository.findById(otherMemberId).get().getNickname();
+            Long hoId=memberRepository.findHoAptIdsByMemberId(otherMemberId);
+            Ho ho=hoRepository.findById(hoId).orElseThrow(
+                    ()->new NoSuchElementException("존재하지 않는 호입니다.")
+            );
+
+            response=ChatRoomDto.Response.builder()
+                    .id(roomId)
+                    .createdAt(chatRoom.get().getCreatedAt())
+                    .chatMessages(chatRoom.get().getChatMessages())
+                    .oppId(otherMemberId)
+                    .oppNickName(nickname)
+                    .dong(ho.getDong())
+                    .hoName(ho.getName())
+                    .build();
+
+        }
+        return response;
+    }
+
     // 채팅 메시지 저장
     @Override
     public void saveChatMessage(ChatMessageDto message) {
         ChatRoom chatRoom=chatRoomRepository.findById(message.getChatRoomId())
                 .orElseThrow(()->new NoSuchElementException("채팅방을 찾을 수 없습니다."));
-        chatMessageRepository.save(message.toEntity().toBuilder().chatRoom(chatRoom).build());
+
+        chatMessageRepository.save(message.toEntity(chatRoom).toBuilder().build());
     }
 }

@@ -187,7 +187,15 @@ public class MemberServiceImpl implements MemberService {
                     .score(member.get().getScore())
                     .build();;
             existedMember=memberRepository.save(existedMember);
-            return MemberDto.Response.of(existedMember);
+
+
+            Long hoId=memberRepository.findHoAptIdsByMemberId(member.get().getId());
+            Ho ho=hoRepository.findById(hoId)
+                    .orElseThrow(()->new NoSuchElementException("존재하지 않는 호입니다."));
+
+            MemberDto.Response response=MemberDto.Response.of(existedMember,ho);
+
+            return response;
         }
         return null;
     }
