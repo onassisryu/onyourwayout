@@ -32,6 +32,7 @@ public class ChatRoomDto {
         private Long id;
         private LocalDateTime createdAt;
         private String oppNickName;             // 상대방 닉네임
+        private Long oppId;                     // 상대방 uuid
         private Dong dong;                       // 상대방 동
         private String hoName;
         private List<ChatMessage> chatMessages;

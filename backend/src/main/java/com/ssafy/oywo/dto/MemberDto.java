@@ -55,7 +55,7 @@ public class MemberDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
+    @Builder(toBuilder = true)
     public static class Response{
         private Long id;
         private String nickname;

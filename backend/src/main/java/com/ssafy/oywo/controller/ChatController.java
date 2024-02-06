@@ -1,5 +1,6 @@
 package com.ssafy.oywo.controller;
 
+import com.google.api.Http;
 import com.ssafy.oywo.dto.ChatMessageDto;
 import com.ssafy.oywo.dto.ChatRoomDto;
 import com.ssafy.oywo.entity.ChatMessage;
@@ -55,4 +56,17 @@ public class ChatController {
         return new ResponseEntity(payload, HttpStatus.OK);
     }
 
+    // 채팅방 uuid로 채팅 상세 내용 불러오기
+    @GetMapping("/chat/room/detail")
+    public ResponseEntity<?> getDetailChatRooms(@RequestParam("room") Long id,@RequestParam("id") Long memberId){
+        ChatRoomDto.Response payload=chatService.getDetailChatRoom(id,memberId);
+        return new ResponseEntity<>(payload, HttpStatus.OK);
+    }
+
+    // 채팅 저장하기 - 테스트
+    @PostMapping("/chat/message")
+    public ResponseEntity<?> saveChatMessage(ChatMessageDto message){
+        chatService.saveChatMessage(message);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
