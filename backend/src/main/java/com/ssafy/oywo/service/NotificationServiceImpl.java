@@ -2,12 +2,10 @@ package com.ssafy.oywo.service;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.MulticastMessage;
 import com.ssafy.oywo.dto.NotificationDto;
 import com.ssafy.oywo.entity.*;
-import com.ssafy.oywo.repository.DongRepository;
-import com.ssafy.oywo.repository.MemberRepository;
-import com.ssafy.oywo.repository.MembersNotificationRepository;
-import com.ssafy.oywo.repository.NotificationRepository;
+import com.ssafy.oywo.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -27,33 +26,29 @@ public class NotificationServiceImpl implements NotificationService {
     private final MemberRepository memberRepository;
     private final FirebaseMessaging firebaseMessaging;
     private final DongRepository dongRepository;
+    private final HoRepository hoRepository;
 
 
     //알림 메시지로 member들에게 알림을 보내는 메소드
     private void sendMessage(Notification notification, List<Member> members){
-        for(Member member : members){
-            String token = member.getFcmToken();
-            if(token == null) continue;     //fcmToken이 없으면 메시지 보내지 않음
+        List<String> tokens = members.stream().map(Member::getFcmToken).filter(Objects::nonNull).toList();
 
-            Message message = Message.builder() //메시지 생성
-                    .setToken(token)
+        try{
+            firebaseMessaging.sendEachForMulticast(MulticastMessage.builder()
+                    .addAllTokens(tokens)
                     .setNotification(com.google.firebase.messaging.Notification.builder()
                             .setTitle(notification.getTitle())
                             .setBody(notification.getMessage())
-                            .build()
-                    )
-                    .build();
-            try{
-                firebaseMessaging.send(message);
-                membersNotificationRepository.save(MembersNotification.builder()
-                                .member(member)
-                                .notification(notification)
-                        .build()
-                );
-            }catch (Exception e){
-                log.error(e.getMessage());
-                throw new RuntimeException("메시지 보내기 실패");
-            }
+                            .build())
+                    .build());
+
+            membersNotificationRepository.saveAll(members.stream().map(member -> MembersNotification.builder()
+                    .member(member)
+                    .notification(notification)
+                    .build())
+                    .toList());
+        }catch (Exception e){
+            log.error(e.getMessage());
         }
     }
 
@@ -62,21 +57,22 @@ public class NotificationServiceImpl implements NotificationService {
      * @param deal
      * @return
      */
-    public String sendNotificationByDeal(Deal deal){
-        Dong dong = dongRepository.findByMemberId(deal.getRequestId()); // deal 요청자의 동 정보 가져오기
-        if(dong == null) throw new NoSuchElementException("해당하는 동이 없습니다.");
+    public void sendNotificationByDeal(Deal deal){
+        Ho ho = hoRepository.findByMemberId(deal.getRequestId()); // deal 요청자의 동 정보 가져오기
+        if(ho == null) throw new NoSuchElementException("해당하는 호가 없습니다.");
 
-        List<Member> members = memberRepository.findByDong(dong.getId()); // deal 요청자의 동에 속한 멤버들 가져오기
+        List<Member> members = memberRepository.findByDongAndCategory(ho.getDong().getId(), deal.getDealType()); // deal 요청자의 동에 속한 멤버들 가져오기
         if(members.isEmpty()) throw new NoSuchElementException("해당하는 멤버가 없습니다.");
 
+        members = members.stream().filter(member -> !Objects.equals(member.getId(), deal.getRequestId())).toList(); // deal 요청자는 제외
 
         Notification notification = Notification.builder()
-                .title("해줘요잉 알림")
-                .message(dong.getName() + "에 새로운 해줘요잉이 등록되었습니다.")
+                .title("[해줘요잉]")
+                .message(ho.getDong().getName() + "동 "+ho.getName() +"호에서 새로운 해줘요잉이 등록되었습니다.")
                 .build();
+        Notification notificationSaved = notificationRepository.save(notification);
 
-        sendMessage(notification, members);
-        return "메시지 보내기 성공";
+        sendMessage(notificationSaved, members);
     }
 
     @Override
