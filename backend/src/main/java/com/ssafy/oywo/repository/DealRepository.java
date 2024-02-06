@@ -143,7 +143,21 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     // 전체 거래 수
     Long countDealsByRequestIdOrAcceptId(Long requestId, Long acceptId);
     // 전체 거래
-    List<Deal> findDealsByRequestIdOrAcceptIdAndDealStatus(Long requestId, Long acceptId, Deal.DealStatus dealStatus);
+    @Query("SELECT d FROM Deal d " +
+            "WHERE (d.requestId = :requestId) " +
+            "AND (:dealType IS NULL OR d.dealType IN :dealType) " +
+            "AND d.dealStatus = :dealStatus")
+    List<Deal> findDealsByRequestIdAndDealTypeAndDealStatus(
+            @Param("requestId") Long requestId,
+            @Param("dealType") List<DealType> dealType,
+            @Param("dealStatus") Deal.DealStatus dealStatus
+    );
+
+    List<Deal> findTop3DealsByRequestIdOrAcceptIdAndDealStatusOrderByCreatedAtAsc(
+            Long requestId,
+            Long acceptId,
+            Deal.DealStatus dealStatus
+    );
     // 요청자로서 거래 수
     Long countDealsByRequestId(Long memberId);
     // 수락자로서 거래 수

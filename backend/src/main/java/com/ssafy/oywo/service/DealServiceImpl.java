@@ -487,7 +487,7 @@ public class DealServiceImpl implements DealService{
         List<Member> requestMembers = memberRepository.findDealsByRequestIdByDongIdAndDealTypeAndDealStatus(myDongId, dealType, Deal.DealStatus.OPEN);
         log.info("requestMembers : {}", requestMembers.stream().map(m -> MemberDto.Response.of(m)).collect(Collectors.toList()));
         // 추천 리스트
-        List<DealDto.Response> recommendedDeals = new ArrayList<>();
+        List<Deal> recommendedDeals = new ArrayList<>();
 
         Map<Member, Integer> memberScore = new HashMap<>();
         Map<Member, Long> closedDealsCnt = new HashMap<>();
@@ -519,13 +519,14 @@ public class DealServiceImpl implements DealService{
                 .collect(Collectors.toList());
 
         for (Member sortedMember : sortedMembers) {
-            List<Deal> dealsForMember = dealRepository.findDealsByRequestIdOrAcceptIdAndDealStatus(sortedMember.getId(), sortedMember.getId(), Deal.DealStatus.CLOSE);
-            for (Deal deal : dealsForMember) {
-                DealDto.Response dealDto = new DealDto.Response(deal);
-                recommendedDeals.add(dealDto);
-            }
+            List<Deal> dealsForMember = dealRepository.findDealsByRequestIdAndDealTypeAndDealStatus(sortedMember.getId(), dealType, Deal.DealStatus.OPEN);
+            recommendedDeals.addAll(dealsForMember); // 종합 점수가 높은 순서대로 멤버들의 거래가 포함
         }
-        return recommendedDeals;
+
+        return recommendedDeals.subList(0, Math.min(recommendedDeals.size(), 3)) // 거래 3개까지만
+                                    .stream()
+                                    .map(DealDto.Response::new)
+                                    .collect(Collectors.toList());
     }
 
 

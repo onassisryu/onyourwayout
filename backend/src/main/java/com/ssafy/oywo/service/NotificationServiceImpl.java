@@ -58,7 +58,9 @@ public class NotificationServiceImpl implements NotificationService {
      * @return
      */
     public void sendNotificationByDeal(Deal deal){
+        System.out.println(deal.getRequestId());
         Ho ho = hoRepository.findByMemberId(deal.getRequestId()); // deal 요청자의 동 정보 가져오기
+        System.out.println(ho);
         if(ho == null) throw new NoSuchElementException("해당하는 호가 없습니다.");
 
         List<Member> members = memberRepository.findByDongAndCategory(ho.getDong().getId(), deal.getDealType()); // deal 요청자의 동에 속한 멤버들 가져오기
