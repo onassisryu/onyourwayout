@@ -11,5 +11,5 @@ public interface NotificationService {
 
     public void sendNotificationByDeal(Deal deal);
 
-    public List<NotificationDto.Response> getNotificationsByMemberID(Long id);
+    public List<NotificationDto.Response> getNotifications();
 }

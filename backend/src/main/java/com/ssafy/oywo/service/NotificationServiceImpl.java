@@ -28,6 +28,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final DongRepository dongRepository;
     private final HoRepository hoRepository;
 
+    private final MemberService memberService;
+
 
     //알림 메시지로 member들에게 알림을 보내는 메소드
     private void sendMessage(Notification notification, List<Member> members){
@@ -71,6 +73,7 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notification = Notification.builder()
                 .title("[해줘요잉]")
                 .message(ho.getDong().getName() + "동 "+ho.getName() +"호에서 새로운 해줘요잉이 등록되었습니다.")
+                .notificationType(Notification.NotificationType.NOTI_DONG)
                 .build();
         Notification notificationSaved = notificationRepository.save(notification);
 
@@ -78,7 +81,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<NotificationDto.Response> getNotificationsByMemberID(Long id) {
+    public List<NotificationDto.Response> getNotifications() {
+        Long id = memberService.getLoginUserId();
         List<Notification> notifications = notificationRepository.findByMemberId(id);
         return notifications.stream().map(NotificationDto.Response::of).toList();
     }

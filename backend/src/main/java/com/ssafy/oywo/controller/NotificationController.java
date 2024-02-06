@@ -22,13 +22,9 @@ public class NotificationController {
     private final MemberService memberService;
     private final NotificationService notificationService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getNotifications(@PathVariable("id") Long id) {
-        MemberDto.Response memberDto = memberService.getMemberInfo(id);
-        if(memberDto == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        List<NotificationDto.Response> notifications = notificationService.getNotificationsByMemberID(id);
+    @GetMapping()
+    public ResponseEntity<?> getNotifications() {
+        List<NotificationDto.Response> notifications = notificationService.getNotifications();
         return ResponseEntity.ok(notifications);
     }
 
