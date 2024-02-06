@@ -70,7 +70,7 @@ const Login = ({navigation}: any) => {
   useEffect(() => {
     getStorage('token').then(token => {
       if (token) {
-        console.log('리프레시 토큰이 있습니다.', token);
+        console.log('토큰이 있습니다.', token);
         getStorage('autoLogin').then(auto => {
           if (auto) {
             handleLogin();
