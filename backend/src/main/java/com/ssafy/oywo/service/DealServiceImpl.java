@@ -340,6 +340,8 @@ public class DealServiceImpl implements DealService{
             throw new IllegalStateException("현재 거래 상태에서는 수락할 수 없음");
         }
 
+        notificationService.sendNotificationDealAccept(deal);
+
         // 갱신된 엔티티 저장
         return new DealDto.Response(deal);
     }
