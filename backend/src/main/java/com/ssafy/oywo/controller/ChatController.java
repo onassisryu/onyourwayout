@@ -6,6 +6,7 @@ import com.ssafy.oywo.dto.ChatRoomDto;
 import com.ssafy.oywo.entity.ChatMessage;
 import com.ssafy.oywo.entity.ChatRoom;
 import com.ssafy.oywo.service.ChatService;
+import com.ssafy.oywo.service.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,11 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.*;
-
+import org.apache.commons.codec.binary.Base64;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 @RestController
@@ -26,15 +31,71 @@ public class ChatController {
 
     private final ChatService chatService;
     private final SimpMessageSendingOperations sendingOperations;
-
-    @MessageMapping("/room")    // /send/{roomId}를 통해 여기로 전송되면 메서드 호출 -> StompConfig prefixes에서 적용한건 앞에 생략
+    private final S3UploadService s3UploadService;
+    @MessageMapping("/channel")    // /pub/channel를 통해 여기로 전송되면 메서드 호출 -> StompConfig prefixes에서 적용한건 앞에 생략
     //@SendTo("/room/{roomId}")       // 여길 구독하고 있는 곳으로 메시지 전송
-    public ChatMessageDto messageHandler(ChatMessageDto message){
+    public ChatMessageDto.Response messageHandler(ChatMessageDto.Request message) throws IOException {
+        // 바이트코드 파일로 변환
+        String imgUrl="";
+        if (message.getImg()!=null || message.getImg().length()>0){
+            imgUrl=changeBinaryImageChange(message.getImg(),message.getSendId());
+        }
+        // Response로 변환
+        ChatMessageDto.Response response=ChatMessageDto.Response
+                .builder()
+                .msg(message.getMsg())
+                .sendId(message.getSendId())
+                .chatRoomId(message.getChatRoomId())
+                .imgUrl(imgUrl).build();
+
         // /room/{roomId}를 구독하는 클라이언트로 메시지 객체가 전달
-        sendingOperations.convertAndSend("/room/"+message.getChatRoomId(),message);
-        // chatService 호출로 message를 보낸다.
-        chatService.saveChatMessage(message);
-        return message;
+        sendingOperations.convertAndSend("/sub/channel"+response.getChatRoomId(),response);
+
+        // message를 저장한다.
+        chatService.saveChatMessage(response);
+        return response;
+    }
+
+    // 바이트 코드를 파일 형태로 변환하여 S3에 저장하고 링크를 반환
+    public String changeBinaryImageChange(String byteCode, Long senderId){
+        try{
+            String[] strings=byteCode.split(",");
+            String base64Image=strings[1];
+            String extension="";        // if 문을 통해 확장자명을 정해줌
+            if(strings[0].equals("data:image/jpeg;base64")){
+                extension="jpeg";
+            }else if(strings[0].equals("data:image/png;base64")){
+                extension="png";
+            }else{
+                extension="jpg";
+            }
+
+            byte[] imageBytes=Base64.decodeBase64(base64Image);
+
+            File tempFile=File.createTempFile("image","."+extension);
+            // 바이트 코드를 파일 형태로 변환
+            try (OutputStream outputStream=new FileOutputStream(tempFile)){
+                outputStream.write(imageBytes);
+            }
+
+            String imgUrl=s3UploadService.upload(tempFile,"ChatImage",senderId);
+
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(tempFile); // 파일 삭제시 전부 아웃풋 닫아줘야함 (방금 생성한 임시 파일을 지워주는 과정
+                fileOutputStream.close(); // 아웃풋 닫아주기
+                if (tempFile.delete()) {
+                    log.info("File delete success"); // tempFile.delete()를 통해 삭제
+                } else {
+                    log.info("File delete fail");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return imgUrl;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // 두 사용자의 username으로
@@ -65,8 +126,16 @@ public class ChatController {
 
     // 채팅 저장하기 - 테스트
     @PostMapping("/chat/message")
-    public ResponseEntity<?> saveChatMessage(ChatMessageDto message){
-        chatService.saveChatMessage(message);
+    public ResponseEntity<?> saveChatMessage(@RequestBody ChatMessageDto.Request message) throws IOException {
+        // 바이트코드 파일로 변환
+        String imgUrl=changeBinaryImageChange(message.getImg(),message.getSendId());
+        ChatMessageDto.Response response=ChatMessageDto.Response
+                .builder()
+                .msg(message.getMsg())
+                .sendId(message.getSendId())
+                .chatRoomId(message.getChatRoomId())
+                .imgUrl(imgUrl).build();
+        chatService.saveChatMessage(response);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

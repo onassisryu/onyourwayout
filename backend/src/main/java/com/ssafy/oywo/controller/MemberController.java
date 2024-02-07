@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -79,7 +80,7 @@ public class MemberController {
     /**
      * 회원가입
      * 인증 불필요
-     * @param memberDto
+     * @param
      * @return
      *
      * "username", "nickname", "password", "phoneNumber", "dongId", "hoName", "inviteCode" 필수
@@ -87,8 +88,9 @@ public class MemberController {
     @Operation(summary = "사용자 회원가입",description = "사용자 회원가입을 진행합니다." +
             "phoneNumber는 중복 입력을 할 수 없습니다. 초대 코드가 있다면 넣고, 없다면 빈 문자열로 요청해야 합니다.")
     @PostMapping("/signup")
-    public ResponseEntity<MemberDto.Response> signUp(@RequestBody MemberDto.Request memberDto) {
-        MemberDto.Response savedMemberDto = memberSerivce.signUp(memberDto);
+    public ResponseEntity<MemberDto.Response> signUp(@RequestPart MemberDto.Request dto,
+                                                     @RequestPart(required = false)MultipartFile certiImage) {
+        MemberDto.Response savedMemberDto = memberSerivce.signUp(dto,certiImage);
         return ResponseEntity.ok(savedMemberDto);
     }
 
@@ -205,6 +207,36 @@ public class MemberController {
             return new ResponseEntity<>("유효하지 않은 초대코드입니다.",HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(memberSerivce.findHoByInviteCode(inviteCode),HttpStatus.OK);
+    }
+
+    // 아이디 중복 여부 확인
+    @GetMapping("/dup/id")
+    public ResponseEntity<?> duplicateUserName(@RequestParam("value") String userName){
+        boolean isExist=memberSerivce.isExistUserName(userName);
+        if (isExist){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // 전화번호 중복 여부 확인
+    @GetMapping("/dup/phone")
+    public ResponseEntity<?> duplicatePhoneNumber(@RequestParam("value") String phoneNumber){
+        boolean isExist= memberSerivce.isExistPhoneNumber(phoneNumber);
+        if (isExist){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // 닉네임 중복 여부 확인
+    @GetMapping("/dup/nickname")
+    public ResponseEntity<?> duplicateNickName(@RequestParam("value") String nickName){
+        boolean isExist= memberSerivce.isExistNickName(nickName);
+        if(isExist){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

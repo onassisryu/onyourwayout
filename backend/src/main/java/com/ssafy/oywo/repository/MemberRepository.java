@@ -44,12 +44,11 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     List<Member> findMembersByOrderByScoreDesc();
 
     // 동 현재 거래의 requestID
-    @Query("SELECT d.requestId FROM Deal d " +
-            "WHERE d.requestId IN " +
-            "(SELECT hoMember.id FROM Ho ho " +
-            " JOIN ho.member hoMember " +
+    @Query("SELECT hoMember FROM Ho ho " +
             " JOIN ho.dong dong " +
-            " WHERE dong.id = :dongId) " +
+            " JOIN ho.member hoMember " +
+            " JOIN Deal d ON hoMember.id = d.requestId " +
+            " WHERE dong.id = :dongId " +
             " AND (:dealType IS NULL OR d.dealType IN :dealType) " +
             " AND d.dealStatus = :dealStatus" )
     List<Member> findDealsByRequestIdByDongIdAndDealTypeAndDealStatus(
@@ -69,4 +68,6 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
             "AND (:dongId IN (SELECT d.id FROM m.notiDongs d) OR m.isNotiDongAll = true) " +
             "AND (:dealType IN(SELECT dt.dealType From m.notiDealCategories dt) OR m.isNotiCategoryAll = true)")
     List<Member> findByDongAndCategory(Long dongId, DealType dealType);
+
+    Optional<Member> findByPhoneNumber(String phoneNumber);
 }

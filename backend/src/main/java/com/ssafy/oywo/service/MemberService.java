@@ -7,12 +7,13 @@ import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.entity.RefreshToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
 public interface MemberService {
     public JwtToken signIn(String username, String password);
-    public MemberDto.Response signUp(MemberDto.Request memberDto);
+    public MemberDto.Response signUp(MemberDto.Request memberDto, MultipartFile certiImage);
     public Optional<RefreshToken> getRefreshToken(String refreshToken);
     public Map<String,String> validateRefreshToken(String refreshToken);
 
@@ -37,4 +38,10 @@ public interface MemberService {
     public void removeFcmToken(String username);
 
     public HashMap<String,Object> findHoByInviteCode(String inviteCode);
+
+    public boolean isExistUserName(String userName);
+
+    public boolean isExistNickName(String nickName);
+
+    public boolean isExistPhoneNumber(String phoneNumber);
 }

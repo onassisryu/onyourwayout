@@ -81,6 +81,13 @@ public class ChatServiceImpl implements ChatService{
         // 사용자 uuid로 채팅방 리스트를 가져온다.
         List<ChatRoom> roomList = chatRoomRepository.getChatRoomById(memberId)
                 .orElseThrow(()->new NoSuchElementException("존재하는 채팅방이 없습니다."));
+        Collections.sort(roomList, new Comparator<ChatRoom>() {
+            @Override
+            public int compare(ChatRoom o1, ChatRoom o2) {
+                return o1.getCreatedAt().compareTo(o2.getCreatedAt());
+            }
+        });
+
         List<ChatRoomDto.Response> result =new ArrayList<>();
 
         // 채팅방 상대 정보를 가져온다.
@@ -144,10 +151,15 @@ public class ChatServiceImpl implements ChatService{
 
     // 채팅 메시지 저장
     @Override
-    public void saveChatMessage(ChatMessageDto message) {
+    public void saveChatMessage(ChatMessageDto.Response message) {
+
         ChatRoom chatRoom=chatRoomRepository.findById(message.getChatRoomId())
                 .orElseThrow(()->new NoSuchElementException("채팅방을 찾을 수 없습니다."));
 
-        chatMessageRepository.save(message.toEntity(chatRoom).toBuilder().build());
+        ChatMessage newMessage=message.toEntity(chatRoom);
+
+        System.out.println(chatRoom);
+        System.out.print(newMessage);
+        chatMessageRepository.save(newMessage);
     }
 }
