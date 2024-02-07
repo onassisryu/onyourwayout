@@ -120,4 +120,37 @@ public class NotificationServiceImpl implements NotificationService {
 
         membersNotificationRepository.delete(membersNotification.get());
     }
+
+    /**
+     * 로그인된 유저가 받은 모든 알람 삭제
+     */
+    @Override
+    public void deleteNotificationAll() {
+        Long memberId = memberService.getLoginUserId();
+        membersNotificationRepository.deleteAllByMemberId(memberId);
+    }
+
+    /**
+     * 로그인된 유저가 받은 알람 읽음 처리
+     * @param notificationId
+     */
+    @Override
+    public void readNotification(Long notificationId) {
+        Long memberId = memberService.getLoginUserId();
+
+        Optional<MembersNotification> membersNotification = membersNotificationRepository.findByNotificationIdAndMemberId(notificationId, memberId);
+        if(membersNotification.isEmpty()) throw new NoSuchElementException("해당하는 알림이 없거나 이미 삭제된 알림입니다.");
+
+        membersNotification.get().setRead(true);
+    }
+
+    /**
+     * 로그인된 유저가 받은 모든 알람 읽음 처리
+     */
+    @Override
+    public void readNotificationAll() {
+        Long memberId = memberService.getLoginUserId();
+        List<MembersNotification> membersNotifications = membersNotificationRepository.findAllByMemberId(memberId);
+        membersNotifications.forEach(membersNotification -> membersNotification.setRead(true));
+    }
 }

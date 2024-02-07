@@ -39,14 +39,15 @@ public class NotificationDto {
     @Getter
     @Builder
     public static class Response{
+        @Schema(description = "알림 id")
         private Long id;
-
+        @Schema(description = "알림 제목")
         private String title;
-
+        @Schema(description = "알림 내용")
         private String message;
-
+        @Schema(description = "알림 읽음 여부")
         private Boolean isRead;
-
+        @Schema(description = "알림 타입")
         private Notification.NotificationType notificationType;
 
         public static Response of(Notification notification){

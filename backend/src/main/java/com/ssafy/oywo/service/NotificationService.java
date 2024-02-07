@@ -14,4 +14,10 @@ public interface NotificationService {
     public List<NotificationDto.Response> getNotifications();
 
     public void deleteNotification(Long notificationId);
+
+    public void deleteNotificationAll();
+
+    public void readNotification(Long notificationId);
+
+    public void readNotificationAll();
 }
