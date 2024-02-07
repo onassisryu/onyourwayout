@@ -10,17 +10,16 @@ import axiosAuth from '@/axios/axiosAuth';
 import {NavigationProp} from '@react-navigation/native';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {RootStackParamList} from '@/@types';
-import {getAccessToken} from '@/utils/common';
 import SockJS from 'sockjs-client';
-// import StompJs, {Client} from '@stomp/stompjs';
 import StompJs, {Client} from '@stomp/stompjs';
-import TextEncodingPolyfill from 'text-encoding';
-Object.assign(global, {
+import * as encoding from 'text-encoding';
+
+const TextEncodingPolyfill = require('text-encoding');
+
+Object.assign('global', {
   TextEncoder: TextEncodingPolyfill.TextEncoder,
   TextDecoder: TextEncodingPolyfill.TextDecoder,
 });
-// const client2 = useRef<Client>();
-// const client = useRef<Client | null>(null);
 const StyledText = styled.Text`
   font-size: 30px;
   margin-bottom: 10px;
@@ -85,31 +84,47 @@ const ChatDetail = ({navigation}: Props) => {
         console.log(err);
       });
   };
-
-  const connectChat = async () => {
-    const token = await getAccessToken();
-    const client = new StompJs.Client({
+  const client = useRef<Client | null>(null);
+  // const socket = new SockJS('http://i10a302.p.ssafy.io:8080/ws/chat');
+  const connectChat = () => {
+    console.log('connectChat');
+    client.current = new StompJs.Client({
       brokerURL: 'ws://i10a302.p.ssafy.io:8080/ws/chat',
+      // webSocketFactory: () => socket,
       connectHeaders: {
-        Authorization: `Bearer ${token}`,
+        Authorization:
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzQ2NTI4NX0.Gt-ZV4OolYvl_LqsWG2n19BSNmRxegnRIGrF_5AAqmA',
+      },
+      debug: str => {
+        console.log(str);
       },
       onConnect: () => {
-        console.log('success');
+        console.log('Connected to the WebSocket server');
+        client.current?.subscribe('/sub/chat/room/1', message => {
+          const receivedMessage = JSON.parse(message.body);
+        });
       },
-      reconnectDelay: 5000, //자동재연결
+      onStompError: frame => {
+        console.error('Broker reported error:', frame.headers['message']);
+        console.error('Additional details:', frame.body);
+      },
+      onDisconnect: () => {
+        console.log('Disconnected from the WebSocket server');
+      },
+      onWebSocketClose: async e => {
+        console.log('Closed', e);
+      },
+      reconnectDelay: 50000, //자동재연결
       heartbeatIncoming: 4000,
-      heartOutgoing: 4000,
     });
-    console.log('client', client);
-    client.activate();
-    client.onConnect = () => {
-      console.log('연결성공');
+    client.current.onConnect = () => {
+      console.log('onConnect');
     };
+    client.current.activate();
   };
-
+  connectChat();
   useEffect(() => {
     getChatDetail();
-    connectChat();
   }, []);
 
   return (
