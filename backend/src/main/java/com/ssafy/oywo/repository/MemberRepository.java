@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.awt.print.Pageable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,4 +71,6 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     List<Member> findByDongAndCategory(Long dongId, DealType dealType);
 
     Optional<Member> findByPhoneNumber(String phoneNumber);
+
+    List<Member> findByPauseEndAtGreaterThan(LocalDateTime now);
 }

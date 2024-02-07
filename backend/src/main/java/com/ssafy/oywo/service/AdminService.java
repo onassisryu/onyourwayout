@@ -4,6 +4,7 @@ import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.entity.Member;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface AdminService {
@@ -19,5 +20,9 @@ public interface AdminService {
     List<MemberDto.Response> manageSuspendedMembers();
     MemberDto.Response processUnlockMember(Long memberId);
 
+    HashMap<String,Object> updatePenaltyAndPauseTime(Long memberId);
 
+    DealDto.Response changeStatusToClose(Long dealId);
+
+    List<MemberDto.Response> getPausedMember();
 }
