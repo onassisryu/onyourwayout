@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -103,7 +104,7 @@ public class DealDto {
         private LocalDateTime deletedAt;
 
         private List<DealComplaint> complaints;
-        private Member requestInfo;
+        private MemberDto.ResponseWithDeal requestInfo;
 //        private String nickname;
 //        private int score;
 //        private Long hoId;
@@ -154,8 +155,7 @@ public class DealDto {
             this.title = entity.getTitle();
             this.content = entity.getContent();
             this.requestId = entity.getRequestId();
-            this.requestInfo = member;
-            this.acceptId = entity.getAcceptId();
+            this.requestInfo = MemberDto.ResponseWithDeal.of(member, member.getHo());
             this.cash = entity.getCash();
             this.item = entity.getItem();
             this.rewardType = entity.getRewardType();

@@ -259,8 +259,8 @@ public class DealServiceImpl implements DealService{
                 .orElseThrow(
                         () -> new IllegalArgumentException("해당 requestId에 대한 사용자가 없음")
                 );
-        return new DealDto.Response(deal, requestMember);
 
+        return new DealDto.Response(deal, requestMember);
     }
 
 
