@@ -110,7 +110,7 @@ public class MemberServiceImpl implements MemberService {
                 List<Member> members=ho.get().getMember();
                 members.add(member);
                 ho.get().builder().member(members).build();
-
+                member.setHo(ho.get());
                 response=MemberDto.Response.of(member,ho.get());
             }
         }
