@@ -84,6 +84,11 @@ public class NotificationServiceImpl implements NotificationService {
         sendMessage(notificationSaved, members, data);
     }
 
+    /**
+     * deal이 수락되거나 취소될 때, deal 요청자에게 알림을 보내는 메소드
+     * @param deal
+     * @return
+     */
     public void sendNotificationDealAccept(Deal deal){
         Member member = memberRepository.findById(deal.getRequestId())
                 .orElseThrow(() -> new NoSuchElementException("해당하는 멤버가 없습니다."));
