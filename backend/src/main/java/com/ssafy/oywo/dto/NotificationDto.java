@@ -37,6 +37,7 @@ public class NotificationDto {
     }
 
     @Getter
+    @Builder
     public static class Response{
         private Long id;
 
@@ -44,15 +45,9 @@ public class NotificationDto {
 
         private String message;
 
-        private Notification.NotificationType notificationType;
+        private Boolean isRead;
 
-        @Builder
-        public Response(Long id, String title, String message, Notification.NotificationType notificationType) {
-            this.id = id;
-            this.title = title;
-            this.message = message;
-            this.notificationType = notificationType;
-        }
+        private Notification.NotificationType notificationType;
 
         public static Response of(Notification notification){
             return Response.builder().
