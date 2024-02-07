@@ -28,7 +28,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Shadow',
+    title: '비인증 사용자',
     icon: IconCopy,
     href: '/ui/shadow',
   },

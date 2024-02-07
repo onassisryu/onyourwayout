@@ -1,5 +1,6 @@
-const { default: axios } = require("axios")
 import { SERVER,ACCESSTOKEN } from './Config';
+import axios from 'axios';
+
 
 // 신고된 거래 내역 보기
 export function getDealsWithComplaint(){

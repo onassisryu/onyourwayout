@@ -4,6 +4,7 @@ import PageContainer from 'src/components/container/PageContainer';
 import DashboardCard from '../../components/shared/DashboardCard';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 
+// DEAL - 신고 거래
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body1,
   textAlign: 'center',
@@ -14,12 +15,12 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
 const lightTheme = createTheme({ palette: { mode: 'light' } });
-
+// MEMBER 비인증 사용자
 const Shadow = () => {
   return (
     <PageContainer title="Shadow" description="this is Shadow">
-
-      <DashboardCard title="Shadow">
+      
+      <DashboardCard title="아파트 인증이 필요한 사용자입니다">
         <Grid container spacing={2}>
           {[lightTheme, darkTheme].map((theme, index) => (
             <Grid item xs={6} key={index}>

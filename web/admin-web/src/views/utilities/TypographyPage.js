@@ -4,14 +4,14 @@ import PageContainer from 'src/components/container/PageContainer';
 import DashboardCard from '../../components/shared/DashboardCard';
 import BlankCard from 'src/components/shared/BlankCard';
 
-
+// MEMEBER - 정지 사용자
 const TypographyPage = () => {
   return (
     <PageContainer title="Typography" description="this is Typography">
 
       <Grid container spacing={3}>
         <Grid item sm={12}>
-          <DashboardCard title="Default Text">
+          <DashboardCard title="정지된 사용자 목록입니다">
             <Grid container spacing={3}>
               <Grid item sm={12}>
                 <BlankCard>
