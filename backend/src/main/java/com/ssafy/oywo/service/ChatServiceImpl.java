@@ -134,11 +134,18 @@ public class ChatServiceImpl implements ChatService{
             Ho ho=hoRepository.findById(hoId).orElseThrow(
                     ()->new NoSuchElementException("존재하지 않는 호입니다.")
             );
+            List<ChatMessage> orderedChatMessages=new ArrayList<>(chatRoom.get().getChatMessages());
+            Collections.sort(orderedChatMessages, new Comparator<ChatMessage>() {
+                @Override
+                public int compare(ChatMessage o1, ChatMessage o2) {
+                    return o1.getCreatedAt().compareTo(o2.getCreatedAt());
+                }
+            });
 
             response=ChatRoomDto.Response.builder()
                     .id(roomId)
                     .createdAt(chatRoom.get().getCreatedAt())
-                    .chatMessages(chatRoom.get().getChatMessages())
+                    .chatMessages(orderedChatMessages)
                     .oppId(otherMemberId)
                     .oppNickName(nickname)
                     .dong(ho.getDong())
