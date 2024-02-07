@@ -67,8 +67,9 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
             "JOIN dong.apartment apt " +
             "WHERE apt.id = (select apt.id from Apartment apt Join Dong d on d.apartment = apt where d.id = :dongId) " +
             "AND (:dongId IN (SELECT d.id FROM m.notiDongs d) OR m.isNotiDongAll = true) " +
-            "AND (:dealType IN(SELECT dt.dealType From m.notiDealCategories dt) OR m.isNotiCategoryAll = true)")
-    List<Member> findByDongAndCategory(Long dongId, DealType dealType);
+            "AND (:dealType IN(SELECT dt.dealType From m.notiDealCategories dt) OR m.isNotiCategoryAll = true) " +
+            "AND m.id NOT IN (SELECT bm.memberId.id FROM BlockMembers bm WHERE bm.blockMemberId.id = :requestId)")
+    List<Member> findByDongAndCategory(Long dongId, DealType dealType, Long requestId);
 
     Optional<Member> findByPhoneNumber(String phoneNumber);
 
