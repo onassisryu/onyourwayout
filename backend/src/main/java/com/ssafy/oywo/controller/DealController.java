@@ -244,7 +244,7 @@ public class DealController {
 
 
     /**
-     * 나가요잉 추천
+     * 나가요잉 거래 추천
      * @param dealType 거래 유형
      * @return 거래 추천 리스트 3개
      */
@@ -252,6 +252,28 @@ public class DealController {
     public ResponseEntity<?> recommendDeal(
             @RequestParam(name = "dealType", required = false) List<DealType> dealType) {
         return ResponseEntity.ok(dealService.recommendDeal(dealType));
+    }
+
+
+
+    /**
+     * 나가요잉 최종확인(수락: 요청자)
+     * @param id 거래 아이디
+     * @param acceptId 거래 수락자 아이디(수행자)
+     * @return 거래 수락 메시지
+     * @throws Exception
+     */
+    @PutMapping("/out-recommend/{id}/{acceptId}")
+    public ResponseEntity<?> checkOutRecommendDeal(
+            @PathVariable Long id,
+            @PathVariable Long acceptId) throws Exception {
+
+        DealDto.Response response = dealService.checkOutRecommendDeal(id, acceptId);
+        if (response.getDealStatus() == Deal.DealStatus.ING) {
+            return ResponseEntity.ok("거래가 수락되었습니다.");
+        } else {
+            return ResponseEntity.ok("거래수락이 취소되었습니다.");
+        }
     }
 
 

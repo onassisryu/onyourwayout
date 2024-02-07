@@ -37,5 +37,9 @@ public interface DealService {
     // 거래 신고
     void complaintDeal(Long id, DealComplaint dealComplaint);
 
+
+    // 나가요잉 거래 추천
     List<DealDto.Response> recommendDeal(List<DealType> dealType);
+    // 나가요잉 최종확인(수락: 요청자)
+    DealDto.Response checkOutRecommendDeal(Long id, Long acceptId);
 }

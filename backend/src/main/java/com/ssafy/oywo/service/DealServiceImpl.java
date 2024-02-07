@@ -308,7 +308,7 @@ public class DealServiceImpl implements DealService{
                 () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
         );
 
-        // 로그인 사용자 id
+        // 로그인 사용자 id (수행자)
         Long loginUserId = getLoginUserId();
         // 현재 매칭된 해줘요잉 개수
         Long numberOfMatchingDeals = dealRepository.countDealsByAcceptIdAndDealStatus(loginUserId, Deal.DealStatus.ING);
@@ -533,6 +533,36 @@ public class DealServiceImpl implements DealService{
                                     .stream()
                                     .map(DealDto.Response::new)
                                     .collect(Collectors.toList());
+    }
+
+
+    // 나가요잉 최종확인(수락: 요청자)
+    @Override
+    public DealDto.Response checkOutRecommendDeal(Long id, Long acceptId) {
+        Deal deal = dealRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
+        );
+        // 로그인 사용자 id(요청자)
+        Long loginUserId = getLoginUserId();
+
+        // 거래 상태 확인
+        // 확인
+        if (deal.getDealStatus() == Deal.DealStatus.OPEN) {
+            // 확인자 확인
+            if (!deal.getRequestId().equals(loginUserId)) {
+                throw new IllegalStateException("요청자와 확인자는 다를 수 없음");
+            }
+
+            // 엔티티 갱신
+            deal.setAcceptId(acceptId);
+            deal.setDealStatus(Deal.DealStatus.ING);
+
+        } else {
+            throw new IllegalStateException("현재 거래 상태에서는 수락할 수 없음");
+        }
+
+        // 갱신된 엔티티 저장
+        return new DealDto.Response(deal);
     }
 
 
