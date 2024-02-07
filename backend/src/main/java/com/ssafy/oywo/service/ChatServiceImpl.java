@@ -81,6 +81,13 @@ public class ChatServiceImpl implements ChatService{
         // 사용자 uuid로 채팅방 리스트를 가져온다.
         List<ChatRoom> roomList = chatRoomRepository.getChatRoomById(memberId)
                 .orElseThrow(()->new NoSuchElementException("존재하는 채팅방이 없습니다."));
+        Collections.sort(roomList, new Comparator<ChatRoom>() {
+            @Override
+            public int compare(ChatRoom o1, ChatRoom o2) {
+                return o1.getCreatedAt().compareTo(o2.getCreatedAt());
+            }
+        });
+
         List<ChatRoomDto.Response> result =new ArrayList<>();
 
         // 채팅방 상대 정보를 가져온다.
