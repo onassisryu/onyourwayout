@@ -21,7 +21,7 @@ import java.util.List;
 public class Notification extends BaseTimeEntity {
 
     public enum NotificationType {
-        CHAT, NOTI_DONG, NOTI_BLOCK, NOTI_APT
+        CHAT, DEAL_NEW, DEAL_ACCEPT, DEAL_REJECT, DEAL_COMPLETE, DEAL_CANCEL
     }
 
     @Id

@@ -31,8 +31,10 @@ public class Apartment extends BaseTimeEntity {
 
     private String areaCode;
 
+    @Column(precision = 10, scale = 8)
     private BigDecimal lat;
 
+    @Column(precision = 11, scale = 8)
     private BigDecimal lng;
 
     @Builder

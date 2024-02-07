@@ -11,7 +11,15 @@ public interface NotificationService {
 
     public void sendNotificationByDeal(Deal deal);
 
+    public void sendNotificationDealAccept(Deal deal);
+
     public List<NotificationDto.Response> getNotifications();
 
     public void deleteNotification(Long notificationId);
+
+    public void deleteNotificationAll();
+
+    public void readNotification(Long notificationId);
+
+    public void readNotificationAll();
 }

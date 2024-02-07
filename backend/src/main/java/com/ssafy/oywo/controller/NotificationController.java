@@ -25,7 +25,7 @@ public class NotificationController {
 
     @Operation(summary = "사용자가 받은 알림조회", description = "사용자가 받은 전체 알림을 조회한다.")
     @GetMapping()
-    public ResponseEntity<?> getNotifications() {
+    public ResponseEntity<?> getNotificationAll() {
         List<NotificationDto.Response> notifications = notificationService.getNotifications();
         return ResponseEntity.ok(notifications);
     }
@@ -42,6 +42,40 @@ public class NotificationController {
         return ResponseEntity.ok("알림 삭제에 성공했습니다.");
     }
 
+    @Operation(summary = "알림 전체 삭제", description = "알림을 전체 삭제한다.")
+    @DeleteMapping()
+    public ResponseEntity<?> deleteNotificationAll() {
+        try {
+            notificationService.deleteNotificationAll();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok("알림 전체 삭제에 성공했습니다.");
+    }
 
+    @Operation(summary = "알림 읽기", description = "알림을 읽음 처리한다.")
+    @PutMapping("/{notificationId}")
+    public ResponseEntity<?> readNotification(@PathVariable Long notificationId) {
+        try {
+            notificationService.readNotification(notificationId);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok("알림 읽기에 성공했습니다.");
+    }
+
+    @Operation(summary = "알림 전체 읽기", description = "알림을 전체 읽음 처리한다.")
+    @PutMapping()
+    public ResponseEntity<?> readNotificationAll() {
+        try {
+            notificationService.readNotificationAll();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok("알림 전체 읽기에 성공했습니다.");
+    }
 
 }

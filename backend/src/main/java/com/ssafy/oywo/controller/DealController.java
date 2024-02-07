@@ -187,8 +187,8 @@ public class DealController {
     public ResponseEntity<?> closeDeal(
             @PathVariable Long id) throws Exception {
 
-
-        return ResponseEntity.ok(" 해당 거래가 완료되었습니다." + dealService.closeDeal(id));
+        dealService.closeDeal(id);
+        return ResponseEntity.ok(" 해당 거래가 완료되었습니다.");
     }
 
 
@@ -205,7 +205,8 @@ public class DealController {
             @PathVariable("id") Long id,
             @PathVariable("gb") String gb) throws Exception {
 
-        return ResponseEntity.ok(dealService.reviewDeal(id, gb));
+        dealService.reviewDeal(id, gb);
+        return ResponseEntity.ok("상대방에게 " + gb + "로 평가하였습니다.");
     }
 
 
@@ -221,7 +222,7 @@ public class DealController {
             @PathVariable Long id) throws Exception {
 
         dealService.deleteDeal(id);
-        return ResponseEntity.ok(id + "번 거래가 삭제");
+        return ResponseEntity.ok(id + "번 거래가 삭제되었습니다.");
     }
 
 
@@ -239,7 +240,7 @@ public class DealController {
             @RequestBody DealComplaint dealComplaint) throws Exception {
 
         dealService.complaintDeal(id, dealComplaint);
-        return ResponseEntity.ok("해당 거래 신고됨");
+        return ResponseEntity.ok("해당 거래 신고되었습니다.");
     }
 
 

@@ -70,8 +70,12 @@ public class MemberDto {
         private String fcmToken;
         private Boolean isNotiDongAll;
         private Boolean isNotiCategoryAll;
+        private Timestamp pauseStartAt;
+        private Timestamp pauseEndAt;
         private List<String> roles=new ArrayList<>();
 
+        private Long aptId;
+        private String aptName;
         private Long dongId;
         private String dongName;
         private Long hoId;
@@ -89,18 +93,22 @@ public class MemberDto {
             return Response.builder()
                     .id(member.getId())
                     .username(member.getUsername())
-                    .password(member.getPassword())
+                    .password(null)
                     .nickname(member.getNickname())
                     .birthDate(member.getBirthDate())
                     .phoneNumber(member.getPhoneNumber())
                     .score(member.getScore())
                     .isCertified(member.isCertified())
+                    .aptId(ho.getDong().getApartment().getId())
+                    .aptName(ho.getDong().getApartment().getName())
                     .dongId(ho.getDong().getId())
                     .dongName(ho.getDong().getName())
                     .hoId(ho.getId())
                     .hoName(ho.getName())
                     .inviteCode(ho.getInviteCode())
                     .roles(member.getRoles())
+                    .pauseStartAt(member.getPauseStartAt())
+                    .pauseEndAt(member.getPauseEndAt())
                     .build();
         }
         public static Response of(Member member){
@@ -111,7 +119,7 @@ public class MemberDto {
             return Response.builder()
                     .id(member.getId())
                     .nickname(member.getNickname())
-                    .password(member.getPassword())
+                    .password(null)
                     .username(member.getUsername())
                     .birthDate(member.getBirthDate())
                     .phoneNumber(member.getPhoneNumber())
@@ -124,6 +132,8 @@ public class MemberDto {
                     .isNotiDongAll(member.isNotiDongAll())
                     .isNotiCategoryAll(member.isNotiCategoryAll())
                     .roles(member.getRoles())
+                    .pauseStartAt(member.getPauseStartAt())
+                    .pauseEndAt(member.getPauseEndAt())
                     .build();
         }
 

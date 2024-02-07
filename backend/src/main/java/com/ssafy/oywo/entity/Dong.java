@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "dong")
 @Getter
@@ -29,5 +31,9 @@ public class Dong extends BaseTimeEntity{
 
     private String name;
 
+    @Column(precision = 10, scale = 8)
+    private BigDecimal lat;
 
+    @Column(precision = 11, scale = 8)
+    private BigDecimal lng;
 }
