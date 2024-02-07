@@ -1,9 +1,6 @@
 package com.ssafy.oywo.dto;
 
-import com.ssafy.oywo.entity.Deal;
-import com.ssafy.oywo.entity.DealComplaint;
-import com.ssafy.oywo.entity.DealImage;
-import com.ssafy.oywo.entity.DealType;
+import com.ssafy.oywo.entity.*;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -106,6 +103,10 @@ public class DealDto {
         private LocalDateTime deletedAt;
 
         private List<DealComplaint> complaints;
+        private Member requestInfo;
+//        private String nickname;
+//        private int score;
+//        private Long hoId;
 
         /*
         Entity -> Dto
@@ -146,6 +147,26 @@ public class DealDto {
             this.createdAt = entity.getCreatedAt();
             this.modifiedAt = entity.getModifiedAt();
             this.complaints = complaints;
+        }
+
+        public Response(Deal entity, Member member) {
+            this.id = entity.getId();
+            this.title = entity.getTitle();
+            this.content = entity.getContent();
+            this.requestId = entity.getRequestId();
+            this.requestInfo = member;
+            this.acceptId = entity.getAcceptId();
+            this.cash = entity.getCash();
+            this.item = entity.getItem();
+            this.rewardType = entity.getRewardType();
+            this.complaint = entity.getComplaint();
+            this.dealStatus = entity.getDealStatus();
+            this.dealType = entity.getDealType();
+            this.expireAt = entity.getExpireAt();
+            this.dealImages = entity.getDealImages();
+            this.createdAt = entity.getCreatedAt();
+            this.modifiedAt = entity.getModifiedAt();
+
         }
     }
 
