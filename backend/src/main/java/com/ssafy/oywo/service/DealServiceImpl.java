@@ -251,11 +251,16 @@ public class DealServiceImpl implements DealService{
         // 로그인 사용자 id
         Long loginUserId = memberService.getLoginUserId();
 
-        return dealRepository.findById(id)
-                .map(DealDto.Response::new)
+        Deal deal = dealRepository.findById(id)
                 .orElseThrow(
                         () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
                 );
+        Member requestMember = memberRepository.findById(deal.getRequestId())
+                .orElseThrow(
+                        () -> new IllegalArgumentException("해당 requestId에 대한 사용자가 없음")
+                );
+
+        return new DealDto.Response(deal, requestMember);
     }
 
 

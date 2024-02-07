@@ -55,7 +55,7 @@ public class MemberDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder(toBuilder = true)
-    public static class Response{
+    public static class Response {
         private Long id;
         private String nickname;
         private String username;
@@ -72,7 +72,7 @@ public class MemberDto {
         private Boolean isNotiCategoryAll;
         private Timestamp pauseStartAt;
         private Timestamp pauseEndAt;
-        private List<String> roles=new ArrayList<>();
+        private List<String> roles = new ArrayList<>();
 
         private Long aptId;
         private String aptName;
@@ -89,7 +89,7 @@ public class MemberDto {
         private List<NotiDealCategory> notiDealCategories;
         private List<MembersNotification> membersNotifications;
 
-        public static Response of(Member member, Ho ho){
+        public static Response of(Member member, Ho ho) {
             return Response.builder()
                     .id(member.getId())
                     .username(member.getUsername())
@@ -111,7 +111,8 @@ public class MemberDto {
                     .pauseEndAt(member.getPauseEndAt())
                     .build();
         }
-        public static Response of(Member member){
+
+        public static Response of(Member member) {
             System.out.println("===========RESPONSE==============");
             System.out.println(member);
             System.out.println(member.isNotiDongAll());
@@ -137,7 +138,8 @@ public class MemberDto {
                     .build();
         }
 
-        public Member toEntity(){
+
+        public Member toEntity() {
             return Member.builder()
                     .id(id)
                     .nickname(nickname)
@@ -157,6 +159,35 @@ public class MemberDto {
                     .build();
         }
     }
+
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder(toBuilder = true)
+    public static class ResponseWithDeal{
+        private Long id;
+        private String nickname;
+        private String username;
+        private int score;
+
+        private Long dongId;
+        private String dongName;
+
+        public static ResponseWithDeal of(Member member, Ho ho){
+            return ResponseWithDeal.builder()
+                    .id(member.getId())
+                    .username(member.getUsername())
+                    .nickname(member.getNickname())
+                    .score(member.getScore())
+                    .dongId(ho.getDong().getId())
+                    .dongName(ho.getDong().getName())
+                    .build();
+        }
+    }
+
+
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
