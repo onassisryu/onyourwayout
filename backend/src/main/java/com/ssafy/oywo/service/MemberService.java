@@ -13,7 +13,7 @@ import java.util.*;
 
 public interface MemberService {
     public JwtToken signIn(String username, String password);
-    public MemberDto.Response signUp(MemberDto.Request memberDto);
+    public MemberDto.Response signUp(MemberDto.Request memberDto, MultipartFile certiImage);
     public Optional<RefreshToken> getRefreshToken(String refreshToken);
     public Map<String,String> validateRefreshToken(String refreshToken);
 
