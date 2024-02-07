@@ -80,7 +80,7 @@ const Signup5 = ({navigation, route}: any) => {
       .then(resp => {
         // console.log('성공', resp.data);
         console.log('회원가입 성공');
-        navigation.navigate('login');
+        navigation.navigate('Login');
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);

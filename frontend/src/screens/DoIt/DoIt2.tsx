@@ -19,6 +19,8 @@ import Ant from 'react-native-vector-icons/AntDesign';
 import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
 import axiosAuth from '@/axios/axiosAuth';
+import {getAccessToken} from '@/utils/common';
+import axios from 'axios';
 type DoItScreenRouteProp = RouteProp<RootStackParamList, 'DoIt2'>;
 
 interface Props {
@@ -157,22 +159,73 @@ const DoIt2 = ({navigation}: Props) => {
     outputRange: [0, width / 2.4], // 화면의 반쪽으로 이동
   });
   const userData = useRecoilValue(userDataState);
-  const AccessToken = userData.accessToken;
-  function MakeDeal() {
-    const data = {
-      dto: {
-        title: 'title2',
-        content: 'content2',
-        cash: 1110,
-        dealType: 'RECYCLE',
-        expireAtStr: '2025-03-03 00:00:00',
+  const token =
+    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzM1ODI4N30.qU7yh9VK8SNoDHVMSPIBiejonl6AFXeIui_3ONrz2YQ';
+
+  const submitMultipart = (body: any) => {
+    const formData = new FormData();
+    formData.append('dto', JSON.stringify(body.jsonData));
+    formData.append('dealImageFileList', body.dealImageFileList);
+
+    console.log(JSON.stringify(body.jsonData));
+    const instance = axios.create();
+    return instance({
+      url: 'http://i10a302.p.ssafy.io:8080/deal',
+      method: 'post',
+      data: formData,
+      headers: {
+        'Authorization':
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzM1ODI4N30.qU7yh9VK8SNoDHVMSPIBiejonl6AFXeIui_3ONrz2YQ',
+        'content-type': 'multipart/form-data',
       },
+    });
+  };
+
+  function MakeDeal() {
+    //   const jwtAccessToken =
+    //     'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzM1ODI4N30.qU7yh9VK8SNoDHVMSPIBiejonl6AFXeIui_3ONrz2YQ';
+
+    //   // 만료 시간을 포함한 데이터 객체
+
+    //   // FormData 객체를 생성합니다.
+    //   const formData = new FormData();
+
+    //   // data 객체의 각 속성을 FormData에 추가합니다.
+    //   Object.entries(data).forEach(([key, value]) => {
+    //     formData.append(`dto[${key}]`, value);
+    //   });
+    //   console.log(formData);
+    //   try {
+    //     // Axios 인스턴스 생성
+    //     const axiosInstance = axios.create({
+    //       baseURL: 'http://i10a302.p.ssafy.io:8080', // 기본 URL 설정
+    //       headers: {
+    //         'Authorization': `Bearer ${jwtAccessToken}`, // JWT access token 추가
+    //         'Content-Type': 'multipart/form-data', // multipart/form-data 설정
+    //       },
+    //     });
+
+    //     // multipart 요청 보내기
+    //     const response = await axiosInstance.post('/deal', formData);
+
+    //     console.log('성공', response.data);
+    //   } catch (error) {
+    //     console.error('데이터를 가져오는 중 오류 발생:', error);
+    //   }
+    const data = {
+      title: 'title2',
+      content: 'content2',
+      cash: 1110,
+      dealType: 'RECYCLE',
+      expireAtStr: '2025-03-03 00:00:00',
     };
 
-    console.log(AccessToken);
-    console.log(data);
-    axiosAuth
-      .post('/deal', data)
+    const body = {
+      jsonData: data,
+      dealImageFileList: '',
+    };
+
+    submitMultipart(body)
       .then(resp => {
         console.log('성공', resp.data);
       })
