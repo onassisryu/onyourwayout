@@ -24,7 +24,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final MembersNotificationRepository membersNotificationRepository;
     private final MemberRepository memberRepository;
     private final FirebaseMessaging firebaseMessaging;
-    private final DongRepository dongRepository;
+    private final DealRepository dealRepository;
     private final HoRepository hoRepository;
 
     private final MemberService memberService;
@@ -192,5 +192,11 @@ public class NotificationServiceImpl implements NotificationService {
         Long memberId = memberService.getLoginUserId();
         List<MembersNotification> membersNotifications = membersNotificationRepository.findAllByMemberId(memberId);
         membersNotifications.forEach(membersNotification -> membersNotification.setRead(true));
+    }
+
+    @Override
+    public void checkNearDong(Long dongId) {
+        Long memberId = memberService.getLoginUserId();
+        List<Deal>deals = dealRepository.findByDongIdAndMemberId(dongId, memberId);
     }
 }
