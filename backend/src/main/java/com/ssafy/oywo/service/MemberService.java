@@ -39,6 +39,8 @@ public interface MemberService {
 
     public HashMap<String,Object> findHoByInviteCode(String inviteCode);
 
+    public Long getLoginUserId();
+
     public boolean isExistUserName(String userName);
 
     public boolean isExistNickName(String nickName);

@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -370,6 +371,17 @@ public class MemberServiceImpl implements MemberService {
         return null;
 
 
+    }
+
+    public Long getLoginUserId() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Long loginUserId = memberRepository.findByUsername(username)
+                .map(Member::getId)
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
+
+        log.info("loginUserName: {}, loginUserId: {}", username, loginUserId);
+        return loginUserId;
     }
 
     @Override
