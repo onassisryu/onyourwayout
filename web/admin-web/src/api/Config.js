@@ -1,0 +1,2 @@
+export const ACCESSTOKEN="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjY0BnbWFpbCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MDc0MTg4NTN9.3l-v3KvfJPadE-4zsGuDSnH4jhOav9UtO7a69pZic10";
+export const SERVER="http://i10a302.p.ssafy.io:8080/";
