@@ -62,15 +62,15 @@ public class DealServiceImpl implements DealService{
         List<Deal> filteredDeals;
 
         if (dealType == DealType.RECYCLE) {
-            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.RECYCLE, Deal.DealStatus.OPEN);
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.RECYCLE, Deal.DealStatus.OPEN, loginUserId);
         } else if (dealType == DealType.PET) {
-            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.PET, Deal.DealStatus.OPEN);
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.PET, Deal.DealStatus.OPEN, loginUserId);
         } else if (dealType == DealType.SHOP) {
-            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.SHOP, Deal.DealStatus.OPEN);
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.SHOP, Deal.DealStatus.OPEN, loginUserId);
         } else if (dealType == DealType.ETC) {
-            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.ETC, Deal.DealStatus.OPEN);
+            filteredDeals = dealRepository.findDealsByApartmentIdAndDealType(myAptId, DealType.ETC, Deal.DealStatus.OPEN, loginUserId);
         } else {
-            filteredDeals = dealRepository.findDealsByApartmentId(myAptId, Deal.DealStatus.OPEN);
+            filteredDeals = dealRepository.findDealsByApartmentId(myAptId, Deal.DealStatus.OPEN, loginUserId);
         }
 
         System.out.println("filteredDeals = " + filteredDeals);
@@ -91,7 +91,7 @@ public class DealServiceImpl implements DealService{
         log.info("myAptId : {}", myAptId);
 
         List<Deal> dealsByDong = dealRepository.findDealsByDongIdAndDealType(
-                myAptId, dongId, dealType, Deal.DealStatus.OPEN);
+                myAptId, dongId, dealType, Deal.DealStatus.OPEN, loginUserId);
 
         log.info("dealsByDong: {}", dealsByDong);
         return dealsByDong
@@ -112,7 +112,7 @@ public class DealServiceImpl implements DealService{
         log.info("myAptId : {}", myAptId);
 
         return dealRepository.countDealsByDongIdAndDealType(
-                    myAptId, dongId, dealType, Deal.DealStatus.OPEN);
+                    myAptId, dongId, dealType, Deal.DealStatus.OPEN, loginUserId);
     }
 
 
@@ -477,6 +477,7 @@ public class DealServiceImpl implements DealService{
 
     // 나가요잉 거래 추천
     @Override
+    @Transactional(readOnly = true)
     public List<DealDto.Response> recommendDeal(List<DealType> dealType) {
         // 로그인 사용자 id
         Long loginUserId = getLoginUserId();
@@ -525,7 +526,7 @@ public class DealServiceImpl implements DealService{
                 .collect(Collectors.toList());
 
         for (Member sortedMember : sortedMembers) {
-            List<Deal> dealsForMember = dealRepository.findDealsByRequestIdAndDealTypeAndDealStatus(sortedMember.getId(), dealType, Deal.DealStatus.OPEN);
+            List<Deal> dealsForMember = dealRepository.findDealsByRequestIdAndDealTypeAndDealStatus(sortedMember.getId(), dealType, Deal.DealStatus.OPEN, loginUserId);
             recommendedDeals.addAll(dealsForMember); // 종합 점수가 높은 순서대로 멤버들의 거래가 포함
         }
 

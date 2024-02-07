@@ -40,9 +40,13 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " JOIN dong.apartment apt " +
             " WHERE apt.id = :apartmentId)" +
             " AND d.dealStatus = :dealStatus" +
-            " AND d.expireAt > CURRENT_TIMESTAMP")
+            " AND d.expireAt > CURRENT_TIMESTAMP" +
+            " AND d.requestId NOT IN " +
+            "(SELECT bm.blockMemberId.id FROM BlockMembers bm " +
+            " WHERE bm.memberId.id = :memberId)")
     List<Deal> findDealsByApartmentId(@Param("apartmentId") Long apartmentId,
-                                      @Param("dealStatus") Deal.DealStatus dealStatus);
+                                      @Param("dealStatus") Deal.DealStatus dealStatus,
+                                      @Param("memberId") Long memberId);
 
 
     // apt_id로 필터링된(dealType) 거래 들고오기(OPEN/만료 안된 거래만)
@@ -55,12 +59,15 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " WHERE apt.id = :apartmentId) " +
             " AND (:dealType IS NULL OR d.dealType = :dealType) " +
             " AND d.dealStatus = :dealStatus" +
-            " AND d.expireAt > CURRENT_TIMESTAMP")
+            " AND d.expireAt > CURRENT_TIMESTAMP" +
+            " AND d.requestId NOT IN " +
+            "(SELECT bm.blockMemberId.id FROM BlockMembers bm " +
+            " WHERE bm.memberId.id = :memberId)")
     List<Deal> findDealsByApartmentIdAndDealType(
             @Param("apartmentId") Long apartmentId,
             @Param("dealType") @Nullable DealType dealType,
-            @Param("dealStatus") Deal.DealStatus dealStatus
-    );
+            @Param("dealStatus") Deal.DealStatus dealStatus,
+            @Param("memberId") Long memberId);
 
 
     // dong_id로 필터링된(dealType) 거래 들고오기(OPEN 거래만)
@@ -72,12 +79,15 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " WHERE dong.id = :dongId) " +
             " AND (:dealType IS NULL OR d.dealType IN :dealType) " +
             " AND d.dealStatus = :dealStatus" +
-            " AND d.expireAt > CURRENT_TIMESTAMP")
+            " AND d.expireAt > CURRENT_TIMESTAMP" +
+            " AND d.requestId NOT IN " +
+            "(SELECT bm.blockMemberId.id FROM BlockMembers bm " +
+            " WHERE bm.memberId.id = :memberId)")
     List<Deal> findDealsByDongIdAndDealTypeAndDealStatus(
             @Param("dongId") Long dongId,
             @Param("dealType") @Nullable List<DealType> dealType,
-            @Param("dealStatus") Deal.DealStatus dealStatus
-    );
+            @Param("dealStatus") Deal.DealStatus dealStatus,
+            @Param("memberId") Long memberId);
 
 
     // 각 동별 거래 조회
@@ -91,13 +101,16 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " AND (:dongId IS NULL OR ho.dong.id = :dongId))" +
             " AND (:dealType IS NULL OR d.dealType IN :dealType)" +
             " AND d.dealStatus = :dealStatus" +
-            " AND d.expireAt > current_timestamp ")
+            " AND d.expireAt > current_timestamp " +
+            " AND d.requestId NOT IN " +
+            "(SELECT bm.blockMemberId.id FROM BlockMembers bm " +
+            " WHERE bm.memberId.id = :memberId)")
     List<Deal> findDealsByDongIdAndDealType(
             @Param("apartmentId") Long apartmentId,
             @Param("dongId") @Nullable Long dongId,
             @Param("dealType") @Nullable List<DealType> dealType,
-            @Param("dealStatus") Deal.DealStatus dealStatus
-    );
+            @Param("dealStatus") Deal.DealStatus dealStatus,
+            @Param("memberId") Long memberId);
 
 
     // 동별 거래 건수
@@ -110,13 +123,16 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " AND (:dongId IS NULL OR dong.id = :dongId)) " +
             " AND (:dealType IS NULL OR d.dealType IN :dealType) " +
             " AND d.dealStatus = :dealStatus" +
-            " AND d.expireAt > current_timestamp")
+            " AND d.expireAt > current_timestamp" +
+            " AND d.requestId NOT IN " +
+            "(SELECT bm.blockMemberId.id FROM BlockMembers bm " +
+            " WHERE bm.memberId.id = :memberId)")
     Long countDealsByDongIdAndDealType(
             @Param("apartmentId") Long apartmentId,
             @Param("dongId") @Nullable Long dongId,
             @Param("dealType") @Nullable List<DealType> dealType,
-            @Param("dealStatus") Deal.DealStatus dealStatus
-    );
+            @Param("dealStatus") Deal.DealStatus dealStatus,
+            @Param("memberId") Long memberId);
 
 
     // member_id로 사용자별 요청한(requestId) 전체 거래 들고오기
@@ -157,12 +173,15 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             "WHERE (d.requestId = :requestId) " +
             "AND (:dealType IS NULL OR d.dealType IN :dealType) " +
             "AND d.dealStatus = :dealStatus " +
-            "AND d.expireAt > CURRENT_TIMESTAMP")
+            "AND d.expireAt > CURRENT_TIMESTAMP" +
+            " AND d.requestId NOT IN " +
+            "(SELECT bm.blockMemberId.id FROM BlockMembers bm " +
+            " WHERE bm.memberId.id = :memberId)")
     List<Deal> findDealsByRequestIdAndDealTypeAndDealStatus(
             @Param("requestId") Long requestId,
             @Param("dealType") List<DealType> dealType,
-            @Param("dealStatus") Deal.DealStatus dealStatus
-    );
+            @Param("dealStatus") Deal.DealStatus dealStatus,
+            @Param("memberId") Long memberId);
 
     List<Deal> findTop3DealsByRequestIdOrAcceptIdAndDealStatusOrderByCreatedAtAsc(
             Long requestId,
