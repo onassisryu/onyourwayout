@@ -3,6 +3,7 @@ package com.ssafy.oywo.service;
 import com.ssafy.oywo.dto.DealDto;
 import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.entity.Deal;
+import com.ssafy.oywo.entity.Ho;
 import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.repository.DealComplaintRepository;
 import com.ssafy.oywo.repository.DealRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,17 +35,21 @@ public class AdminServiceImpl implements AdminService {
     public List<MemberDto.Response> getNonCertifiedMembers() {
         List<Member> nonCertifiedMembers = memberRepository.findMembersByIsCertifiedIsFalse();
 
-        return nonCertifiedMembers.stream()
-                .map(MemberDto.Response::of)
-                .collect(Collectors.toList());
+        List<MemberDto.Response> nonCertifiedMembersInfo=new ArrayList<>();
+
+        for (Member member: nonCertifiedMembers){
+            Ho ho=member.getHo();
+            nonCertifiedMembersInfo.add(MemberDto.Response.of(member,ho));
+        }
+        return nonCertifiedMembersInfo;
     }
 
     @Override
     public MemberDto.Response getNonCertifiedMember(Long memberId) {
         Member member = memberRepository.findByIdAndIsCertifiedIsFalse(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("비인증 회원이 존재하지 않음"));
-
-        return MemberDto.Response.of(member);
+        Ho ho=member.getHo();
+        return MemberDto.Response.of(member,ho);
     }
 
     @Transactional
