@@ -76,6 +76,28 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getDealsWithComplaint());
     }
 
+    @PutMapping("/deal")
+    public ResponseEntity<?> changeDealStatus(@RequestParam("id") Long dealId){
+        return ResponseEntity.ok(adminService.changeStatusToClose(dealId));
+
+    }
+
+
+    /**
+     * 사용자 페널티 수 추가 및 정지시간 재설정
+     */
+    @PutMapping("/pause")
+    public ResponseEntity<?> givePenaltyAndSetPause(@RequestParam("id") Long memberId){
+        return ResponseEntity.ok(adminService.updatePenaltyAndPauseTime(memberId));
+    }
+
+    /**
+     * 정지된 사용자 리스트 보이기
+     */
+    @GetMapping("/pause")
+    public ResponseEntity<?> getPausedMemberList(){
+        return ResponseEntity.ok(adminService.getPausedMember());
+    }
 
 
     /**
