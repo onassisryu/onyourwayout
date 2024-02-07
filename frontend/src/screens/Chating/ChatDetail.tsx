@@ -7,14 +7,20 @@ import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
 import {useRef, useEffect, useState} from 'react';
 import axiosAuth from '@/axios/axiosAuth';
-import {get} from 'axios';
 import {NavigationProp} from '@react-navigation/native';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {RootStackParamList} from '@/@types';
-
-// import SockJS from 'sockjs-client';
-// import Stomp from '@stomp/stompjs'
-// import { Client } from '@stomp/stompjs'
+import {getAccessToken} from '@/utils/common';
+import SockJS from 'sockjs-client';
+// import StompJs, {Client} from '@stomp/stompjs';
+import StompJs, {Client} from '@stomp/stompjs';
+import TextEncodingPolyfill from 'text-encoding';
+Object.assign(global, {
+  TextEncoder: TextEncodingPolyfill.TextEncoder,
+  TextDecoder: TextEncodingPolyfill.TextDecoder,
+});
+// const client2 = useRef<Client>();
+// const client = useRef<Client | null>(null);
 const StyledText = styled.Text`
   font-size: 30px;
   margin-bottom: 10px;
@@ -53,11 +59,17 @@ type ChatDetailScreenRouteProp = RouteProp<RootStackParamList, 'ChatDetail'>;
 interface Props {
   navigation: NavigationProp<any>;
 }
+
 const ChatDetail = ({navigation}: Props) => {
   const {params} = useRoute<ChatDetailScreenRouteProp>();
   const [chatRoom, setChatRoom] = useState<ChatRoom[]>([]);
   const userData = useRecoilValue(userDataState);
+  const TextEncodingPolyfill = require('text-encoding');
 
+  Object.assign('global', {
+    TextEncoder: TextEncodingPolyfill.TextEncoder,
+    TextDecoder: TextEncodingPolyfill.TextDecoder,
+  });
   const detailParams = {
     room: params.roomId,
     id: userData.id,
@@ -74,37 +86,30 @@ const ChatDetail = ({navigation}: Props) => {
       });
   };
 
-  // const connectChat = () => {
-  //   //1. sockejs객체 생성
-  //   var url = 'ws://i10a302.p.ssafy.io:8080/ws';
-  //   var client = Stomp.client({
-  //     brokerURL: '/api/ws',
-  //     connectHeaders: {
-  //       login: 'user',
-  //       passcode: 'password',
-  //     },
-  //     debug: function (str) {
-  //       console.log(str);
-  //     },
-  //     reconnectDelay: 5000, //자동 재 연결
-  //     heartbeatIncoming: 4000,
-  //     heartbeatOutgoing: 4000,
-  //   });
-  //   const socket = new SockJS(url);
-  //   console.log('채팅 연결 시작');
-  //   //2. stomp 객체 생성
-  //   const stompClient = Stomp.over(socket);
-  //   var headers = {
-  //     'login': 'mylogin',
-  //     'passcode': 'mypasscode',
-  //     // additional header
-  //     'client-id': 'my-client-id',
-  //   };
-  // };
+  const connectChat = async () => {
+    const token = await getAccessToken();
+    const client = new StompJs.Client({
+      brokerURL: 'ws://i10a302.p.ssafy.io:8080/ws/chat',
+      connectHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+      onConnect: () => {
+        console.log('success');
+      },
+      reconnectDelay: 5000, //자동재연결
+      heartbeatIncoming: 4000,
+      heartOutgoing: 4000,
+    });
+    console.log('client', client);
+    client.activate();
+    client.onConnect = () => {
+      console.log('연결성공');
+    };
+  };
 
   useEffect(() => {
     getChatDetail();
-    // connectChat();
+    connectChat();
   }, []);
 
   return (

@@ -49,10 +49,10 @@ import Signup5 from '@/screens/Signup/Signup5';
 import Signup5a from '@/screens/Signup/Signup5a';
 import Signup6 from '@/screens/Signup/Signup6';
 import GoOut1 from '@/screens/GoOut/GoOut1';
-
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 const App = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();

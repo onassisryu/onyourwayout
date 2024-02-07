@@ -2,7 +2,7 @@
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "types": ["@emotion/react/types/css-prop"],
+    "typeRoots": ["./node_modules/@types", "./types", "@types/stompjs"],
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
@@ -47,7 +47,9 @@
     "moduleResolution": "node16",
     "noEmit": true,
     "strict": true,
-    "target": "esnext"
+    "target": "es2022",
+    "types": ["node"],
+    "noImplicitAny": true
   },
   "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js"]
 }
