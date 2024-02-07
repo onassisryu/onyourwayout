@@ -8,12 +8,14 @@ import com.ssafy.oywo.entity.*;
 import com.ssafy.oywo.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +36,7 @@ public class NotificationServiceImpl implements NotificationService {
     //알림 메시지로 member들에게 알림을 보내는 메소드
     private void sendMessage(Notification notification, List<Member> members){
         List<String> tokens = members.stream().map(Member::getFcmToken).filter(Objects::nonNull).toList();
-
+        members.stream().forEach(member -> log.info(member.getNickname()));
         try{
             firebaseMessaging.sendEachForMulticast(MulticastMessage.builder()
                     .addAllTokens(tokens)
@@ -42,6 +44,7 @@ public class NotificationServiceImpl implements NotificationService {
                             .setTitle(notification.getTitle())
                             .setBody(notification.getMessage())
                             .build())
+                    .putData("notificationId", notification.getId().toString())
                     .build());
 
             membersNotificationRepository.saveAll(members.stream().map(member -> MembersNotification.builder()
@@ -80,10 +83,41 @@ public class NotificationServiceImpl implements NotificationService {
         sendMessage(notificationSaved, members);
     }
 
+    /**
+     * 로그인된 유저가 받은 알람 조회
+     * @return List<NotificationDto.Response>
+     */
     @Override
     public List<NotificationDto.Response> getNotifications() {
         Long id = memberService.getLoginUserId();
-        List<Notification> notifications = notificationRepository.findByMemberId(id);
-        return notifications.stream().map(NotificationDto.Response::of).toList();
+        List<Optional[]> notifications = notificationRepository.findByMemberId(id);
+
+        List<NotificationDto.Response> responses = notifications.stream().map(notification -> {
+            Notification noti = (Notification) notification[0].get();
+            MembersNotification membersNotification = (MembersNotification) notification[1].get();
+            return NotificationDto.Response.builder()
+                    .id(noti.getId())
+                    .title(noti.getTitle())
+                    .message(noti.getMessage())
+                    .isRead(membersNotification.isRead())
+                    .notificationType(noti.getNotificationType())
+                    .build();
+        }).toList();
+
+        return responses;
+    }
+
+    /**
+     * 로그인된 유저가 받은 알람 삭제
+     * @param notificationId
+     */
+    @Override
+    public void deleteNotification(Long notificationId) {
+        Long memberId = memberService.getLoginUserId();
+
+        Optional<MembersNotification> membersNotification = membersNotificationRepository.findByNotificationIdAndMemberId(notificationId, memberId);
+        if(membersNotification.isEmpty()) throw new NoSuchElementException("해당하는 알림이 없거나 이미 삭제된 알림입니다.");
+
+        membersNotificationRepository.delete(membersNotification.get());
     }
 }
