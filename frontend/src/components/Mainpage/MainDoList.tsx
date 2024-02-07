@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
 import styled from '@emotion/native';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
-import {ScrollView, ImageSourcePropType} from 'react-native';
+import {ScrollView, ImageSourcePropType, } from 'react-native';
+import { NavigationProp } from '@react-navigation/native';
 import {Global} from '@emotion/react';
 
 const DoListComponent = styled(GlobalContainer)`
   padding: 20px;
+  height: initial;
 `;
 
 const DoListHeader = styled(GlobalContainer)`
@@ -13,6 +15,7 @@ const DoListHeader = styled(GlobalContainer)`
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
+  height: initial;
 `;
 
 const DoListTitle = styled(GlobalText)`
@@ -36,6 +39,7 @@ const CategoryComponent = styled(GlobalContainer)`
   width: 100%;
   justify-content: space-between;
   padding: 0 20px;
+  height: initial;
 `;
 
 const Category = styled(GlobalButton)<{selected: boolean}>`
@@ -111,12 +115,16 @@ interface DoListCard {
   apart: string;
 }
 
+interface Props {
+  navigation: NavigationProp<any>;
+}
+
 const dogImage: ImageSourcePropType = require('images/dog.png');
 const turtleImage: ImageSourcePropType = require('images/turtle.png');
 const trashImage: ImageSourcePropType = require('images/trash3.png');
 const workImage: ImageSourcePropType = require('images/convstore.png');
 
-const MainDoList = ({navigation}: any) => {
+const MainDoList = ({navigation}: Props) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   const onSelectCategory = (category: string) => {
@@ -143,7 +151,7 @@ const MainDoList = ({navigation}: any) => {
       <DoListComponent>
         <DoListHeader>
           <DoListTitle> 이웃들에게 맡겨볼까요? </DoListTitle>
-          <DoListSee onPress={() => {}}>
+          <DoListSee onPress={() => navigation.navigate('DoItList')}>
             <DoListSeeText> 모두 보기 </DoListSeeText>
           </DoListSee>
         </DoListHeader>

@@ -1,9 +1,15 @@
 import React, {useState} from 'react';
-import {View} from 'react-native';
+import {View, ActivityIndicator} from 'react-native';
 import {useRecoilValue} from 'recoil';
 import styled, {css} from '@emotion/native';
 import {GlobalButton, GlobalContainer, GlobalText} from '@/GlobalStyles';
-import {userDataState} from '../recoil/atoms';
+import {userDataState} from '@/recoil/atoms';
+import {WebView} from 'react-native-webview';
+import Map from '@screens/Map/htmlCode/Map';
+import Geolocation from 'react-native-geolocation-service';
+import {useEffect} from 'react';
+import {Platform, PermissionsAndroid} from 'react-native';
+import Config from 'react-native-config';
 const LocationHeader = styled.View`
   padding-right: 20px;
   padding-left: 20px;
@@ -34,13 +40,19 @@ const CategoryText = styled(GlobalText)<{selected: boolean}>`
 `;
 
 const MapContainer = styled.View`
-  background-color: black;
   height: 100%;
 `;
+interface ILocation {
+  latitude: number;
+  longitude: number;
+}
 
 const Location = ({navigation}: any) => {
+  const [location, setLocation] = useState<ILocation | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const key = Config.KAKAO_JAVASCRIPT_KEY;
   const userData = useRecoilValue(userDataState);
+
   const toggleCategory = (category: string) => {
     const index = selectedCategories.indexOf(category);
     if (index === -1) {
@@ -53,6 +65,33 @@ const Location = ({navigation}: any) => {
   const isCategorySelected = (category: string) => {
     return selectedCategories.includes(category);
   };
+  // 위치 동의 얻기
+  async function requestPermissions() {
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+    }
+  }
+  //현재 위치 받아오기
+  useEffect(() => {
+    const getLocation = async () => {
+      await requestPermissions();
+      Geolocation.getCurrentPosition(
+        position => {
+          console.log(position.coords.latitude, position.coords.longitude);
+          const {latitude, longitude} = position.coords;
+          setLocation({
+            latitude,
+            longitude,
+          });
+        },
+        error => {
+          console.log(error.code, error.message);
+        },
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
+      );
+    };
+    getLocation();
+  }, []);
 
   return (
     <GlobalContainer
@@ -60,8 +99,7 @@ const Location = ({navigation}: any) => {
         height: 100%;
       `}>
       <LocationHeader>
-        <LocationHeadText>효자촌 그린타운</LocationHeadText>
-        {/* <LocationHeadText>{userData.memberInfo.아파트정보}</LocationHeadText> */}
+        <LocationHeadText>{userData.aptName}</LocationHeadText>
         <View
           style={css`
             flex-direction: row;
@@ -80,7 +118,24 @@ const Location = ({navigation}: any) => {
           </Category>
         </View>
       </LocationHeader>
-      <MapContainer></MapContainer>
+      <MapContainer>
+        {location ? (
+          <WebView
+            originWhitelist={['*']}
+            source={{html: Map(key, location)}}
+            javaScriptEnabled={true}
+            injectedJavaScript={''}
+          />
+        ) : (
+          <ActivityIndicator
+            style={css`
+              margin: auto;
+            `}
+            size="large"
+            color="#00D282"
+          />
+        )}
+      </MapContainer>
     </GlobalContainer>
   );
 };
