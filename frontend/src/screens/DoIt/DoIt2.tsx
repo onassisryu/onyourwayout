@@ -231,6 +231,7 @@ const DoIt2 = ({navigation}: Props) => {
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
+        //
       });
   }
 
