@@ -68,7 +68,7 @@ public class NotificationServiceImpl implements NotificationService {
         System.out.println(ho);
         if(ho == null) throw new NoSuchElementException("해당하는 호가 없습니다.");
 
-        List<Member> members = memberRepository.findByDongAndCategory(ho.getDong().getId(), deal.getDealType()); // deal 요청자의 동에 속한 멤버들 가져오기
+        List<Member> members = memberRepository.findByDongAndCategory(ho.getDong().getId(), deal.getDealType(), deal.getRequestId()); // deal 요청자의 동에 속한 멤버들 가져오기
         if(members.isEmpty()) throw new NoSuchElementException("해당하는 멤버가 없습니다.");
 
         members = members.stream().filter(member -> !Objects.equals(member.getId(), deal.getRequestId())).toList(); // deal 요청자는 제외
