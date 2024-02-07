@@ -130,7 +130,6 @@ public class MemberServiceImpl implements MemberService {
                 ho.get().builder().member(members).build();
                 member.setHo(ho.get());
                 response=MemberDto.Response.of(member,ho.get());
-                member.setHo(ho.get());
             }
             // 등록되지 않은 호인 경우
             else{
