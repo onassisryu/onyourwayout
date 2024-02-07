@@ -22,4 +22,7 @@ export type RootStackParamList = {
     type: string;
     icon: 'puppy' | 'puppyOff' | 'bags' | 'bagsOff' | 'building' | 'buildingOff' | 'shopping' | 'shoppingOff';
   };
+  ChatDetail: {
+    roomId: long;
+  };
 };

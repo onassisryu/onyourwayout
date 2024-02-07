@@ -30,7 +30,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 import {Screens} from '@screens/Screens';
 import Main from '@screens/Main';
 import Location from '@screens/Location';
-import Chat from '@screens/Chat';
+import ChatMain from '@screens/Chating/ChatMain';
+import ChatDetail from '@screens/Chating/ChatDetail';
 import Apart from '@screens/Apart';
 import My from '@screens/My';
 import MySetting from '@screens/MySetting';
@@ -109,7 +110,7 @@ const App = () => {
         <Tab.Screen name="홈" component={Main} />
         <Tab.Screen name="위치" component={Location} />
         <Tab.Screen name="아파트" component={Apart} />
-        <Tab.Screen name="채팅" component={Chat} />
+        <Tab.Screen name="채팅" component={ChatMain} />
         <Tab.Screen name="내정보" component={My} />
       </Tab.Navigator>
     );
@@ -135,6 +136,7 @@ const App = () => {
             <Stack.Screen name="Signup5" component={Signup5} />
             <Stack.Screen name="Signup5a" component={Signup5a} />
             <Stack.Screen name="Signup6" component={Signup6} />
+            <Stack.Screen name="ChatDetail" component={ChatDetail} />
             <Stack.Screen name="MySetting" component={MySetting} />
             {Screens.map(screen => (
               <Stack.Screen key={screen.name} name={screen.name} component={screen.component} />
