@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -18,9 +19,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.text.html.Option;
 import javax.swing.text.html.Option;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.sql.Timestamp;
 import java.util.*;
@@ -38,6 +41,8 @@ public class MemberServiceImpl implements MemberService {
     private final NotiDealCategoryRepository notiDealCategoryRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final S3UploadService s3UploadService;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -71,7 +76,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public MemberDto.Response signUp(MemberDto.Request memberDto) {
+    public MemberDto.Response signUp(MemberDto.Request memberDto, MultipartFile certiImage) {
         if (memberRepository.existsByUsername(memberDto.getUsername())) {
             throw new IllegalArgumentException("이미 사용 중인 사용자 이름입니다.");
         }
@@ -84,9 +89,8 @@ public class MemberServiceImpl implements MemberService {
 
         // 먼저 회원 정보를 저장
         MemberDto.SignUp signup=new MemberDto.SignUp();
-        Member member=null;
 
-//        Long memberId=member.getId();                   // 저장된 회원 고유 id
+        Member member=null;
 
         // 반환할 값
         MemberDto.Response response=null;
@@ -106,7 +110,7 @@ public class MemberServiceImpl implements MemberService {
                 List<Member> members=ho.get().getMember();
                 members.add(member);
                 ho.get().builder().member(members).build();
-
+                member.setHo(ho.get());
                 response=MemberDto.Response.of(member,ho.get());
             }
         }
@@ -124,7 +128,7 @@ public class MemberServiceImpl implements MemberService {
                 List<Member> members=ho.get().getMember();
                 members.add(member);
                 ho.get().builder().member(members).build();
-
+                member.setHo(ho.get());
                 response=MemberDto.Response.of(member,ho.get());
                 member.setHo(ho.get());
             }
@@ -144,6 +148,20 @@ public class MemberServiceImpl implements MemberService {
                 response= MemberDto.Response.of(member, newHo);
             }
         }
+
+        // 아파트 명세서 등록
+        String apartCertificateImgUrl="";
+        try{
+            if (certiImage!=null){
+                apartCertificateImgUrl=s3UploadService.upload(certiImage,"CertiImage",member.getId());
+            }
+            member.setCertificationImg(apartCertificateImgUrl);
+            response=response.toBuilder().certificationImg(apartCertificateImgUrl).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("아파트 명세서 등록 중 오류 발생", e);
+        }
+
         return response;
     }
 

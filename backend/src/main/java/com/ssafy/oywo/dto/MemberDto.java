@@ -30,7 +30,7 @@ public class MemberDto {
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         private java.sql.Date birthDate;                 // 생년월일
         private String phoneNumber;            // 전화번호
-        private String apartCertificateImg;  // 아파트 증명 이미지
+
 
         private Long dongId;                // 동 id
         private String hoName;              // 호 이름
@@ -44,7 +44,6 @@ public class MemberDto {
                     .phoneNumber(phoneNumber)
                     .isCertified(false)
                     .score(50)              // 기본값 50
-                    .certificationImg(apartCertificateImg)
                     .build();
 
             return member;
@@ -161,7 +160,6 @@ public class MemberDto {
         private Date birthDate;                 // 생년월일
 
         private String phoneNumber;            // 전화번호
-        private String apartCertificateImg;  // 아파트 증명 이미지
         private List<String> roles=new ArrayList<>();
 
         public Member toEntity(MemberDto.Request req,List<String> roles,boolean isCertified){
@@ -173,7 +171,6 @@ public class MemberDto {
                     .phoneNumber(req.getPhoneNumber())
                     .isCertified(isCertified)
                     .score(50)              // 기본값 50
-                    .certificationImg(req.getApartCertificateImg())
                     .roles(roles)
                     .build();
 
