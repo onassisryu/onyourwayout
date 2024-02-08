@@ -16,7 +16,7 @@ export const refreshToken = async () => {
 // 현재 저장된 AccessToken 가져오기
 export const getAccessToken = async (): Promise<string | null> => {
   const token = await getStorage('token');
-  return token;
+  return 'Bearer ' + token;
 };
 
 export const logoutUser = async () => {

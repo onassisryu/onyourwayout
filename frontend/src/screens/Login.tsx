@@ -64,6 +64,12 @@ const Login = ({navigation}: any) => {
   const handleLogin = () => {
     console.log('자동로그인');
     setIsLoggedIn(true);
+    getStorage('user').then(user => {
+      setUserData(user);
+      if (user) {
+        navigation.navigate('Bottom', {screen: 'Main'});
+      }
+    });
   };
 
   //로그인 상태 체크
@@ -74,12 +80,6 @@ const Login = ({navigation}: any) => {
         getStorage('autoLogin').then(auto => {
           if (auto) {
             handleLogin();
-            getStorage('user').then(auto => {
-              setUserData(auto);
-              if (auto) {
-                navigation.navigate('Bottom', {screen: 'Main'});
-              }
-            });
           }
         });
       }
