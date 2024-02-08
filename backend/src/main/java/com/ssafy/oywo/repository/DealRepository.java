@@ -195,4 +195,12 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     // 특정 사용자끼리 거래 수
     Long countDealsByRequestIdAndAcceptId(Long requestId, Long acceptId);
 
+    //해당 동에 있는 사용자들의 거래 조회(블락된 사용자, 자신 제외)
+    @Query("SELECT d FROM Deal d " +
+            "JOIN Member m ON d.requestId = m.id " +
+            "WHERE m in (Select ho.member from Ho ho Join Dong dong on ho.dong = dong where dong.id = :dongId) " +
+            "AND m not in (Select bm.blockMemberId from BlockMembers bm where bm.memberId.id = :memberId)" +
+            "AND m.id != :memberId")
+    List<Deal> findByDongIdAndMemberId(Long dongId, Long memberId);
+
 }
