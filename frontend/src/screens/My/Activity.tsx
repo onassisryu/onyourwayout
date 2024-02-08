@@ -35,7 +35,6 @@ const data = {
 
 const Activity = () => {
   const userData = useRecoilValue(userDataState); // userDataState 상태 가져오기
-  const userId = userData.id;
 
   useEffect(() => {
     axiosAuth

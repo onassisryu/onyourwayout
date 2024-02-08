@@ -36,7 +36,6 @@ const MainButtonContainer = styled(GlobalContainer)`
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  background-color: pink;
 `;
 const TypeButton = styled(GlobalButton)<{selected: boolean}>`
   width: 151px;
@@ -58,6 +57,13 @@ const TypeButtonText = styled(GlobalText)<{selected: boolean}>`
   position: absolute;
   bottom: 20px;
   color: ${({selected}) => (selected ? '#27D894' : '#B2B2B2')};
+`;
+const NextButton2 = styled(DefaultButton)`
+  width: 82%;
+  font-size: 18px;
+  height: 50px;
+  margin-top: 20px;
+  padding: 10px;
 `;
 type ButtonState = {
   title: string;
@@ -147,13 +153,7 @@ const GoOut1 = ({navigation}: Props) => {
           </TypeButton>
         </GlobalComponent>
       </MainButtonContainer>
-      <DefaultButton
-        title="다음"
-        color="primary"
-        size="lg"
-        onPress={() => {
-          navigation.navigate('홈');
-        }}></DefaultButton>
+      <NextButton2 title="다음" color="primary" size="lg"></NextButton2>
     </GlobalContainer>
   );
 };

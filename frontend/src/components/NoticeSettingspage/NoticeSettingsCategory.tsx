@@ -10,6 +10,7 @@ import {GlobalText, GlobalContainer, GlobalButton} from '@/GlobalStyles';
 const SettingsComponent = styled(GlobalContainer)`
   justify-content: initial;
   align-items: initial;
+  height: initial;
   margin: 0 20px;
   margin-top: 20px;
 `;
@@ -17,11 +18,12 @@ const SettingsComponent = styled(GlobalContainer)`
 const CategorySettingsTitle = styled(GlobalContainer)`
   flex-direction: row;
   justify-content: space-between;
+  height: initial;
 `;
 
 const SettingsTitle = styled(GlobalText)`
-  font-size: ${theme.fontSize.subtitle};
-  color: ${theme.color.black};
+  font-size: ${props => props.theme.fontSize.subtitle};
+  color: ${props => props.theme.color.black};
   font-weight: bold;
   margin-bottom: 15px;
 `;
@@ -29,12 +31,12 @@ const SettingsTitle = styled(GlobalText)`
 const AllSelectionButton = styled(GlobalButton)`
   background-color: white;
   margin-bottom: 5px;
-  font-size: ${theme.fontSize.medium};
+  font-size: ${props => props.theme.fontSize.medium};
 `;
 
 const AllSelection = styled(GlobalText)`
-  font-size: ${theme.fontSize.short};
-  color: ${theme.color.gray};
+  font-size: ${props => props.theme.fontSize.short};
+  color: ${props => props.theme.color.gray};
   font-weight: 900;
 `;
 
@@ -43,6 +45,7 @@ const CategoryComponent = styled(GlobalContainer)`
   flex-wrap: wrap;
   justify-content: space-between;
   margin-bottom: 15px;
+  height: initial;
 `;
 
 const Category = styled(GlobalButton)<{selected: boolean}>`
@@ -55,16 +58,11 @@ const Category = styled(GlobalButton)<{selected: boolean}>`
 `;
 
 const CategoryText = styled(GlobalText)<{selected: boolean}>`
-  font-size: ${theme.fontSize.medium};
+  font-size: ${props => props.theme.fontSize.medium};
   font-weight: bold;
   color: ${({selected}) => (selected ? `${theme.color.primary}` : `${theme.color.gray}`)};
 `;
 
-const DistinctLine = styled.View`
-  width: 100%;
-  border: 1px solid #b2b2b2;
-  margin-bottom: 15px;
-`;
 
 const NoticeSettingsCategory = () => {
   const categories = ['반려동물 산책', '분리수거', '심부름', '기타'];
