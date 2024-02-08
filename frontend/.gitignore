@@ -41,7 +41,7 @@ DerivedData
 *.ipa
 
 *.xcuserstate
-
+.env
  
 
 # Android/IntelliJ
@@ -58,7 +58,7 @@ local.properties
 
 *.iml
 
- 
+.env
 
 # node.js
 

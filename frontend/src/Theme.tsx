@@ -1,20 +1,29 @@
 import {Theme} from '@emotion/react';
 
 const color = {
+  white: '#FFFFFF',
   black: '#262626',
   primary: '#00D282',
+  lightgray: '#F9F9F9',
+  gray0: '#E9E9E9',
   gray100: '#DCDCDC',
+  gray200: '#C4C4C4',
+  gray300: '#ABABAB',
+  gray: '#B2B2B2',
 };
 const font = {
-  primary: 'Cochin',
+  primary: 'PretendardVariable',
+  clover: 'YClover TTF-Bold',
 };
 
 const fontSize = {
+  short: '12px',
   small: '14px',
   medium: '16px',
   title: '42px',
   subtitle: '20px',
 };
+
 const border = {
   primary: '#00D282',
 };

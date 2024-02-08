@@ -1,4 +1,4 @@
-package com.oywo
+package com.ssafy.oywo
 
 import android.app.Application
 import com.facebook.react.PackageList
