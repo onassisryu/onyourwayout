@@ -127,15 +127,15 @@ public class DealServiceImpl implements DealService{
         List<Deal> memberDeals;
         if (requestOrAccept.equals("request")) {
             if (memberId != null) {
-                memberDeals = dealRepository.findDealsByRequestId(memberId);
+                memberDeals = dealRepository.findDealsByRequestIdOrderByCreatedAtDesc(memberId);
             } else {
-                memberDeals = dealRepository.findDealsByRequestId(loginUserId);
+                memberDeals = dealRepository.findDealsByRequestIdOrderByCreatedAtDesc(loginUserId);
             }
         } else if (requestOrAccept.equals("accept")) {
             if (memberId != null) {
-                memberDeals = dealRepository.findDealsByAcceptId(memberId);
+                memberDeals = dealRepository.findDealsByAcceptIdOrderByCreatedAtDesc(memberId);
             } else {
-                memberDeals = dealRepository.findDealsByAcceptId(loginUserId);
+                memberDeals = dealRepository.findDealsByAcceptIdOrderByCreatedAtDesc(loginUserId);
             }
         } else {
             throw new IllegalArgumentException("type={request or accept}를 파라미터를 필수로 가져야함");
