@@ -6,9 +6,11 @@ import {GlobalButton, GlobalContainer, GlobalText} from '@/GlobalStyles';
 import {userDataState} from '@/recoil/atoms';
 import {WebView} from 'react-native-webview';
 import Map from '@screens/Map/htmlCode/Map';
+import ApartMarker from '@screens/Map/htmlCode/ApartMarker';
 import Geolocation from 'react-native-geolocation-service';
 import {useEffect} from 'react';
 import {Platform, PermissionsAndroid} from 'react-native';
+import {Button} from 'react-native';
 import Config from 'react-native-config';
 const LocationHeader = styled.View`
   padding-right: 20px;
@@ -50,7 +52,53 @@ interface ILocation {
 const Location = ({navigation}: any) => {
   const [location, setLocation] = useState<ILocation | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const key = Config.KAKAO_JAVASCRIPT_KEY;
+  const [test, setTest] = useState<boolean>(false);
+  // const key = Config.KAKAO_JAVASCRIPT_KEY;
+  const [markers, setMarkers] = useState<any[]>([
+    {
+      dongNo: '545217',
+      bildName: '201',
+      x: 127.0448914000001,
+      y: 37.49904909908856,
+    },
+    {
+      dongNo: '227627',
+      bildName: '202',
+      x: 127.04522710000013,
+      y: 37.49906849908855,
+    },
+    {
+      dongNo: '1000394',
+      bildName: '203',
+      x: 127.04593210000012,
+      y: 37.49932509908855,
+    },
+    {
+      dongNo: '956787',
+      bildName: '204',
+      x: 127.04647060000012,
+      y: 37.499480999088554,
+    },
+    {
+      dongNo: '1230262',
+      bildName: '205',
+      x: 127.0474082,
+      y: 37.4998516,
+    },
+    {
+      dongNo: '1230306',
+      bildName: '206',
+      x: 127.0479293,
+      y: 37.5000126,
+    },
+    {
+      dongNo: '547109',
+      bildName: '207',
+      x: 127.0484379,
+      y: 37.5001584,
+    },
+  ]);
+  const key = '4d3c782ec2cd76adf03897821a745bc2';
   const userData = useRecoilValue(userDataState);
 
   const toggleCategory = (category: string) => {
@@ -116,16 +164,31 @@ const Location = ({navigation}: any) => {
           <Category selected={isCategorySelected('기타')} onPress={() => toggleCategory('기타')}>
             <CategoryText selected={isCategorySelected('기타')}>기타</CategoryText>
           </Category>
+          <Button
+            title="지도 마커테스트"
+            onPress={() => {
+              console.log('지도 마커테스트');
+              setTest(true);
+            }}></Button>
         </View>
       </LocationHeader>
-      <MapContainer>
+      <MapContainer style={{backgroundColor: 'black'}}>
         {location ? (
-          <WebView
-            originWhitelist={['*']}
-            source={{html: Map(key, location)}}
-            javaScriptEnabled={true}
-            injectedJavaScript={''}
-          />
+          test ? (
+            <WebView
+              originWhitelist={['*']}
+              source={{html: ApartMarker(key, markers)}}
+              javaScriptEnabled={true}
+              injectedJavaScript={''}
+            />
+          ) : (
+            <WebView
+              originWhitelist={['*']}
+              source={{html: Map(key, location)}}
+              javaScriptEnabled={true}
+              injectedJavaScript={''}
+            />
+          )
         ) : (
           <ActivityIndicator
             style={css`

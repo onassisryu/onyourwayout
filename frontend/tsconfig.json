@@ -2,7 +2,7 @@
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "types": ["@emotion/react/types/css-prop"],
+    "typeRoots": ["./node_modules/@types", "./types"],
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
@@ -42,12 +42,18 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
     "jsx": "react-native",
-    "lib": ["es6"],
-    "module": "node16",
-    "moduleResolution": "node16",
+    "lib": ["dom", "es2015"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "sourceMap": true,
+    "outDir": "esm6",
+    "declaration": true,
     "noEmit": true,
     "strict": true,
-    "target": "esnext"
+    "target": "es2020",
+    "types": ["node"],
+    "noImplicitAny": true
   },
-  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js"]
+
+  "exclude": ["./node_modules", "babel.config.js", "metro.config.js", "jest.config.tsx"]
 }
