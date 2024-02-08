@@ -43,7 +43,8 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " AND d.expireAt > CURRENT_TIMESTAMP" +
             " AND d.requestId NOT IN " +
             "(SELECT bm.blockMemberId.id FROM BlockMembers bm " +
-            " WHERE bm.memberId.id = :memberId)")
+            " WHERE bm.memberId.id = :memberId) " +
+            " ORDER BY d.createdAt DESC ")
     List<Deal> findDealsByApartmentId(@Param("apartmentId") Long apartmentId,
                                       @Param("dealStatus") Deal.DealStatus dealStatus,
                                       @Param("memberId") Long memberId);
@@ -62,7 +63,8 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " AND d.expireAt > CURRENT_TIMESTAMP" +
             " AND d.requestId NOT IN " +
             "(SELECT bm.blockMemberId.id FROM BlockMembers bm " +
-            " WHERE bm.memberId.id = :memberId)")
+            " WHERE bm.memberId.id = :memberId)" +
+            " ORDER BY d.createdAt DESC ")
     List<Deal> findDealsByApartmentIdAndDealType(
             @Param("apartmentId") Long apartmentId,
             @Param("dealType") @Nullable DealType dealType,
@@ -82,7 +84,8 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " AND d.expireAt > CURRENT_TIMESTAMP" +
             " AND d.requestId NOT IN " +
             "(SELECT bm.blockMemberId.id FROM BlockMembers bm " +
-            " WHERE bm.memberId.id = :memberId)")
+            " WHERE bm.memberId.id = :memberId)" +
+            " ORDER BY d.createdAt DESC ")
     List<Deal> findDealsByDongIdAndDealTypeAndDealStatus(
             @Param("dongId") Long dongId,
             @Param("dealType") @Nullable List<DealType> dealType,
@@ -104,7 +107,8 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " AND d.expireAt > current_timestamp " +
             " AND d.requestId NOT IN " +
             "(SELECT bm.blockMemberId.id FROM BlockMembers bm " +
-            " WHERE bm.memberId.id = :memberId)")
+            " WHERE bm.memberId.id = :memberId)" +
+            " ORDER BY d.createdAt DESC ")
     List<Deal> findDealsByDongIdAndDealType(
             @Param("apartmentId") Long apartmentId,
             @Param("dongId") @Nullable Long dongId,
@@ -126,7 +130,8 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             " AND d.expireAt > current_timestamp" +
             " AND d.requestId NOT IN " +
             "(SELECT bm.blockMemberId.id FROM BlockMembers bm " +
-            " WHERE bm.memberId.id = :memberId)")
+            " WHERE bm.memberId.id = :memberId)" +
+            " ORDER BY d.createdAt DESC ")
     Long countDealsByDongIdAndDealType(
             @Param("apartmentId") Long apartmentId,
             @Param("dongId") @Nullable Long dongId,
@@ -136,10 +141,10 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
 
 
     // member_id로 사용자별 요청한(requestId) 전체 거래 들고오기
-    List<Deal> findDealsByRequestId(@Param("memberId") Long memberId);
+    List<Deal> findDealsByRequestIdOrderByCreatedAtDesc(@Param("memberId") Long memberId);
 
     // member_id로 사용자별 수행한(acceptId) 전체 거래 들고오기
-    List<Deal> findDealsByAcceptId(Long memberId);
+    List<Deal> findDealsByAcceptIdOrderByCreatedAtDesc(Long memberId);
 
     // reuqest_id와 accept_id로 현재 거래 들고오기(최신 1개)
     Optional<Deal> findTopByRequestIdAndAcceptIdAndDealStatusOrderByModifiedAtDesc(
@@ -183,7 +188,7 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             @Param("dealStatus") Deal.DealStatus dealStatus,
             @Param("memberId") Long memberId);
 
-    List<Deal> findTop3DealsByRequestIdOrAcceptIdAndDealStatusOrderByCreatedAtAsc(
+    List<Deal> findTop3DealsByRequestIdOrAcceptIdAndDealStatusOrderByCreatedAtDesc(
             Long requestId,
             Long acceptId,
             Deal.DealStatus dealStatus
@@ -200,7 +205,8 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             "JOIN Member m ON d.requestId = m.id " +
             "WHERE m in (Select ho.member from Ho ho Join Dong dong on ho.dong = dong where dong.id = :dongId) " +
             "AND m not in (Select bm.blockMemberId from BlockMembers bm where bm.memberId.id = :memberId)" +
-            "AND m.id != :memberId")
+            "AND m.id != :memberId " +
+            "ORDER BY d.createdAt DESC")
     List<Deal> findByDongIdAndMemberId(Long dongId, Long memberId);
 
 }

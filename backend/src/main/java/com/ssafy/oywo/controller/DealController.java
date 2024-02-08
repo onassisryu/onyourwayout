@@ -38,6 +38,20 @@ public class DealController {
 
 
     /**
+     * 거래유형별 현재 거래에 대한 동 아이디 리스트
+     * @param dealType 거래 유형
+     * @return 동 아이디 리스트
+     */
+    @GetMapping("/dong-list")
+    public List<Long> getDongIdsByDealType (
+            @RequestParam(name = "dealType", required = false) List<DealType> dealType) {
+
+        return dealService.getDongIdsByDealType(dealType);
+    }
+
+
+
+    /**
      * 동별 거래 전체 조회 + 거래 유형 필터
      * @param dongId 동 아이디
      * @param dealType 거래 유형
