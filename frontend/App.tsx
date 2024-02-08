@@ -34,21 +34,9 @@ import ChatMain from '@screens/Chating/ChatMain';
 import ChatDetail from '@screens/Chating/ChatDetail';
 import Apart from '@screens/Apart';
 import My from '@screens/My';
-import MySetting from '@screens/MySetting';
-import Login from '@screens/Login';
-import Notice from '@screens/Notice';
-import NoticeSettings from '@screens/NoticeSettings';
-import DoIt1 from '@/screens/DoIt/DoIt1';
-import DoIt2 from '@/screens/DoIt/DoIt2';
-import Signup0 from '@/screens/Signup/Signup0';
-import Signup1 from '@/screens/Signup/Signup1';
-import Signup2 from '@/screens/Signup/Signup2';
-import Signup3 from '@/screens/Signup/Signup3';
-import Signup4 from '@/screens/Signup/Signup4';
-import Signup5 from '@/screens/Signup/Signup5';
-import Signup5a from '@/screens/Signup/Signup5a';
-import Signup6 from '@/screens/Signup/Signup6';
-import GoOut1 from '@/screens/GoOut/GoOut1';
+import {NoticeTab, sendNotification} from '@/components/Noticepage/NoticeTab';
+import DoItList from '@/screens/DoItList';
+
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -70,6 +58,13 @@ const App = () => {
     // 앱이 켜져있을때
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log('[Remote Message] ', JSON.stringify(remoteMessage));
+      // 메시지 오면 띄우는 코드
+      const notice = {
+        id: remoteMessage.messageId,
+        title: remoteMessage.notification?.title,
+        content: remoteMessage.notification?.body,
+      };
+      sendNotification(notice);
     });
     return unsubscribe;
   }, []);
@@ -109,7 +104,7 @@ const App = () => {
         })}>
         <Tab.Screen name="홈" component={Main} />
         <Tab.Screen name="위치" component={Location} />
-        <Tab.Screen name="아파트" component={Apart} />
+        <Tab.Screen name="아파트" component={DoItList} />
         <Tab.Screen name="채팅" component={ChatMain} />
         <Tab.Screen name="내정보" component={My} />
       </Tab.Navigator>
@@ -122,22 +117,7 @@ const App = () => {
           <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
           <Stack.Navigator initialRouteName="Login" screenOptions={{headerShown: false}}>
             <Stack.Screen name="Bottom" component={BottomTab} />
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="Notice" component={Notice} />
-            <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
-            <Stack.Screen name="GoOut1" component={GoOut1} />
-            <Stack.Screen name="DoIt1" component={DoIt1} />
-            <Stack.Screen name="DoIt2" component={DoIt2} />
-            <Stack.Screen name="Signup0" component={Signup0} />
-            <Stack.Screen name="Signup1" component={Signup1} />
-            <Stack.Screen name="Signup2" component={Signup2} />
-            <Stack.Screen name="Signup3" component={Signup3} />
-            <Stack.Screen name="Signup4" component={Signup4} />
-            <Stack.Screen name="Signup5" component={Signup5} />
-            <Stack.Screen name="Signup5a" component={Signup5a} />
-            <Stack.Screen name="Signup6" component={Signup6} />
             <Stack.Screen name="ChatDetail" component={ChatDetail} />
-            <Stack.Screen name="MySetting" component={MySetting} />
             {Screens.map(screen => (
               <Stack.Screen key={screen.name} name={screen.name} component={screen.component} />
             ))}
