@@ -3,6 +3,8 @@ package com.ssafy.oywo.repository;
 
 import com.ssafy.oywo.dto.DongDto;
 import com.ssafy.oywo.entity.Apartment;
+import com.ssafy.oywo.entity.Deal;
+import com.ssafy.oywo.entity.DealType;
 import com.ssafy.oywo.entity.Dong;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
