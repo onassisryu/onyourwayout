@@ -39,3 +39,4 @@ server:
     include-exception: false
   tomcat:
     connection-timeout: 1800000
+    keep-alive-timeout: 3000000
