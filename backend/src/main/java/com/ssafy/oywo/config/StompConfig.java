@@ -21,7 +21,7 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // web socket 통신 url : ws://~~/ws/chat
-        registry.addEndpoint("/ws/chat").setAllowedOriginPatterns("*").withSockJS();
+        registry.addEndpoint("/ws/chat").setAllowedOriginPatterns("*");
     }
 
     // 보낼 때와 받을 때 prefix 지정
