@@ -27,6 +27,8 @@ public interface MemberService {
     public MemberDto.Response getMemberInfo(String username, String password);
     public MemberDto.Response getMemberInfo(Long id);
 
+    public MemberDto.Response getMemberInfo(String username);
+
     public Long getHoIdByMemberId(Long memberId);
 
     // member id로 Fcm token을 저장
