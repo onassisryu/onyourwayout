@@ -78,4 +78,11 @@ public class NotificationController {
         return ResponseEntity.ok("알림 전체 읽기에 성공했습니다.");
     }
 
+    @Operation(summary = "근처 동에 있는 해줘요잉 확인", description = "근처에 있는 동에 해줘요잉 요청이 있는지 확인합니다")
+    @GetMapping("/near/{dongId}")
+    public void checkNearDong(@PathVariable Long dongId) {
+
+        notificationService.checkNearDong(dongId);
+    }
+
 }

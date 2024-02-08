@@ -22,4 +22,6 @@ public interface NotificationService {
     public void readNotification(Long notificationId);
 
     public void readNotificationAll();
+
+    public void checkNearDong(Long dongId);
 }
