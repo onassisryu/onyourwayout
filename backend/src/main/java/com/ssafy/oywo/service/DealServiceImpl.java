@@ -81,6 +81,30 @@ public class DealServiceImpl implements DealService{
                 .toList();
     }
 
+
+    // 거래유형별 현재 거래에 대한 동 아이디 리스트
+    @Override
+    public List<Long> getDongIdsByDealType(List<DealType> dealType) {
+
+        // 로그인 사용자 id
+        Long loginUserId = memberService.getLoginUserId();
+        // 내 아파트 id 구하기
+        Long myAptId = dealRepository.findHoAptIdsByMemberId(loginUserId);
+        log.info("myAptId : {}", myAptId);
+
+        Set<Long> dongIdSet = new HashSet<>();
+        List<Deal> dealsByDong = dealRepository.findDealsByDongIdAndDealType(
+                myAptId, null, dealType, Deal.DealStatus.OPEN, loginUserId);
+        for (Deal deal : dealsByDong) {
+            Member requestMember = memberRepository.findById(deal.getRequestId()).orElseThrow(() -> new IllegalArgumentException("없는 requestId 사용자 입니다."));
+            dongIdSet.add(requestMember.getHo().getDong().getId());
+        }
+
+        return new ArrayList<>(dongIdSet);
+    }
+
+
+
     //동별 거래 전체 조회 + 거래 유형 필터
     @Override
     @Transactional(readOnly = true)

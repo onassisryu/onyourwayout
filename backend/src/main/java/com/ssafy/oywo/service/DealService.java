@@ -12,6 +12,8 @@ public interface DealService {
 
     // 거래 전체 조회 + 거래유형 필터(QueryString)
     List<DealDto.Response> getDeals(DealType dealType);
+    // 거래유형별 현재 거래에 대한 동 아이디 리스트
+    List<Long> getDongIdsByDealType(List<DealType> dealType);
     // 동 별 거래 전체 조회 + 거래 유형 필터
     List<DealDto.Response> getDealsByDong(Long dongId, List<DealType> dealType);
     // 동 별 거래 건수 조회
@@ -42,4 +44,5 @@ public interface DealService {
     List<DealDto.Response> recommendDeal(List<DealType> dealType);
     // 나가요잉 최종확인(수락: 요청자)
     DealDto.Response checkOutRecommendDeal(Long id, Long acceptId);
+
 }
