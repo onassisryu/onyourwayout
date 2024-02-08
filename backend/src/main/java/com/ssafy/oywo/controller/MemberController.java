@@ -8,14 +8,17 @@ import com.ssafy.oywo.entity.Apartment;
 import com.ssafy.oywo.entity.Dong;
 import com.ssafy.oywo.entity.Ho;
 import com.ssafy.oywo.entity.Member;
+import com.ssafy.oywo.jwt.JwtTokenProvider;
 import com.ssafy.oywo.service.DongService;
 import com.ssafy.oywo.service.HoService;
 import com.ssafy.oywo.service.MemberService;
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
@@ -35,6 +38,7 @@ public class MemberController {
     private final MemberService memberSerivce;
     private final HoService hoService;
     private final DongService dongService;
+    private final JwtTokenProvider jwtTokenProvider;
     /**
      * 로그인
      * 인증 불필요
@@ -238,5 +242,15 @@ public class MemberController {
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/auth")
+    public ResponseEntity<?> getMemberFromToken(@RequestHeader("Authorization") String accessToken){
+        String token=accessToken.substring(7);
+        // 사용자 아이디를 가져온다.
+        String userName=jwtTokenProvider.getAuthentication(token).getName();
+        return new ResponseEntity<>(memberSerivce.getMemberInfo(userName),HttpStatus.OK);
+    }
+
+
 
 }

@@ -320,6 +320,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public MemberDto.Response getMemberInfo(String username) {
+        Member member=memberRepository.findByUsername(username)
+                .orElseThrow(()->new NoSuchElementException("찾을 수 없는 아이디입니다."));
+        // member가 사는 곳을 찾는다.
+        Ho ho=hoRepository.findByMemberId(member.getId());
+        return MemberDto.Response.of(member,ho);
+    }
+
+    @Override
     public Long getHoIdByMemberId(Long memberId) {
         return memberRepository.findHoAptIdsByMemberId(memberId);
     }
