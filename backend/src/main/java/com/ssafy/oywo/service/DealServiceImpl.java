@@ -97,7 +97,7 @@ public class DealServiceImpl implements DealService{
         log.info("dealsByDong: {}", dealsByDong);
         return dealsByDong
                 .stream()
-                .map(DealDto.Response::new)
+                .map(d -> new DealDto.Response(d, memberRepository.findById(d.getRequestId()).orElseThrow(() -> new IllegalArgumentException("해당 requestId의 사용자가 없음"))))
                 .collect(Collectors.toList());
     }
 
