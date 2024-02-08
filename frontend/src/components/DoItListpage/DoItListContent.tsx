@@ -1,25 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import styled, { css } from '@emotion/native';
+import React, {useState, useEffect} from 'react';
+import styled, {css} from '@emotion/native';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import Feather from 'react-native-vector-icons/Feather';
-import { NavigationProp, RouteProp } from '@react-navigation/native';
+import {NavigationProp, RouteProp} from '@react-navigation/native';
 import axiosAuth from '@/axios/axiosAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { 
-    TouchableOpacity, 
-    Text,
-    View,
-    Animated,
-    ImageSourcePropType,
-    ScrollView
-} from 'react-native';
+import {TouchableOpacity, Text, View, Animated, ImageSourcePropType, ScrollView} from 'react-native';
 
 const DoItListCardComponent = styled(ScrollView)`
   padding-left: 10px;
   padding-right: 10px;
   margin-top: 10px;
-  
 `;
 
 const DoItListButton = styled(GlobalButton)`
@@ -31,10 +23,10 @@ const DoItListButton = styled(GlobalButton)`
 const DoItListCard = styled(GlobalContainer)`
   flex-direction: row;
   justify-content: space-between;
-  align-items: center; 
+  align-items: center;
   width: 130px;
   height: 160px;
-`; 
+`;
 
 const DoItListImage = styled.Image`
   width: 130px;
@@ -53,7 +45,6 @@ const TextComponent = styled(GlobalContainer)`
 
 const ReportButton = styled(GlobalButton)`
   background-color: white;
-
 `;
 
 const TextTitle = styled(GlobalText)`
@@ -66,20 +57,20 @@ const TextTitle = styled(GlobalText)`
 
 const TextApart = styled(GlobalText)`
   font-size: ${props => props.theme.fontSize.short};
-  color:  ${props => props.theme.color.gray};
+  color: ${props => props.theme.color.gray};
   font-weight: bold;
   margin-bottom: 12px;
 `;
 
 const TextContent = styled(GlobalText)`
   font-size: ${props => props.theme.fontSize.small};
-  color:  ${props => props.theme.color.black};
+  color: ${props => props.theme.color.black};
   padding: 5px 0px 5px 0px;
 `;
 
 const TextPrice = styled(GlobalText)`
   font-size: ${props => props.theme.fontSize.medium};
-  color:  ${props => props.theme.color.black};
+  color: ${props => props.theme.color.black};
   font-weight: bold;
   margin-bottom: 10px;
 `;
@@ -88,7 +79,7 @@ const DistinctLine = styled.View`
   width: 100%;
   margin-top: 5px;
   margin-bottom: 5px;
-  border: 1px solid #B2B2B2;
+  border: 1px solid #b2b2b2;
 `;
 
 interface DealImage {
@@ -116,104 +107,166 @@ interface DoListCard {
 }
 
 interface Props {
-    navigation: NavigationProp<any>;
-    selectedApartCategory: string;
-    selectedTypeCategory: string;
-    setReportModalVisible: (state: boolean) => void;
-  }
+  navigation: NavigationProp<any>;
+  selectedApartCategory: string;
+  selectedTypeCategory: string;
+  setReportModalVisible: (state: boolean) => void;
+}
 
 const dogImage: ImageSourcePropType = require('images/dog.png');
 const turtleImage: ImageSourcePropType = require('images/turtle.png');
 const trashImage: ImageSourcePropType = require('images/trash3.png');
 const workImage: ImageSourcePropType = require('images/convstore.png');
 
-const DoItListContent = ({ navigation, selectedApartCategory, selectedTypeCategory, setReportModalVisible}: Props) => {
-  
+const DoItListContent = ({navigation, selectedApartCategory, selectedTypeCategory, setReportModalVisible}: Props) => {
   const [doListCards, setDoListCards] = useState<DoListCard[]>([
     {
-      "id": 50,
-      "title": "title2",
-      "content": "content2",
-      "requestId": 13,
-      "acceptId": null,
-      "cash": 1110,
-      "item": null,
-      "rewardType": "CASH",
-      "complaint": 0,
-      "dealStatus": "OPEN",
-      "dealType": "PET",
-      "expireAt": "2025-03-03T00:00:00",
-      "dealImages": [dogImage],
-      "createdAt": "2024-02-02T14:47:35.251175",
-      "modifiedAt": "2024-02-02T14:47:35.251175",
-      "deletedAt": null
-  },
-
+      id: 50,
+      title: 'title2',
+      content: 'content2',
+      requestId: 13,
+      acceptId: null,
+      cash: 1110,
+      item: null,
+      rewardType: 'CASH',
+      complaint: 0,
+      dealStatus: 'OPEN',
+      dealType: 'PET',
+      expireAt: '2025-03-03T00:00:00',
+      dealImages: [dogImage],
+      createdAt: '2024-02-02T14:47:35.251175',
+      modifiedAt: '2024-02-02T14:47:35.251175',
+      deletedAt: null,
+    },
+    {
+      id: 50,
+      title: 'title2',
+      content: 'content2',
+      requestId: 13,
+      acceptId: null,
+      cash: 1110,
+      item: null,
+      rewardType: 'CASH',
+      complaint: 0,
+      dealStatus: 'OPEN',
+      dealType: 'PET',
+      expireAt: '2025-03-03T00:00:00',
+      dealImages: [turtleImage],
+      createdAt: '2024-02-02T14:47:35.251175',
+      modifiedAt: '2024-02-02T14:47:35.251175',
+      deletedAt: null,
+    },
+    {
+      id: 50,
+      title: 'title2',
+      content: 'content2',
+      requestId: 13,
+      acceptId: null,
+      cash: 1110,
+      item: null,
+      rewardType: 'CASH',
+      complaint: 0,
+      dealStatus: 'OPEN',
+      dealType: 'PET',
+      expireAt: '2025-03-03T00:00:00',
+      dealImages: [turtleImage],
+      createdAt: '2024-02-02T14:47:35.251175',
+      modifiedAt: '2024-02-02T14:47:35.251175',
+      deletedAt: null,
+    },
+    {
+      id: 50,
+      title: 'title2',
+      content: 'content2',
+      requestId: 13,
+      acceptId: null,
+      cash: 1110,
+      item: null,
+      rewardType: 'CASH',
+      complaint: 0,
+      dealStatus: 'OPEN',
+      dealType: 'PET',
+      expireAt: '2025-03-03T00:00:00',
+      dealImages: [turtleImage],
+      createdAt: '2024-02-02T14:47:35.251175',
+      modifiedAt: '2024-02-02T14:47:35.251175',
+      deletedAt: null,
+    },
   ]);
 
-  let dong = '303동'
+  let dong = '303동';
 
-  useEffect(() => {
-    AsyncStorage.getItem('token').then((token) => {
-      axiosAuth.get(`/deal/dong/list?dong=&dealType=`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // 토큰을 Bearer 토큰으로 설정
-        }
-      })
-        .then(response => {
-          console.log(response.data);
+  // useEffect(() => {
+  //   AsyncStorage.getItem('token').then(token => {
+  //     axiosAuth
+  //       .get(`/deal/dong/list?dong=&dealType=`, {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`, // 토큰을 Bearer 토큰으로 설정
+  //         },
+  //       })
+  //       .then(response => {
+  //         console.log(response.data);
 
-          setDoListCards(response.data);
-        })
+  //         setDoListCards(response.data);
+  //       })
 
-        .catch(error => console.error(error));
-    });
-  }, []);
+  //       .catch(error => console.error(error));
+  //   });
+  // }, []);
 
+  // // 카드 필터링
+  // let filteredDoItListCards: DoListCard[] = doListCards;
 
-  // 카드 필터링
-  let filteredDoItListCards: DoListCard[] = doListCards;
+  // // 아파트 카테고리와 타입 카테고리 둘 다 선택되지 않았으면 모든 카드를 반환
+  // if (selectedApartCategory !== '' || selectedTypeCategory !== '') {
+  //   filteredDoItListCards = doListCards.filter(card => {
+  //     // 아파트 카테고리만 선택되었으면 아파트 카테고리에 맞는 카드만 반환
+  //     if (selectedApartCategory !== '' && selectedTypeCategory === '') {
+  //       return dong === selectedApartCategory;
+  //     }
+  //     // 타입 카테고리만 선택되었으면 타입 카테고리에 맞는 카드만 반환
+  //     else if (selectedApartCategory === '' && selectedTypeCategory !== '') {
+  //       return dong === selectedTypeCategory;
+  //     }
+  //     // 아파트 카테고리와 타입 카테고리 둘 다 선택되었으면 둘 다 맞는 카드만 반환
+  //     else {
+  //       return dong === selectedApartCategory && card.dealType === selectedTypeCategory;
+  //     }
+  //   });
+  // }
 
-  // 아파트 카테고리와 타입 카테고리 둘 다 선택되지 않았으면 모든 카드를 반환
-  if (selectedApartCategory !== '' || selectedTypeCategory !== '') {
-    filteredDoItListCards = doListCards.filter(card => {
-      // 아파트 카테고리만 선택되었으면 아파트 카테고리에 맞는 카드만 반환
-      if (selectedApartCategory !== '' && selectedTypeCategory === '') {
-        return dong === selectedApartCategory;
-      }
-      // 타입 카테고리만 선택되었으면 타입 카테고리에 맞는 카드만 반환
-      else if (selectedApartCategory === '' && selectedTypeCategory !== '') {
-        return dong === selectedTypeCategory;
-      }
-      // 아파트 카테고리와 타입 카테고리 둘 다 선택되었으면 둘 다 맞는 카드만 반환
-      else {
-        return dong === selectedApartCategory && card.dealType === selectedTypeCategory;
-      }
-    });
-  }
-  
   return (
-
-      <DoItListCardComponent>
-      {filteredDoItListCards.map((card, index) => (
+    <DoItListCardComponent>
+      {doListCards.map((card, index) => (
         <View key={index}>
-          <DoItListButton onPress={() => navigation.navigate('DoItListDetail', { card: card })}>
+          <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {card: card})}>
             <DoItListCard>
-              <DoItListImage source={card.dealImages[0]}/>
+              <DoItListImage source={card.dealImages[0]} />
               <TextComponent>
-                <ReportButton onPress={() => setReportModalVisible(true)} >
-                  <Feather name='more-vertical' size= {25} style={css`position: absolute; top: 7px; left: 230px;`}></Feather>
+                <ReportButton onPress={() => setReportModalVisible(true)}>
+                  <Feather
+                    name="more-vertical"
+                    size={25}
+                    style={css`
+                      position: absolute;
+                      top: 7px;
+                      left: 230px;
+                    `}></Feather>
                 </ReportButton>
-                <View style={css`
-                  flex: 1;
-                  margin-top: 10px;
-                `}>
-                  <TextTitle numberOfLines={1}>{card.title}</TextTitle>
-                  <TextApart>{dong} / {card.createdAt}</TextApart>
-                  <View style={css`
-                    height: 50px;
-                    justify-content: center;
+                <View
+                  style={css`
+                    flex: 1;
+                    margin-top: 10px;
                   `}>
+                  <TextTitle numberOfLines={1}>{card.title}</TextTitle>
+                  <TextApart>
+                    {dong} / {card.createdAt}
+                  </TextApart>
+                  <View
+                    style={css`
+                      height: 50px;
+                      justify-content: center;
+                    `}>
                     <TextContent numberOfLines={2}>{card.content}</TextContent>
                   </View>
                 </View>
@@ -223,10 +276,8 @@ const DoItListContent = ({ navigation, selectedApartCategory, selectedTypeCatego
           </DoItListButton>
           <DistinctLine></DistinctLine>
         </View>
-      
       ))}
     </DoItListCardComponent>
-
   );
 };
 

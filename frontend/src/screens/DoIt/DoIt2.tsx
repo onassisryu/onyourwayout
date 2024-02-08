@@ -213,11 +213,11 @@ const DoIt2 = ({navigation}: Props) => {
     //     console.error('데이터를 가져오는 중 오류 발생:', error);
     //   }
     const data = {
-      title: 'title2',
-      content: 'content2',
+      title: '반려동물 산책시켜주세요',
+      content: '저희 뽀삐 안물어요 1시간 산책시켜주세요',
       cash: 1110,
-      dealType: 'RECYCLE',
-      expireAtStr: '2025-03-03 00:00:00',
+      dealType: 'PET',
+      expireAtStr: '2024-03-03 00:00:00',
     };
 
     const body = {
@@ -228,6 +228,7 @@ const DoIt2 = ({navigation}: Props) => {
     submitMultipart(body)
       .then(resp => {
         console.log('성공', resp.data);
+        navigation.navigate('DoItListDetail', {id: resp.data.id});
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);

@@ -131,7 +131,6 @@ const TextPrice = styled(GlobalText)`
 `;
 
 const TextReport = styled(GlobalText)`
-  margin-top: 10px;
   font-size: ${props => props.theme.fontSize.short};
   color: ${props => props.theme.color.gray};
   padding: 0px 0px 5px 0px;
@@ -217,12 +216,6 @@ interface Props {
   // 필요하다면 다른 props들도 추가할 수 있습니다.
 }
 
-const dealTypeTextMap = {
-  PET: '애완동물 산책',
-  RECYCLE: '분리수거',
-  SHOP: '장보기',
-  ETC: '기타',
-};
 const DoItListDetail = ({route, navigation}: any) => {
   const card = {
     id: 1,
@@ -235,7 +228,7 @@ const DoItListDetail = ({route, navigation}: any) => {
     content: '나는김치맨김치파워',
   };
   const param = route.params['id'];
-  const [responseData, setResponseData] = useState({});
+  const [responseData, setResponseData] = useState(null);
   useEffect(() => {
     axiosAuth
       .get(`/deal/${param}`)
@@ -295,13 +288,14 @@ const DoItListDetail = ({route, navigation}: any) => {
               </SubHeader>
               <DistinctLine></DistinctLine>
               <ContentComponent>
+                <TextTitle numberOfLines={1}>{card.title}</TextTitle>
                 <TextTitle numberOfLines={1}>{responseData.title}</TextTitle>
                 <InfoComponent>
-                  <TextCategory>{dealTypeTextMap[responseData.dealType]}</TextCategory>
-                  {responseData.rewardType === 'CASH' && <TextPrice>{responseData.cash}원</TextPrice>}
-                  {responseData.rewardType === 'ITEM' && <TextPrice>{responseData.item}</TextPrice>}
+                  <TextCategory>{card.category}</TextCategory>
+                  <TextPrice>{card.price}</TextPrice>
                 </InfoComponent>
-                <TextContent>{responseData.content}</TextContent>
+                <TextContent>{card.content}</TextContent>
+                <TextInfo>찜 1 / 조회 208</TextInfo>
                 <TextReport>게시글 신고하기</TextReport>
               </ContentComponent>
             </SubContainer>

@@ -81,25 +81,24 @@ const xImage: ImageSourcePropType = require('icons/x.png');
 // 알림 채널 생성
 PushNotification.createChannel(
   {
-    channelId: "channel-id", // 채널 ID
-    channelName: "My channel", // 채널 이름
-    channelDescription: "A channel to categorise your notifications", // 채널 설명
-    soundName: "default", // 기본 사운드 사용
+    channelId: 'channel-id', // 채널 ID
+    channelName: 'My channel', // 채널 이름
+    channelDescription: 'A channel to categorise your notifications', // 채널 설명
+    soundName: 'default', // 기본 사운드 사용
     importance: 4, // 알림 중요도 설정. 4는 High를 의미함
     vibrate: true, // 진동 설정
   },
-  (created) => console.log(`createChannel returned '${created}'`) // (optional) 채널 생성 성공 여부를 로그에 출력
+  created => console.log(`createChannel returned '${created}'`) // (optional) 채널 생성 성공 여부를 로그에 출력
 );
 
 const sendNotification = (notice: any) => {
-
   const now = moment();
   const formattedTime = now.format('A hh:mm');
-  const message = `${notice.content} (${formattedTime})`
+  const message = `${notice.content} (${formattedTime})`;
 
   PushNotification.localNotification({
-  /* Android Only Properties */
-    channelId: "channel-id", // 위에서 생성한 채널 ID를 지정
+    /* Android Only Properties */
+    channelId: 'channel-id', // 위에서 생성한 채널 ID를 지정
     /* iOS and Android properties */
     id: notice.id,
     title: notice.title,
@@ -119,9 +118,8 @@ const NoticeTab = () => {
   // 알림 카드 테스트
   const [notices, setNotices] = useState([
     {id: 1, title: '[나가요잉]', content: '응응 뿡뿡뿡ㅃㅉ오라ㅃ쪼아라로빠쫑ㄹ짜ㅗㄹ'},
-    {id: 2, title: '[나가요잉]', content: '응응 뿡뿡뿡까까ㅃ까ㅃㅉㅇ롸ㅃㅇ롸ㅃㅉㅇ롸ㅃㅉ오라ㅃ쪼아라로빠쫑ㄹ짜ㅗㄹ'}
+    {id: 2, title: '[나가요잉]', content: '응응 뿡뿡뿡까까ㅃ까ㅃㅉㅇ롸ㅃㅇ롸ㅃㅉㅇ롸ㅃㅉ오라ㅃ쪼아라로빠쫑ㄹ짜ㅗㄹ'},
   ]);
-
 
   // X 누르면 삭제
   const deleteNotice = (id: number) => {
@@ -171,4 +169,4 @@ const NoticeTab = () => {
   );
 };
 
-export default {NoticeTab, sendNotification};
+export {NoticeTab, sendNotification};

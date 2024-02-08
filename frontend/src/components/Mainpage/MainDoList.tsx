@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import styled from '@emotion/native';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
-import {ScrollView, ImageSourcePropType, } from 'react-native';
-import { NavigationProp } from '@react-navigation/native';
+import {ScrollView, ImageSourcePropType} from 'react-native';
+import {NavigationProp} from '@react-navigation/native';
 import {Global} from '@emotion/react';
 
 const DoListComponent = styled(GlobalContainer)`
@@ -151,7 +151,7 @@ const MainDoList = ({navigation}: Props) => {
       <DoListComponent>
         <DoListHeader>
           <DoListTitle> 이웃들에게 맡겨볼까요? </DoListTitle>
-          <DoListSee onPress={() => navigation.navigate('DoItList')}>
+          <DoListSee onPress={() => navigation.navigate('Bottom', {screen: '아파트'})}>
             <DoListSeeText> 모두 보기 </DoListSeeText>
           </DoListSee>
         </DoListHeader>
