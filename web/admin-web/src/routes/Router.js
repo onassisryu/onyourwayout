@@ -7,22 +7,21 @@ const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')));
 
 /* ****Pages***** */
-const Dashboard = Loadable(lazy(() => import('../views/dashboard/Dashboard')))
-const TypographyPage = Loadable(lazy(() => import('../views/utilities/TypographyPage')))
-const Shadow = Loadable(lazy(() => import('../views/utilities/Shadow')))
 const Error = Loadable(lazy(() => import('../views/authentication/Error')));
 const Register = Loadable(lazy(() => import('../views/authentication/Register')));
 const Login = Loadable(lazy(() => import('../views/authentication/Login')));
-
+const Complain=Loadable(lazy(()=>import("../views/deal/Complain")));
+const NonCertified=Loadable(lazy(()=>import("../views/member/NonCertified")));
+const Paused=Loadable(lazy(()=>import("../views/member/Paused")));
 const Router = [
   {
     path: '/',
     element: <FullLayout />,
     children: [
-      { path: '/', element: <Navigate to="/dashboard" /> },
-      { path: '/dashboard', exact: true, element: <Dashboard /> },
-      { path: '/ui/typography', exact: true, element: <TypographyPage /> },
-      { path: '/ui/shadow', exact: true, element: <Shadow /> },
+      { path: '/', element: <Navigate to="/deal/complain" /> },
+      { path: '/deal/complain', exact: true, element: <Complain /> },
+      { path: '/member/noncerti', exact: true, element: <NonCertified /> },
+      { path: '/member/paused', exact: true, element: <Paused /> },
       { path: '*', element: <Navigate to="/auth/404" /> },
     ],
   },

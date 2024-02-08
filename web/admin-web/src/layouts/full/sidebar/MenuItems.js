@@ -14,7 +14,7 @@ const Menuitems = [
     id: uniqueId(),
     title: '신고 거래',
     icon: IconLayoutDashboard,
-    href: '/dashboard',
+    href: '/deal/complain',
   },
   {
     navlabel: true,
@@ -24,13 +24,13 @@ const Menuitems = [
     id: uniqueId(),
     title: '정지 사용자',
     icon: IconTypography,
-    href: '/ui/typography',
+    href: '/member/paused',
   },
   {
     id: uniqueId(),
     title: '비인증 사용자',
     icon: IconCopy,
-    href: '/ui/shadow',
+    href: '/member/noncerti',
   },
   {
     navlabel: true,

@@ -68,5 +68,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy":"http://i10a302.p.ssafy.io:8080"
 }

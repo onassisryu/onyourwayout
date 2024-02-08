@@ -10,15 +10,15 @@ import { Typography, Grid, CardContent } from '@mui/material';
 
 
 // DEAL 신고 거래 페이지
-const Dashboard = () => {
+const Complain = () => {
   const [data,setData]=useState(null);
-  const getDeals=async()=>{
-    const deals=await getDealsWithComplaint();
-    setData(deals.data);
-  }
+  // const getDeals=async()=>{
+  //   const deals=await getDealsWithComplaint();
+  //   setData(deals.data);
+  // }
   useEffect(()=>{
-    getDeals();
-    console.log(data);
+    // getDeals();
+    // console.log(data);
   },[])
 
   return (
@@ -223,4 +223,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Complain;
