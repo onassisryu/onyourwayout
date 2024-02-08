@@ -31,3 +31,5 @@ server:
     include-message: always
     include-binding-errors: always
     include-exception: false
+  tomcat:
+    connection-timeout: 1800000
