@@ -33,7 +33,7 @@ public class NotificationServiceImpl implements NotificationService {
     //알림 메시지로 member들에게 알림을 보내는 메소드
     private void sendMessage(Notification notification, List<Member> members, Map<String, String> data){
         List<String> tokens = members.stream().map(Member::getFcmToken).filter(Objects::nonNull).toList();
-        members.stream().forEach(member -> log.info(member.getNickname()));
+
         try{
             firebaseMessaging.sendEachForMulticast(MulticastMessage.builder()
                     .addAllTokens(tokens)
@@ -61,9 +61,7 @@ public class NotificationServiceImpl implements NotificationService {
      * @return
      */
     public void sendNotificationByDeal(Deal deal){
-        System.out.println(deal.getRequestId());
         Ho ho = hoRepository.findByMemberId(deal.getRequestId()); // deal 요청자의 동 정보 가져오기
-        System.out.println(ho);
         if(ho == null) throw new NoSuchElementException("해당하는 호가 없습니다.");
 
         List<Member> members = memberRepository.findByDongAndCategory(ho.getDong().getId(), deal.getDealType(), deal.getRequestId()); // deal 요청자의 동에 속한 멤버들 가져오기
@@ -78,6 +76,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .build();
         Notification notificationSaved = notificationRepository.save(notification);
 
+        // map형 데이터 이후 추가
         Map<String, String> data = new HashMap<>();
         data.put("category", deal.getDealType().toString());
 
@@ -197,6 +196,6 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void checkNearDong(Long dongId) {
         Long memberId = memberService.getLoginUserId();
-        List<Deal>deals = dealRepository.findByDongIdAndMemberId(dongId, memberId);
+        List<Deal> deals = dealRepository.findByDongIdAndMemberId(dongId, memberId);
     }
 }
