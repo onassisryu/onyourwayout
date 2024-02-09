@@ -88,6 +88,13 @@ const App = () => {
     // 앱이 켜져있을때
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log('[Remote Message] ', JSON.stringify(remoteMessage));
+      // 메시지 오면 띄우는 코드
+      const notice = {
+        id: remoteMessage.messageId,
+        title: remoteMessage.notification?.title,
+        content: remoteMessage.notification?.body,
+      };
+      sendNotification(notice);
     });
     return unsubscribe;
   }, []);

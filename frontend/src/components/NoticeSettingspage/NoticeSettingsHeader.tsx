@@ -8,15 +8,6 @@ import {GlobalText} from '@/GlobalStyles';
 import GoBack from '@/components/Signup/GoBack';
 import Header from '@/components/Header';
 
-const HeaderContainer = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  height: 60px;
-  background-color: white;
-  padding: 0 10px;
-`;
-
 const BackImage = styled.View`
   width: 25px;
   height: 25px;
@@ -24,8 +15,8 @@ const BackImage = styled.View`
 
 const NoticeTitle = styled(GlobalText)`
   font-weight: bold;
-  font-size: ${theme.fontSize.subtitle};
-  color: ${theme.color.black};
+  font-size: ${props => props.theme.fontSize.subtitle};
+  color: ${props => props.theme.color.black};
   padding-bottom: 5px;
 `;
 
