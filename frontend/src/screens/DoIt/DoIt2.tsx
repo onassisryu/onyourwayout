@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {css} from '@emotion/native';
 import {ScrollView, View, TouchableOpacity, Text, Animated, useWindowDimensions} from 'react-native';
+import {ImageURISource, Alert, Button, Image, StyleSheet} from 'react-native';
 import {GlobalContainer, GlobalText} from '@/GlobalStyles';
 import {NavigationProp} from '@react-navigation/native';
 import DefaultButton from '@/components/DefaultButton';
@@ -20,6 +21,14 @@ import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
 import axiosAuth from '@/axios/axiosAuth';
 import {getAccessToken} from '@/utils/common';
+import {
+  launchCamera,
+  launchImageLibrary,
+  CameraOptions,
+  ImagePickerResponse,
+  ImageLibraryOptions,
+  Asset,
+} from 'react-native-image-picker';
 import axios from 'axios';
 type DoItScreenRouteProp = RouteProp<RootStackParamList, 'DoIt2'>;
 
@@ -160,7 +169,7 @@ const DoIt2 = ({navigation}: Props) => {
   });
   const userData = useRecoilValue(userDataState);
   const token =
-    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzM1ODI4N30.qU7yh9VK8SNoDHVMSPIBiejonl6AFXeIui_3ONrz2YQ';
+    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzUxNjQ4MX0.ufi1bnruLSZqryEJ38jDc3CXz9yMamARmkj-HSToCH4';
 
   const submitMultipart = (body: any) => {
     const formData = new FormData();
@@ -175,12 +184,77 @@ const DoIt2 = ({navigation}: Props) => {
       data: formData,
       headers: {
         'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzM1ODI4N30.qU7yh9VK8SNoDHVMSPIBiejonl6AFXeIui_3ONrz2YQ',
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzUxNjQ4MX0.ufi1bnruLSZqryEJ38jDc3CXz9yMamARmkj-HSToCH4',
         'content-type': 'multipart/form-data',
       },
     });
   };
+  const [img, setImg] = useState<ImageURISource>({
+    uri: 'https://cdn.pixabay.com/photo/2023/05/21/12/40/dog-8008483_1280.jpg',
+  }); //setState를 대신하는 넘이랑 변수랑 같이 하기
+  //제네릭 필수!!!
+  const [imageData, setImageData] = useState({});
+  //버튼 동작
+  //카메라 앱을 실행하는 기능 화살표 함수
+  const showCamera = () => {
+    //1. launchCamera 하기 위한 옵션 객체
+    const options: CameraOptions = {
+      //Property 'mediaType' is missing in type '{}' but required in type 'CameraOptions'
+      mediaType: 'photo', //필수 속성
+      cameraType: 'back',
+      saveToPhotos: true,
+      quality: 1,
+      videoQuality: 'high',
+    };
 
+    //2. 촬영 결과를 받아오는 callback 메소드 등록
+    launchCamera(options, (response: ImagePickerResponse) => {
+      if (response.didCancel) Alert.alert('촬영취소');
+      else if (response.errorMessage) Alert.alert('Error : ' + response.errorMessage);
+      else {
+        //이곳에 왔다면 이미지가 잘 촬영된 것
+        //촬용된 이미지는 response 객체의 assets 라는 속성으로 전달됨
+        if (response.assets != null) {
+          //선택된 이미지 객체를 이미지뷰가 보여주는 state변수 img에 저장
+          //선택된 이미지의 uri 경로 얻어오기
+          const uri = response.assets[0].uri; //assets 여러개가 올수 있는데 중에 0번방 거
+          const type = response.assets[0].type;
+          const fileSize = response.assets[0].fileSize;
+
+          console.log(response.assets[0]);
+
+          const souce = {uri: uri, type: type, fileSize: fileSize};
+          setImageData(souce);
+          setImg(souce);
+        }
+      }
+    }); //파라미터로 응답객체 받음
+  };
+
+  //사진앱을 실행하는 기능 화살표 함수
+  const showPhoto = async () => {
+    //1. 옵션객체 만들기
+    const option: ImageLibraryOptions = {
+      mediaType: 'photo',
+      selectionLimit: 5,
+    };
+
+    //callback 말고 async-await 문법 사용해보기!!!!!!
+    //ES7의 새로운 문법 : async-await 문법 [callback 비동기 작업을 동기작업처럼 처리함]
+    const response = await launchImageLibrary(option); //함수에 async가 붙어 있어야 함
+    //결과를 기다렸다가 받아와라
+
+    if (response.didCancel) Alert.alert('취소');
+    else if (response.errorMessage) Alert.alert('Error : ' + response.errorMessage);
+    else {
+      const uris: Asset[] = [];
+      response.assets?.forEach(value => uris.push(value)); //선택한 사진 순서와 상관없이 들어옴
+
+      //원래는 FlatList로 이미지 보여줘야하지만
+      //첫번째 이미지만 보여주기
+      setImg(uris[0]);
+    }
+  };
   function MakeDeal() {
     //   const jwtAccessToken =
     //     'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzM1ODI4N30.qU7yh9VK8SNoDHVMSPIBiejonl6AFXeIui_3ONrz2YQ';
@@ -222,11 +296,12 @@ const DoIt2 = ({navigation}: Props) => {
 
     const body = {
       jsonData: data,
-      dealImageFileList: '',
+      dealImageFileList: imageData,
     };
 
     submitMultipart(body)
       .then(resp => {
+        console.log(body);
         console.log('성공', resp.data);
         navigation.navigate('DoItListDetail', {id: resp.data.id});
       })
@@ -261,6 +336,16 @@ const DoIt2 = ({navigation}: Props) => {
             <SvgIcon name={params.icon} size={40} />
           </IconWrapper>
         </StyledInputContainer>
+        <View>
+          <View>
+            <Button title="show camera app" onPress={showCamera}></Button>
+            <Button title="show photo app" color={'green'} onPress={showPhoto}></Button>
+          </View>
+
+          <Text>{img.uri}</Text>
+
+          <Image source={img} width={10} height={10}></Image>
+        </View>
         <View
           style={css`
             flex-direction: row;

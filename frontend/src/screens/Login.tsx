@@ -70,7 +70,7 @@ const Login = ({navigation}: any) => {
   useEffect(() => {
     getStorage('token').then(token => {
       if (token) {
-        console.log('토큰이 있습니다.', token);
+        console.log('리프레시 토큰이 있습니다.', token);
         getStorage('autoLogin').then(auto => {
           if (auto) {
             handleLogin();
@@ -98,6 +98,7 @@ const Login = ({navigation}: any) => {
           const token = response.data.token.accessToken;
           const refreshToken = response.data.token.refreshToken;
           const user = response.data.memberInfo;
+
           await setStorage('token', token);
           await setStorage('refreshToken', refreshToken);
           await setStorage('autoLogin', 'true');
@@ -107,6 +108,8 @@ const Login = ({navigation}: any) => {
 
           Keyboard.dismiss();
           navigation.navigate('Bottom', {screen: 'Main'});
+          console.log('123123');
+          console.log(token);
           console.log('로그인 성공');
         } else {
           Alert.alert('로그인 실패', '아이디나 비밀번호를 확인하세요.');
