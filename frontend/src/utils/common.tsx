@@ -1,6 +1,13 @@
-import {getStorage, removeStorage} from '@/storage/common_storage';
+import {getStorage, removeStorage, clearStorage} from '@/storage/common_storage';
 import axiosAuth from '@/axios/axiosAuth';
 
+import {useSetRecoilState, useRecoilState} from 'recoil';
+import {isLoggedInState, userDataState} from '@/recoil/atoms';
+import {clear} from 'console';
+
+const setUserData = useSetRecoilState(userDataState);
+const setIsLoggedIn = useSetRecoilState(isLoggedInState);
+const test = useRecoilState(isLoggedInState);
 export const refreshToken = async () => {
   // AsyncStorage에서 refreshToken 가져오기
   const getRefreshToken = await getStorage('refreshToken');
@@ -20,14 +27,12 @@ export const getAccessToken = async (): Promise<string | null> => {
 };
 
 export const logoutUser = async () => {
-  try {
-    // 인증 정보 삭제
-    console;
-    await removeStorage('token');
-    await removeStorage('refreshToken');
-    await removeStorage('autoLogin');
-    await removeStorage('user');
-  } catch (error) {
-    console.log!(error);
-  }
+  // 인증 정보 삭제
+  await clearStorage();
+  await removeStorage('token');
+  await removeStorage('refreshToken');
+  await removeStorage('user');
+  setIsLoggedIn(false);
+  setUserData({});
+  console.log('로그아웃 완료');
 };
