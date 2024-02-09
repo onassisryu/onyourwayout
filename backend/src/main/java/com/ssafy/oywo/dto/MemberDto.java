@@ -238,7 +238,7 @@ public class MemberDto {
         private String inviteCode;
         private Boolean isNotiDongAll;
         private Boolean isNotiCategoryAll;
-
+        private List<String> roles = new ArrayList<>();
         private Long aptId;
         private String aptName;
         private Long dongId;
@@ -284,6 +284,7 @@ public class MemberDto {
                     .aptId(dong.getApartment().getId())
                     .aptName(dong.getApartment().getName())
                     .inviteCode(ho.getInviteCode())
+                    .roles(response.getRoles())
                     .build();
             return totalInfo;
         }
