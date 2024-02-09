@@ -92,6 +92,7 @@ const MainStack = () => {
       <Stack.Screen name="GoOut1" component={GoOut1} />
       <Stack.Screen name="DoIt1" component={DoIt1} />
       <Stack.Screen name="DoIt2" component={DoIt2} />
+      <Stack.Screen name="ChatMain" component={ChatMain} />
       <Stack.Screen name="ChatDetail" component={ChatDetail} />
       <Stack.Screen name="MySetting" component={MySetting} />
       <Stack.Screen name="AdminStack" component={AdminStack} />

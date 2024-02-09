@@ -32,6 +32,8 @@ import MainStack from '@/navigations/MainStack';
 import AdminStack from '@/navigations/AdminStack';
 import LoginStack from '@/navigations/LoginStack';
 
+import {NoticeTab, sendNotification} from '@/components/Noticepage/NoticeTab';
+
 import {getStorage, setStorage} from '@/storage/common_storage';
 
 const App = () => {
@@ -39,22 +41,13 @@ const App = () => {
 
   const [isLogin, setIsLogin] = useState(false);
 
-  const user = useRecoilValue(userDataState);
+  const userData = useRecoilValue(userDataState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const setUserData = useSetRecoilState(userDataState);
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
 
   const admin = false;
-  // useEffect(() => {
-  //   getStorage('token').then(token => {
-  //     if (token) {
-  //       console.log('토큰이 있습니다.', token);
-  //       getStorage('user').then(user => {
-  //         setIsLogin(true);
-  //       });
-  //     }
-  //   });
-  // }, []);
+
   // FCM 토큰 발급
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
