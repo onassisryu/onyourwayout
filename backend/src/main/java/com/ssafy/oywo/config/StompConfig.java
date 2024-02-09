@@ -3,6 +3,7 @@ package com.ssafy.oywo.config;
 import com.ssafy.oywo.interceptor.ChatPreHandler;
 import com.ssafy.oywo.interceptor.HttpHandshakeInterceptor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -22,8 +23,8 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // web socket 통신 url : ws://~~/ws/chat
-        registry.addEndpoint("/ws/chat").setAllowedOriginPatterns("*")
-                .addInterceptors(new HttpHandshakeInterceptor());
+        registry.addEndpoint("/ws/chat").setAllowedOriginPatterns("*");
+                //.addInterceptors(new HttpHandshakeInterceptor());
     }
 
     // 보낼 때와 받을 때 prefix 지정
