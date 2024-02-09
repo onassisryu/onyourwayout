@@ -1,7 +1,5 @@
 import axios, {get} from 'axios';
 import {getAccessToken} from '@/utils/common';
-import {useSetRecoilState} from 'recoil';
-import {loadingState} from '@/recoil/atoms';
 
 const axiosAuth = axios.create({
   baseURL: 'http://i10a302.p.ssafy.io:8080',
@@ -9,9 +7,8 @@ const axiosAuth = axios.create({
 
 axiosAuth.interceptors.request.use(
   async (config: any) => {
-    const token = await getAccessToken();
-    config.headers['Content-Type'] = 'multipart/form-data';
-    config.headers['Authorization'] = `Bearer ${token}`;
+    config.headers['Content-Type'] = 'application/json; charset=utf-8';
+    config.headers['Authorization'] = await getAccessToken();
     return config;
   },
   err => {
@@ -24,6 +21,10 @@ axiosAuth.interceptors.response.use(
     return config;
   },
   err => {
+    const statusCode = err.response?.status;
+    if (statusCode === 402) {
+      console.log('토큰 만료');
+    }
     return Promise.reject(err);
   }
 );

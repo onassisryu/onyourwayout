@@ -30,6 +30,5 @@ export const removeStorage = async (key: string) => {
 
 export const clearStorage = () => {
   console.log('clearStorage...');
-  logoutUser();
-  return AsyncStorage.clear();
+  AsyncStorage.clear();
 };
