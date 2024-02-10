@@ -2,6 +2,7 @@ package com.ssafy.oywo.service;
 
 import com.ssafy.oywo.dto.NotificationDto;
 import com.ssafy.oywo.entity.Deal;
+import com.ssafy.oywo.entity.Member;
 import com.ssafy.oywo.entity.Notification;
 
 import java.util.List;
@@ -24,4 +25,6 @@ public interface NotificationService {
     public void readNotificationAll();
 
     public void checkNearDong(Long dongId);
+
+    public void requestRecommendDeal(Deal deal, Member acceptMember);
 }

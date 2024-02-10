@@ -198,4 +198,31 @@ public class NotificationServiceImpl implements NotificationService {
         Long memberId = memberService.getLoginUserId();
         List<Deal> deals = dealRepository.findByDongIdAndMemberId(dongId, memberId);
     }
+
+    @Override
+    public void requestRecommendDeal(Deal deal, Member acceptMember) {
+        Long requestMemberId = deal.getRequestId();
+        Member requestMember = memberRepository.findById(requestMemberId)
+                .orElseThrow(() -> new NoSuchElementException("해당하는 멤버가 없습니다."));
+
+        Ho ho = hoRepository.findByMemberId(acceptMember.getId());
+
+        Notification notification = Notification.builder()
+                .title("[해줘요잉 수락]")
+                .message(acceptMember.getNickname() + "님이 요청하신 해줘요잉을 수락하였습니다.")
+                .notificationType(Notification.NotificationType.DEAL_ACCEPT)
+                .build();
+        Notification notificationSaved = notificationRepository.save(notification);
+
+        Map<String, String> data = new HashMap<>();
+        data.put("dealId",deal.getId().toString());
+        data.put("title",deal.getTitle());
+        data.put("acceptMemberId",acceptMember.getId().toString());
+        data.put("acceptMemberNickname",acceptMember.getNickname());
+        data.put("acceptMemberDong",ho.getDong().getName());
+        data.put("acceptMemberHo",ho.getName());
+        data.put("acceptMemberScore",Integer.toString(acceptMember.getScore()));
+
+        sendMessage(notificationSaved, List.of(requestMember), data);
+    }
 }
