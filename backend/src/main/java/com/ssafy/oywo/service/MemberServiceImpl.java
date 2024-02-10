@@ -365,7 +365,7 @@ public class MemberServiceImpl implements MemberService {
     public void saveFcmToken(Long memberId, String fcmToken) {
         Member member=memberRepository.findById(memberId)
                 .orElseThrow(()->new EntityNotFoundException("없는 사용자 입니다."));
-        member=member.toBuilder().fcmToken(fcmToken).build();
+        member.setFcmToken(fcmToken);
         memberRepository.save(member);
     }
 

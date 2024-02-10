@@ -26,6 +26,7 @@ public class MemberDto {
         private String inviteCode;              // 인증 코드
         private boolean isNotiDongAll;          // 전체 동 알림 여부
         private boolean isNotiCategoryAll;      // 전체 유형 알림 여부
+        private String fcmToken;
 
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         private java.sql.Date birthDate;                 // 생년월일
