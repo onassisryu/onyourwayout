@@ -205,7 +205,7 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             "JOIN Member m ON d.requestId = m.id " +
             "WHERE m in (Select ho.member from Ho ho Join Dong dong on ho.dong = dong where dong.id = :dongId) " +
             "AND m not in (Select bm.blockMemberId from BlockMembers bm where bm.memberId.id = :memberId)" +
-            "AND m.id != :memberId " +
+            "AND m.id <> :memberId " +
             "ORDER BY d.createdAt DESC")
     List<Deal> findByDongIdAndMemberId(Long dongId, Long memberId);
 

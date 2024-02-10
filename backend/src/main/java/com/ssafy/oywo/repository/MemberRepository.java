@@ -51,11 +51,13 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
             " JOIN Deal d ON hoMember.id = d.requestId " +
             " WHERE dong.id = :dongId " +
             " AND (:dealType IS NULL OR d.dealType IN :dealType) " +
-            " AND d.dealStatus = :dealStatus" )
+            " AND d.dealStatus = :dealStatus" +
+            " AND hoMember.id <> :loginUserId")
     List<Member> findDealsByRequestIdByDongIdAndDealTypeAndDealStatus(
             @Param("dongId") Long dongId,
             @Param("dealType") @Nullable List<DealType>  dealType,
-            @Param("dealStatus") Deal.DealStatus dealStatus
+            @Param("dealStatus") Deal.DealStatus dealStatus,
+            @Param("loginUserId") Long loginUserId
     );
 
 
