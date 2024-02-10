@@ -77,7 +77,9 @@ public class MemberController {
 
             // 해당 아파트의 동 정보를 가져온다.
             Apartment apartment=ho.getDong().getApartment();
-            payload.put("apartment",apartment);
+            //payload.put("apartment",apartment);
+            List<DongDto.Response> dongList=dongService.getDongList(apartment.getId());
+            payload.put("adjDongs",dongList);
 
             return ResponseEntity.ok(payload);
 
