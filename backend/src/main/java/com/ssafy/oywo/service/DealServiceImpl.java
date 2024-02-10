@@ -517,7 +517,7 @@ public class DealServiceImpl implements DealService{
         Long myDongId = dealRepository.findDongIdByMemberId(loginUserId);
         log.info("myDongId : {}", myDongId);
         // 우리 동 거래 requestId 리스트
-        List<Member> requestMembers = memberRepository.findDealsByRequestIdByDongIdAndDealTypeAndDealStatus(myDongId, dealType, Deal.DealStatus.OPEN);
+        List<Member> requestMembers = memberRepository.findDealsByRequestIdByDongIdAndDealTypeAndDealStatus(myDongId, dealType, Deal.DealStatus.OPEN, loginUserId);
         log.info("requestMembers : {}", requestMembers.stream().map(Member::getUsername).collect(Collectors.toList()));
         // 추천 리스트
         List<Deal> recommendedDeals = new ArrayList<>();
