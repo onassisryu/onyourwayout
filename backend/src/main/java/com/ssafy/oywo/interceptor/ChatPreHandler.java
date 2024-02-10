@@ -34,12 +34,12 @@ public class ChatPreHandler implements ChannelInterceptor {
     // websocket을 통해 들어온 요청이 처리되기 전에 실행됨
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel){
-        StompHeaderAccessor accessor=StompHeaderAccessor.wrap(message);
-        String authToken=accessor.getFirstNativeHeader("Authorization").substring(7);
-        // websocket 연결 시 헤더의 jwt token 유효성 검증
-        if (StompCommand.CONNECT==accessor.getCommand()){
-            jwtTokenProvider.validateToken(Objects.requireNonNull(authToken));
-        }
+//        StompHeaderAccessor accessor=StompHeaderAccessor.wrap(message);
+//        String authToken=accessor.getFirstNativeHeader("Authorization").substring(7);
+//        // websocket 연결 시 헤더의 jwt token 유효성 검증
+//        if (StompCommand.CONNECT==accessor.getCommand()){
+//            jwtTokenProvider.validateToken(Objects.requireNonNull(authToken));
+//        }
         return message;
     }
     @EventListener

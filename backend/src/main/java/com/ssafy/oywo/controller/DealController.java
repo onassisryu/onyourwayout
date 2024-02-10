@@ -269,7 +269,18 @@ public class DealController {
         return ResponseEntity.ok(dealService.recommendDeal(dealType));
     }
 
+    @GetMapping("/out-recommend/{dealId}")
+    public ResponseEntity<?> requestRecommendDeal(
+            @PathVariable Long dealId) {
+        try {
+            dealService.requestRecommendDeal(dealId);
+            return ResponseEntity.ok("거래가 요청되었습니다.");
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
 
+    }
 
     /**
      * 나가요잉 최종확인(수락: 요청자)

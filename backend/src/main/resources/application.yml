@@ -6,7 +6,6 @@ spring:
       name: user
       password: 1234
 
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -32,5 +31,5 @@ server:
     include-binding-errors: always
     include-exception: false
   tomcat:
-    connection-timeout: 1800000
-    keep-alive-timeout: 3000000
+    connection-timeout: 60000
+    keep-alive-timeout: 60000

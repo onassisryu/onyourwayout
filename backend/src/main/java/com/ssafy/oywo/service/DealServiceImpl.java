@@ -569,6 +569,19 @@ public class DealServiceImpl implements DealService{
     }
 
 
+    @Override
+    public void requestRecommendDeal(Long dealId){
+        Long loginUserId = memberService.getLoginUserId();
+        Member acceptMember = memberRepository.findById(loginUserId).orElseThrow(() -> new NoSuchElementException("해당하는 멤버가 없습니다."));
+        Deal deal = dealRepository.findById(dealId).orElseThrow(() -> new NoSuchElementException("해당하는 거래가 없습니다."));
+
+        if(deal.getRequestId().equals(loginUserId)){
+            throw new IllegalArgumentException("자신이 요청한 거래는 요청할 수 없습니다.");
+        }
+
+        notificationService.requestRecommendDeal(deal, acceptMember);
+    }
+
     // 나가요잉 최종확인(수락: 요청자)
     @Override
     public DealDto.Response checkOutRecommendDeal(Long id, Long acceptId) {
