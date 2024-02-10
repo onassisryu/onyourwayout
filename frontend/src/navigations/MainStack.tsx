@@ -16,9 +16,8 @@ import {userDataState} from '@/recoil/atoms';
 import {useRecoilValue} from 'recoil';
 
 //page
-import {Screens} from '@screens/Screens';
 import Main from '@screens/Main';
-import Location from '@screens/Location';
+import Location from '@/screens/Map/Location';
 import ChatMain from '@screens/Chating/ChatMain';
 import ChatDetail from '@screens/Chating/ChatDetail';
 import Apart from '@screens/Apart';

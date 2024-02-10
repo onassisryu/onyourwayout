@@ -1,6 +1,6 @@
 import axios, {get} from 'axios';
 import {useSetRecoilState, useRecoilValue} from 'recoil';
-import {isLoggedInState, userDataState} from '@/recoil/atoms';
+import {isLoggedInState, userDataState, apartDataState} from '@/recoil/atoms';
 import React, {useState, useEffect} from 'react';
 import {Text, Alert, View, Keyboard, TouchableWithoutFeedback, Image, TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
@@ -59,6 +59,7 @@ const Login = ({navigation}: any) => {
 
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const setUserData = useSetRecoilState(userDataState);
+  const setApartData = useSetRecoilState(apartDataState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
 
   async function login() {
@@ -74,16 +75,18 @@ const Login = ({navigation}: any) => {
           const token = response.data.token.accessToken;
           const refreshToken = response.data.token.refreshToken;
           const user = response.data.memberInfo;
+          const adjDongs = response.data.adjDongs;
           console.log('로그인 성공', response.data);
           await setStorage('token', token);
           await setStorage('refreshToken', refreshToken);
           await setStorage('user', user);
+          await setStorage('adjDongs', adjDongs);
 
           //recoil에 저장
           setIsLoggedIn(true);
           setUserData(user);
+          setApartData(adjDongs);
           Keyboard.dismiss();
-          navigation.navigate('Bottom', {screen: 'Main'});
           console.log('123123');
           console.log(user);
           console.log(token);

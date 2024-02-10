@@ -10,7 +10,7 @@ import {StatusBar} from 'react-native';
 import {NavigationContainer, useNavigationContainerRef} from '@react-navigation/native';
 
 //recoil&react-query
-import {isLoggedInState, userDataState} from '@/recoil/atoms';
+import {isLoggedInState, userDataState, apartDataState} from '@/recoil/atoms';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
@@ -44,6 +44,7 @@ const App = () => {
   const userData = useRecoilValue(userDataState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const setUserData = useSetRecoilState(userDataState);
+  const setApartData = useSetRecoilState(apartDataState);
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
 
   const admin = false;
@@ -56,7 +57,7 @@ const App = () => {
   const checkLogin = async () => {
     if (isLoggedIn) {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
-      if (admin) {
+      if (userData.roles === 'ADMIN') {
         console.log('관리자입니다.');
       }
     } else {
@@ -67,6 +68,10 @@ const App = () => {
           getStorage('user').then(user => {
             setUserData(user);
             setIsLoggedIn(true);
+            getStorage('adjDongs').then(adjDongs => {
+              console.log(adjDongs);
+              setApartData(adjDongs);
+            });
           });
         }
       });

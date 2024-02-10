@@ -13,6 +13,9 @@ import {RootStackParamList} from '@/@types';
 import SockJS from 'sockjs-client';
 import StompJs, {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
+import {get} from 'axios';
+import {getStorage} from '@/storage/common_storage';
+import {getAccessToken} from '@/utils/common';
 
 const TextEncodingPolyfill = require('text-encoding');
 
@@ -99,31 +102,18 @@ const ChatDetail = ({navigation}: Props) => {
   const client = useRef<Client | null>(null);
   const socket = new SockJS('http://i10a302.p.ssafy.io:8080/ws/chat');
 
-  const connectChat = () => {
-    console.log('connectChat');
+  const connectChat = async () => {
     client.current = new StompJs.Client({
       brokerURL: 'ws://i10a302.p.ssafy.io:8080/ws/chat',
       // webSocketFactory: () => socket,
       connectHeaders: {
-        Authorization:
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzUxMzA5MX0.vSsVcwPlzGYeIYttLAfrmJB1220TCgQPTZaCbNV8V74',
+        Authorization: `${await getAccessToken()}`,
       },
       debug: str => {
         console.log('디버그', str);
-        console.log('121212121212');
       },
       onConnect: e => {
-        console.log('!@#!@#!@#!@#!@#!@#!@#');
         console.log(e);
-        console.log('Connected to the WebSocket server');
-        client.current?.subscribe(`/sub/channel/${params.roomId}`, message => {
-          const receivedMessage = JSON.parse(message.body);
-          console.log('receivedMessage', receivedMessage);
-          setMessages(receivedMessage);
-        });
-      },
-      onChangeState: e => {
-        console.log('onChangeState', e);
       },
       onStompError: frame => {
         console.error('Broker reported error:', frame.headers['message']);
@@ -135,12 +125,9 @@ const ChatDetail = ({navigation}: Props) => {
       onWebSocketClose: async e => {
         console.log('Closed', e.reason);
       },
-      reconnectDelay: 50000,
+      reconnectDelay: 10000,
       heartbeatIncoming: 40000,
     });
-    client.current.onConnect = () => {
-      console.log('onConnect');
-    };
     client.current.activate();
   };
   connectChat();
