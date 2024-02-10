@@ -1,4 +1,5 @@
 const Map = (key, location) => {
+  console.log('지도로딩중');
   return `
       <html>
         <head>
