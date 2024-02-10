@@ -29,6 +29,8 @@ import Notice from '@screens/Notice';
 import NoticeSettings from '@screens/NoticeSettings';
 import DoIt1 from '@/screens/DoIt/DoIt1';
 import DoIt2 from '@/screens/DoIt/DoIt2';
+import DoItListDetail from '@/screens/DoItListDetail';
+import DoItList from '@/screens/DoItList';
 import GoOut1 from '@/screens/GoOut/GoOut1';
 import AdminStack from '@/navigations/AdminStack';
 
@@ -75,7 +77,7 @@ const MainStack = () => {
         })}>
         <Tab.Screen name="홈" component={Main} />
         <Tab.Screen name="위치" component={Location} />
-        <Tab.Screen name="아파트" component={Apart} />
+        <Tab.Screen name="아파트" component={DoItList} />
         <Tab.Screen name="채팅" component={ChatMain} />
         <Tab.Screen name="내정보" component={My} />
       </Tab.Navigator>
@@ -96,6 +98,7 @@ const MainStack = () => {
       <Stack.Screen name="ChatDetail" component={ChatDetail} />
       <Stack.Screen name="MySetting" component={MySetting} />
       <Stack.Screen name="AdminStack" component={AdminStack} />
+      <Stack.Screen name="DoItListDetail" component={DoItListDetail} />
     </Stack.Navigator>
   );
 };

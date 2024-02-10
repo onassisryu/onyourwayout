@@ -1,30 +1,22 @@
 import React, {useState, useEffect} from 'react';
-import {Button, ScrollView, View, ImageSourcePropType} from 'react-native';
+import {Button, ScrollView, View, ImageSourcePropType, Text} from 'react-native';
 import styled, {css} from '@emotion/native';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 import DoItListHeader from '@components/DoItListpage/DoItListHeader';
 import DoItListCategory from '@components/DoItListpage/DoItListCategory';
-import DoItListContent from '@components/DoItListpage/DoItListContent';
 import ApartSelectionModal from '@components/DoItListpage/ApartSelectionModal';
 import ReportModal from '@components/DoItListpage/ReportModal';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
 
-interface Props {
-  navigation: NavigationProp<any>;
-  route: RouteProp<any>;
-}
 const DoItListCardComponent = styled(ScrollView)`
-  padding-left: 10px;
-  padding-right: 10px;
-  margin-top: 10px;
+  padding: 10px 20px;
 `;
 
 const DoItListButton = styled(GlobalButton)`
-  padding-right: 260px;
-  border-radius: 15px;
   background-color: white;
+  border-radius: 0px;
+  padding: 10px 0px;
 `;
 
 const DoItListCard = styled(GlobalContainer)`
@@ -36,22 +28,26 @@ const DoItListCard = styled(GlobalContainer)`
 `;
 
 const DoItListImage = styled.Image`
-  width: 120px;
-  height: 110px;
-  margin-right: 15px;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
   resize-mode: cover;
-  border-radius: 15px;
 `;
 
-const TextComponent = styled(GlobalContainer)`
-  width: 230px;
-  height: initial;
+const CardTextContainer = styled(GlobalContainer)`
+  position: relative;
+  flex: 1;
+  width: 100%;
+  margin-left: 20px;
   flex-direction: column;
   align-items: flex-start;
 `;
 
 const ReportButton = styled(GlobalButton)`
+  position: absolute;
   background-color: white;
+  top: 7px;
+  right: 5px;
 `;
 
 const TextTitle = styled(GlobalText)`
@@ -65,6 +61,7 @@ const TextApart = styled(GlobalText)`
   font-size: ${props => props.theme.fontSize.short};
   color: ${props => props.theme.color.gray};
   font-weight: bold;
+  margin-top: 5px;
   margin-bottom: 12px;
 `;
 
@@ -76,21 +73,27 @@ const TextContent = styled(GlobalText)`
 
 const TextPrice = styled(GlobalText)`
   font-size: ${props => props.theme.fontSize.medium};
-  color: ${props => props.theme.color.black};
+  margin-right: 10px;
   font-weight: bold;
-  margin-bottom: 10px;
 `;
 
 const DistinctLine = styled.View`
   width: 100%;
   margin-top: 5px;
   margin-bottom: 5px;
-  border: 1px solid #b2b2b2;
+  border: 1px solid #efefef;
+`;
+
+const CardImageContainer = styled(View)`
+  width: 130px;
+  height: 100%;
+  border-radius: 10px;
+  background-color: aliceblue;
 `;
 
 interface DealImage {
   // DealImage에 대한 필드를 정의해주세요.
-  // 예: id, url 등
+  imgUrl: string;
 }
 
 interface DoListCard {
@@ -100,7 +103,7 @@ interface DoListCard {
   requestId: number;
   acceptId: number | null;
   cash: number;
-  item: any; // 'item'의 구조에 따라 적절한 타입을 지정해주세요.
+  item: any;
   rewardType: string;
   complaint: number;
   dealStatus: string;
@@ -110,91 +113,19 @@ interface DoListCard {
   createdAt: string;
   modifiedAt: string;
   deletedAt: string | null;
+  requestInfo: {
+    dongId: number;
+    dongName: string;
+    requestType: string;
+    requestContent: string;
+    requestStatus: string;
+    createdAt: string;
+    modifiedAt: string;
+    deletedAt: string | null;
+  };
 }
 
-interface Props {
-  navigation: NavigationProp<any>;
-  selectedApartCategory: string;
-  selectedTypeCategory: string;
-  setReportModalVisible: (state: boolean) => void;
-}
-const dogImage: ImageSourcePropType = require('images/dog.png');
-const turtleImage: ImageSourcePropType = require('images/turtle.png');
-const DoItList = ({navigation, route}: Props) => {
-  const [doListCards, setDoListCards] = useState<DoListCard[]>([
-    {
-      id: 50,
-      title: '뽀삐 산책시켜주세요',
-      content: 'content2',
-      requestId: 13,
-      acceptId: null,
-      cash: 1110,
-      item: null,
-      rewardType: 'CASH',
-      complaint: 0,
-      dealStatus: 'OPEN',
-      dealType: 'PET',
-      expireAt: '2025-03-03T00:00:00',
-      dealImages: [dogImage],
-      createdAt: '2024-02-02T14:47:35.251175',
-      modifiedAt: '2024-02-02T14:47:35.251175',
-      deletedAt: null,
-    },
-    {
-      id: 50,
-      title: 'title2',
-      content: 'content2',
-      requestId: 13,
-      acceptId: null,
-      cash: 1110,
-      item: null,
-      rewardType: 'CASH',
-      complaint: 0,
-      dealStatus: 'OPEN',
-      dealType: 'PET',
-      expireAt: '2025-03-03T00:00:00',
-      dealImages: [turtleImage],
-      createdAt: '2024-02-02T14:47:35.251175',
-      modifiedAt: '2024-02-02T14:47:35.251175',
-      deletedAt: null,
-    },
-    {
-      id: 50,
-      title: 'title2',
-      content: 'content2',
-      requestId: 13,
-      acceptId: null,
-      cash: 1110,
-      item: null,
-      rewardType: 'CASH',
-      complaint: 0,
-      dealStatus: 'OPEN',
-      dealType: 'PET',
-      expireAt: '2025-03-03T00:00:00',
-      dealImages: [turtleImage],
-      createdAt: '2024-02-06T14:47:35.251175',
-      modifiedAt: '2024-02-06T14:47:35.251175',
-      deletedAt: null,
-    },
-    {
-      id: 172,
-      title: 'title2',
-      content: 'content2',
-      requestId: 13,
-      acceptId: null,
-      cash: 0,
-      item: '담배3갑',
-      rewardType: 'ITEM',
-      complaint: 0,
-      dealStatus: 'OPEN',
-      dealType: 'PET',
-      expireAt: '2025-03-03T00:00:00',
-      dealImages: [turtleImage],
-      createdAt: '2024-02-07T14:47:35.251175',
-      modifiedAt: '2024-02-07T14:47:35.251175',
-      deletedAt: null,
-    },
-  ]);
+const DoItList = ({navigation}: any) => {
   const [selectedApartCategory, setSelectedApartCategory] = useState<string>('');
   const [selectedTypeCategory, setSelectedTypeCategory] = useState<string>('');
 
@@ -202,7 +133,7 @@ const DoItList = ({navigation, route}: Props) => {
   const [selectedApart, setSelectedApart] = useState('');
 
   const [reportModalVisible, setReportModalVisible] = useState(false);
-  const [responseData, setResponseData] = useState([]);
+  const [cardListData, setCardListData] = useState<DoListCard[]>([]);
 
   const calculateTimeAgo = (createdAt: string) => {
     const now = new Date(); // 현재 시간
@@ -236,14 +167,13 @@ const DoItList = ({navigation, route}: Props) => {
     axiosAuth
       .get('deal/dong/list')
       .then(resp => {
-        setResponseData(resp.data);
-        console.log('성공', resp.data);
+        setCardListData(resp.data);
+        console.log('카드리스트 api 호출 성공', resp.data[0]);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   }, []);
-  //한번렌더링하고 새로고침하면 다시랜더링 해야됨~
 
   return (
     <GlobalContainer>
@@ -259,33 +189,24 @@ const DoItList = ({navigation, route}: Props) => {
       />
       <ScrollView overScrollMode="never">
         <DoItListCardComponent>
-          {responseData.map((card, index) => (
+          {cardListData.map((card, index) => (
             <View key={index}>
               <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {id: card.id})}>
                 <DoItListCard>
-                  {card.dealImages.length > 0 ? (
-                    <DoItListImage source={card.dealImages[0]} />
-                  ) : (
-                    <View
-                      style={css`
-                        width: 100px;
-                        height: 110px;
-                        margin-right: 15px;
-                        border-radius: 15px;
-                        background-color: lightgray;
-                      `}></View>
-                  )}
-                  <TextComponent>
+                  <CardImageContainer>
+                    {card.dealImages.length > 0 && <DoItListImage src={card.dealImages[0].imgUrl} />}
+                  </CardImageContainer>
+
+                  <CardTextContainer>
                     <ReportButton onPress={() => setReportModalVisible(true)}>
                       <Feather
                         name="more-vertical"
                         size={25}
                         style={css`
-                          position: absolute;
-                          top: 7px;
-                          left: 230px;
+                          color: #c4c4c4;
                         `}></Feather>
                     </ReportButton>
+
                     <View
                       style={css`
                         flex: 1;
@@ -293,7 +214,9 @@ const DoItList = ({navigation, route}: Props) => {
                       `}>
                       <TextTitle numberOfLines={1}>{card.title}</TextTitle>
 
-                      <TextApart>303동 / {calculateTimeAgo(card.createdAt)}</TextApart>
+                      <TextApart>
+                        {card.requestInfo.dongName}동 / {calculateTimeAgo(card.createdAt)}
+                      </TextApart>
                     </View>
                     <View
                       style={css`
@@ -311,7 +234,7 @@ const DoItList = ({navigation, route}: Props) => {
                           : 'Unknown Reward Type'}
                       </TextPrice>
                     </View>
-                  </TextComponent>
+                  </CardTextContainer>
                 </DoItListCard>
               </DoItListButton>
               <DistinctLine></DistinctLine>
