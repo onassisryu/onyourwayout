@@ -37,13 +37,16 @@ public class Apartment extends BaseTimeEntity {
     @Column(precision = 11, scale = 8)
     private BigDecimal lng;
 
+    private String officeTelNumber;
+
     @Builder
-    public Apartment(String aptCode, String name, String areaCode, BigDecimal lat, BigDecimal lng) {
+    public Apartment(String aptCode, String name, String areaCode, BigDecimal lat, BigDecimal lng, String officeTelNumber) {
         this.aptCode = aptCode;
         this.name = name;
         this.areaCode = areaCode;
         this.lat = lat;
         this.lng = lng;
+        this.officeTelNumber = officeTelNumber;
     }
 
 }
