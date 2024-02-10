@@ -42,9 +42,9 @@ const ShareButton = styled(GlobalButton)`
 `;
 
 const DoItListImage = styled.Image`
-  width: 410px;
-  height: 450px;
-  resize-mode: contain;
+  height: 400px;
+  width: 100%;
+  padding: 0;
 `;
 
 const TotalComponent = styled(ScrollView)`
@@ -236,11 +236,16 @@ const DoItListDetail = ({route, navigation}: any) => {
   };
   const param = route.params['id'];
   const [responseData, setResponseData] = useState({});
+  const [userInfo, setUserInfo] = useState({});
+  const [detailImage, setDetailImage] = useState([]);
   useEffect(() => {
     axiosAuth
       .get(`/deal/${param}`)
       .then(resp => {
         setResponseData(resp.data);
+        setUserInfo(resp.data.requestInfo);
+        setDetailImage(resp.data.dealImages);
+        console.log(detailImage);
         console.log('성공', resp.data);
       })
       .catch(error => {
@@ -248,6 +253,44 @@ const DoItListDetail = ({route, navigation}: any) => {
       });
   }, []);
 
+  const calculateTimeAgo = (createdAt: string) => {
+    const now = new Date(); // 현재 시간
+    const created = new Date(createdAt); // createdAt을 Date 객체로 변환
+    const diff = now.getTime() - created.getTime(); // 현재 시간과 createdAt 사이의 차이(밀리초)
+    const minutesAgo = Math.floor(diff / (1000 * 60)); // 밀리초를 분으로 변환하여 계산
+    const hoursAgo = Math.floor(minutesAgo / 60); // 분을 시간으로 변환하여 계산
+    const daysAgo = Math.floor(hoursAgo / 24); // 시간을 일로 변환하여 계산
+
+    if (daysAgo > 30) {
+      // 30일 이상인 경우 한 달 전을 반환
+      const monthsAgo = Math.floor(daysAgo / 30);
+      return `${monthsAgo}달 전`;
+    } else if (daysAgo > 7) {
+      // 7일 이상인 경우 일주일 전을 반환
+      const weeksAgo = Math.floor(daysAgo / 7);
+      return `${weeksAgo}주일 전`;
+    } else if (daysAgo > 0) {
+      // 1일 이상인 경우 일수로 반환
+      return `${daysAgo}일 전`;
+    } else if (hoursAgo > 0) {
+      // 1시간 이상인 경우 시간으로 반환
+      return `${hoursAgo}시간 전`;
+    } else {
+      // 1시간 미만인 경우 분으로 반환
+      return `${minutesAgo}분 전`;
+    }
+  };
+  function acceptDoit() {
+    axiosAuth
+      .get('deal/dong/list')
+      .then(resp => {
+        setResponseData(resp.data);
+        console.log('성공', resp.data);
+      })
+      .catch(error => {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      });
+  }
   return (
     <View
       style={css`
@@ -270,8 +313,8 @@ const DoItListDetail = ({route, navigation}: any) => {
               height: 1000px;
             `}>
             <View style={{zIndex: -99}}>
-              {card.image ? (
-                <DoItListImage source={card.image} />
+              {detailImage.length > 0 ? (
+                <DoItListImage src={detailImage[0].imgUrl} />
               ) : (
                 <View
                   style={css`
@@ -286,10 +329,10 @@ const DoItListDetail = ({route, navigation}: any) => {
               <SubHeader>
                 <SvgIcon name="profile" size={40} />
                 <ProfileComponent>
-                  <TextNickname> {card.nickname}</TextNickname>
+                  <TextNickname> {userInfo.nickname}</TextNickname>
                   <TextApart>
                     {' '}
-                    {card.apart} / {card.uptime}{' '}
+                    {userInfo.dongName}동 / {calculateTimeAgo(responseData.createdAt)}{' '}
                   </TextApart>
                 </ProfileComponent>
               </SubHeader>
@@ -341,11 +384,11 @@ const DoItListDetail = ({route, navigation}: any) => {
           bottom: 60px;
           z-index: 1;
         `}>
-        <AgreeButton>
+        <AgreeButton onPress={() => navigation.navigate()}>
           <FontAwesome name="handshake-o" size={20} color="white"></FontAwesome>
           <ButtonText> 수락하기 </ButtonText>
         </AgreeButton>
-        <ChatButton>
+        <ChatButton onPress={() => navigation.navigate()}>
           <Ionicons name="chatbox-ellipses-outline" size={20} color="white"></Ionicons>
           <ButtonText> 채팅하기 </ButtonText>
         </ChatButton>

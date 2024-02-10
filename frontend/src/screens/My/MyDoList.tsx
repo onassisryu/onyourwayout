@@ -147,49 +147,6 @@ const ButtonComponent = styled(GlobalContainer)`
   height: initial;
 `;
 
-const LikeButton = styled(GlobalButton)`
-  width: 70px;
-  height: 60px;
-  border: white;
-  background-color: ${props => props.theme.color.primary};
-  border-top-left-radius: 15px;
-  border-bottom-left-radius: 15px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-`;
-
-const AgreeButton = styled(GlobalButton)`
-  flex-direction: row;
-  width: 150px;
-  height: 60px;
-  border: white;
-  background-color: ${props => props.theme.color.primary};
-  border-top-left-radius: 15px;
-  border-bottom-left-radius: 15px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-`;
-
-const ChatButton = styled(GlobalButton)`
-  flex-direction: row;
-  width: 150px;
-  height: 60px;
-  border: white;
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border-top-right-radius: 15px;
-  border-bottom-right-radius: 15px;
-  background-color: ${props => props.theme.color.primary};
-`;
-
-const ButtonText = styled(GlobalText)`
-  font-size: ${props => props.theme.fontSize.medium};
-  color: ${props => props.theme.color.white};
-  font-weight: bold;
-  margin-left: 5px;
-  margin-bottom: 4px;
-`;
-
 interface DoListCard {
   id: number;
   category: string;
@@ -233,12 +190,8 @@ const dealTypeTextMapReverse = {
 
 const GoOut2 = ({route, navigation}: any) => {
   const [responseData, setResponseData] = useState([]);
-  const selectedTitles: string[] = route.params.selectedButton
-    .filter((button: {status: boolean; title: string}) => button.status === true)
-    .map((button: {status: boolean; title: string}) => button.title);
-  console.log('selectedTitles', selectedTitles);
-  const queryString = selectedTitles.map(title => `dealType=${title}`).join('&');
-  const url = `deal/out-recommend?${queryString}`;
+  const type = route.params.type;
+  const url = `deal/user/list?type=${type}`;
 
   useEffect(() => {
     axiosAuth
@@ -251,24 +204,13 @@ const GoOut2 = ({route, navigation}: any) => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   }, []);
-
-  function sendGoOutRequest(dealid: number) {
-    axiosAuth
-      .get(`deal/out-recommend/${dealid}`)
-      .then(resp => {
-        console.log('성공', resp.data);
-      })
-      .catch(error => {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
-      });
-  }
   return (
     <View
       style={css`
         width: 100%;
         height: 100%;
       `}>
-      <ScrollView>
+      <ScrollView horizontal>
         {responseData.map((card, index) => (
           <View
             key={index}
@@ -277,11 +219,7 @@ const GoOut2 = ({route, navigation}: any) => {
             `}>
             <Text>{card.title}</Text>
             <Text>{card.content}</Text>
-            <Text>{card.id}</Text>
-            <TouchableOpacity
-              onPress={() => {
-                sendGoOutRequest(card.id);
-              }}>
+            <TouchableOpacity onPress={() => {}}>
               <Text>수락하기</Text>
             </TouchableOpacity>
           </View>

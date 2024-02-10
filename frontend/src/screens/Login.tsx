@@ -70,6 +70,7 @@ const Login = ({navigation}: any) => {
       try {
         const response = await axios.post('http://i10a302.p.ssafy.io:8080/members/signin', {username, password});
         if (response.data !== null && response.data !== '') {
+          console.log(response.data);
           const token = response.data.token.accessToken;
           const refreshToken = response.data.token.refreshToken;
           const user = response.data.memberInfo;
@@ -82,6 +83,11 @@ const Login = ({navigation}: any) => {
           setIsLoggedIn(true);
           setUserData(user);
           Keyboard.dismiss();
+          navigation.navigate('Bottom', {screen: 'Main'});
+          console.log('123123');
+          console.log(user);
+          console.log(token);
+          console.log('로그인 성공');
         } else {
           Alert.alert('로그인 실패', '아이디나 비밀번호를 확인하세요.');
           setusername('');
