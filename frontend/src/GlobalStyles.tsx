@@ -11,7 +11,6 @@ export const GlobalContainer = styled.View`
   box-sizing: border-box;
   background-color: white;
   height: 100%;
-  height: 100%;
 `;
 export const GlobalComponent = styled.View`
   font-family: ${theme.font.primary};

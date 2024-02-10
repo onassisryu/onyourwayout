@@ -3,11 +3,10 @@ import {css} from '@emotion/native';
 import {ScrollView, View, TouchableOpacity, Text, Animated, useWindowDimensions} from 'react-native';
 import {ImageURISource, Alert, Button, Image, StyleSheet} from 'react-native';
 import {GlobalContainer, GlobalText} from '@/GlobalStyles';
-import {NavigationProp} from '@react-navigation/native';
 import DefaultButton from '@/components/DefaultButton';
 import Header from '@/components/Header';
 import GoBack from '@components/Signup/GoBack';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {NavigationProp, RouteProp, useRoute} from '@react-navigation/native';
 import styled from '@emotion/native';
 import theme from '@/Theme';
 import {useEffect} from 'react';
@@ -30,6 +29,7 @@ import {
   Asset,
 } from 'react-native-image-picker';
 import axios from 'axios';
+
 type DoItScreenRouteProp = RouteProp<RootStackParamList, 'DoIt2'>;
 
 interface Props {
@@ -168,23 +168,20 @@ const DoIt2 = ({navigation}: Props) => {
     outputRange: [0, width / 2.4], // 화면의 반쪽으로 이동
   });
   const userData = useRecoilValue(userDataState);
-  const token =
-    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzUxNjQ4MX0.ufi1bnruLSZqryEJ38jDc3CXz9yMamARmkj-HSToCH4';
 
-  const submitMultipart = (body: any) => {
+  const submitMultipart = async (body: any) => {
     const formData = new FormData();
     formData.append('dto', JSON.stringify(body.jsonData));
     formData.append('dealImageFileList', body.dealImageFileList);
 
-    console.log(JSON.stringify(body.jsonData));
+    console.log(JSON.stringify(body.dealImageFileList));
     const instance = axios.create();
     return instance({
       url: 'http://i10a302.p.ssafy.io:8080/deal',
       method: 'post',
       data: formData,
       headers: {
-        'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzUxNjQ4MX0.ufi1bnruLSZqryEJ38jDc3CXz9yMamARmkj-HSToCH4',
+        'Authorization': await getAccessToken(),
         'content-type': 'multipart/form-data',
       },
     });
@@ -220,12 +217,13 @@ const DoIt2 = ({navigation}: Props) => {
           const uri = response.assets[0].uri; //assets 여러개가 올수 있는데 중에 0번방 거
           const type = response.assets[0].type;
           const fileSize = response.assets[0].fileSize;
+          const fileName = response.assets[0].fileName;
 
-          console.log(response.assets[0]);
+          console.log('이미지 파일입니다', response.assets[0]);
 
-          const souce = {uri: uri, type: type, fileSize: fileSize};
+          const souce = {uri: uri, type: type, fileSize: fileSize, name: fileName};
           setImageData(souce);
-          setImg(souce);
+          // setImg(souce);
         }
       }
     }); //파라미터로 응답객체 받음
@@ -252,6 +250,7 @@ const DoIt2 = ({navigation}: Props) => {
 
       //원래는 FlatList로 이미지 보여줘야하지만
       //첫번째 이미지만 보여주기
+      console.log('이미지 파일입니다', uris[0]);
       setImg(uris[0]);
     }
   };
