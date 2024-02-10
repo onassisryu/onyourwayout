@@ -26,6 +26,7 @@ public class MemberDto {
         private String inviteCode;              // 인증 코드
         private boolean isNotiDongAll;          // 전체 동 알림 여부
         private boolean isNotiCategoryAll;      // 전체 유형 알림 여부
+        private String fcmToken;
 
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         private java.sql.Date birthDate;                 // 생년월일
@@ -80,6 +81,7 @@ public class MemberDto {
         private String dongName;
         private Long hoId;
         private String hoName;
+        private String officeTelNumber;
 
         private String certificationImg;
         private Time notificationStart;
@@ -105,6 +107,7 @@ public class MemberDto {
                     .dongName(ho.getDong().getName())
                     .hoId(ho.getId())
                     .hoName(ho.getName())
+                    .officeTelNumber(ho.getDong().getApartment().getOfficeTelNumber())
                     .inviteCode(ho.getInviteCode())
                     .roles(member.getRoles())
                     .pauseStartAt(member.getPauseStartAt())
@@ -245,6 +248,7 @@ public class MemberDto {
         private String dongName;
         private Long hoId;
         private String hoName;
+        private String officeTelNumber;
 
         private Timestamp createdAt;
         private Timestamp updatedAt;
@@ -283,12 +287,26 @@ public class MemberDto {
                     .dongName(dong.getName())
                     .aptId(dong.getApartment().getId())
                     .aptName(dong.getApartment().getName())
+                    .officeTelNumber(dong.getApartment().getOfficeTelNumber())
                     .inviteCode(ho.getInviteCode())
                     .roles(response.getRoles())
                     .build();
             return totalInfo;
         }
 
-        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder(toBuilder = true)
+    public static class Modification{
+        private Long id;
+        private String nickname;
+        private String username;
+        private String password;
+        private Date birthDate;
+        private String phoneNumber;
+    }
 
 }

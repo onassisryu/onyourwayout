@@ -18,6 +18,8 @@ public interface MemberService {
     public Map<String,String> validateRefreshToken(String refreshToken);
 
     public MemberDto.Response modify(Member member);
+
+    public MemberDto.Response modify(MemberDto.Modification dto,MultipartFile certiImage);
     public MemberDto.Response modify(Long id, MemberDto.Request memberDto);
 
     public MemberDto.Response modifyWithAlarm(Member member);

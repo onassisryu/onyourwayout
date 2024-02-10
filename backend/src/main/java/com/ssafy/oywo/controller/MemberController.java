@@ -56,15 +56,16 @@ public class MemberController {
             JwtToken jwtToken = memberSerivce.signIn(username, password);
             log.info("request username = {}, password = {}", username, password);
             log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
-
+            
             MemberDto.Response memberResponse=memberSerivce.getMemberInfo(username,password);
+            // fcm 토큰 저장
+            memberSerivce.saveFcmToken(memberResponse.getId(),memberDto.getFcmToken());
             MemberDto.TotalInfo totalMemberInfo=new MemberDto.TotalInfo();
 
 
             // 사용자 id로 아파트, 동, 호를 저장한다.
             Long hoId=memberSerivce.getHoIdByMemberId(memberResponse.getId());
             Ho ho=hoService.getHoById(hoId).orElseThrow(()->new NoSuchElementException("찾을 수 없는 호입니다"));
-            System.out.println("InviteCode "+ho.getInviteCode());
             HoDto hoDto=HoDto.builder().name(ho.getName()).id(ho.getId()).inviteCode(ho.getInviteCode()).build();
             DongDto.Response dongResponse=dongService.getDongByHoId(hoId);
 
@@ -73,6 +74,10 @@ public class MemberController {
             HashMap<String,Object> payload=new HashMap<>();
             payload.put("token",jwtToken);
             payload.put("memberInfo",totalMemberInfo);
+
+            // 해당 아파트의 동 정보를 가져온다.
+            Apartment apartment=ho.getDong().getApartment();
+            payload.put("apartment",apartment);
 
             return ResponseEntity.ok(payload);
 
@@ -118,14 +123,15 @@ public class MemberController {
     }
     /**
      *
-     * @param id 사용자 고유 id
-     * @param memberDto 사용자 관련 정보 수정
+     * @param
+     * @param
      * @return
      */
     @Operation(summary = "사용자 정보 수정",description = "사용자 uuid로 사용자 정보를 수정합니다.")
-    @PutMapping("/{id}")
-    public ResponseEntity<?> modifyUserInfo(@Parameter(name = "id", description = "사용자 uuid") @PathVariable Long id, @RequestBody MemberDto.Request memberDto){
-        MemberDto.Response modifiedMember=memberSerivce.modify(id, memberDto);
+    @PutMapping("/modify")
+    public ResponseEntity<?> modifyUserInfo(@RequestPart MemberDto.Modification dto,
+                                            @RequestPart(required = false)MultipartFile certiImage){
+        MemberDto.Response modifiedMember=memberSerivce.modify(dto,certiImage);
         return new ResponseEntity<>(modifiedMember,HttpStatus.ACCEPTED);
     }
 
