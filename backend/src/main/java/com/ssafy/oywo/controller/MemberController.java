@@ -118,14 +118,15 @@ public class MemberController {
     }
     /**
      *
-     * @param id 사용자 고유 id
-     * @param memberDto 사용자 관련 정보 수정
+     * @param
+     * @param
      * @return
      */
     @Operation(summary = "사용자 정보 수정",description = "사용자 uuid로 사용자 정보를 수정합니다.")
-    @PutMapping("/{id}")
-    public ResponseEntity<?> modifyUserInfo(@Parameter(name = "id", description = "사용자 uuid") @PathVariable Long id, @RequestBody MemberDto.Request memberDto){
-        MemberDto.Response modifiedMember=memberSerivce.modify(id, memberDto);
+    @PutMapping("/modify")
+    public ResponseEntity<?> modifyUserInfo(@RequestPart MemberDto.Modification dto,
+                                            @RequestPart(required = false)MultipartFile certiImage){
+        MemberDto.Response modifiedMember=memberSerivce.modify(dto,certiImage);
         return new ResponseEntity<>(modifiedMember,HttpStatus.ACCEPTED);
     }
 

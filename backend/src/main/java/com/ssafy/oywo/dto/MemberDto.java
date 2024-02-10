@@ -293,6 +293,19 @@ public class MemberDto {
             return totalInfo;
         }
 
-        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder(toBuilder = true)
+    public static class Modification{
+        private Long id;
+        private String nickname;
+        private String username;
+        private String password;
+        private Date birthDate;
+        private String phoneNumber;
+    }
 
 }

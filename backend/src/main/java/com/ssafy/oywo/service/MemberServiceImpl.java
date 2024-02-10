@@ -265,6 +265,33 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
+    public MemberDto.Response modify(MemberDto.Modification dto,MultipartFile certiImage) {
+        Member member=memberRepository.findById(dto.getId())
+                .orElseThrow(()->new NoSuchElementException("존재하지 않는 사용자입니다."));
+        member.setNickname(dto.getNickname());
+        member.setPassword(dto.getPassword());
+        member.setUsername(dto.getUsername());
+        member.setBirthDate(dto.getBirthDate());
+        member.setPhoneNumber(dto.getPhoneNumber());
+        try{
+            if (!certiImage.isEmpty()){
+                String imgURL=s3UploadService.upload(certiImage,"CertiImage",member.getId());
+                member.setCertificationImg(imgURL);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("아파트 명세서 등록 중 오류 발생", e);
+        }
+
+        Ho ho=hoRepository.findByMemberId(member.getId());
+
+        MemberDto.Response response=MemberDto.Response.of(member,ho);
+
+        return response;
+    }
+
+    @Transactional
+    @Override
     public void logout(String username) {
         Optional<RefreshToken> refreshToken=refreshTokenRepository.findByUserName(username);
 
