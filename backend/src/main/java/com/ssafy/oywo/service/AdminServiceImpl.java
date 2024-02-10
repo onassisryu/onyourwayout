@@ -150,7 +150,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     public List<MemberDto.Response> getPausedMember(){
-        List<Member> pausedMembers=memberRepository.findByPauseEndAtGreaterThan(LocalDateTime.now().now());
+        List<Member> pausedMembers=memberRepository.findByPauseEndAtGreaterThan(LocalDateTime.now());
         List<MemberDto.Response> payload=new ArrayList<>();
         for (Member member:pausedMembers){
             Ho ho=member.getHo();
