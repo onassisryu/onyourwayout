@@ -174,10 +174,10 @@ const My = ({navigation}: any) => {
                   flex-direction: row;
                   justify-content: space-around;
                 `}>
-                <InnerContainerBox onPress={() => navigation.navigate('Activity')}>
+                <InnerContainerBox onPress={() => navigation.navigate('MyDoList', {type: 'accept'})}>
                   <Text>내가 한일</Text>
                 </InnerContainerBox>
-                <InnerContainerBox onPress={() => navigation.navigate('Activity')}>
+                <InnerContainerBox onPress={() => navigation.navigate('MyDoList', {type: 'request'})}>
                   <Text>내가 맡긴일</Text>
                 </InnerContainerBox>
               </View>

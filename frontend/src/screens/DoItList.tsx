@@ -118,6 +118,7 @@ interface Props {
   selectedTypeCategory: string;
   setReportModalVisible: (state: boolean) => void;
 }
+
 const dogImage: ImageSourcePropType = require('images/dog.png');
 const turtleImage: ImageSourcePropType = require('images/turtle.png');
 const DoItList = ({navigation, route}: Props) => {
@@ -264,11 +265,11 @@ const DoItList = ({navigation, route}: Props) => {
               <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {id: card.id})}>
                 <DoItListCard>
                   {card.dealImages.length > 0 ? (
-                    <DoItListImage source={card.dealImages[0]} />
+                    <DoItListImage src={card.dealImages[0].imgUrl} />
                   ) : (
                     <View
                       style={css`
-                        width: 100px;
+                        width: 120px;
                         height: 110px;
                         margin-right: 15px;
                         border-radius: 15px;

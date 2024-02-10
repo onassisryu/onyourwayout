@@ -217,13 +217,14 @@ const DoIt2 = ({navigation}: Props) => {
         if (response.assets != null) {
           //선택된 이미지 객체를 이미지뷰가 보여주는 state변수 img에 저장
           //선택된 이미지의 uri 경로 얻어오기
+          const name = response.assets[0].fileName;
           const uri = response.assets[0].uri; //assets 여러개가 올수 있는데 중에 0번방 거
           const type = response.assets[0].type;
           const fileSize = response.assets[0].fileSize;
 
           console.log(response.assets[0]);
 
-          const souce = {uri: uri, type: type, fileSize: fileSize};
+          const souce = {name: name, uri: uri, type: type, fileSize: fileSize};
           setImageData(souce);
           setImg(souce);
         }

@@ -10,7 +10,7 @@ const axiosAuth = axios.create({
 axiosAuth.interceptors.request.use(
   async (config: any) => {
     const token = await getAccessToken();
-    config.headers['Content-Type'] = 'multipart/form-data';
+    config.headers['Content-Type'] = 'application/json';
     config.headers['Authorization'] = `Bearer ${token}`;
     return config;
   },

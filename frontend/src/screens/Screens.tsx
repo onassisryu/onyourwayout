@@ -13,6 +13,7 @@ import Signup5 from '@/screens/Signup/Signup5';
 import Signup5a from '@/screens/Signup/Signup5a';
 import Signup6 from '@/screens/Signup/Signup6';
 import GoOut1 from '@/screens/GoOut/GoOut1';
+import GoOut2 from '@/screens/GoOut/GoOut2';
 import Activity from '@/screens/My/Activity';
 import ApartCertification from '@/screens/My/ApartCertification';
 import BankAccount from '@/screens/My/BankAccount';
@@ -20,6 +21,7 @@ import InvitationCode from '@/screens/My/InvitationCode';
 import ServiceCenter from '@/screens/My/ServiceCenter';
 import DoItList from './DoItList';
 import DoItListDetail from './DoItListDetail';
+import MyDoList from './My/MyDoList';
 type ScreenItem = {
   name: string;
   component: React.ComponentType<any>;
@@ -37,6 +39,7 @@ export const Screens: ScreenItem[] = [
   {name: 'Notice', component: Notice},
   {name: 'NoticeSettings', component: NoticeSettings},
   {name: 'GoOut1', component: GoOut1},
+  {name: 'GoOut2', component: GoOut2},
   {name: 'DoIt1', component: DoIt1},
   {name: 'DoIt2', component: DoIt2},
   {name: 'Signup0', component: Signup0},
@@ -48,4 +51,5 @@ export const Screens: ScreenItem[] = [
   {name: 'Signup5a', component: Signup5a},
   {name: 'Signup6', component: Signup6},
   {name: 'MySetting', component: MySetting},
+  {name: 'MyDoList', component: MyDoList},
 ];

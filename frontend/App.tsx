@@ -32,10 +32,10 @@ import Main from '@screens/Main';
 import Location from '@screens/Location';
 import ChatMain from '@screens/Chating/ChatMain';
 import ChatDetail from '@screens/Chating/ChatDetail';
+import DoItList from '@/screens/DoItList';
 import Apart from '@screens/Apart';
 import My from '@screens/My';
 import {NoticeTab, sendNotification} from '@/components/Noticepage/NoticeTab';
-import DoItList from '@/screens/DoItList';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
