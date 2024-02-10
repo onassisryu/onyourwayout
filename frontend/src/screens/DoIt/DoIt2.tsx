@@ -192,7 +192,6 @@ const DoIt2 = ({navigation}: Props) => {
   const [img, setImg] = useState<ImageURISource>({
     uri: 'https://cdn.pixabay.com/photo/2023/05/21/12/40/dog-8008483_1280.jpg',
   }); //setState를 대신하는 넘이랑 변수랑 같이 하기
-  //제네릭 필수!!!
   const [imageData, setImageData] = useState({});
   //버튼 동작
   //카메라 앱을 실행하는 기능 화살표 함수
