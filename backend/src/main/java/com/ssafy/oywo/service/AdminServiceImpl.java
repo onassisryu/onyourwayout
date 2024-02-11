@@ -72,7 +72,9 @@ public class AdminServiceImpl implements AdminService {
         List<Deal> deals = dealRepository.findDealsByOrderByComplaintDesc();
 
         return deals.stream()
-                .map(d -> new DealDto.Response(d, memberRepository.findById(d.getRequestId()).orElseThrow(() -> new IllegalArgumentException("해당 requestId의 사용자가 없음"))))
+                .map(d -> new DealDto.Response(d,
+                        dealComplaintRepository.findDealComplaintByDealId(d.getId()),
+                        memberRepository.findById(d.getRequestId()).orElseThrow(() -> new IllegalArgumentException("해당 requestId의 사용자가 없음"))))
                 .collect(Collectors.toList());
     }
 
@@ -81,7 +83,12 @@ public class AdminServiceImpl implements AdminService {
     public DealDto.Response getDealWithComplaint(Long dealId) {
 
         return dealRepository.findById(dealId)
-                .map(deal -> new DealDto.Response(deal, dealComplaintRepository.findDealComplaintByDealId(deal.getId())))
+                .map(deal -> new DealDto.Response(deal,
+                                dealComplaintRepository.findDealComplaintByDealId(deal.getId()),
+                                memberRepository.findById(deal.getRequestId())
+                                .orElseThrow(
+                                        () -> new IllegalArgumentException("해당 requestId에 대한 사용자가 없음")
+                                )))
                 .orElseThrow(
                         () -> new IllegalArgumentException("해당 거래가 없음")
                 );
