@@ -10,6 +10,7 @@ import ApartSelectionModal from '@components/DoItListpage/ApartSelectionModal';
 import ReportModal from '@components/DoItListpage/ReportModal';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
+import SvgIcon from '@components/SvgIcon';
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -35,7 +36,7 @@ const DoItListCard = styled(GlobalContainer)`
   height: 130px;
 `;
 
-const DoItListImage = styled.Image`
+const DoItListImage = styled.ImageBackground`
   width: 120px;
   height: 110px;
   margin-right: 15px;
@@ -53,6 +54,7 @@ const TextComponent = styled(GlobalContainer)`
 const ReportButton = styled(GlobalButton)`
   background-color: white;
 `;
+
 
 const TextTitle = styled(GlobalText)`
   font-size: ${props => props.theme.fontSize.medium};
@@ -90,7 +92,7 @@ const DistinctLine = styled.View`
 
 interface DealImage {
   // DealImage에 대한 필드를 정의해주세요.
-  // 예: id, url 등
+  image: ImageSourcePropType;
 }
 
 interface DoListCard {
@@ -118,8 +120,8 @@ interface Props {
   selectedTypeCategory: string;
   setReportModalVisible: (state: boolean) => void;
 }
-const dogImage: ImageSourcePropType = require('images/dog.png');
-const turtleImage: ImageSourcePropType = require('images/turtle.png');
+
+
 const DoItList = ({navigation, route}: Props) => {
   const [doListCards, setDoListCards] = useState<DoListCard[]>([
     {
@@ -135,7 +137,7 @@ const DoItList = ({navigation, route}: Props) => {
       dealStatus: 'OPEN',
       dealType: 'PET',
       expireAt: '2025-03-03T00:00:00',
-      dealImages: [dogImage],
+      dealImages: [],
       createdAt: '2024-02-02T14:47:35.251175',
       modifiedAt: '2024-02-02T14:47:35.251175',
       deletedAt: null,
@@ -153,7 +155,7 @@ const DoItList = ({navigation, route}: Props) => {
       dealStatus: 'OPEN',
       dealType: 'PET',
       expireAt: '2025-03-03T00:00:00',
-      dealImages: [turtleImage],
+      dealImages: [],
       createdAt: '2024-02-02T14:47:35.251175',
       modifiedAt: '2024-02-02T14:47:35.251175',
       deletedAt: null,
@@ -171,30 +173,13 @@ const DoItList = ({navigation, route}: Props) => {
       dealStatus: 'OPEN',
       dealType: 'PET',
       expireAt: '2025-03-03T00:00:00',
-      dealImages: [turtleImage],
+      dealImages: [],
       createdAt: '2024-02-06T14:47:35.251175',
       modifiedAt: '2024-02-06T14:47:35.251175',
       deletedAt: null,
     },
-    {
-      id: 172,
-      title: 'title2',
-      content: 'content2',
-      requestId: 13,
-      acceptId: null,
-      cash: 0,
-      item: '담배3갑',
-      rewardType: 'ITEM',
-      complaint: 0,
-      dealStatus: 'OPEN',
-      dealType: 'PET',
-      expireAt: '2025-03-03T00:00:00',
-      dealImages: [turtleImage],
-      createdAt: '2024-02-07T14:47:35.251175',
-      modifiedAt: '2024-02-07T14:47:35.251175',
-      deletedAt: null,
-    },
   ]);
+
   const [selectedApartCategory, setSelectedApartCategory] = useState<string>('');
   const [selectedTypeCategory, setSelectedTypeCategory] = useState<string>('');
 
@@ -244,6 +229,26 @@ const DoItList = ({navigation, route}: Props) => {
       });
   }, []);
   //한번렌더링하고 새로고침하면 다시랜더링 해야됨~
+  
+  const categoryToDealType = (category: string) => {
+    switch (category) {
+      case '반려동물 산책':
+        return 'PET';
+      case '심부름':
+        return 'SHOP';
+      case '분리수거':
+        return 'RECYCLE';
+      case '기타':
+        return 'ETC';
+      default:
+        return '';
+    }
+  };
+  
+  let filteredData = responseData;
+  if (selectedTypeCategory) {
+    filteredData = responseData.filter((card) => card.dealType === categoryToDealType(selectedTypeCategory));
+  }
 
   return (
     <GlobalContainer>
@@ -259,21 +264,31 @@ const DoItList = ({navigation, route}: Props) => {
       />
       <ScrollView overScrollMode="never">
         <DoItListCardComponent>
-          {responseData.map((card, index) => (
+          {filteredData.map((card, index) => (
             <View key={index}>
-              <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {id: card.id})}>
+              <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {card: card})}>
                 <DoItListCard>
                   {card.dealImages.length > 0 ? (
-                    <DoItListImage source={card.dealImages[0]} />
+                    <DoItListImage source={card.dealImages[0]} >
+                      {card.dealType === 'PET' && <SvgIcon name="puppy" size={30} style={css`position: absolute; top: 10px; left: 10px;`} />}
+                      {card.dealType === 'RECYCLE' && <SvgIcon name="shopping" size={30} style={css`position: absolute;`} />}
+                      {card.dealType === 'SHOP' && <SvgIcon name="bags" size={30} style={css`position: absolute;`} />}
+                      {card.dealType === 'ETC' && <SvgIcon name="building" size={30} style={css`position: absolute;`} />}
+                    </DoItListImage> 
                   ) : (
                     <View
                       style={css`
                         width: 100px;
                         height: 110px;
-                        margin-right: 15px;
+                        margin-right: 35px;
                         border-radius: 15px;
                         background-color: lightgray;
-                      `}></View>
+                      `}>
+                        {card.dealType === 'PET' && <SvgIcon name="puppy" size={30} style={css`position: absolute; top: 10px; left: 10px;`} />}
+                      {card.dealType === 'RECYCLE' && <SvgIcon name="shopping" size={30} style={css`position: absolute;`} />}
+                      {card.dealType === 'SHOP' && <SvgIcon name="bags" size={30} style={css`position: absolute;`} />}
+                      {card.dealType === 'ETC' && <SvgIcon name="building" size={30} style={css`position: absolute;`} />}
+                      </View>
                   )}
                   <TextComponent>
                     <ReportButton onPress={() => setReportModalVisible(true)}>
@@ -305,11 +320,11 @@ const DoItList = ({navigation, route}: Props) => {
                       <TextPrice>
                         {' '}
                         {card.rewardType === 'CASH'
-                          ? `${card.cash}원`
-                          : card.rewardType === 'ITEM'
-                          ? card.item
-                          : 'Unknown Reward Type'}
-                      </TextPrice>
+                            ? `${card.cash.toLocaleString()}원`
+                            : card.rewardType === 'ITEM'
+                            ? card.item
+                            : 'Unknown Reward Type'}
+                    </TextPrice>
                     </View>
                   </TextComponent>
                 </DoItListCard>

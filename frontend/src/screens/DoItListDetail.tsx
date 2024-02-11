@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import {ImageSourcePropType, StatusBar, View, Text, ScrollView, TouchableOpacity} from 'react-native';
+import {ImageSourcePropType, StatusBar, View, Text, ScrollView, TouchableOpacity, Modal} from 'react-native';
 import styled, {css} from '@emotion/native';
+import EditDeleteModal from '@/components/DoItListDetailModal/EditDeleteModal';
+import ReportModal from '@/components/DoItListDetailModal/ReportModal';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import Header from '@/components/Header';
@@ -11,8 +13,10 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GoBack from '@/components/Signup/GoBack';
 import axiosAuth from '@/axios/axiosAuth';
+import Feather from 'react-native-vector-icons/Feather';
+import { getStorage } from '@/storage/common_storage';
 
-const Container = styled(GlobalContainer)``;
+
 
 const SubContainer = styled(GlobalContainer)`
   margin: 10px;
@@ -209,20 +213,14 @@ type RootStackParamList = {
   // 다른 라우트 이름들도 이곳에 추가해야 합니다.
 };
 
-type DoItListDetailRouteProp = RouteProp<RootStackParamList, 'DoItListDetail'>;
-
-interface Props {
-  route: DoItListDetailRouteProp;
-  navigation: NavigationProp<any>;
-  // 필요하다면 다른 props들도 추가할 수 있습니다.
-}
-
 const dealTypeTextMap = {
   PET: '애완동물 산책',
   RECYCLE: '분리수거',
   SHOP: '장보기',
   ETC: '기타',
 };
+
+
 const DoItListDetail = ({route, navigation}: any) => {
   const card = {
     id: 1,
@@ -234,19 +232,42 @@ const DoItListDetail = ({route, navigation}: any) => {
     nickname: '호구팟',
     content: '나는김치맨김치파워',
   };
-  const param = route.params['id'];
+
+  const [userId, setUserId] = useState(null); // 로그인한 사용자의 ID를 저장하는 state
+  const [requestUserId, setRequestUserId] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
+
+  const param = route.params.card;
+  console.log(param)
+
   const [responseData, setResponseData] = useState({});
   useEffect(() => {
+    getStorage('user')
+      .then(data => {
+        setUserId(data?.id); // 로그인한 사용자의 ID를 state에 저장
+        });
+
     axiosAuth
-      .get(`/deal/${param}`)
+      .get(`/deal/${param.id}`)
       .then(resp => {
         setResponseData(resp.data);
+        setRequestUserId(resp.data.requestId);
         console.log('성공', resp.data);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   }, []);
+
+  const handleIconPress = () => {
+    if (requestUserId === userId) {
+      setModalType('edit'); // 수정, 삭제 가능한 모달
+    } else {
+      setModalType('report'); // 신고 가능한 모달
+    }
+    setModalVisible(true); // 모달 열기
+  };
 
   return (
     <View
@@ -320,16 +341,24 @@ const DoItListDetail = ({route, navigation}: any) => {
         <View
           style={css`
             margin-left: 10px;
+            margin-right: 5px;
           `}>
-          <TouchableOpacity>
-            <Text>
+          <TouchableOpacity
+            style={css`
+              flex-direction: row;
+              justify-content: space-between;
+            `}>
               <Ant
                 name="arrowleft"
                 size={40}
                 color="black"
                 onPress={() => navigation.navigate('Bottom', {screen: '아파트'})}
               />
-            </Text>
+              <Feather
+                name="more-vertical"
+                size={40}
+                onPress={handleIconPress}
+              />
           </TouchableOpacity>
         </View>
       </View>
@@ -350,7 +379,25 @@ const DoItListDetail = ({route, navigation}: any) => {
           <ButtonText> 채팅하기 </ButtonText>
         </ChatButton>
       </View>
+      { 
+        modalVisible && (
+          modalType === 'edit'
+          ?  <EditDeleteModal 
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            navigation={navigation}
+            data={param}
+          />
+          : <ReportModal 
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            navigation={navigation}
+          />
+        )
+      }
+    
     </View>
+    
   );
 };
 

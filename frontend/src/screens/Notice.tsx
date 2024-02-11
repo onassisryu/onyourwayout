@@ -4,7 +4,7 @@ import styled from '@emotion/native';
 import {NavigationProp} from '@react-navigation/native';
 
 import NoticeHeader from '@components/Noticepage/NoticeHeader';
-import {NoticeTab} from '@/components/Noticepage/NoticeTab';
+import NoticeTab from '@/components/Noticepage/NoticeTab';
 
 interface Props {
   navigation: NavigationProp<any>;

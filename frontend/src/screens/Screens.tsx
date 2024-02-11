@@ -20,6 +20,10 @@ import InvitationCode from '@/screens/My/InvitationCode';
 import ServiceCenter from '@/screens/My/ServiceCenter';
 import DoItList from './DoItList';
 import DoItListDetail from './DoItListDetail';
+import Report from './Report';
+import DoItPut from './DoItPut';
+
+
 type ScreenItem = {
   name: string;
   component: React.ComponentType<any>;
@@ -48,4 +52,6 @@ export const Screens: ScreenItem[] = [
   {name: 'Signup5a', component: Signup5a},
   {name: 'Signup6', component: Signup6},
   {name: 'MySetting', component: MySetting},
+  {name: 'DoItPut', component: DoItPut},
+  {name: 'Report', component: Report},
 ];
