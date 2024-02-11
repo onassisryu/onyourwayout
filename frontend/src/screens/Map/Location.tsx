@@ -141,7 +141,6 @@ const Location = ({navigation}: any) => {
   function getDongWithin50m(currentLocation: any, dongList: any) {
     const filteredDongList = dongList.filter(dong => {
       const distance = getDistance(currentLocation.lat, currentLocation.lng, dong.lat, dong.lng);
-      console.log('distance', distance, dong.name);
       return distance <= 50;
     });
 
@@ -183,7 +182,12 @@ const Location = ({navigation}: any) => {
           lng: position.coords.longitude,
         };
         const dongsWithin50m = getDongWithin50m(currentLocation, apartLocation);
-        console.log('dongsWithin50m', dongsWithin50m);
+        if (dongsWithin50m.length > 0) {
+          dongsWithin50m.map(dong => {
+            console.log('내 주변 동', dong.name, dong.id);
+            axiosAuth.get(`/notification/near/${dong.id}`);
+          });
+        }
       },
       error => {
         console.log(error.code, error.message);
