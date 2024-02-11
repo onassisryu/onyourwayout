@@ -37,7 +37,7 @@ public class ChatController {
     public ChatMessageDto.Response messageHandler(ChatMessageDto.Request message) throws IOException {
         // 바이트코드 파일로 변환
         String imgUrl="";
-        if (message.getImg()!=null || message.getImg().length()>0){
+        if (!message.getImg().equals("")){
             imgUrl=changeBinaryImageChange(message.getImg(),message.getSendId());
         }
         // Response로 변환
@@ -128,7 +128,10 @@ public class ChatController {
     @PostMapping("/chat/message")
     public ResponseEntity<?> saveChatMessage(@RequestBody ChatMessageDto.Request message) throws IOException {
         // 바이트코드 파일로 변환
-        String imgUrl=changeBinaryImageChange(message.getImg(),message.getSendId());
+        String imgUrl="";
+        if (!message.getImg().equals("")){
+            imgUrl=changeBinaryImageChange(message.getImg(),message.getSendId());
+        }
         ChatMessageDto.Response response=ChatMessageDto.Response
                 .builder()
                 .msg(message.getMsg())
