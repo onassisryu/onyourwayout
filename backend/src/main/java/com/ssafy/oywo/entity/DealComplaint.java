@@ -1,5 +1,7 @@
 package com.ssafy.oywo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,10 +33,12 @@ public class DealComplaint extends BaseTimeEntity{
 
     @ManyToOne
     @JoinColumn(name = "deal_id")
+    @JsonIgnore
     private Deal deal;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
+    @JsonIgnore
     private Member member;
 
     @Enumerated(EnumType.STRING)
