@@ -162,6 +162,14 @@ const Signup6 = ({navigation}: any) => {
           disabled={isDisabled}
           onPress={() => navigation.navigate('Signup2')}
         />
+        <Text>이페이지에서는 지도를 통해 법정동 코드를 얻어내야함</Text>
+        <NextButton
+          title="다음"
+          color="primary"
+          size="lg"
+          disabled={!isDisabled}
+          onPress={() => navigation.navigate('Signup7')}
+        />
       </SignupBodyContainer>
     </GlobalContainer>
   );
