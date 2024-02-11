@@ -140,6 +140,13 @@ const Signup6 = ({navigation}: any) => {
   return (
     <GlobalContainer>
       <Header>
+        <NextButton
+            title="다음"
+            color="primary"
+            size="lg"
+
+            onPress={() => navigation.navigate('Signup2')}
+          />
         <GoBack />
       </Header>
       <SignupBodyContainer>

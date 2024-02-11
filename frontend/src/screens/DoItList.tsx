@@ -8,6 +8,10 @@ import ApartSelectionModal from '@components/DoItListpage/ApartSelectionModal';
 import ReportModal from '@components/DoItListpage/ReportModal';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
+import SvgIcon from '@components/SvgIcon';
+import { useRecoilValue } from 'recoil';
+import { userDataState } from '@/recoil/atoms';
+
 
 const DoItListCardComponent = styled(ScrollView)`
   padding: 10px 20px;
@@ -26,6 +30,7 @@ const DoItListCard = styled(GlobalContainer)`
   width: 100%;
   height: 130px;
 `;
+
 
 const DoItListImage = styled.Image`
   width: 100%;
@@ -49,6 +54,7 @@ const ReportButton = styled(GlobalButton)`
   top: 7px;
   right: 5px;
 `;
+
 
 const TextTitle = styled(GlobalText)`
   font-size: ${props => props.theme.fontSize.medium};
@@ -126,6 +132,7 @@ interface DoListCard {
 }
 
 const DoItList = ({navigation}: any) => {
+  const userData = useRecoilValue(userDataState);
   const [selectedApartCategory, setSelectedApartCategory] = useState<string>('');
   const [selectedTypeCategory, setSelectedTypeCategory] = useState<string>('');
 
@@ -173,6 +180,28 @@ const DoItList = ({navigation}: any) => {
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
+  }, [userData]);
+  //한번렌더링하고 새로고침하면 다시랜더링 해야됨~
+  
+  const categoryToDealType = (category: string) => {
+    switch (category) {
+      case '반려동물 산책':
+        return 'PET';
+      case '심부름':
+        return 'SHOP';
+      case '분리수거':
+        return 'RECYCLE';
+      case '기타':
+        return 'ETC';
+      default:
+        return '';
+    }
+  };
+  
+  let filteredData = responseData;
+  if (selectedTypeCategory) {
+    filteredData = responseData.filter((card) => card.dealType === categoryToDealType(selectedTypeCategory));
+  }
   }, []);
 
   return (
@@ -189,10 +218,33 @@ const DoItList = ({navigation}: any) => {
       />
       <ScrollView overScrollMode="never">
         <DoItListCardComponent>
-          {cardListData.map((card, index) => (
+          {filteredData.map((card, index) => (
             <View key={index}>
-              <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {id: card.id})}>
+              <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {card: card})}>
                 <DoItListCard>
+                  {card.dealImages.length > 0 ? (
+                    <DoItListImage source={card.dealImages[0]} >
+                      {card.dealType === 'PET' && <SvgIcon name="puppy" size={30} style={css`position: absolute;`} />}
+                      {card.dealType === 'RECYCLE' && <SvgIcon name="shopping" size={30} style={css`position: absolute;`} />}
+                      {card.dealType === 'SHOP' && <SvgIcon name="bags" size={30} style={css`position: absolute;`} />}
+                      {card.dealType === 'ETC' && <SvgIcon name="building" size={30} style={css`position: absolute;`} />}
+                    </DoItListImage> 
+                  ) : (
+                    <View
+                      style={css`
+                        width: 100px;
+                        height: 110px;
+                        margin-right: 35px;
+                        border-radius: 15px;
+                        background-color: lightgray;
+                      `}>
+                        {card.dealType === 'PET' && <SvgIcon name="puppy" size={30} style={css`position: absolute; top: 10px; left: 10px;`} />}
+                      {card.dealType === 'RECYCLE' && <SvgIcon name="shopping" size={30} style={css`position: absolute;`} />}
+                      {card.dealType === 'SHOP' && <SvgIcon name="bags" size={30} style={css`position: absolute;`} />}
+                      {card.dealType === 'ETC' && <SvgIcon name="building" size={30} style={css`position: absolute;`} />}
+                      </View>
+                  )}
+                  <TextComponent>
                   <CardImageContainer>
                     {card.dealImages.length > 0 && <DoItListImage src={card.dealImages[0].imgUrl} />}
                   </CardImageContainer>
@@ -213,11 +265,8 @@ const DoItList = ({navigation}: any) => {
                         margin-top: 10px;
                       `}>
                       <TextTitle numberOfLines={1}>{card.title}</TextTitle>
+                      <TextApart>{card.requestInfo.dongName}동 / {calculateTimeAgo(card.createdAt)}</TextApart>
 
-                      <TextApart>
-                        {card.requestInfo.dongName}동 / {calculateTimeAgo(card.createdAt)}
-                        {card.id}
-                      </TextApart>
                     </View>
                     <View
                       style={css`
@@ -229,11 +278,11 @@ const DoItList = ({navigation}: any) => {
                       <TextPrice>
                         {' '}
                         {card.rewardType === 'CASH'
-                          ? `${card.cash}원`
-                          : card.rewardType === 'ITEM'
-                          ? card.item
-                          : 'Unknown Reward Type'}
-                      </TextPrice>
+                            ? `${card.cash.toLocaleString()}원`
+                            : card.rewardType === 'ITEM'
+                            ? card.item
+                            : 'Unknown Reward Type'}
+                    </TextPrice>
                     </View>
                   </CardTextContainer>
                 </DoItListCard>
