@@ -78,7 +78,7 @@ public class AdminController {
 
     @PutMapping("/deal")
     public ResponseEntity<?> changeDealStatus(@RequestParam("id") Long dealId){
-        return ResponseEntity.ok(adminService.changeStatusToClose(dealId));
+        return ResponseEntity.ok(adminService.changeStatusToPause(dealId));
 
     }
 
@@ -110,12 +110,6 @@ public class AdminController {
 
         return ResponseEntity.ok(adminService.getDealWithComplaint(dealId));
     }
-
-
-
-    /**
-     * 거래 삭제
-     */
 
 
 

@@ -149,10 +149,10 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public DealDto.Response changeStatusToClose(Long dealId) {
+    public DealDto.Response changeStatusToPause(Long dealId) {
         Deal deal=dealRepository.findById(dealId)
                 .orElseThrow(()->new NoSuchElementException("찾을 수 없는 거래입니다."));
-        deal.setDealStatus(Deal.DealStatus.CLOSE);
+        deal.setDealStatus(Deal.DealStatus.PAUSE);
         return new DealDto.Response(dealRepository.save(deal));
     }
 
