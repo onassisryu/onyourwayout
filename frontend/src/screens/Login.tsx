@@ -1,6 +1,6 @@
 import axios, {get} from 'axios';
 import {useSetRecoilState, useRecoilValue} from 'recoil';
-import {isLoggedInState, userDataState} from '@/recoil/atoms';
+import {isLoggedInState, userDataState, fcmTokenState} from '@/recoil/atoms';
 import React, {useState, useEffect} from 'react';
 import {Text, Alert, View, Keyboard, TouchableWithoutFeedback, Image, TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
@@ -51,26 +51,30 @@ const LoginButton = styled(DefaultButton)`
 `;
 
 const Login = ({navigation}: any) => {
-  const [username, setusername] = useState('a@gmail');
-  const [password, setPassword] = useState('1234');
+  const [username, setusername] = useState('');
+  const [password, setPassword] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isnotValueid, setIsnotValueid] = useState(true);
   const [isnotValuepassword, setIsnotValuepassword] = useState(true);
-
+  const fcmToken = useRecoilValue(fcmTokenState).fcmToken;
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const setUserData = useSetRecoilState(userDataState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
 
   async function login() {
+    console.log(fcmToken);
     if (username.trim() === '') {
       Alert.alert('아이디 입력 확인', '아이디가 입력되지 않았습니다.');
     } else if (password.trim() === '') {
       Alert.alert('비밀번호 입력 확인', '비밀번호가 입력되지 않았습니다.');
     } else {
       try {
-        const response = await axios.post('http://i10a302.p.ssafy.io:8080/members/signin', {username, password});
+        const response = await axios.post('http://i10a302.p.ssafy.io:8080/members/signin', {
+          username: username,
+          password: password,
+          fcmToken: fcmToken,
+        });
         if (response.data !== null && response.data !== '') {
-          console.log(response.data);
           const token = response.data.token.accessToken;
           const refreshToken = response.data.token.refreshToken;
           const user = response.data.memberInfo;
@@ -83,7 +87,6 @@ const Login = ({navigation}: any) => {
           setIsLoggedIn(true);
           setUserData(user);
           Keyboard.dismiss();
-          navigation.navigate('Bottom', {screen: 'Main'});
           console.log('123123');
           console.log(user);
           console.log(token);

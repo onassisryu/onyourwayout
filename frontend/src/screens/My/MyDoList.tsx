@@ -193,7 +193,20 @@ const GoOut2 = ({route, navigation}: any) => {
   const type = route.params.type;
   const url = `deal/user/list?type=${type}`;
 
-  useEffect(() => {
+  function acceptDoit(id: number) {
+    axiosAuth
+      .put(`deal/accept/${id}`)
+      .then(resp => {
+        console.log('성공', resp.data);
+        // 데이터 업데이트 후 useEffect 다시 실행
+        loadData();
+      })
+      .catch(error => {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      });
+  }
+
+  const loadData = () => {
     axiosAuth
       .get(url)
       .then(resp => {
@@ -203,6 +216,10 @@ const GoOut2 = ({route, navigation}: any) => {
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
   return (
     <View
@@ -210,7 +227,7 @@ const GoOut2 = ({route, navigation}: any) => {
         width: 100%;
         height: 100%;
       `}>
-      <ScrollView horizontal>
+      <ScrollView>
         {responseData.map((card, index) => (
           <View
             key={index}
@@ -219,9 +236,14 @@ const GoOut2 = ({route, navigation}: any) => {
             `}>
             <Text>{card.title}</Text>
             <Text>{card.content}</Text>
-            <TouchableOpacity onPress={() => {}}>
-              <Text>수락하기</Text>
-            </TouchableOpacity>
+            {type === 'accept' && (
+              <TouchableOpacity
+                onPress={() => {
+                  acceptDoit(card.id);
+                }}>
+                <Text>파토내기</Text>
+              </TouchableOpacity>
+            )}
           </View>
         ))}
       </ScrollView>
