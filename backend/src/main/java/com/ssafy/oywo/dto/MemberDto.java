@@ -174,6 +174,7 @@ public class MemberDto {
         private String username;
         private int score;
 
+        private ApartmentDto.Response apt;
         private Long dongId;
         private String dongName;
 
@@ -183,6 +184,7 @@ public class MemberDto {
                     .username(member.getUsername())
                     .nickname(member.getNickname())
                     .score(member.getScore())
+                    .apt(ApartmentDto.Response.of(ho.getDong().getApartment()))
                     .dongId(ho.getDong().getId())
                     .dongName(ho.getDong().getName())
                     .build();
