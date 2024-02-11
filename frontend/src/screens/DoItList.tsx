@@ -216,6 +216,7 @@ const DoItList = ({navigation}: any) => {
 
                       <TextApart>
                         {card.requestInfo.dongName}동 / {calculateTimeAgo(card.createdAt)}
+                        {card.id}
                       </TextApart>
                     </View>
                     <View

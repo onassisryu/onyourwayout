@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {ImageSourcePropType, StatusBar, View, Text, ScrollView, TouchableOpacity} from 'react-native';
+import {ImageSourcePropType, StatusBar, View, Text, ScrollView, TouchableOpacity, Image} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
@@ -11,184 +11,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GoBack from '@/components/Signup/GoBack';
 import axiosAuth from '@/axios/axiosAuth';
-
-const Container = styled(GlobalContainer)``;
-
-const SubContainer = styled(GlobalContainer)`
-  margin: 10px;
-  margin-right: 20px;
-  margin-left: 20px;
-`;
-
-const HeaderContainer = styled(Header)`
-  width: 100%;
-  height: 20px;
-`;
-
-const GoBackButton = styled(GlobalButton)`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: transparent;
-  margin: 30px 0px 30px 0px;
-`;
-
-const ShareButton = styled(GlobalButton)`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: transparent;
-  margin: 30px 0px 30px 0px;
-`;
-
-const DoItListImage = styled.Image`
-  height: 400px;
-  width: 100%;
-  padding: 0;
-`;
-
-const TotalComponent = styled(ScrollView)`
-  height: 2000px;
-`;
-
-const SubHeader = styled(GlobalContainer)`
-  flex-direction: row;
-  align-items: center;
-  height: 80px;
-`;
-
-const ProfileComponent = styled(GlobalContainer)`
-  height: initial;
-  flex: 1;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 7px 5px 0px 5px;
-`;
-
-const TextNickname = styled(GlobalText)`
-  font-size: ${props => props.theme.fontSize.medium};
-  color: ${props => props.theme.color.black};
-  font-weight: bold;
-  padding-bottom: 1px;
-`;
-
-const TextApart = styled(GlobalText)`
-  font-size: ${props => props.theme.fontSize.short};
-  color: ${props => props.theme.color.gray};
-  font-weight: bold;
-  padding-bottom: 12px;
-`;
-
-const DistinctLine = styled.View`
-  width: 100%;
-  border: 1px solid #b2b2b2;
-`;
-
-const ContentComponent = styled(GlobalContainer)`
-  flex-direction: column;
-  align-items: flex-start;
-`;
-
-const TextTitle = styled(GlobalText)`
-  font-size: ${props => props.theme.fontSize.subtitle};
-  color: ${props => props.theme.color.black};
-  padding: 30px 0px 0px 0px;
-  font-weight: bold;
-`;
-
-const TextCategory = styled(GlobalText)`
-  font-size: ${props => props.theme.fontSize.small};
-  color: ${props => props.theme.color.gray};
-  padding: 10px 0px 0px 0px;
-`;
-
-const TextContent = styled(GlobalText)`
-  width: 390px;
-  line-height: 24px;
-  font-size: ${props => props.theme.fontSize.medium};
-  color: ${props => props.theme.color.black};
-  padding: 25px 0px 0px 0px;
-`;
-
-const InfoComponent = styled(GlobalContainer)`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  width: 100%;
-  height: initial;
-`;
-
-const TextInfo = styled(GlobalText)`
-  font-size: ${props => props.theme.fontSize.short};
-  color: ${props => props.theme.color.gray};
-  padding: 25px 0px 5px 0px;
-`;
-
-const TextPrice = styled(GlobalText)`
-  font-size: ${props => props.theme.fontSize.subtitle};
-  color: ${props => props.theme.color.black};
-  font-weight: bold;
-`;
-
-const TextReport = styled(GlobalText)`
-  margin-top: 10px;
-  font-size: ${props => props.theme.fontSize.short};
-  color: ${props => props.theme.color.gray};
-  padding: 0px 0px 5px 0px;
-  text-decoration-line: underline;
-`;
-
-const ButtonComponent = styled(GlobalContainer)`
-  position: absolute;
-  top: 800px;
-  display: flex;
-  flex-direction: row;
-  padding: 10px 20px 10px 20px;
-  height: initial;
-`;
-
-const LikeButton = styled(GlobalButton)`
-  width: 70px;
-  height: 60px;
-  border: white;
-  background-color: ${props => props.theme.color.primary};
-  border-top-left-radius: 15px;
-  border-bottom-left-radius: 15px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-`;
-
-const AgreeButton = styled(GlobalButton)`
-  flex-direction: row;
-  width: 150px;
-  height: 60px;
-  border: white;
-  background-color: ${props => props.theme.color.primary};
-  border-top-left-radius: 15px;
-  border-bottom-left-radius: 15px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-`;
-
-const ChatButton = styled(GlobalButton)`
-  flex-direction: row;
-  width: 150px;
-  height: 60px;
-  border: white;
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border-top-right-radius: 15px;
-  border-bottom-right-radius: 15px;
-  background-color: ${props => props.theme.color.primary};
-`;
-
-const ButtonText = styled(GlobalText)`
-  font-size: ${props => props.theme.fontSize.medium};
-  color: ${props => props.theme.color.white};
-  font-weight: bold;
-  margin-left: 5px;
-  margin-bottom: 4px;
-`;
+import Carousel from 'pinar';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface DoListCard {
   id: number;
@@ -231,6 +55,23 @@ const dealTypeTextMapReverse = {
   '기타': 'ETC',
 };
 
+const dotStyle = css`
+  width: 30%;
+  height: 3px;
+  margin: 5px;
+  background-color: gray;
+`;
+const activeDotStyle = css`
+  width: 30%;
+  height: 3px;
+  margin: 3px;
+  background-color: white;
+`;
+
+const CarouselContainer = styled.View`
+  height: 80%;
+`;
+
 const GoOut2 = ({route, navigation}: any) => {
   const [responseData, setResponseData] = useState([]);
   const selectedTitles: string[] = route.params.selectedButton
@@ -245,6 +86,7 @@ const GoOut2 = ({route, navigation}: any) => {
       .get(url)
       .then(resp => {
         setResponseData(resp.data);
+
         console.log('성공', resp.data);
       })
       .catch(error => {
@@ -265,28 +107,76 @@ const GoOut2 = ({route, navigation}: any) => {
   return (
     <View
       style={css`
-        width: 100%;
-        height: 100%;
+        flex: 1;
       `}>
-      <ScrollView>
-        {responseData.map((card, index) => (
-          <View
-            key={index}
-            style={css`
-              border: 1px solid black;
-            `}>
-            <Text>{card.title}</Text>
-            <Text>{card.content}</Text>
-            <Text>{card.id}</Text>
-            <TouchableOpacity
-              onPress={() => {
-                sendGoOutRequest(card.id);
-              }}>
-              <Text>수락하기</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </ScrollView>
+      <CarouselContainer>
+        <Carousel dotStyle={dotStyle} activeDotStyle={activeDotStyle}>
+          {responseData.map((card, index) => (
+            <View
+              style={css`
+                height: 80%;
+                position: relative;
+              `}
+              key={index}>
+              <View
+                style={css`
+                  width: 100%;
+                  height: 150px;
+                  position: absolute;
+                  bottom: 10px;
+                  z-index: 1;
+                  background-color: rgba(0, 0, 0, 0.1);
+                `}>
+                <Text
+                  style={css`
+                    color: white;
+                    font-size: 30px;
+                    font-weight: bold;
+                  `}>
+                  {card.title}
+                </Text>
+                <Text>{card.content}</Text>
+                <Text>{card.id}</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    sendGoOutRequest(card.id);
+                  }}>
+                  <Text>수락하기</Text>
+                </TouchableOpacity>
+              </View>
+              {card.dealImages.length > 0 ? (
+                <Image
+                  style={css`
+                    width: 100%;
+                    height: 100%;
+                    background-color: gray;
+                    z-index: 0;
+                  `}
+                  src={card.dealImages[0].imgUrl}
+                />
+              ) : (
+                <View
+                  style={css`
+                    width: 100%;
+                    height: 100%;
+                    background-color: gray;
+                    z-index: 0;
+                  `}
+                />
+              )}
+            </View>
+          ))}
+        </Carousel>
+      </CarouselContainer>
+      <View
+        style={css`
+          height: 20%;
+          width: 100%;
+        `}>
+        <TouchableOpacity>
+          <Text>눌러</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

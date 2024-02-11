@@ -8,7 +8,7 @@ import Signup4 from '@/screens/Signup/Signup4';
 import Signup5 from '@/screens/Signup/Signup5';
 import Signup5a from '@/screens/Signup/Signup5a';
 import Signup6 from '@/screens/Signup/Signup6';
-
+import Main from '@/screens/Main';
 const Stack = createNativeStackNavigator();
 
 const LoginStack = () => {

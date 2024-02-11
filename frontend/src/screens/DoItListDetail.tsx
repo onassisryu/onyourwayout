@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {ImageSourcePropType, StatusBar, View, Text, ScrollView, TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
@@ -11,6 +12,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GoBack from '@/components/Signup/GoBack';
 import axiosAuth from '@/axios/axiosAuth';
+import {useRecoilValue} from 'recoil';
+import {userDataState} from '@/recoil/atoms';
 
 const Container = styled(GlobalContainer)``;
 
@@ -238,7 +241,10 @@ const DoItListDetail = ({route, navigation}: any) => {
   const [responseData, setResponseData] = useState({});
   const [userInfo, setUserInfo] = useState({});
   const [detailImage, setDetailImage] = useState([]);
+  const loginuser = useRecoilValue(userDataState);
+  console.log('로그인 유저', loginuser);
   useEffect(() => {
+    console.log(param);
     axiosAuth
       .get(`/deal/${param}`)
       .then(resp => {
@@ -251,7 +257,7 @@ const DoItListDetail = ({route, navigation}: any) => {
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
-  }, []);
+  }, [param]);
 
   const calculateTimeAgo = (createdAt: string) => {
     const now = new Date(); // 현재 시간
@@ -280,17 +286,29 @@ const DoItListDetail = ({route, navigation}: any) => {
       return `${minutesAgo}분 전`;
     }
   };
-  function acceptDoit() {
+  function acceptDoit(id: number) {
+    console.log(id);
     axiosAuth
-      .get('deal/dong/list')
+      .put(`deal/accept/${id}`)
       .then(resp => {
-        setResponseData(resp.data);
         console.log('성공', resp.data);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   }
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setTranslucent(true);
+      StatusBar.setBackgroundColor('transparent');
+
+      return () => {
+        // 페이지를 벗어날 때 StatusBar 설정을 원래대로 복원
+        StatusBar.setTranslucent(false);
+        StatusBar.setBackgroundColor('white');
+      };
+    }, [])
+  );
   return (
     <View
       style={css`
@@ -300,7 +318,6 @@ const DoItListDetail = ({route, navigation}: any) => {
         align-items: center;
         background-color: white;
       `}>
-      <StatusBar backgroundColor="transparent" barStyle="dark-content" translucent={true} />
       <View
         style={css`
           position: relative;
@@ -332,7 +349,7 @@ const DoItListDetail = ({route, navigation}: any) => {
                   <TextNickname> {userInfo.nickname}</TextNickname>
                   <TextApart>
                     {' '}
-                    {userInfo.dongName}동 / {calculateTimeAgo(responseData.createdAt)}{' '}
+                    {userInfo.dongName}동 / {calculateTimeAgo(responseData.createdAt)}
                   </TextApart>
                 </ProfileComponent>
               </SubHeader>
@@ -341,6 +358,7 @@ const DoItListDetail = ({route, navigation}: any) => {
                 <TextTitle numberOfLines={1}>{responseData.title}</TextTitle>
                 <InfoComponent>
                   <TextCategory>{dealTypeTextMap[responseData.dealType]}</TextCategory>
+
                   {responseData.rewardType === 'CASH' && <TextPrice>{responseData.cash}원</TextPrice>}
                   {responseData.rewardType === 'ITEM' && <TextPrice>{responseData.item}</TextPrice>}
                 </InfoComponent>
@@ -384,14 +402,28 @@ const DoItListDetail = ({route, navigation}: any) => {
           bottom: 60px;
           z-index: 1;
         `}>
-        <AgreeButton onPress={() => navigation.navigate()}>
-          <FontAwesome name="handshake-o" size={20} color="white"></FontAwesome>
-          <ButtonText> 수락하기 </ButtonText>
-        </AgreeButton>
-        <ChatButton onPress={() => navigation.navigate()}>
-          <Ionicons name="chatbox-ellipses-outline" size={20} color="white"></Ionicons>
-          <ButtonText> 채팅하기 </ButtonText>
-        </ChatButton>
+        {userInfo.id === loginuser.id ? (
+          <View>
+            <Text>내 작성글 입니다</Text>
+          </View>
+        ) : (
+          <View
+            style={css`
+              flex-direction: row;
+            `}>
+            <AgreeButton
+              onPress={() => {
+                acceptDoit(responseData.id);
+              }}>
+              <FontAwesome name="handshake-o" size={20} color="white"></FontAwesome>
+              <ButtonText> 수락하기 </ButtonText>
+            </AgreeButton>
+            <ChatButton onPress={() => navigation.navigate()}>
+              <Ionicons name="chatbox-ellipses-outline" size={20} color="white"></Ionicons>
+              <ButtonText> 채팅하기 </ButtonText>
+            </ChatButton>
+          </View>
+        )}
       </View>
     </View>
   );
