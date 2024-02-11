@@ -64,8 +64,13 @@ const MapContainer = styled.View`
 `;
 
 const Location = ({navigation}: any) => {
+  const apartData = useRecoilValue(apartDataState);
+  const userData = useRecoilValue(userDataState);
+  let key = '4d3c782ec2cd76adf03897821a745bc2';
+
   const [location, setLocation] = useState<ILocation | null>(null);
-  // const key = Config.KAKAO_JAVASCRIPT_KEY;
+  const [apartAll, setApartAll] = useState<Dong[]>([]);
+  const [markers, setMarkers] = useState<Dong[]>([]);
 
   const [selectedButton, setSelectedButton] = useState<ButtonState>([
     {title: 'PET', status: true},
@@ -73,18 +78,15 @@ const Location = ({navigation}: any) => {
     {title: 'RECYCLE', status: true},
     {title: 'ETC', status: true},
   ]);
-  useEffect(() => {
-    console.log(selectedButton);
-  }, [selectedButton]);
-
   const [selectAll, setSelectAll] = useState<boolean>(true);
-  const apartData = useRecoilValue(apartDataState);
-  const [markers, setMarkers] = useState<Dong[]>([]);
+
   const getDongList = async () => {
     const filteredButtons = selectedButton.filter(button => button.status);
     const dealType = filteredButtons.map(button => button.title).join(',');
     console.log('api호출중', dealType);
     const res = await axiosAuth.get(`/deal/dong-list?dealType=${dealType}`);
+    console.log('api호출후', res.data);
+
     const dongList = res.data;
     const filteredApartData = apartData.filter(apart => dongList.includes(apart.dongId));
     const updatedMarkers = filteredApartData.map(apart => ({
@@ -97,7 +99,7 @@ const Location = ({navigation}: any) => {
   };
 
   useEffect(() => {
-    console.log('useEffect실행중');
+    console.log(selectedButton);
     getDongList();
   }, [selectedButton]);
 
@@ -128,52 +130,74 @@ const Location = ({navigation}: any) => {
       });
     }
   };
-  let key = '4d3c782ec2cd76adf03897821a745bc2';
-  const userData = useRecoilValue(userDataState);
-
   // 위치 동의 얻기
   async function requestPermissions() {
     if (Platform.OS === 'android') {
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
     }
   }
+
+  //위치 계삼 함수
+  function getDongWithin50m(currentLocation: any, dongList: any) {
+    const filteredDongList = dongList.filter(dong => {
+      const distance = getDistance(currentLocation.lat, currentLocation.lng, dong.lat, dong.lng);
+      console.log('distance', distance, dong.name);
+      return distance <= 50;
+    });
+
+    return filteredDongList;
+  }
+
+  function getDistance(lat1, lon1, lat2, lon2) {
+    const toRadian = angle => (Math.PI / 180) * angle;
+    const distance = (a, b) => (Math.PI / 180) * (a - b);
+
+    const RADIUS_OF_EARTH_IN_KM = 6371;
+    const dLat = distance(lat2, lat1);
+    const dLon = distance(lon2, lon1);
+
+    lat1 = toRadian(lat1);
+    lat2 = toRadian(lat2);
+
+    // Haversine Formula
+    const a = Math.pow(Math.sin(dLat / 2), 2) + Math.pow(Math.sin(dLon / 2), 2) * Math.cos(lat1) * Math.cos(lat2);
+    const c = 2 * Math.asin(Math.sqrt(a));
+
+    let finalDistance = RADIUS_OF_EARTH_IN_KM * c;
+
+    return Number(finalDistance.toFixed(2));
+  }
+
+  const updateLocation = async () => {
+    const apartLocation = apartData.map(apart => ({
+      id: apart.dongId,
+      name: apart.name,
+      lat: apart.apartment.lat,
+      lng: apart.apartment.lng,
+    }));
+    Geolocation.getCurrentPosition(
+      position => {
+        console.log('내 현재 위치', position.coords.latitude, position.coords.longitude);
+        const currentLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        const dongsWithin50m = getDongWithin50m(currentLocation, apartLocation);
+        console.log('dongsWithin50m', dongsWithin50m);
+      },
+      error => {
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
+    );
+  };
   //현재 위치 받아오기
   useEffect(() => {
     const getLocation = async () => {
       await requestPermissions();
-      const updateLocation = () => {
-        Geolocation.getCurrentPosition(
-          position => {
-            console.log('updateLocation', position.coords.latitude, position.coords.longitude);
-            const targetLatitude = 37.12345;
-            const targetLongitude = 126.54321;
-            const distance = calculateDistance(
-              position.coords.latitude,
-              position.coords.longitude,
-              targetLatitude,
-              targetLongitude
-            );
-
-            // 100미터 이내에 위치한 경우 알림
-            if (distance <= 100) {
-              console.log('현재 위치는 특정 좌표의 100미터 이내에 있습니다.');
-              // 알림 로직 추가
-            }
-            const {latitude, longitude} = position.coords;
-            setLocation({
-              latitude,
-              longitude,
-            });
-          },
-          error => {
-            console.log(error.code, error.message);
-          },
-          {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
-        );
-      };
 
       updateLocation();
-      const intervalId = setInterval(updateLocation, 10000);
+      const intervalId = setInterval(updateLocation, 60000);
 
       return () => {
         clearInterval(intervalId);
@@ -182,19 +206,6 @@ const Location = ({navigation}: any) => {
 
     getLocation();
   }, []);
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const R = 6371e3; // 지구의 반지름 (미터)
-    const φ1 = (lat1 * Math.PI) / 180;
-    const φ2 = (lat2 * Math.PI) / 180;
-    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-    const Δλ = ((lon2 - lon1) * Math.PI) / 180;
-
-    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    const distance = R * c;
-    return distance;
-  };
 
   return (
     <GlobalContainer

@@ -100,7 +100,7 @@ const ChatDetail = ({navigation}: Props) => {
     });
   };
   const client = useRef<Client | null>(null);
-  const socket = new SockJS('http://i10a302.p.ssafy.io:8080/ws/chat');
+  const socket = new SockJS('ws/chat');
 
   const connectChat = async () => {
     client.current = new StompJs.Client({
