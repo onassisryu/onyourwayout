@@ -5,12 +5,14 @@ import {NavigationProp, RouteProp} from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 import DoItListHeader from '@components/DoItListpage/DoItListHeader';
 import DoItListCategory from '@components/DoItListpage/DoItListCategory';
-import DoItListContent from '@components/DoItListpage/DoItListContent';
 import ApartSelectionModal from '@components/DoItListpage/ApartSelectionModal';
 import ReportModal from '@components/DoItListpage/ReportModal';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
 import SvgIcon from '@components/SvgIcon';
+import { useRecoilValue } from 'recoil';
+import { userDataState } from '@/recoil/atoms';
+
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -123,62 +125,7 @@ interface Props {
 
 
 const DoItList = ({navigation, route}: Props) => {
-  const [doListCards, setDoListCards] = useState<DoListCard[]>([
-    {
-      id: 50,
-      title: '뽀삐 산책시켜주세요',
-      content: 'content2',
-      requestId: 13,
-      acceptId: null,
-      cash: 1110,
-      item: null,
-      rewardType: 'CASH',
-      complaint: 0,
-      dealStatus: 'OPEN',
-      dealType: 'PET',
-      expireAt: '2025-03-03T00:00:00',
-      dealImages: [],
-      createdAt: '2024-02-02T14:47:35.251175',
-      modifiedAt: '2024-02-02T14:47:35.251175',
-      deletedAt: null,
-    },
-    {
-      id: 50,
-      title: 'title2',
-      content: 'content2',
-      requestId: 13,
-      acceptId: null,
-      cash: 1110,
-      item: null,
-      rewardType: 'CASH',
-      complaint: 0,
-      dealStatus: 'OPEN',
-      dealType: 'PET',
-      expireAt: '2025-03-03T00:00:00',
-      dealImages: [],
-      createdAt: '2024-02-02T14:47:35.251175',
-      modifiedAt: '2024-02-02T14:47:35.251175',
-      deletedAt: null,
-    },
-    {
-      id: 50,
-      title: 'title2',
-      content: 'content2',
-      requestId: 13,
-      acceptId: null,
-      cash: 1110,
-      item: null,
-      rewardType: 'CASH',
-      complaint: 0,
-      dealStatus: 'OPEN',
-      dealType: 'PET',
-      expireAt: '2025-03-03T00:00:00',
-      dealImages: [],
-      createdAt: '2024-02-06T14:47:35.251175',
-      modifiedAt: '2024-02-06T14:47:35.251175',
-      deletedAt: null,
-    },
-  ]);
+  const userData = useRecoilValue(userDataState);
 
   const [selectedApartCategory, setSelectedApartCategory] = useState<string>('');
   const [selectedTypeCategory, setSelectedTypeCategory] = useState<string>('');
@@ -227,7 +174,7 @@ const DoItList = ({navigation, route}: Props) => {
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
-  }, []);
+  }, [userData]);
   //한번렌더링하고 새로고침하면 다시랜더링 해야됨~
   
   const categoryToDealType = (category: string) => {
@@ -270,7 +217,7 @@ const DoItList = ({navigation, route}: Props) => {
                 <DoItListCard>
                   {card.dealImages.length > 0 ? (
                     <DoItListImage source={card.dealImages[0]} >
-                      {card.dealType === 'PET' && <SvgIcon name="puppy" size={30} style={css`position: absolute; top: 10px; left: 10px;`} />}
+                      {card.dealType === 'PET' && <SvgIcon name="puppy" size={30} style={css`position: absolute;`} />}
                       {card.dealType === 'RECYCLE' && <SvgIcon name="shopping" size={30} style={css`position: absolute;`} />}
                       {card.dealType === 'SHOP' && <SvgIcon name="bags" size={30} style={css`position: absolute;`} />}
                       {card.dealType === 'ETC' && <SvgIcon name="building" size={30} style={css`position: absolute;`} />}
@@ -308,7 +255,7 @@ const DoItList = ({navigation, route}: Props) => {
                       `}>
                       <TextTitle numberOfLines={1}>{card.title}</TextTitle>
 
-                      <TextApart>303동 / {calculateTimeAgo(card.createdAt)}</TextApart>
+                      <TextApart>{card.requestInfo.dongName}동 / {calculateTimeAgo(card.createdAt)}</TextApart>
                     </View>
                     <View
                       style={css`

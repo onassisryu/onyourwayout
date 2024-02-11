@@ -95,17 +95,17 @@ const NoticeSettings = () => {
     const isNotiCategoryAll: boolean = selectedCategories.length === categories.length;
     
     axiosAuth.post('/alarm/set', {
-      memberId: 26,
+      memberId: myId,
       isNotiDongAll: isNotiDongAll,
       isNotiCategoryAll: isNotiCategoryAll,
       dealTypeList: isNotiCategoryAll ? [] : selectedCategories,
       dongIdList: isNotiDongAll ? [] : selectedDongIds,
       notificationStart: formattedStart,
       notificationEnd: formattedEnd
-    },  { headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${await getAccessToken()}`
-      }
+    // },  { headers: {
+    //   'Content-Type': 'application/json',
+    //   'Authorization': `Bearer ${await getAccessToken()}`
+    //   }
     })
       .then(response => {
         console.log(response);

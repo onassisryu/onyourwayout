@@ -154,13 +154,27 @@ const EditPage = ({ route, navigation } : any) => {
 
   function Edit() {
 
-    const data = {
-      title: '반려동물 산책시켜주세요',
-      content: '저희 뽀삐 안물어요 1시간 산책시켜주세요',
-      cash: 1110,
-      dealType: 'PET',
-      expireAtStr: '2024-03-03 00:00:00',
-    };
+    const formatCash = (cash: string) => {
+      return Number(cash.replace(/,/g, "")); // 쉼표를 제거하고, 숫자 형식으로 변환합니다.
+    }
+  
+    const formatExpireAt = (expireAt: string) => {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더해줍니다.
+      const date = String(today.getDate()).padStart(2, '0');
+  
+      return `${year}-${month}-${date}T${expireAt}:00`; // "YYYY-MM-DDTHH:MM:SS" 형태로 만듭니다.
+    }
+  
+      const data = {
+        title: title,
+        content: content,
+        cash: formatCash(cash),  // 쉼표를 제거하고 숫자 형식으로 변환한 후 cash 데이터를 집어넣습니다.
+        dealType: 'PET',
+        expireAt: formatExpireAt(expireAt),  // ":00"을 추가한 형태로 expireAt 데이터를 집어넣습니다.
+      };
+  
 
     const body = {
       jsonData: data,

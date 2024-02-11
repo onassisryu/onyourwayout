@@ -15,6 +15,8 @@ import GoBack from '@/components/Signup/GoBack';
 import axiosAuth from '@/axios/axiosAuth';
 import Feather from 'react-native-vector-icons/Feather';
 import { getStorage } from '@/storage/common_storage';
+import { useRecoilState } from 'recoil';
+import { userDataState } from '@/recoil/atoms';
 
 
 
@@ -116,7 +118,6 @@ const TextContent = styled(GlobalText)`
 
 const InfoComponent = styled(GlobalContainer)`
   flex-direction: row;
-  justify-content: space-between;
   align-items: flex-end;
   width: 100%;
   height: initial;
@@ -207,12 +208,6 @@ interface DoListCard {
   remaintime: string;
 }
 
-type RootStackParamList = {
-  DoItListDetail: {card: DoListCard};
-  // 여기서 DoListCard는 카드의 타입입니다.
-  // 다른 라우트 이름들도 이곳에 추가해야 합니다.
-};
-
 const dealTypeTextMap = {
   PET: '애완동물 산책',
   RECYCLE: '분리수거',
@@ -222,6 +217,12 @@ const dealTypeTextMap = {
 
 
 const DoItListDetail = ({route, navigation}: any) => {
+  const [userData, setUserData] = useRecoilState(userDataState);
+
+  const handleEdit = (newData: object) => {
+    setUserData(newData);  // userData를 수정합니다.
+  };
+
   const card = {
     id: 1,
     category: 'PET',
@@ -239,7 +240,7 @@ const DoItListDetail = ({route, navigation}: any) => {
   const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
 
   const param = route.params.card;
-  console.log(param)
+
 
   const [responseData, setResponseData] = useState({});
   useEffect(() => {
@@ -267,6 +268,21 @@ const DoItListDetail = ({route, navigation}: any) => {
       setModalType('report'); // 신고 가능한 모달
     }
     setModalVisible(true); // 모달 열기
+  };
+
+  const categoryToDealType = (category: string) => {
+    switch (category) {
+      case '반려동물 산책':
+        return 'PET';
+      case '심부름':
+        return 'SHOP';
+      case '분리수거':
+        return 'RECYCLE';
+      case '기타':
+        return 'ETC';
+      default:
+        return '';
+    }
   };
 
   return (
@@ -318,10 +334,17 @@ const DoItListDetail = ({route, navigation}: any) => {
               <ContentComponent>
                 <TextTitle numberOfLines={1}>{responseData.title}</TextTitle>
                 <InfoComponent>
-                  <TextCategory>{dealTypeTextMap[responseData.dealType]}</TextCategory>
-                  {responseData.rewardType === 'CASH' && <TextPrice>{responseData.cash}원</TextPrice>}
+                  {responseData.dealType === 'PET' && <SvgIcon name="puppy" size={20}/>}
+                  {responseData.dealType === 'RECYCLE' && <SvgIcon name="bags" size={23}/>}
+                  {responseData.dealType === 'SHOP' && <SvgIcon name="shopping" size={20}/>}
+                  {responseData.dealType === 'ETC' && <SvgIcon name="building" size={20}/>}
+                  <TextCategory> {dealTypeTextMap[responseData.dealType]}</TextCategory>
+                </InfoComponent>
+                <InfoComponent style={css`justify-content: flex-end`}>
+                  {responseData.rewardType === 'CASH' && <TextPrice>{responseData.cash.toLocaleString()}원</TextPrice>}
                   {responseData.rewardType === 'ITEM' && <TextPrice>{responseData.item}</TextPrice>}
                 </InfoComponent>
+                  
                 <TextContent>{responseData.content}</TextContent>
                 <TextReport>게시글 신고하기</TextReport>
               </ContentComponent>

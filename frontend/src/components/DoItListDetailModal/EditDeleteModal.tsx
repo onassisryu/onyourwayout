@@ -5,6 +5,7 @@ import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import {Modal, View, ImageSourcePropType, TouchableWithoutFeedback} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp } from '@react-navigation/native';
+import axiosAuth from '@/axios/axiosAuth';
 
 const ModalBackground = styled(GlobalContainer)`
   flex: 1;
@@ -54,7 +55,21 @@ interface Props {
 }
 
 const EditDeleteModal = ( props: Props ) => {
-    console.log(props.data)
+    console.log('성공해쪄요',props.data)
+
+    const handleDelete = () => {
+      const id = props.data.id;  // 삭제할 게시글의 ID
+      axiosAuth.delete(`deal/${id}`)  // 서버에 DELETE 요청을 보냅니다.
+        .then(() => {
+          console.log('성공맨이야')
+          props.setModalVisible(false);  // 모달을 닫습니다.
+          props.navigation.navigate('Bottom', {screen: '아파트'});  // 아파트 페이지로 이동합니다.
+        })
+        .catch(error => {
+          console.error('게시글을 삭제하는 중 오류 발생:', error);
+        });
+    };
+    
     return (
         <>
         <Modal
@@ -76,11 +91,7 @@ const EditDeleteModal = ( props: Props ) => {
                 </ModalSubComponent>
                 <DistinctLine></DistinctLine>
                 <ModalSubComponent
-                  onPress={() => {
-                    props.navigation.navigate('Bottom', {screen: '아파트'});
-                    props.setModalVisible(false);
-                  }}>
-  
+                  onPress={handleDelete}>
                   <ModalText> 게시글 삭제 </ModalText>
                 </ModalSubComponent>
               </ModalComponent>
