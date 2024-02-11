@@ -165,8 +165,6 @@ public class ChatServiceImpl implements ChatService{
 
         ChatMessage newMessage=message.toEntity(chatRoom);
 
-        System.out.println(chatRoom);
-        System.out.print(newMessage);
         chatMessageRepository.save(newMessage);
     }
 }
