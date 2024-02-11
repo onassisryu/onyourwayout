@@ -77,7 +77,6 @@ public class AlarmController {
 
         // 사용자 정보 가져오기
         MemberDto.Response memberDto=memberSerivce.getMemberInfo(alarmDto.getMemberId());
-        System.out.println("memberDto======");
         Member memberEntity=memberDto.toEntity();
         // 전체 동 알림 여부 확인
         if (alarmDto.getIsNotiCategoryAll()){
