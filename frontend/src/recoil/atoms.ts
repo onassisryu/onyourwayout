@@ -14,6 +14,13 @@ export const apartDataState = atom({
   default: [],
 });
 
+export const fcmTokenState = atom({
+  key: 'fcmTokenState',
+  default: {
+    fcmToken: '',
+  },
+});
+
 export const userSignUpDataState = atom({
   key: 'userSignUpDataState',
   default: {

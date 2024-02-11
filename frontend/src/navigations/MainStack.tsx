@@ -20,7 +20,6 @@ import Main from '@screens/Main';
 import Location from '@/screens/Map/Location';
 import ChatMain from '@screens/Chating/ChatMain';
 import ChatDetail from '@screens/Chating/ChatDetail';
-import Apart from '@screens/Apart';
 import My from '@screens/My';
 import MySetting from '@screens/MySetting';
 import Login from '@screens/Login';
@@ -31,7 +30,13 @@ import DoIt2 from '@/screens/DoIt/DoIt2';
 import DoItListDetail from '@/screens/DoItListDetail';
 import DoItList from '@/screens/DoItList';
 import GoOut1 from '@/screens/GoOut/GoOut1';
+import GoOut2 from '@/screens/GoOut/GoOut2';
 import AdminStack from '@/navigations/AdminStack';
+import ApartCertification from '@/screens/My/ApartCertification';
+import BankAccount from '@/screens/My/BankAccount';
+import InvitationCode from '@/screens/My/InvitationCode';
+import ServiceCenter from '@/screens/My/ServiceCenter';
+import MyDoList from '@/screens/My/MyDoList';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -91,6 +96,7 @@ const MainStack = () => {
       <Stack.Screen name="Notice" component={Notice} />
       <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
       <Stack.Screen name="GoOut1" component={GoOut1} />
+      <Stack.Screen name="GoOut2" component={GoOut2} />
       <Stack.Screen name="DoIt1" component={DoIt1} />
       <Stack.Screen name="DoIt2" component={DoIt2} />
       <Stack.Screen name="ChatMain" component={ChatMain} />
@@ -98,6 +104,11 @@ const MainStack = () => {
       <Stack.Screen name="MySetting" component={MySetting} />
       <Stack.Screen name="AdminStack" component={AdminStack} />
       <Stack.Screen name="DoItListDetail" component={DoItListDetail} />
+      <Stack.Screen name="ApartCertification" component={ApartCertification} />
+      <Stack.Screen name="BankAccount" component={BankAccount} />
+      <Stack.Screen name="InvitationCode" component={InvitationCode} />
+      <Stack.Screen name="ServiceCenter" component={ServiceCenter} />
+      <Stack.Screen name="MyDoList" component={MyDoList} />
     </Stack.Navigator>
   );
 };

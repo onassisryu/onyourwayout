@@ -10,7 +10,7 @@ import {StatusBar} from 'react-native';
 import {NavigationContainer, useNavigationContainerRef} from '@react-navigation/native';
 
 //recoil&react-query
-import {isLoggedInState, userDataState, apartDataState} from '@/recoil/atoms';
+import {isLoggedInState, userDataState, apartDataState, fcmTokenState} from '@/recoil/atoms';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
@@ -40,18 +40,19 @@ const App = () => {
   const queryClient = new QueryClient();
 
   const [isLogin, setIsLogin] = useState(false);
-
   const userData = useRecoilValue(userDataState);
+
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const setUserData = useSetRecoilState(userDataState);
   const setApartData = useSetRecoilState(apartDataState);
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
-
+  const setFcmTokenState = useSetRecoilState(fcmTokenState);
   const admin = false;
 
   // FCM 토큰 발급
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
+    setFcmTokenState({fcmToken});
     console.log('[FCM Token] ', fcmToken);
   };
   const checkLogin = async () => {
@@ -100,7 +101,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
-        <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+        <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" translucent={false} />
         <NavigationContainer>
           {isLoggedIn ? admin ? <AdminStack /> : <MainStack /> : <LoginStack />}
         </NavigationContainer>
