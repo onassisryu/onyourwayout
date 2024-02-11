@@ -3,7 +3,7 @@ import {Button, TouchableOpacity, Text} from 'react-native';
 import styled from '@emotion/native';
 import {useRecoilValue} from 'recoil'; // useRecoilValue 훅 추가
 import {GlobalContainer} from '@/GlobalStyles';
-import {isLoggedInState, userDataState} from '../recoil/atoms';
+import {userDataState} from '../recoil/atoms';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
 const StyledText = styled.Text`

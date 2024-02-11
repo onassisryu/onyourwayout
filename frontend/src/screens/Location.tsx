@@ -98,7 +98,7 @@ const Location = ({navigation}: any) => {
       y: 37.5001584,
     },
   ]);
-  const key = '4d3c782ec2cd76adf03897821a745bc2';
+  let key = '4d3c782ec2cd76adf03897821a745bc2';
   const userData = useRecoilValue(userDataState);
 
   const toggleCategory = (category: string) => {
@@ -141,6 +141,19 @@ const Location = ({navigation}: any) => {
     getLocation();
   }, []);
 
+  // const intervalId = setInterval(() => {
+  //   // 여기서 위치를 업데이트하고, setLocation 함수를 통해 상태를 변경합니다.
+  //   const newLocation = {latitude: 37.4924783, longitude: 127.09};
+  //   setLocation(newLocation);
+  // }, 6000);
+  // intervalId;
+
+  // const updateLocation = () => {
+  //   // 여기서 위치를 업데이트하십시오.
+  //   console.log('위치 업데이트');
+  //   key = 'new_location';
+  // };
+  // setInterval(updateLocation, 60000);
   return (
     <GlobalContainer
       style={css`

@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {Button, ScrollView, View, ImageSourcePropType} from 'react-native';
+import {Button, ScrollView, View, ImageSourcePropType, Text} from 'react-native';
 import styled, {css} from '@emotion/native';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 import DoItListHeader from '@components/DoItListpage/DoItListHeader';
 import DoItListCategory from '@components/DoItListpage/DoItListCategory';
@@ -14,20 +13,14 @@ import { useRecoilValue } from 'recoil';
 import { userDataState } from '@/recoil/atoms';
 
 
-interface Props {
-  navigation: NavigationProp<any>;
-  route: RouteProp<any>;
-}
 const DoItListCardComponent = styled(ScrollView)`
-  padding-left: 10px;
-  padding-right: 10px;
-  margin-top: 10px;
+  padding: 10px 20px;
 `;
 
 const DoItListButton = styled(GlobalButton)`
-  padding-right: 260px;
-  border-radius: 15px;
   background-color: white;
+  border-radius: 0px;
+  padding: 10px 0px;
 `;
 
 const DoItListCard = styled(GlobalContainer)`
@@ -38,23 +31,28 @@ const DoItListCard = styled(GlobalContainer)`
   height: 130px;
 `;
 
-const DoItListImage = styled.ImageBackground`
-  width: 120px;
-  height: 110px;
-  margin-right: 15px;
+
+const DoItListImage = styled.Image`
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
   resize-mode: cover;
-  border-radius: 15px;
 `;
 
-const TextComponent = styled(GlobalContainer)`
-  width: 230px;
-  height: initial;
+const CardTextContainer = styled(GlobalContainer)`
+  position: relative;
+  flex: 1;
+  width: 100%;
+  margin-left: 20px;
   flex-direction: column;
   align-items: flex-start;
 `;
 
 const ReportButton = styled(GlobalButton)`
+  position: absolute;
   background-color: white;
+  top: 7px;
+  right: 5px;
 `;
 
 
@@ -69,6 +67,7 @@ const TextApart = styled(GlobalText)`
   font-size: ${props => props.theme.fontSize.short};
   color: ${props => props.theme.color.gray};
   font-weight: bold;
+  margin-top: 5px;
   margin-bottom: 12px;
 `;
 
@@ -80,21 +79,27 @@ const TextContent = styled(GlobalText)`
 
 const TextPrice = styled(GlobalText)`
   font-size: ${props => props.theme.fontSize.medium};
-  color: ${props => props.theme.color.black};
+  margin-right: 10px;
   font-weight: bold;
-  margin-bottom: 10px;
 `;
 
 const DistinctLine = styled.View`
   width: 100%;
   margin-top: 5px;
   margin-bottom: 5px;
-  border: 1px solid #b2b2b2;
+  border: 1px solid #efefef;
+`;
+
+const CardImageContainer = styled(View)`
+  width: 130px;
+  height: 100%;
+  border-radius: 10px;
+  background-color: aliceblue;
 `;
 
 interface DealImage {
   // DealImage에 대한 필드를 정의해주세요.
-  image: ImageSourcePropType;
+  imgUrl: string;
 }
 
 interface DoListCard {
@@ -104,7 +109,7 @@ interface DoListCard {
   requestId: number;
   acceptId: number | null;
   cash: number;
-  item: any; // 'item'의 구조에 따라 적절한 타입을 지정해주세요.
+  item: any;
   rewardType: string;
   complaint: number;
   dealStatus: string;
@@ -114,19 +119,20 @@ interface DoListCard {
   createdAt: string;
   modifiedAt: string;
   deletedAt: string | null;
+  requestInfo: {
+    dongId: number;
+    dongName: string;
+    requestType: string;
+    requestContent: string;
+    requestStatus: string;
+    createdAt: string;
+    modifiedAt: string;
+    deletedAt: string | null;
+  };
 }
 
-interface Props {
-  navigation: NavigationProp<any>;
-  selectedApartCategory: string;
-  selectedTypeCategory: string;
-  setReportModalVisible: (state: boolean) => void;
-}
-
-
-const DoItList = ({navigation, route}: Props) => {
+const DoItList = ({navigation}: any) => {
   const userData = useRecoilValue(userDataState);
-
   const [selectedApartCategory, setSelectedApartCategory] = useState<string>('');
   const [selectedTypeCategory, setSelectedTypeCategory] = useState<string>('');
 
@@ -134,7 +140,7 @@ const DoItList = ({navigation, route}: Props) => {
   const [selectedApart, setSelectedApart] = useState('');
 
   const [reportModalVisible, setReportModalVisible] = useState(false);
-  const [responseData, setResponseData] = useState([]);
+  const [cardListData, setCardListData] = useState<DoListCard[]>([]);
 
   const calculateTimeAgo = (createdAt: string) => {
     const now = new Date(); // 현재 시간
@@ -168,8 +174,8 @@ const DoItList = ({navigation, route}: Props) => {
     axiosAuth
       .get('deal/dong/list')
       .then(resp => {
-        setResponseData(resp.data);
-        console.log('성공', resp.data);
+        setCardListData(resp.data);
+        console.log('카드리스트 api 호출 성공', resp.data[0]);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -196,6 +202,7 @@ const DoItList = ({navigation, route}: Props) => {
   if (selectedTypeCategory) {
     filteredData = responseData.filter((card) => card.dealType === categoryToDealType(selectedTypeCategory));
   }
+  }, []);
 
   return (
     <GlobalContainer>
@@ -238,24 +245,28 @@ const DoItList = ({navigation, route}: Props) => {
                       </View>
                   )}
                   <TextComponent>
+                  <CardImageContainer>
+                    {card.dealImages.length > 0 && <DoItListImage src={card.dealImages[0].imgUrl} />}
+                  </CardImageContainer>
+
+                  <CardTextContainer>
                     <ReportButton onPress={() => setReportModalVisible(true)}>
                       <Feather
                         name="more-vertical"
                         size={25}
                         style={css`
-                          position: absolute;
-                          top: 7px;
-                          left: 230px;
+                          color: #c4c4c4;
                         `}></Feather>
                     </ReportButton>
+
                     <View
                       style={css`
                         flex: 1;
                         margin-top: 10px;
                       `}>
                       <TextTitle numberOfLines={1}>{card.title}</TextTitle>
-
                       <TextApart>{card.requestInfo.dongName}동 / {calculateTimeAgo(card.createdAt)}</TextApart>
+
                     </View>
                     <View
                       style={css`
@@ -273,7 +284,7 @@ const DoItList = ({navigation, route}: Props) => {
                             : 'Unknown Reward Type'}
                     </TextPrice>
                     </View>
-                  </TextComponent>
+                  </CardTextContainer>
                 </DoItListCard>
               </DoItListButton>
               <DistinctLine></DistinctLine>

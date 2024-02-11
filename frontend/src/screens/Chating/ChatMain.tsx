@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Text, View, ScrollView, TouchableOpacity} from 'react-native';
+import {FlatList, Button, Text, View, ScrollView, TouchableOpacity} from 'react-native';
 import DefaultButton from '@/components/DefaultButton';
 import {GlobalContainer, GlobalText} from '@/GlobalStyles';
 import styled, {css} from '@emotion/native';
@@ -7,7 +7,6 @@ import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
 import {useRef, useEffect, useState} from 'react';
 import axiosAuth from '@/axios/axiosAuth';
-import {get} from 'axios';
 
 const StyledText = styled.Text`
   font-size: 30px;
@@ -53,7 +52,7 @@ const ChatMain = ({navigation}: any) => {
   // });
   const user = {
     memberNickname: '가영가영이',
-    otherNickname: 'ssss',
+    otherNickname: '태양태양이',
   };
   //채팅방생성
   const makeChatRoom = () => {

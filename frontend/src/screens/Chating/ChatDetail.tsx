@@ -63,6 +63,7 @@ const ChatDetail = ({navigation}: Props) => {
   const {params} = useRoute<ChatDetailScreenRouteProp>();
   const [chatRoom, setChatRoom] = useState<ChatRoom[]>([]);
   const userData = useRecoilValue(userDataState);
+  const [messages, setMessages] = useState([]);
   const TextEncodingPolyfill = require('text-encoding');
 
   Object.assign('global', {
@@ -84,8 +85,20 @@ const ChatDetail = ({navigation}: Props) => {
         console.log(err);
       });
   };
+  const sendMessage = (message: string) => {
+    client.current?.publish({
+      destination: `/pub/channel/${params.roomId}`,
+      body: JSON.stringify({
+        chatRoomId: params.roomId, // 채팅방 고유 번호
+        sendId: 47, // 메시지 발신자 uuid
+        msg: message,
+        img: '',
+      }),
+    });
+  };
   const client = useRef<Client | null>(null);
-  // const socket = new SockJS('http://i10a302.p.ssafy.io:8080/ws/chat');
+  const socket = new SockJS('http://i10a302.p.ssafy.io:8080/ws/chat');
+
   const connectChat = () => {
     console.log('connectChat');
     client.current = new StompJs.Client({
@@ -93,16 +106,24 @@ const ChatDetail = ({navigation}: Props) => {
       // webSocketFactory: () => socket,
       connectHeaders: {
         Authorization:
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzQ2NTI4NX0.Gt-ZV4OolYvl_LqsWG2n19BSNmRxegnRIGrF_5AAqmA',
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzUxMzA5MX0.vSsVcwPlzGYeIYttLAfrmJB1220TCgQPTZaCbNV8V74',
       },
       debug: str => {
-        console.log(str);
+        console.log('디버그', str);
+        console.log('121212121212');
       },
-      onConnect: () => {
+      onConnect: e => {
+        console.log('!@#!@#!@#!@#!@#!@#!@#');
+        console.log(e);
         console.log('Connected to the WebSocket server');
-        client.current?.subscribe('/sub/chat/room/1', message => {
+        client.current?.subscribe(`/sub/channel/${params.roomId}`, message => {
           const receivedMessage = JSON.parse(message.body);
+          console.log('receivedMessage', receivedMessage);
+          setMessages(receivedMessage);
         });
+      },
+      onChangeState: e => {
+        console.log('onChangeState', e);
       },
       onStompError: frame => {
         console.error('Broker reported error:', frame.headers['message']);
@@ -112,10 +133,10 @@ const ChatDetail = ({navigation}: Props) => {
         console.log('Disconnected from the WebSocket server');
       },
       onWebSocketClose: async e => {
-        console.log('Closed', e);
+        console.log('Closed', e.reason);
       },
-      reconnectDelay: 50000, //자동재연결
-      heartbeatIncoming: 4000,
+      reconnectDelay: 50000,
+      heartbeatIncoming: 40000,
     });
     client.current.onConnect = () => {
       console.log('onConnect');

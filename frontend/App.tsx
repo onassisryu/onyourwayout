@@ -5,15 +5,13 @@
  * @format
  */
 
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StatusBar} from 'react-native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useNavigationContainerRef} from '@react-navigation/native';
 
 //recoil&react-query
-import {useRecoilValue} from 'recoil';
-import {isLoggedInState} from '@/recoil/atoms';
+import {isLoggedInState, userDataState, fcmTokenState} from '@/recoil/atoms';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
 import {ThemeProvider} from '@emotion/react';
@@ -29,29 +27,34 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('[Background Remote Message]', remoteMessage);
 });
 
-//page
-import {Screens} from '@screens/Screens';
-import Main from '@screens/Main';
-import Location from '@screens/Location';
-import ChatMain from '@screens/Chating/ChatMain';
-import ChatDetail from '@screens/Chating/ChatDetail';
-import Apart from '@screens/Apart';
-import My from '@screens/My';
-import DoItList from '@/screens/DoItList';
-
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import MainStack from '@/navigations/MainStack';
+import AdminStack from '@/navigations/AdminStack';
+import LoginStack from '@/navigations/LoginStack';
+
+import {NoticeTab, sendNotification} from '@/components/Noticepage/NoticeTab';
+
+import {getStorage, setStorage} from '@/storage/common_storage';
+
 const App = () => {
-  const Stack = createNativeStackNavigator();
-  const Tab = createBottomTabNavigator();
   const queryClient = new QueryClient();
+
+  const [isLogin, setIsLogin] = useState(false);
+  const userData = useRecoilValue(userDataState);
+
   const isLoggedIn = useRecoilValue(isLoggedInState);
-  console.log('App Loading....');
-  // 토큰 발급
+  const setUserData = useSetRecoilState(userDataState);
+  const setIsLoggedIn = useSetRecoilState(isLoggedInState);
+  const setFcmTokenState = useSetRecoilState(fcmTokenState);
+  const admin = false;
+
+  // FCM 토큰 발급
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
+    setFcmTokenState({fcmToken});
     console.log('[FCM Token] ', fcmToken);
   };
   
@@ -84,6 +87,29 @@ const App = () => {
     });
   };
 
+  const checkLogin = async () => {
+    if (isLoggedIn) {
+      console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
+      if (admin) {
+        console.log('관리자입니다.');
+      }
+    } else {
+      getStorage('token').then(token => {
+        console.log(token);
+        if (token) {
+          console.log('토큰이 있습니다.', token);
+          getStorage('user').then(user => {
+            setUserData(user);
+            setIsLoggedIn(true);
+          });
+        }
+      });
+    }
+  };
+  useEffect(() => {
+    checkLogin();
+  }, [isLoggedIn]);
+
   useEffect(() => {
     getFcmToken(); // 토큰 발급
     // 앱이 켜져있을때
@@ -100,61 +126,14 @@ const App = () => {
     return unsubscribe;
   }, []);
 
-  const BottomTab = () => {
-    return (
-      <Tab.Navigator
-        screenOptions={({route}) => ({
-          tabBarHideOnKeyboard: true,
-          headerShown: false,
-          tabBarStyle: {
-            paddingBottom: 5,
-            height: 60,
-            fontweight: 'bold',
-          },
-          tabBarActiveTintColor: '#27D894',
-          tabBarLabelStyle: {
-            fontWeight: 'bold',
-          },
-          tabBarIcon: ({focused, size, color}) => {
-            let iconName!: string;
-
-            if (route.name === '홈') {
-              iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === '위치') {
-              iconName = focused ? 'location' : 'location-outline';
-            } else if (route.name === '채팅') {
-              iconName = focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline';
-            } else if (route.name === '아파트') {
-              iconName = focused ? 'office-building' : 'office-building-outline';
-              return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
-            } else if (route.name === '내정보') {
-              iconName = focused ? 'person' : 'person-outline';
-            }
-            return <Ionic name={iconName!} size={size} color={color} />;
-          },
-        })}>
-        <Tab.Screen name="홈" component={Main} />
-        <Tab.Screen name="위치" component={Location} />
-        <Tab.Screen name="아파트" component={DoItList} />
-        <Tab.Screen name="채팅" component={ChatMain} />
-        <Tab.Screen name="내정보" component={My} />
-      </Tab.Navigator>
-    );
-  };
   return (
     <QueryClientProvider client={queryClient}>
-      <NavigationContainer>
-        <ThemeProvider theme={theme}>
-          <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
-          <Stack.Navigator initialRouteName="Login" screenOptions={{headerShown: false}}>
-            <Stack.Screen name="Bottom" component={BottomTab} />
-            <Stack.Screen name="ChatDetail" component={ChatDetail} />
-            {Screens.map(screen => (
-              <Stack.Screen key={screen.name} name={screen.name} component={screen.component} />
-            ))}
-          </Stack.Navigator>
-        </ThemeProvider>
-      </NavigationContainer>
+      <ThemeProvider theme={theme}>
+        <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" translucent={false} />
+        <NavigationContainer>
+          {isLoggedIn ? admin ? <AdminStack /> : <MainStack /> : <LoginStack />}
+        </NavigationContainer>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };

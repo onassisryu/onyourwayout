@@ -1,13 +1,12 @@
 import axios, {get} from 'axios';
-import {useSetRecoilState} from 'recoil';
-import {isLoggedInState, userDataState} from '@/recoil/atoms';
+import {useSetRecoilState, useRecoilValue} from 'recoil';
+import {isLoggedInState, userDataState, fcmTokenState} from '@/recoil/atoms';
 import React, {useState, useEffect} from 'react';
 import {Text, Alert, View, Keyboard, TouchableWithoutFeedback, Image, TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import DefaultButton from '@/components/DefaultButton';
 import theme from '@/Theme';
-import Ant from 'react-native-vector-icons/AntDesign';
 import {getStorage, setStorage} from '@/storage/common_storage';
 
 interface StyledInputProps {
@@ -52,61 +51,45 @@ const LoginButton = styled(DefaultButton)`
 `;
 
 const Login = ({navigation}: any) => {
-  const [username, setusername] = useState('a@gmail');
-  const [password, setPassword] = useState('1234');
+  const [username, setusername] = useState('');
+  const [password, setPassword] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isnotValueid, setIsnotValueid] = useState(true);
   const [isnotValuepassword, setIsnotValuepassword] = useState(true);
-
+  const fcmToken = useRecoilValue(fcmTokenState).fcmToken;
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const setUserData = useSetRecoilState(userDataState);
-
-  const handleLogin = () => {
-    console.log('자동로그인');
-    setIsLoggedIn(true);
-  };
-
-  //로그인 상태 체크
-  useEffect(() => {
-    getStorage('token').then(token => {
-      if (token) {
-        console.log('토큰이 있습니다.', token);
-        getStorage('autoLogin').then(auto => {
-          if (auto) {
-            handleLogin();
-            getStorage('user').then(auto => {
-              setUserData(auto);
-              if (auto) {
-                navigation.navigate('Bottom', {screen: 'Main'});
-              }
-            });
-          }
-        });
-      }
-    });
-  }, []);
+  const isLoggedIn = useRecoilValue(isLoggedInState);
 
   async function login() {
+    console.log(fcmToken);
     if (username.trim() === '') {
       Alert.alert('아이디 입력 확인', '아이디가 입력되지 않았습니다.');
     } else if (password.trim() === '') {
       Alert.alert('비밀번호 입력 확인', '비밀번호가 입력되지 않았습니다.');
     } else {
       try {
-        const response = await axios.post('http://i10a302.p.ssafy.io:8080/members/signin', {username, password});
+        const response = await axios.post('http://i10a302.p.ssafy.io:8080/members/signin', {
+          username: username,
+          password: password,
+          fcmToken: fcmToken,
+        });
         if (response.data !== null && response.data !== '') {
           const token = response.data.token.accessToken;
           const refreshToken = response.data.token.refreshToken;
           const user = response.data.memberInfo;
+          console.log('로그인 성공', response.data);
           await setStorage('token', token);
           await setStorage('refreshToken', refreshToken);
-          await setStorage('autoLogin', 'true');
           await setStorage('user', user);
+
+          //recoil에 저장
           setIsLoggedIn(true);
           setUserData(user);
-
           Keyboard.dismiss();
-          navigation.navigate('Bottom', {screen: 'Main'});
+          console.log('123123');
+          console.log(user);
+          console.log(token);
           console.log('로그인 성공');
         } else {
           Alert.alert('로그인 실패', '아이디나 비밀번호를 확인하세요.');
