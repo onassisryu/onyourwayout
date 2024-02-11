@@ -1,11 +1,15 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled, {css} from '@emotion/native';
 import {GlobalContainer} from '@/GlobalStyles';
 import Header from '@/components/Header';
 import GoBack from '@/components/Signup/GoBack';
 import MypageButton from '@/components/Mypage/MypageButton';
 import {MypageBodyContainer} from '@/components/Mypage/MypageBodyContainer';
-import {View} from 'react-native';
+import {View, ToastAndroid} from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard'; // clipboard 추가
+import {useRecoilValue} from 'recoil';
+import {userDataState} from '@/recoil/atoms';
+
 const BodyContainer = styled(MypageBodyContainer)`
   justify-content: center;
   align-items: center;
@@ -13,15 +17,24 @@ const BodyContainer = styled(MypageBodyContainer)`
 const HeadText = styled.Text`
   font-size: 25px;
   font-weight: 900;
-  padding-top: 150px;
+  margin-top: 150px;
   padding-bottom: 30px;
 `;
 const StyledText = styled.Text`
-  font-size: 18px;
+  font-size: 22px;
   margin-bottom: 10px;
 `;
 
 const InvitationCode = () => {
+  const userData = useRecoilValue(userDataState);
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = () => {
+    Clipboard.setString(userData.inviteCode);
+    ToastAndroid.show('클립보드에 복사되었습니다.', ToastAndroid.SHORT);
+    setCopied(true);
+  };
+
   return (
     <GlobalContainer>
       <Header>
@@ -33,17 +46,19 @@ const InvitationCode = () => {
           style={css`
             justify-content: center;
             align-items: center;
+            text-align: center;
             padding: 20px;
             height: 130px;
             width: 100%;
             border-radius: 10px;
             background-color: #f2f2f2;
             margin-bottom: 30px;
+            padding: 10px;
           `}>
-          <StyledText>wq25awq3215qtasaey636qtetqw21190faQWTG353tGAEQ25AGQV!</StyledText>
+          {copied ? <StyledText>{userData.inviteCode}</StyledText> : <StyledText>코드를 발급해주세요</StyledText>}
         </View>
 
-        <MypageButton title="초대코드 발급" color="primary"></MypageButton>
+        <MypageButton title={copied ? '복사 완료' : '초대코드 발급'} color="primary" onPress={copyToClipboard} />
       </BodyContainer>
     </GlobalContainer>
   );

@@ -26,4 +26,7 @@ export type RootStackParamList = {
   ChatDetail: {
     roomId: long;
   };
+  DoItListDetail: {
+    id: long;
+  };
 };

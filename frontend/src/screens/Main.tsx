@@ -8,10 +8,9 @@ import MainHeader from '@components/Mainpage/MainHeader';
 import MainDoList from '@components/Mainpage/MainDoList';
 import MainModal from '@/components/Mainpage/MainModal';
 import {useRecoilValue} from 'recoil';
-import {getStorage, setStorage, clearStorage} from '@/storage/common_storage';
+
+import {logoutUser} from '@/utils/common';
 import {useEffect} from 'react';
-import {get} from 'axios';
-import {clear} from 'console';
 
 const Home = ({navigation}: any) => {
   return (
@@ -19,16 +18,13 @@ const Home = ({navigation}: any) => {
       style={css`
         width: '100%';
       `}>
-      <ScrollView
-        style={css`
-          width: '100%';
-        `}>
+      <ScrollView>
         <MainHeader navigation={navigation} />
         <MainComponent />
-        <MainDoList />
+        <MainDoList navigation={navigation} />
       </ScrollView>
       <MainModal navigation={navigation} />
-      <GlobalButton onPress={clearStorage}>
+      <GlobalButton onPress={logoutUser}>
         <GlobalText>리셋</GlobalText>
       </GlobalButton>
     </GlobalContainer>

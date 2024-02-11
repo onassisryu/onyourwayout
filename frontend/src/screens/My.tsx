@@ -4,7 +4,7 @@ import {TouchableOpacity, Text, View} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {useRecoilValue} from 'recoil';
 import {GlobalContainer, GlobalText} from '@/GlobalStyles';
-import {isLoggedInState, userDataState} from '@/recoil/atoms';
+import {userDataState} from '@/recoil/atoms';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
 import Mypagelist from '@/components/Mypage/InnerContainerBoxhorizontal';
@@ -66,16 +66,9 @@ const InnerContainerBox = styled.TouchableOpacity`
 `;
 
 const My = ({navigation}: any) => {
-  const isLoggedIn = useRecoilValue(isLoggedInState); // isLoggedInState 상태 가져오기
   const userData = useRecoilValue(userDataState); // userDataState 상태 가져오기
   const scorePercent = `${userData.score}%`;
-  useEffect(() => {
-    console.log('isLoggedIn', isLoggedIn);
-    console.log('userData', userData);
-    if (!isLoggedIn) {
-      navigation.navigate('Login');
-    }
-  }, []);
+
   return (
     <GlobalContainer
       style={css`
@@ -174,10 +167,10 @@ const My = ({navigation}: any) => {
                   flex-direction: row;
                   justify-content: space-around;
                 `}>
-                <InnerContainerBox onPress={() => navigation.navigate('Activity')}>
+                <InnerContainerBox onPress={() => navigation.navigate('MyDoList', {type: 'accept'})}>
                   <Text>내가 한일</Text>
                 </InnerContainerBox>
-                <InnerContainerBox onPress={() => navigation.navigate('Activity')}>
+                <InnerContainerBox onPress={() => navigation.navigate('MyDoList', {type: 'request'})}>
                   <Text>내가 맡긴일</Text>
                 </InnerContainerBox>
               </View>
