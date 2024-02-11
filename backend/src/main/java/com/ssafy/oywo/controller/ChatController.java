@@ -49,7 +49,8 @@ public class ChatController {
                 .imgUrl(imgUrl).build();
 
         // /room/{roomId}를 구독하는 클라이언트로 메시지 객체가 전달
-        sendingOperations.convertAndSend("/sub/channel"+response.getChatRoomId(),response);
+        sendingOperations.convertAndSend("/sub/channel/"+response.getChatRoomId(),response);
+        log.info("메시지 전송 성공");
 
         // message를 저장한다.
         chatService.saveChatMessage(response);
