@@ -23,4 +23,6 @@ export const Screens: ScreenItem[] = [
   {name: 'Signup5a', component: Signup5a},
   {name: 'Signup6', component: Signup6},
   {name: 'MySetting', component: MySetting},
+  {name: 'DoItPut', component: DoItPut},
+  {name: 'Report', component: Report},
 ];

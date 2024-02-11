@@ -35,6 +35,7 @@ const SettingsContent = styled(GlobalText)`
   color: ${props => props.theme.color.black};
   font-weight: bold;
 `;
+
 const SettingsSubcomponent = styled(GlobalContainer)`
   flex-direction: row;
   justify-content: space-between;
@@ -50,20 +51,17 @@ interface Setting {
   value: boolean;
 };
 
-const NoticeSettingsSound = () => {
+const NoticeSettings = () => {
   const [generalSettings, setGeneralSettings] = useState([
     {id: 'alaramDisplay', title: '모든 알림 표시', value: false},
     {id: 'time', title: '방해금지 시간 설정', value: false},
-  ]);
-
-  const [soundSettings, setSoundSettings] = useState([
-    {id: 'sound', title: '소리', value: false},
     {id: 'vibration', title: '진동', value: false},
   ]);
 
+
   // useEffect(() => {
   //   AsyncStorage.getItem('token').then((token) => {
-  //     axiosAuth.get(`/alarm/get/2`, {
+  //     axiosAuth.get(`/alarm/get/1`, {
   //       headers: {
   //         Authorization: `Bearer ${token}`, // 토큰을 Bearer 토큰으로 설정
   //       }
@@ -100,24 +98,9 @@ const NoticeSettingsSound = () => {
           </SettingsSubcomponent>
         ))}
       </SettingComponent>
-      <SettingComponent>
-        <SettingsTitle> 소리/진동 </SettingsTitle>
-        {soundSettings.map(setting => (
-          <SettingsSubcomponent key={setting.id}>
-            <SettingsContent>{setting.title}</SettingsContent>
-            <Switch
-              trackColor={{true: '#00D282', false: '#767577'}}
-              thumbColor={setting.value ? 'white' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={value => handleSwitchChange(soundSettings, setSoundSettings, setting.id, value)}
-              value={setting.value}
-              style={{transform: [{scaleX: 1.1}, {scaleY: 1.1}]}}
-            />
-          </SettingsSubcomponent>
-        ))}
-      </SettingComponent>
+
     </SettingsContainer>
   );
 };
 
-export default NoticeSettingsSound;
+export default NoticeSettings;
