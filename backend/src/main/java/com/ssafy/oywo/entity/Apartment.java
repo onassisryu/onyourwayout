@@ -2,6 +2,7 @@ package com.ssafy.oywo.entity;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +15,10 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "apartment")
+@Builder(toBuilder = true)
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @SQLDelete(sql = "UPDATE apartment SET deleted_at = NOW() WHERE uuid = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class Apartment extends BaseTimeEntity {

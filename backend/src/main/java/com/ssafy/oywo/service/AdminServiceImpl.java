@@ -72,8 +72,8 @@ public class AdminServiceImpl implements AdminService {
         List<Deal> deals = dealRepository.findDealsByOrderByComplaintDesc();
 
         return deals.stream()
-                .map(DealDto.Response::new)
-                .toList();
+                .map(d -> new DealDto.Response(d, memberRepository.findById(d.getRequestId()).orElseThrow(() -> new IllegalArgumentException("해당 requestId의 사용자가 없음"))))
+                .collect(Collectors.toList());
     }
 
 
