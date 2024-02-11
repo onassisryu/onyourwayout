@@ -123,7 +123,7 @@ public class MemberDto {
             return Response.builder()
                     .id(member.getId())
                     .nickname(member.getNickname())
-                    .password(null)
+                    .password(member.getPassword())
                     .username(member.getUsername())
                     .birthDate(member.getBirthDate())
                     .phoneNumber(member.getPhoneNumber())
