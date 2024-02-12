@@ -12,6 +12,7 @@ import {SignupBodyContainer} from '@/components/Signup/SignupBodyContainer';
 import NextButton from '@/components/Signup/NextButton';
 import {userSignUpDataState} from '@/recoil/atoms';
 import {useSetRecoilState, useRecoilValue} from 'recoil';
+import axiosBasic from '@/axios/axios';
 
 const InputContainer = styled.View`
   width: 100%;
@@ -59,22 +60,29 @@ const Signup1 = ({navigation}: any) => {
   const userSignUpData = useRecoilValue(userSignUpDataState);
 
   const updateUserName = (username: string) => {
-    setUserSignUpData(prevState => ({
-      ...prevState,
-      username: username,
-    }));
+    console.log('아이디인디유', username);
+    axiosBasic
+      .get(`/members/dup/id?value=${username}`)
+      .then(resp => {
+        console.log('성공', resp.data.data);
+        setUserSignUpData(prevState => ({
+          ...prevState,
+          username: username,
+        }));
+        navigation.navigate('Signup2');
+      })
+      .catch(error => {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+        if (error.response.status === 409) {
+          Alert.alert('중복된 아이디입니다');
+          setIsDisabled(true);
+        }
+      });
   };
 
   function SetValue() {
     updateUserName(value);
-    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    if (emailRegex.test(value)) {
-      updateUserName(value);
-      console.log(userSignUpData);
-      navigation.navigate('Signup2');
-    } else {
-      Alert.alert('올바르지 않은 아이디 형식입니다');
-    }
+    console.log(userSignUpData);
   }
 
   return (

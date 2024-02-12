@@ -1,6 +1,7 @@
 // 지도
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
+import axios from 'axios';
 import {
   View,
   Button,
@@ -69,7 +70,8 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
 const Signup6 = ({navigation}: any) => {
   const key = Config.KAKAO_JAVASCRIPT_KEY;
   const [location, setLocation] = useState<ILocation | null>(null);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [areaCode, setAreaCode] = useState('fsfsff');
 
   useEffect(() => {
     const getLocation = async () => {
@@ -80,7 +82,31 @@ const Signup6 = ({navigation}: any) => {
             latitude,
             longitude,
           });
-          setIsDisabled(false);
+          //법정동 기반 코드 구하기
+          const url = 'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json';
+          const x = longitude; // x 좌표 값
+          const y = latitude; // y 좌표 값
+          const REST_API_KEY = Config.KAKAO_RESTAPI_KEY; // Kakao REST API 키를 입력해야 합니다.
+
+          axios
+            .get(url, {
+              params: {
+                x: x,
+                y: y,
+              },
+              headers: {
+                Authorization: `KakaoAK ${REST_API_KEY}`,
+              },
+            })
+            .then(response => {
+              console.log(response.data.documents[0].code);
+              const code = response.data.documents[0].code;
+              setAreaCode(code);
+              setIsDisabled(true);
+            })
+            .catch(error => {
+              console.error(error);
+            });
         },
         error => {
           console.log(error.code, error.message);
@@ -130,7 +156,7 @@ const Signup6 = ({navigation}: any) => {
           color="primary"
           size="lg"
           disabled={!isDisabled}
-          onPress={() => navigation.navigate('Signup7')}
+          onPress={() => navigation.navigate('Signup7', {code: areaCode})}
         />
       </SignupBodyContainer>
     </GlobalContainer>

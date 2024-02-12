@@ -7,6 +7,9 @@ import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
 import theme from '@/Theme';
 import GoBack from '@/components/Signup/GoBack';
+import {NavigationProp} from '@react-navigation/native';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {RootStackParamList} from '@/@types';
 import SignupHeadtext from '@/components/Signup/SignupHeadtext';
 import {SignupBodyContainer} from '@/components/Signup/SignupBodyContainer';
 import NextButton from '@/components/Signup/NextButton';
@@ -33,11 +36,16 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
   bottom: 10px;
   ${({visible}) => !visible && 'opacity: 0;'};
 `;
+type SignUpScreenRouteProp = RouteProp<RootStackParamList, 'SignUp7'>;
 
-const Signup7 = ({navigation}: any) => {
+interface Props {
+  navigation: NavigationProp<any>;
+}
+const Signup7 = ({navigation}: Props) => {
+  const {params} = useRoute<SignUpScreenRouteProp>();
+
   const [value, setValue] = useState('');
   const [aprtlist, setAprtlist] = useState([]);
-  const [areacode, setAreacode] = useState('1120010500');
   const [apartid, setApartid] = useState(0);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
@@ -78,7 +86,7 @@ const Signup7 = ({navigation}: any) => {
 
   useEffect(() => {
     axiosBasic
-      .get(`apart/list/${areacode}?name=`)
+      .get(`apart/list/${params.code}?name=`)
       .then(resp => {
         console.log('성공', resp.data.data);
         setAprtlist(resp.data.data);
@@ -88,7 +96,7 @@ const Signup7 = ({navigation}: any) => {
       });
   }, []);
 
-  const handleApartmentPress = apartment => {
+  const handleApartmentPress = (apartment: any) => {
     setValue(`${apartment.name}아파트`); // 아파트 이름으로 value 업데이트
     setApartid(apartment.id); // 아파트 ID로 apartid 업데이트
   };
