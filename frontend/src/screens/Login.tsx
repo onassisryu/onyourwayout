@@ -62,6 +62,18 @@ const Login = ({navigation}: any) => {
   const setApartData = useSetRecoilState(apartDataState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
 
+  const checkLogin = async () => {
+    if (isLoggedIn) {
+      console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
+      navigation.navigate('Main');
+    } else {
+      console.log('로그인 상태가 아닙니다.======> 페이지 이동', isLoggedIn);
+    }
+  };
+  useEffect(() => {
+    checkLogin();
+  }, []);
+
   async function login() {
     console.log(fcmToken);
     if (username.trim() === '') {
@@ -90,6 +102,7 @@ const Login = ({navigation}: any) => {
           setIsLoggedIn(true);
           setUserData(user);
           setApartData(adjDongs);
+          navigation.navigate('Main');
           Keyboard.dismiss();
           console.log('123123');
           console.log(user);

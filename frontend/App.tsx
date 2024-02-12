@@ -256,7 +256,7 @@ const App = () => {
             acceptId={data.acceptMemberId}
             dealId={data.dealId}
           />
-          {isLoggedIn ? admin ? <AdminStack /> : <MainStack /> : <LoginStack />}
+          {admin ? <AdminStack /> : <MainStack />}
         </NavigationContainer>
       </ThemeProvider>
     </QueryClientProvider>
