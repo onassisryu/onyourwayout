@@ -21,7 +21,7 @@ const InnerContainer = styled.View`
 `;
 const InnerContainerTitle = styled.Text`
   font-size: 15px;
-  font-weight: 900;
+  font-weight: 700;
   color: ${props => props.theme.color.black};
   margin-bottom: 20px;
 `;
@@ -148,7 +148,7 @@ const My = ({navigation}: any) => {
                     margin-left: 2px;
                   `}>
                   <ApartText>
-                    {userData.aptName}아파트, {userData.dongName}동 {userData.hoName}호
+                    {userData.apt.name}아파트, {userData.dongName}동 {userData.hoName}호
                   </ApartText>
                 </View>
               </View>

@@ -233,7 +233,7 @@ const App = () => {
       setData(remoteMessage.data);
       console.log('data', data);
       sendNotification(notice);
-      if (remoteMessage.collapseKey) {
+      if (remoteMessage.notification.title === '[나가요잉 신청]') {
         setModalVisible(true);
       }
     });
