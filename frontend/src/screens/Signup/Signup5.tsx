@@ -1,6 +1,6 @@
 // 초대코드
 import React, {useEffect, useState} from 'react';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, Alert} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {GlobalContainer} from '@/GlobalStyles';
 import Header from '@/components/Header';
@@ -92,6 +92,10 @@ const Signup5 = ({navigation}: any) => {
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
+        if (error.response.status == 404) {
+          Alert.alert('유효하지 않은 초대코드입니다.');
+          setIsDisabled(true);
+        }
       });
   }
 

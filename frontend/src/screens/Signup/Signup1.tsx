@@ -1,6 +1,6 @@
 // 아이디
 import React, {useEffect, useState} from 'react';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, Alert} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {GlobalContainer} from '@/GlobalStyles';
 import Header from '@/components/Header';
@@ -67,8 +67,14 @@ const Signup1 = ({navigation}: any) => {
 
   function SetValue() {
     updateUserName(value);
-    console.log(userSignUpData);
-    navigation.navigate('Signup2');
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    if (emailRegex.test(value)) {
+      updateUserName(value);
+      console.log(userSignUpData);
+      navigation.navigate('Signup2');
+    } else {
+      Alert.alert('올바르지 않은 아이디 형식입니다');
+    }
   }
 
   return (

@@ -35,14 +35,14 @@ import MainStack from '@/navigations/MainStack';
 import AdminStack from '@/navigations/AdminStack';
 import LoginStack from '@/navigations/LoginStack';
 
-import {NoticeTab, sendNotification} from '@/components/Noticepage/NoticeTab';
+// import {NoticeTab, sendNotification} from '@/components/Noticepage/NoticeTab';
 
 import {getStorage, setStorage} from '@/storage/common_storage';
 
 const App = () => {
   const queryClient = new QueryClient();
 
-  const [isLogin, setIsLogin] = useState(false);
+  const [admin, setAdmin] = useState(false);
   const userData = useRecoilValue(userDataState);
 
   const isLoggedIn = useRecoilValue(isLoggedInState);
@@ -50,7 +50,6 @@ const App = () => {
   const setApartData = useSetRecoilState(apartDataState);
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const setFcmTokenState = useSetRecoilState(fcmTokenState);
-  const admin = false;
 
   // FCM 토큰 발급
   const getFcmToken = async () => {
@@ -58,7 +57,7 @@ const App = () => {
     setFcmTokenState({fcmToken});
     console.log('[FCM Token] ', fcmToken);
   };
-  
+
   PushNotification.createChannel(
     {
       channelId: 'channel-id', // 채널 ID
@@ -70,7 +69,7 @@ const App = () => {
     },
     created => console.log(`createChannel returned '${created}'`) // (optional) 채널 생성 성공 여부를 로그에 출력
   );
-  
+
   const sendNotification = (notice: any) => {
     const now = moment();
     const formattedTime = now.format('A hh:mm');
@@ -91,8 +90,8 @@ const App = () => {
   const checkLogin = async () => {
     if (isLoggedIn) {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
-      if (userData.roles === 'ADMIN') {
-        console.log('관리자입니다.');
+      if (userData.roles == 'ADMIN') {
+        setAdmin(true);
       }
     } else {
       getStorage('token').then(token => {
@@ -103,7 +102,6 @@ const App = () => {
             setUserData(user);
             setIsLoggedIn(true);
             getStorage('adjDongs').then(adjDongs => {
-              console.log(adjDongs);
               setApartData(adjDongs);
             });
           });

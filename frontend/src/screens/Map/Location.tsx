@@ -3,7 +3,6 @@ import {View, ActivityIndicator} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {GlobalButton, GlobalContainer, GlobalText} from '@/GlobalStyles';
 import {WebView} from 'react-native-webview';
-import Map from '@screens/Map/htmlCode/Map';
 import ApartMarker from '@screens/Map/htmlCode/ApartMarker';
 import Geolocation from 'react-native-geolocation-service';
 import {useEffect} from 'react';
@@ -64,12 +63,11 @@ const MapContainer = styled.View`
 `;
 
 const Location = ({navigation}: any) => {
-  const apartData = useRecoilValue(apartDataState);
+  const apartDongData = useRecoilValue(apartDataState);
   const userData = useRecoilValue(userDataState);
-  let key = '4d3c782ec2cd76adf03897821a745bc2';
+  let key = Config.KAKAO_JAVASCRIPT_KEY;
 
   const [location, setLocation] = useState<ILocation | null>(null);
-  const [apartAll, setApartAll] = useState<Dong[]>([]);
   const [markers, setMarkers] = useState<Dong[]>([]);
 
   const [selectedButton, setSelectedButton] = useState<ButtonState>([
@@ -88,13 +86,8 @@ const Location = ({navigation}: any) => {
     console.log('api호출후', res.data);
 
     const dongList = res.data;
-    const filteredApartData = apartData.filter(apart => dongList.includes(apart.dongId));
-    const updatedMarkers = filteredApartData.map(apart => ({
-      id: apart.dongId,
-      name: apart.name,
-      lat: apart.apartment.lat,
-      lng: apart.apartment.lng,
-    }));
+    const updatedMarkers = apartDongData.filter(apart => dongList.includes(apart.dongId));
+    console.log('updatedMarkers', updatedMarkers);
     setMarkers(updatedMarkers);
   };
 
@@ -147,9 +140,9 @@ const Location = ({navigation}: any) => {
     return filteredDongList;
   }
 
-  function getDistance(lat1, lon1, lat2, lon2) {
+  function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
     const toRadian = angle => (Math.PI / 180) * angle;
-    const distance = (a, b) => (Math.PI / 180) * (a - b);
+    const distance = (a: number, b: number) => (Math.PI / 180) * (a - b);
 
     const RADIUS_OF_EARTH_IN_KM = 6371;
     const dLat = distance(lat2, lat1);
@@ -166,14 +159,9 @@ const Location = ({navigation}: any) => {
 
     return Number(finalDistance.toFixed(2));
   }
+  let lastDetectedDongs: any[] = [];
 
   const updateLocation = async () => {
-    const apartLocation = apartData.map(apart => ({
-      id: apart.dongId,
-      name: apart.name,
-      lat: apart.apartment.lat,
-      lng: apart.apartment.lng,
-    }));
     Geolocation.getCurrentPosition(
       position => {
         console.log('내 현재 위치', position.coords.latitude, position.coords.longitude);
@@ -181,11 +169,14 @@ const Location = ({navigation}: any) => {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
-        const dongsWithin50m = getDongWithin50m(currentLocation, apartLocation);
+        const dongsWithin50m = getDongWithin50m(currentLocation, apartDongData);
+        const test = dongsWithin50m.filter(dong => lastDetectedDongs.dongId === dong.dongId);
+        console.log('이미감지된동', lastDetectedDongs);
+        // const isAlreadyDetected = lastDetectedDongs.some(detectedDong => detectedDong.dongId === dong.dongId);
         if (dongsWithin50m.length > 0) {
           dongsWithin50m.map(dong => {
-            console.log('내 주변 동', dong.name, dong.id);
-            axiosAuth.get(`/notification/near/${dong.id}`);
+            console.log('내 주변 동', dong.name, dong.dongId);
+            // axiosAuth.get(`/notification/near/${dong.dongId}`);
           });
         }
       },
@@ -197,6 +188,7 @@ const Location = ({navigation}: any) => {
   };
   //현재 위치 받아오기
   useEffect(() => {
+    setLocation(userData.apt);
     const getLocation = async () => {
       await requestPermissions();
 
@@ -217,7 +209,7 @@ const Location = ({navigation}: any) => {
         height: 100%;
       `}>
       <LocationHeader>
-        <LocationHeadText>{userData.aptName}</LocationHeadText>
+        <LocationHeadText>{userData.apt.name}</LocationHeadText>
         <View
           style={css`
             flex-direction: row;
@@ -240,7 +232,7 @@ const Location = ({navigation}: any) => {
         {markers.length > 0 ? (
           <WebView
             originWhitelist={['*']}
-            source={{html: Map(key, markers)}}
+            source={{html: ApartMarker(key, markers, location)}}
             javaScriptEnabled={true}
             injectedJavaScript={''}
           />

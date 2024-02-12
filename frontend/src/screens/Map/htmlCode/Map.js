@@ -1,6 +1,5 @@
-const Map = (key, markers) => {
-  console.log('지도로딩중');
-  console.log(markers);
+const Map = (key, location) => {
+  console.log('지도로딩중', location);
   return `
       <html>
         <head>
@@ -16,25 +15,17 @@ const Map = (key, markers) => {
         <body>
           <div id="map"></div>
           <script>
-          const markers = ${JSON.stringify(markers)};
-          kakao.maps.load(() => {
-              const container = document.getElementById('map');
-              const options = {
-                center: new kakao.maps.LatLng(${markers[0].lat}, ${markers[0].lng}), // 초기 지도 중심 좌표 설정
-                level: 3, // 초기 지도 확대 레벨 설정
-              };
-              const map = new kakao.maps.Map(container, options);
-              var bounds = new kakao.maps.LatLngBounds();    
-              markers.forEach((markerObj) => {
-                const markerPosition = new kakao.maps.LatLng(markerObj.lat, markerObj.lng);
-                const marker = new kakao.maps.Marker({
-                  position: markerPosition,
-                });
-                bounds.extend(markerPosition);
-                marker.setMap(map);
-              });
-            });
-            map.setBounds(bounds);
+          const container = document.getElementById('map');
+          const options = {
+            center: new kakao.maps.LatLng(${location?.latitude}, ${location?.longitude}), // 현재 위치를 기준으로 지도를 보여준다.
+            level: 3,
+          };
+          const map = new kakao.maps.Map(container, options);
+          const markerPosition = new kakao.maps.LatLng(${location?.latitude}, ${location?.longitude});
+          const marker = new kakao.maps.Marker({
+            position: markerPosition,
+          });
+          marker.setMap(map); // 현재 위치에 마커를 찍는다.
         </script>
       </body>
     </html>
