@@ -16,6 +16,7 @@ import {QueryClient, QueryClientProvider} from 'react-query';
 
 import {ThemeProvider} from '@emotion/react';
 import theme from '@/Theme';
+
 import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 import 'moment/locale/ko';
@@ -35,9 +36,13 @@ import MainStack from '@/navigations/MainStack';
 import AdminStack from '@/navigations/AdminStack';
 import LoginStack from '@/navigations/LoginStack';
 
-import {NoticeTab, sendNotification} from '@/components/Noticepage/NoticeTab';
-
 import {getStorage, setStorage} from '@/storage/common_storage';
+
+interface Notice {
+  id: string;
+  title: string | undefined;
+  body: string | undefined;
+}
 
 const App = () => {
   const queryClient = new QueryClient();
@@ -58,34 +63,7 @@ const App = () => {
     console.log('[FCM Token] ', fcmToken);
   };
   
-  PushNotification.createChannel(
-    {
-      channelId: 'channel-id', // 채널 ID
-      channelName: 'My channel', // 채널 이름
-      channelDescription: 'A channel to categorise your notifications', // 채널 설명
-      soundName: 'default', // 기본 사운드 사용
-      importance: 4, // 알림 중요도 설정. 4는 High를 의미함
-      vibrate: true, // 진동 설정
-    },
-    created => console.log(`createChannel returned '${created}'`) // (optional) 채널 생성 성공 여부를 로그에 출력
-  );
   
-  const sendNotification = (notice: any) => {
-    const now = moment();
-    const formattedTime = now.format('A hh:mm');
-    const message = `${notice.content} (${formattedTime})`;
-
-    PushNotification.localNotification({
-      /* Android Only Properties */
-      channelId: 'channel-id',
-      /* iOS and Android properties */
-      id: notice.id,
-      title: notice.title,
-      message: message,
-      playSound: true,
-      soundName: 'default',
-    });
-  };
 
   const checkLogin = async () => {
     if (isLoggedIn) {
@@ -110,22 +88,72 @@ const App = () => {
     checkLogin();
   }, [isLoggedIn]);
 
-  useEffect(() => {
-    getFcmToken(); // 토큰 발급
-    // 앱이 켜져있을때
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('[Remote Message] ', JSON.stringify(remoteMessage));
-      // 메시지 오면 띄우는 코드
-      const notice = {
-        id: remoteMessage.messageId,
+
+  
+  PushNotification.createChannel(
+    {
+      channelId: 'channel-id',
+      channelName: 'My channel',
+      channelDescription: 'A channel to categorise your notifications',
+      soundName: 'default',
+      importance: 4,
+      vibrate: true,
+    },
+    created => console.log(`createChannel returned '${created}'`)
+  );
+
+  const sendNotification = (notice: Notice) => {
+    const now = moment();
+    const formattedTime = now.format('A hh:mm');
+    const message = `${notice.body} (${formattedTime})`;
+
+    PushNotification.localNotification({
+      channelId: 'channel-id',
+      id: notice.id,
+      title: notice.title || '',
+      message: message,
+      playSound: true,
+      soundName: 'default',
+    });
+  };
+
+  const handleNotification = (remoteMessage: any) => {
+    console.log('[Remote Message] ', JSON.stringify(remoteMessage));
+    if (remoteMessage.data) {
+      const notice: Notice = {
+        id: String(remoteMessage.data.notificationId),
         title: remoteMessage.notification?.title,
-        content: remoteMessage.notification?.body,
+        body: remoteMessage.notification?.body,
       };
       sendNotification(notice);
-    });
+    }
+  };
+
+  useEffect(() => {
+    getFcmToken();
+    const unsubscribe = messaging().onMessage(handleNotification);
+    messaging().onNotificationOpenedApp(handleNotification);
+    messaging().getInitialNotification().then(handleNotification);
+
+    const sendTestNotification = () => {
+      const notice: Notice = {
+        id: 'testNotification',
+        title: 'Test Notification',
+        body: 'This is a test notification.',
+      };
+      sendNotification(notice);
+    };
+
+    sendTestNotification();
+
     return unsubscribe;
+
   }, []);
 
+
+  
+  // 사용 예
+ 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>

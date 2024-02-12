@@ -19,6 +19,7 @@ const ModalComponent = styled(GlobalContainer)`
   position: absolute;
   right: 20px;
   top: 60px;
+  width: 40%;
   height: initial;
   border: 2px solid #00d282;
   border-radius: 15px;
@@ -42,7 +43,7 @@ const ModalText = styled(GlobalText)`
 `;
 
 const DistinctLine = styled(GlobalContainer)`
-  width: 150px;
+  width: 90%;
   height: initial;
   border: 0.51px solid #b2b2b2;
 `;

@@ -10,6 +10,7 @@ import {
     ImageSourcePropType,
     TouchableWithoutFeedback,
 } from 'react-native';
+import {NavigationProp} from '@react-navigation/native';
 import Octicons from 'react-native-vector-icons/Octicons';
 
 
@@ -52,12 +53,14 @@ const ModalText = styled(GlobalText)`
 
 
 interface Props {
-    reportModalVisible: boolean;
-    setReportModalVisible: (state: boolean) => void;
+  navigation: NavigationProp<any>;
+  reportModalVisible: boolean;
+  selectedCard: object;
+  setReportModalVisible: (state: boolean) => void;
 }
 
-const MainModal = (props: Props) => {
-  
+const ReportModal = (props: Props) => {
+   
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(1000)).current;  // 초기 위치를 화면 밖으로 설정
 
@@ -108,9 +111,9 @@ const MainModal = (props: Props) => {
                 
 
                 <ModalComponent > 
-                    <ModalSubComponent>
-                    <Octicons name='report' size={30}/>
-                    <ModalText> 신고하기 </ModalText >
+                    <ModalSubComponent onPress={() => {props.navigation.navigate('Report', {card: props.selectedCard}); props.setReportModalVisible(false);}}>
+                      <Octicons name='report' size={30}/>
+                      <ModalText> 신고하기 </ModalText >
                     </ModalSubComponent>
                 </ModalComponent>
                 </Modal>
@@ -120,4 +123,4 @@ const MainModal = (props: Props) => {
     };
     
 
-export default MainModal;
+export default ReportModal;
