@@ -72,10 +72,10 @@ type ButtonState = {
 
 const GoOut1 = ({navigation}: Props) => {
   const [selectedButton, setSelectedButton] = useState<ButtonState>([
-    {title: '반려동물', status: true},
-    {title: '장보기', status: true},
-    {title: '분리수거', status: true},
-    {title: '기타', status: true},
+    {title: 'PET', status: true},
+    {title: 'SHOP', status: true},
+    {title: 'RECYCLE', status: true},
+    {title: 'ETC', status: true},
   ]);
   const [selectAll, setSelectAll] = useState<boolean>(true);
   useEffect(() => {
@@ -125,11 +125,11 @@ const GoOut1 = ({navigation}: Props) => {
       </MainTextContainer>
       <MainButtonContainer>
         <GlobalComponent>
-          <TypeButton selected={selectedButton[0].status} onPress={() => handleButtonClick('반려동물')}>
+          <TypeButton selected={selectedButton[0].status} onPress={() => handleButtonClick('PET')}>
             {selectedButton[0].status ? <SvgIcon name="puppy" size={100} /> : <SvgIcon name="puppyOff" size={85} />}
             <TypeButtonText selected={selectedButton[0].status}>반려동물 산책</TypeButtonText>
           </TypeButton>
-          <TypeButton selected={selectedButton[1].status} onPress={() => handleButtonClick('장보기')}>
+          <TypeButton selected={selectedButton[1].status} onPress={() => handleButtonClick('SHOP')}>
             {selectedButton[1].status ? (
               <SvgIcon name="shopping" size={100} />
             ) : (
@@ -139,11 +139,11 @@ const GoOut1 = ({navigation}: Props) => {
           </TypeButton>
         </GlobalComponent>
         <GlobalComponent>
-          <TypeButton selected={selectedButton[2].status} onPress={() => handleButtonClick('분리수거')}>
+          <TypeButton selected={selectedButton[2].status} onPress={() => handleButtonClick('RECYCLE')}>
             {selectedButton[2].status ? <SvgIcon name="bags" size={100} /> : <SvgIcon name="bagsOff" size={90} />}
             <TypeButtonText selected={selectedButton[2].status}>분리수거</TypeButtonText>
           </TypeButton>
-          <TypeButton selected={selectedButton[3].status} onPress={() => handleButtonClick('기타')}>
+          <TypeButton selected={selectedButton[3].status} onPress={() => handleButtonClick('ETC')}>
             {selectedButton[3].status ? (
               <SvgIcon name="building" size={100} />
             ) : (
@@ -153,7 +153,13 @@ const GoOut1 = ({navigation}: Props) => {
           </TypeButton>
         </GlobalComponent>
       </MainButtonContainer>
-      <NextButton2 title="다음" color="primary" size="lg"></NextButton2>
+      <NextButton2
+        title="다음"
+        color="primary"
+        size="lg"
+        onPress={() => {
+          navigation.navigate('GoOut2', {selectedButton});
+        }}></NextButton2>
     </GlobalContainer>
   );
 };

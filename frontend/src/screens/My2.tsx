@@ -4,7 +4,7 @@ import {TouchableOpacity, Text, View} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {useRecoilValue} from 'recoil';
 import {GlobalContainer, GlobalText} from '@/GlobalStyles';
-import {isLoggedInState, userDataState} from '../recoil/atoms';
+import {userDataState} from '../recoil/atoms';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
 import Mypagelist from '@/components/Mypage/InnerContainerBoxhorizontal';
@@ -66,14 +66,8 @@ const InnerContainerBox = styled.TouchableOpacity`
 `;
 
 const My = ({navigation}: any) => {
-  const isLoggedIn = useRecoilValue(isLoggedInState); // isLoggedInState 상태 가져오기
   const userData = useRecoilValue(userDataState); // userDataState 상태 가져오기
   // const scorePercent = `${userData.memberInfo.score}%`;
-  // if (!isLoggedIn) {
-  //   // isLoggedIn이 false이면 로그인 페이지로 이동
-  //   navigation.navigate('Login');
-  //   return null; // 로그인 페이지로 이동하면 현재 컴포넌트는 렌더링하지 않음
-  // }
   return (
     <GlobalContainer
       style={css`

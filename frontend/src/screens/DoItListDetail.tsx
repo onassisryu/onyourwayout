@@ -1,7 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {ImageSourcePropType, StatusBar, View, Text, ScrollView, TouchableOpacity} from 'react-native';
+import {ImageSourcePropType, StatusBar, View, Text, ScrollView, TouchableOpacity, Modal} from 'react-native';
 import styled, {css} from '@emotion/native';
+import EditDeleteModal from '@/components/DoItListDetailModal/EditDeleteModal';
+import ReportModal from '@/components/DoItListDetailModal/ReportModal';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
@@ -11,10 +14,13 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GoBack from '@/components/Signup/GoBack';
 import axiosAuth from '@/axios/axiosAuth';
-
-const Container = styled(GlobalContainer)``;
+import Feather from 'react-native-vector-icons/Feather';
+import {getStorage} from '@/storage/common_storage';
+import {useRecoilState, useRecoilValue} from 'recoil';
+import {userDataState} from '@/recoil/atoms';
 
 const SubContainer = styled(GlobalContainer)`
+  width: 100%;
   margin: 10px;
   margin-right: 20px;
   margin-left: 20px;
@@ -42,9 +48,9 @@ const ShareButton = styled(GlobalButton)`
 `;
 
 const DoItListImage = styled.Image`
-  width: 410px;
-  height: 450px;
-  resize-mode: contain;
+  height: 400px;
+  width: 100%;
+  padding: 0;
 `;
 
 const TotalComponent = styled(ScrollView)`
@@ -112,7 +118,6 @@ const TextContent = styled(GlobalText)`
 
 const InfoComponent = styled(GlobalContainer)`
   flex-direction: row;
-  justify-content: space-between;
   align-items: flex-end;
   width: 100%;
   height: initial;
@@ -203,27 +208,20 @@ interface DoListCard {
   remaintime: string;
 }
 
-type RootStackParamList = {
-  DoItListDetail: {card: DoListCard};
-  // 여기서 DoListCard는 카드의 타입입니다.
-  // 다른 라우트 이름들도 이곳에 추가해야 합니다.
-};
-
-type DoItListDetailRouteProp = RouteProp<RootStackParamList, 'DoItListDetail'>;
-
-interface Props {
-  route: DoItListDetailRouteProp;
-  navigation: NavigationProp<any>;
-  // 필요하다면 다른 props들도 추가할 수 있습니다.
-}
-
 const dealTypeTextMap = {
   PET: '애완동물 산책',
   RECYCLE: '분리수거',
   SHOP: '장보기',
   ETC: '기타',
 };
+
 const DoItListDetail = ({route, navigation}: any) => {
+  const [userData, setUserData] = useRecoilState(userDataState);
+
+  const handleEdit = (newData: object) => {
+    setUserData(newData); // userData를 수정합니다.
+  };
+
   const card = {
     id: 1,
     category: 'PET',
@@ -234,20 +232,113 @@ const DoItListDetail = ({route, navigation}: any) => {
     nickname: '호구팟',
     content: '나는김치맨김치파워',
   };
-  const param = route.params['id'];
+
+  const [userId, setUserId] = useState(null); // 로그인한 사용자의 ID를 저장하는 state
+  const [requestUserId, setRequestUserId] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
+
+  const param = route.params;
+
   const [responseData, setResponseData] = useState({});
+  const [userInfo, setUserInfo] = useState({});
+  const [detailImage, setDetailImage] = useState([]);
+  const loginuser = useRecoilValue(userDataState);
+  console.log('로그인 유저', loginuser);
   useEffect(() => {
+    getStorage('user').then(data => {
+      setUserId(data?.id); // 로그인한 사용자의 ID를 state에 저장
+    });
+    console.log('param', param);
     axiosAuth
-      .get(`/deal/${param}`)
+      .get(`/deal/${param.id}`)
       .then(resp => {
         setResponseData(resp.data);
+        setRequestUserId(resp.data.requestId);
+        setUserInfo(resp.data.requestInfo);
+        setDetailImage(resp.data.dealImages);
+        console.log(detailImage);
         console.log('성공', resp.data);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
-  }, []);
+  }, [param]);
 
+  const handleIconPress = () => {
+    if (requestUserId === userId) {
+      setModalType('edit'); // 수정, 삭제 가능한 모달
+    } else {
+      setModalType('report'); // 신고 가능한 모달
+    }
+    setModalVisible(true); // 모달 열기
+  };
+
+  const categoryToDealType = (category: string) => {
+    switch (category) {
+      case '반려동물 산책':
+        return 'PET';
+      case '심부름':
+        return 'SHOP';
+      case '분리수거':
+        return 'RECYCLE';
+      case '기타':
+        return 'ETC';
+      default:
+        return '';
+    }
+  };
+
+  const calculateTimeAgo = (createdAt: string) => {
+    const now = new Date(); // 현재 시간
+    const created = new Date(createdAt); // createdAt을 Date 객체로 변환
+    const diff = now.getTime() - created.getTime(); // 현재 시간과 createdAt 사이의 차이(밀리초)
+    const minutesAgo = Math.floor(diff / (1000 * 60)); // 밀리초를 분으로 변환하여 계산
+    const hoursAgo = Math.floor(minutesAgo / 60); // 분을 시간으로 변환하여 계산
+    const daysAgo = Math.floor(hoursAgo / 24); // 시간을 일로 변환하여 계산
+
+    if (daysAgo > 30) {
+      // 30일 이상인 경우 한 달 전을 반환
+      const monthsAgo = Math.floor(daysAgo / 30);
+      return `${monthsAgo}달 전`;
+    } else if (daysAgo > 7) {
+      // 7일 이상인 경우 일주일 전을 반환
+      const weeksAgo = Math.floor(daysAgo / 7);
+      return `${weeksAgo}주일 전`;
+    } else if (daysAgo > 0) {
+      // 1일 이상인 경우 일수로 반환
+      return `${daysAgo}일 전`;
+    } else if (hoursAgo > 0) {
+      // 1시간 이상인 경우 시간으로 반환
+      return `${hoursAgo}시간 전`;
+    } else {
+      // 1시간 미만인 경우 분으로 반환
+      return `${minutesAgo}분 전`;
+    }
+  };
+  function acceptDoit(id: number) {
+    console.log(id);
+    axiosAuth
+      .put(`deal/accept/${id}`)
+      .then(resp => {
+        console.log('성공', resp.data);
+      })
+      .catch(error => {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      });
+  }
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setTranslucent(true);
+      StatusBar.setBackgroundColor('transparent');
+
+      return () => {
+        // 페이지를 벗어날 때 StatusBar 설정을 원래대로 복원
+        StatusBar.setTranslucent(false);
+        StatusBar.setBackgroundColor('white');
+      };
+    }, [])
+  );
   return (
     <View
       style={css`
@@ -257,7 +348,6 @@ const DoItListDetail = ({route, navigation}: any) => {
         align-items: center;
         background-color: white;
       `}>
-      <StatusBar backgroundColor="transparent" barStyle="dark-content" translucent={true} />
       <View
         style={css`
           position: relative;
@@ -270,8 +360,8 @@ const DoItListDetail = ({route, navigation}: any) => {
               height: 1000px;
             `}>
             <View style={{zIndex: -99}}>
-              {card.image ? (
-                <DoItListImage source={card.image} />
+              {detailImage.length > 0 ? (
+                <DoItListImage src={detailImage[0].imgUrl} />
               ) : (
                 <View
                   style={css`
@@ -286,10 +376,10 @@ const DoItListDetail = ({route, navigation}: any) => {
               <SubHeader>
                 <SvgIcon name="profile" size={40} />
                 <ProfileComponent>
-                  <TextNickname> {card.nickname}</TextNickname>
+                  <TextNickname> {userInfo.nickname}</TextNickname>
                   <TextApart>
                     {' '}
-                    {card.apart} / {card.uptime}{' '}
+                    {userInfo.dongName}동 / {calculateTimeAgo(responseData.createdAt)}
                   </TextApart>
                 </ProfileComponent>
               </SubHeader>
@@ -297,10 +387,17 @@ const DoItListDetail = ({route, navigation}: any) => {
               <ContentComponent>
                 <TextTitle numberOfLines={1}>{responseData.title}</TextTitle>
                 <InfoComponent>
-                  <TextCategory>{dealTypeTextMap[responseData.dealType]}</TextCategory>
-                  {responseData.rewardType === 'CASH' && <TextPrice>{responseData.cash}원</TextPrice>}
+                  {responseData.dealType === 'PET' && <SvgIcon name="puppy" size={20} />}
+                  {responseData.dealType === 'RECYCLE' && <SvgIcon name="bags" size={23} />}
+                  {responseData.dealType === 'SHOP' && <SvgIcon name="shopping" size={20} />}
+                  {responseData.dealType === 'ETC' && <SvgIcon name="building" size={20} />}
+                  <TextCategory> {dealTypeTextMap[responseData.dealType]}</TextCategory>
+                </InfoComponent>
+                <InfoComponent>
+                  {responseData.rewardType === 'CASH' && <TextPrice>{responseData.cash.toLocaleString()}원</TextPrice>}
                   {responseData.rewardType === 'ITEM' && <TextPrice>{responseData.item}</TextPrice>}
                 </InfoComponent>
+
                 <TextContent>{responseData.content}</TextContent>
                 <TextReport>게시글 신고하기</TextReport>
               </ContentComponent>
@@ -320,16 +417,20 @@ const DoItListDetail = ({route, navigation}: any) => {
         <View
           style={css`
             margin-left: 10px;
+            margin-right: 5px;
           `}>
-          <TouchableOpacity>
-            <Text>
-              <Ant
-                name="arrowleft"
-                size={40}
-                color="black"
-                onPress={() => navigation.navigate('Bottom', {screen: '아파트'})}
-              />
-            </Text>
+          <TouchableOpacity
+            style={css`
+              flex-direction: row;
+              justify-content: space-between;
+            `}>
+            <Ant
+              name="arrowleft"
+              size={40}
+              color="black"
+              onPress={() => navigation.navigate('Bottom', {screen: '아파트'})}
+            />
+            <Feather name="more-vertical" size={40} onPress={handleIconPress} />
           </TouchableOpacity>
         </View>
       </View>
@@ -341,15 +442,40 @@ const DoItListDetail = ({route, navigation}: any) => {
           bottom: 60px;
           z-index: 1;
         `}>
-        <AgreeButton>
-          <FontAwesome name="handshake-o" size={20} color="white"></FontAwesome>
-          <ButtonText> 수락하기 </ButtonText>
-        </AgreeButton>
-        <ChatButton>
-          <Ionicons name="chatbox-ellipses-outline" size={20} color="white"></Ionicons>
-          <ButtonText> 채팅하기 </ButtonText>
-        </ChatButton>
+        {userInfo.id === loginuser.id ? (
+          <View>
+            <Text>내 작성글 입니다</Text>
+          </View>
+        ) : (
+          <View
+            style={css`
+              flex-direction: row;
+            `}>
+            <AgreeButton
+              onPress={() => {
+                acceptDoit(responseData.id);
+              }}>
+              <FontAwesome name="handshake-o" size={20} color="white"></FontAwesome>
+              <ButtonText> 수락하기 </ButtonText>
+            </AgreeButton>
+            <ChatButton onPress={() => navigation.navigate()}>
+              <Ionicons name="chatbox-ellipses-outline" size={20} color="white"></Ionicons>
+              <ButtonText> 채팅하기 </ButtonText>
+            </ChatButton>
+          </View>
+        )}
       </View>
+      {modalVisible &&
+        (modalType === 'edit' ? (
+          <EditDeleteModal
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            navigation={navigation}
+            data={param}
+          />
+        ) : (
+          <ReportModal modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} />
+        ))}
     </View>
   );
 };

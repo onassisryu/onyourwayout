@@ -5,11 +5,9 @@ import {name as appName} from './app.json';
 import React from 'react';
 import * as encoding from 'text-encoding';
 const RootComponent = () => (
-  <React.StrictMode>
-    <RecoilRoot>
-      <App />
-    </RecoilRoot>
-  </React.StrictMode>
+  <RecoilRoot>
+    <App />
+  </RecoilRoot>
 );
 
 AppRegistry.registerComponent(appName, () => RootComponent);

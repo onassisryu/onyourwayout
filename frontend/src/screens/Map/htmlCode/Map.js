@@ -1,4 +1,5 @@
 const Map = (key, location) => {
+  console.log('지도로딩중', location, key);
   return `
       <html>
         <head>
@@ -23,9 +24,9 @@ const Map = (key, location) => {
           const markerPosition = new kakao.maps.LatLng(${location?.latitude}, ${location?.longitude});
           const marker = new kakao.maps.Marker({
             position: markerPosition,
-            title: '역삼IPARK',
           });
           marker.setMap(map); // 현재 위치에 마커를 찍는다.
+
         </script>
       </body>
     </html>
