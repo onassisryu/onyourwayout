@@ -26,6 +26,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final FirebaseMessaging firebaseMessaging;
     private final DealRepository dealRepository;
     private final HoRepository hoRepository;
+    private final DongRepository dongRepository;
 
     private final MemberService memberService;
 
@@ -193,12 +194,38 @@ public class NotificationServiceImpl implements NotificationService {
         membersNotifications.forEach(membersNotification -> membersNotification.setRead(true));
     }
 
+    /**
+     * 내 주변의 동에 해줘요잉이 있는지 확인후 알림 전송
+     * @param dongId
+     */
     @Override
     public void checkNearDong(Long dongId) {
         Long memberId = memberService.getLoginUserId();
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NoSuchElementException("해당하는 멤버가 없습니다."));
+        Dong dong = dongRepository.findById(dongId)
+                .orElseThrow(() -> new NoSuchElementException("해당하는 동이 없습니다."));
         List<Deal> deals = dealRepository.findByDongIdAndMemberId(dongId, memberId);
+
+        //해줘요잉이 없을경우 리턴
+        if(deals.isEmpty()) return;
+
+        Notification notification = Notification.builder()
+                .title("[해줘요잉 추천]")
+                .message(dong.getName()  + "동에 해줘요잉 요청이 있어요.")
+                .notificationType(Notification.NotificationType.DEAL_NEW)
+                .build();
+
+        Notification notificationSaved = notificationRepository.save(notification);
+
+        sendMessage(notificationSaved, List.of(member), null);
     }
 
+    /**
+     * 나가요잉 신청시 알림 전송
+     * @param deal
+     * @param acceptMember
+     */
     @Override
     public void requestRecommendDeal(Deal deal, Member acceptMember) {
         Long requestMemberId = deal.getRequestId();
@@ -208,8 +235,8 @@ public class NotificationServiceImpl implements NotificationService {
         Ho ho = hoRepository.findByMemberId(acceptMember.getId());
 
         Notification notification = Notification.builder()
-                .title("[해줘요잉 수락]")
-                .message(acceptMember.getNickname() + "님이 요청하신 해줘요잉을 수락하였습니다.")
+                .title("[나가요잉 신청]")
+                .message(acceptMember.getNickname() + "님이 \"" + deal.getTitle() + "\"에 나가요잉을 신청하였습니다.")
                 .notificationType(Notification.NotificationType.DEAL_ACCEPT)
                 .build();
         Notification notificationSaved = notificationRepository.save(notification);
