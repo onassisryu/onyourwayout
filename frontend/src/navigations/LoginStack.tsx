@@ -10,8 +10,8 @@ import Signup6 from '@/screens/Signup/Signup6';
 import Signup7 from '@/screens/Signup/Signup7';
 import Signup8 from '@/screens/Signup/Signup8';
 import Signup9 from '@/screens/Signup/Signup9';
-import Signup9a from '@/screens/Signup/Signup9a';
-
+import Signup10 from '@/screens/Signup/Signup10';
+import Main from '@/screens/Main';
 const Stack = createNativeStackNavigator();
 
 const LoginStack = () => {
@@ -28,7 +28,7 @@ const LoginStack = () => {
       <Stack.Screen name="Signup7" component={Signup7} />
       <Stack.Screen name="Signup8" component={Signup8} />
       <Stack.Screen name="Signup9" component={Signup9} />
-      <Stack.Screen name="Signup9a" component={Signup9a} />
+      <Stack.Screen name="Signup10" component={Signup10} />
     </Stack.Navigator>
   );
 };
