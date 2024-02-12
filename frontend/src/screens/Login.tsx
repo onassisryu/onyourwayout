@@ -51,8 +51,8 @@ const LoginButton = styled(DefaultButton)`
 `;
 
 const Login = ({navigation}: any) => {
-  const [username, setusername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setusername] = useState('a@gmail');
+  const [password, setPassword] = useState('1234');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isnotValueid, setIsnotValueid] = useState(true);
   const [isnotValuepassword, setIsnotValuepassword] = useState(true);

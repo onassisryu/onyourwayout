@@ -27,7 +27,7 @@ import Signup6 from '@/screens/Signup/Signup6';
 import Signup7 from '@/screens/Signup/Signup7';
 import Signup8 from '@/screens/Signup/Signup8';
 import Signup9 from '@/screens/Signup/Signup9';
-import Signup9a from '@/screens/Signup/Signup9a';
+import Signup10 from '@/screens/Signup/Signup10';
 import Main from '@screens/Main';
 import Location from '@/screens/Map/Location';
 import ChatMain from '@screens/Chating/ChatMain';
@@ -112,7 +112,7 @@ const MainStack = () => {
       <Stack.Screen name="Signup7" component={Signup7} />
       <Stack.Screen name="Signup8" component={Signup8} />
       <Stack.Screen name="Signup9" component={Signup9} />
-      <Stack.Screen name="Signup9a" component={Signup9a} />
+      <Stack.Screen name="Signup10" component={Signup10} />
       <Stack.Screen name="Main" component={BottomTab} initialParams={{initialTab: '홈'}} />
       <Stack.Screen name="Bottom" component={BottomTab} />
       <Stack.Screen name="Notice" component={Notice} />
