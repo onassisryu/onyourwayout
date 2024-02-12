@@ -22,6 +22,7 @@ export const userSignUpDataState = atom({
     phoneNumber: '',
     birthDate: '',
     password: '',
+    inviteCode: '',
   },
 });
 

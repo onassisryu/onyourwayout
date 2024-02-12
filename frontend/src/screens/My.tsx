@@ -67,6 +67,7 @@ const InnerContainerBox = styled.TouchableOpacity`
 
 const My = ({navigation}: any) => {
   const userData = useRecoilValue(userDataState); // userDataState 상태 가져오기
+  console.log(userData);
   const scorePercent = `${userData.score}%`;
 
   return (
@@ -146,7 +147,9 @@ const My = ({navigation}: any) => {
                     margin-top: 5px;
                     margin-left: 2px;
                   `}>
-                  <ApartText>싸피아파트, 1201동 303호</ApartText>
+                  <ApartText>
+                    {userData.aptName}아파트, {userData.dongName}동 {userData.hoName}호
+                  </ApartText>
                 </View>
               </View>
             </InnerContainer>

@@ -1,5 +1,4 @@
-// 지도
-
+// 명세서 사진
 import React, {useEffect, useState} from 'react';
 import {View, Button, Text, Image, TouchableOpacity, ImageURISource, Alert, StyleSheet} from 'react-native';
 import styled, {css} from '@emotion/native';
