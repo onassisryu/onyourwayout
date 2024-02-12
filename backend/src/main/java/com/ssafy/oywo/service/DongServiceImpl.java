@@ -32,7 +32,7 @@ public class DongServiceImpl implements DongService{
 
         List<DongDto.Response> responses = new ArrayList<>();
         for(Dong d : dong){
-            responses.add(new DongDto.Response(d.getId(), d.getName(), d.getApartment()));
+            responses.add(new DongDto.Response(d.getId(), d.getName(), d.getLat(), d.getLng()));
         }
 
         return responses;
