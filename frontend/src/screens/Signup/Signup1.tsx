@@ -35,7 +35,7 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
 `;
 
 const Signup1 = ({navigation}: any) => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState('2@gmail');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
 

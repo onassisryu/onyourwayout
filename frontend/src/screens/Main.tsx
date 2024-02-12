@@ -14,7 +14,6 @@ import {logoutUser} from '@/utils/common';
 
 const Home = ({navigation}: any) => {
   async function requestPermissions() {
-    console.log('권한');
     if (Platform.OS === 'android') {
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
     }

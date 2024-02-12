@@ -388,7 +388,7 @@ const DoIt2 = ({navigation}: Props) => {
           <TouchableOpacity></TouchableOpacity>
         </View>
         <StyledInputTitle>사진</StyledInputTitle>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={showPhoto}>
           <View
             style={css`
               width: 100%;

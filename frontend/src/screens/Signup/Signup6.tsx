@@ -129,8 +129,8 @@ const Signup6 = ({navigation}: any) => {
           title="다음"
           color="primary"
           size="lg"
-          disabled={isDisabled}
-          onPress={() => navigation.navigate('Signup2')}
+          disabled={!isDisabled}
+          onPress={() => navigation.navigate('Signup7')}
         />
       </SignupBodyContainer>
     </GlobalContainer>
