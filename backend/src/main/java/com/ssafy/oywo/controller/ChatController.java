@@ -37,7 +37,7 @@ public class ChatController {
     public ChatMessageDto.Response messageHandler(ChatMessageDto.Request message) throws IOException {
         // 바이트코드 파일로 변환
         String imgUrl="";
-        if (message.getImg()!=null || message.getImg().length()>0){
+        if (!message.getImg().equals("")){
             imgUrl=changeBinaryImageChange(message.getImg(),message.getSendId());
         }
         // Response로 변환
@@ -49,7 +49,8 @@ public class ChatController {
                 .imgUrl(imgUrl).build();
 
         // /room/{roomId}를 구독하는 클라이언트로 메시지 객체가 전달
-        sendingOperations.convertAndSend("/sub/channel"+response.getChatRoomId(),response);
+        sendingOperations.convertAndSend("/sub/channel/"+response.getChatRoomId(),response);
+        log.info("메시지 전송 성공");
 
         // message를 저장한다.
         chatService.saveChatMessage(response);
@@ -128,7 +129,10 @@ public class ChatController {
     @PostMapping("/chat/message")
     public ResponseEntity<?> saveChatMessage(@RequestBody ChatMessageDto.Request message) throws IOException {
         // 바이트코드 파일로 변환
-        String imgUrl=changeBinaryImageChange(message.getImg(),message.getSendId());
+        String imgUrl="";
+        if (!message.getImg().equals("")){
+            imgUrl=changeBinaryImageChange(message.getImg(),message.getSendId());
+        }
         ChatMessageDto.Response response=ChatMessageDto.Response
                 .builder()
                 .msg(message.getMsg())

@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -123,7 +124,7 @@ public class MemberDto {
             return Response.builder()
                     .id(member.getId())
                     .nickname(member.getNickname())
-                    .password(null)
+                    .password(member.getPassword())
                     .username(member.getUsername())
                     .birthDate(member.getBirthDate())
                     .phoneNumber(member.getPhoneNumber())
@@ -174,6 +175,7 @@ public class MemberDto {
         private String username;
         private int score;
 
+        private ApartmentDto.Response apt;
         private Long dongId;
         private String dongName;
 
@@ -183,6 +185,7 @@ public class MemberDto {
                     .username(member.getUsername())
                     .nickname(member.getNickname())
                     .score(member.getScore())
+                    .apt(ApartmentDto.Response.of(ho.getDong().getApartment()))
                     .dongId(ho.getDong().getId())
                     .dongName(ho.getDong().getName())
                     .build();
@@ -242,13 +245,12 @@ public class MemberDto {
         private Boolean isNotiDongAll;
         private Boolean isNotiCategoryAll;
         private List<String> roles = new ArrayList<>();
-        private Long aptId;
-        private String aptName;
+        private ApartmentDto.LoginResponse apt;
+
         private Long dongId;
         private String dongName;
         private Long hoId;
         private String hoName;
-        private String officeTelNumber;
 
         private Timestamp createdAt;
         private Timestamp updatedAt;
@@ -285,9 +287,7 @@ public class MemberDto {
                     .hoName(ho.getName())
                     .dongId(dong.getDongId())
                     .dongName(dong.getName())
-                    .aptId(dong.getApartment().getId())
-                    .aptName(dong.getApartment().getName())
-                    .officeTelNumber(dong.getApartment().getOfficeTelNumber())
+                    .apt(ApartmentDto.LoginResponse.of(dong.getApartment()))
                     .inviteCode(ho.getInviteCode())
                     .roles(response.getRoles())
                     .build();

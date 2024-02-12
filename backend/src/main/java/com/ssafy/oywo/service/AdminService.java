@@ -22,7 +22,7 @@ public interface AdminService {
 
     HashMap<String,Object> updatePenaltyAndPauseTime(Long memberId);
 
-    DealDto.Response changeStatusToClose(Long dealId);
+    DealDto.Response changeStatusToPause(Long dealId);
 
     List<MemberDto.Response> getPausedMember();
 }

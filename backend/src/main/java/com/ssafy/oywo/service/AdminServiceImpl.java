@@ -72,8 +72,10 @@ public class AdminServiceImpl implements AdminService {
         List<Deal> deals = dealRepository.findDealsByOrderByComplaintDesc();
 
         return deals.stream()
-                .map(DealDto.Response::new)
-                .toList();
+                .map(d -> new DealDto.Response(d,
+                        dealComplaintRepository.findDealComplaintByDealId(d.getId()),
+                        memberRepository.findById(d.getRequestId()).orElseThrow(() -> new IllegalArgumentException("해당 requestId의 사용자가 없음"))))
+                .collect(Collectors.toList());
     }
 
 
@@ -81,7 +83,12 @@ public class AdminServiceImpl implements AdminService {
     public DealDto.Response getDealWithComplaint(Long dealId) {
 
         return dealRepository.findById(dealId)
-                .map(deal -> new DealDto.Response(deal, dealComplaintRepository.findDealComplaintByDealId(deal.getId())))
+                .map(deal -> new DealDto.Response(deal,
+                                dealComplaintRepository.findDealComplaintByDealId(deal.getId()),
+                                memberRepository.findById(deal.getRequestId())
+                                .orElseThrow(
+                                        () -> new IllegalArgumentException("해당 requestId에 대한 사용자가 없음")
+                                )))
                 .orElseThrow(
                         () -> new IllegalArgumentException("해당 거래가 없음")
                 );
@@ -142,10 +149,10 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public DealDto.Response changeStatusToClose(Long dealId) {
+    public DealDto.Response changeStatusToPause(Long dealId) {
         Deal deal=dealRepository.findById(dealId)
                 .orElseThrow(()->new NoSuchElementException("찾을 수 없는 거래입니다."));
-        deal.setDealStatus(Deal.DealStatus.CLOSE);
+        deal.setDealStatus(Deal.DealStatus.PAUSE);
         return new DealDto.Response(dealRepository.save(deal));
     }
 

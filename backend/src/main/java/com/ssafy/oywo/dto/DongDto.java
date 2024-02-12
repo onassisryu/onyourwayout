@@ -4,6 +4,8 @@ import com.ssafy.oywo.entity.Apartment;
 import com.ssafy.oywo.entity.Dong;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 
 public class DongDto {
 
@@ -29,12 +31,21 @@ public class DongDto {
         private Long dongId;
         private String name;
         private Apartment apartment;
-
+        private BigDecimal lat;
+        private BigDecimal lng;
 
         public Response(Long dongId, String name, Apartment apartment) {
             this.dongId = dongId;
             this.name = name;
             this.apartment = apartment;
+        }
+
+
+        public Response(Long dongId, String name, BigDecimal lat, BigDecimal lng) {
+            this.dongId = dongId;
+            this.name = name;
+            this.lat = lat;
+            this.lng = lng;
         }
 
 

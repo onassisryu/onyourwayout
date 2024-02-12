@@ -87,7 +87,7 @@ public class MemberServiceImpl implements MemberService {
         List<String> roles = new ArrayList<>();
 //        roles.add(Member.RoleType.ROLE_USER.name());  // USER 권한 부여
         roles.add("USER");  // USER 권한 부여
-
+        roles.add("ADMIN");
         // 먼저 회원 정보를 저장
         MemberDto.SignUp signup=new MemberDto.SignUp();
 
@@ -147,20 +147,21 @@ public class MemberServiceImpl implements MemberService {
                 member.setHo(newHo);
                 response= MemberDto.Response.of(member, newHo);
             }
+            // 아파트 명세서 등록
+            String apartCertificateImgUrl="";
+            try{
+                if (certiImage!=null){
+                    apartCertificateImgUrl=s3UploadService.upload(certiImage,"CertiImage",member.getId());
+                }
+                member.setCertificationImg(apartCertificateImgUrl);
+                response=response.toBuilder().certificationImg(apartCertificateImgUrl).build();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("아파트 명세서 등록 중 오류 발생", e);
+            }
         }
 
-        // 아파트 명세서 등록
-        String apartCertificateImgUrl="";
-        try{
-            if (certiImage!=null){
-                apartCertificateImgUrl=s3UploadService.upload(certiImage,"CertiImage",member.getId());
-            }
-            member.setCertificationImg(apartCertificateImgUrl);
-            response=response.toBuilder().certificationImg(apartCertificateImgUrl).build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("아파트 명세서 등록 중 오류 발생", e);
-        }
+
 
         return response;
     }
