@@ -16,14 +16,24 @@ import {userDataState} from '@/recoil/atoms';
 import {useRecoilValue} from 'recoil';
 
 //page
-import {Screens} from '@screens/Screens';
+import Login from '@/screens/Login';
+import Signup0 from '@/screens/Signup/Signup0';
+import Signup1 from '@/screens/Signup/Signup1';
+import Signup2 from '@/screens/Signup/Signup2';
+import Signup3 from '@/screens/Signup/Signup3';
+import Signup4 from '@/screens/Signup/Signup4';
+import Signup5 from '@/screens/Signup/Signup5';
+import Signup6 from '@/screens/Signup/Signup6';
+import Signup7 from '@/screens/Signup/Signup7';
+import Signup8 from '@/screens/Signup/Signup8';
+import Signup9 from '@/screens/Signup/Signup9';
+import Signup9a from '@/screens/Signup/Signup9a';
 import Main from '@screens/Main';
-import Location from '@screens/Location';
+import Location from '@/screens/Map/Location';
 import ChatMain from '@screens/Chating/ChatMain';
 import ChatDetail from '@screens/Chating/ChatDetail';
 import My from '@screens/My';
 import MySetting from '@screens/MySetting';
-import Login from '@screens/Login';
 import Notice from '@screens/Notice';
 import NoticeSettings from '@screens/NoticeSettings';
 import DoIt1 from '@/screens/DoIt/DoIt1';
@@ -90,10 +100,21 @@ const MainStack = () => {
   };
 
   return (
-    <Stack.Navigator initialRouteName={'Main'} screenOptions={{headerShown: false}}>
+    <Stack.Navigator initialRouteName={'Login'} screenOptions={{headerShown: false}}>
+      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Signup0" component={Signup0} />
+      <Stack.Screen name="Signup1" component={Signup1} />
+      <Stack.Screen name="Signup2" component={Signup2} />
+      <Stack.Screen name="Signup3" component={Signup3} />
+      <Stack.Screen name="Signup4" component={Signup4} />
+      <Stack.Screen name="Signup5" component={Signup5} />
+      <Stack.Screen name="Signup6" component={Signup6} />
+      <Stack.Screen name="Signup7" component={Signup7} />
+      <Stack.Screen name="Signup8" component={Signup8} />
+      <Stack.Screen name="Signup9" component={Signup9} />
+      <Stack.Screen name="Signup9a" component={Signup9a} />
       <Stack.Screen name="Main" component={BottomTab} initialParams={{initialTab: '홈'}} />
       <Stack.Screen name="Bottom" component={BottomTab} />
-      <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Notice" component={Notice} />
       <Stack.Screen name="NoticeSettings" component={NoticeSettings} />
       <Stack.Screen name="GoOut1" component={GoOut1} />

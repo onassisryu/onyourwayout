@@ -29,4 +29,7 @@ export type RootStackParamList = {
   DoItListDetail: {
     id: long;
   };
+  SignUp7: {
+    code: string;
+  };
 };

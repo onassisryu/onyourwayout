@@ -13,7 +13,7 @@ import {Text, View, Button} from 'react-native';
 import {css} from '@emotion/native';
 
 //recoil&react-query
-import {isLoggedInState, userDataState, fcmTokenState} from '@/recoil/atoms';
+import {isLoggedInState, userDataState, apartDataState, fcmTokenState} from '@/recoil/atoms';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
@@ -38,7 +38,7 @@ import MainStack from '@/navigations/MainStack';
 import AdminStack from '@/navigations/AdminStack';
 import LoginStack from '@/navigations/LoginStack';
 
-import {NoticeTab, sendNotification} from '@/components/Noticepage/NoticeTab';
+// import {NoticeTab, sendNotification} from '@/components/Noticepage/NoticeTab';
 
 import {getStorage, setStorage} from '@/storage/common_storage';
 import axiosAuth from '@/axios/axiosAuth';
@@ -46,14 +46,14 @@ import axiosAuth from '@/axios/axiosAuth';
 const App = () => {
   const queryClient = new QueryClient();
 
-  const [isLogin, setIsLogin] = useState(false);
+  const [admin, setAdmin] = useState(false);
   const userData = useRecoilValue(userDataState);
 
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const setUserData = useSetRecoilState(userDataState);
+  const setApartData = useSetRecoilState(apartDataState);
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const setFcmTokenState = useSetRecoilState(fcmTokenState);
-  const admin = false;
 
   // FCM 토큰 발급
   const getFcmToken = async () => {
@@ -192,8 +192,8 @@ const App = () => {
   const checkLogin = async () => {
     if (isLoggedIn) {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
-      if (admin) {
-        console.log('관리자입니다.');
+      if (userData.roles == 'ADMIN') {
+        setAdmin(true);
       }
     } else {
       getStorage('token').then(token => {
@@ -203,6 +203,9 @@ const App = () => {
           getStorage('user').then(user => {
             setUserData(user);
             setIsLoggedIn(true);
+            getStorage('adjDongs').then(adjDongs => {
+              setApartData(adjDongs);
+            });
           });
         }
       });
@@ -253,7 +256,7 @@ const App = () => {
             acceptId={data.acceptMemberId}
             dealId={data.dealId}
           />
-          {isLoggedIn ? admin ? <AdminStack /> : <MainStack /> : <LoginStack />}
+          {admin ? <AdminStack /> : <MainStack />}
         </NavigationContainer>
       </ThemeProvider>
     </QueryClientProvider>

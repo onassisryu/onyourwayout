@@ -67,6 +67,7 @@ const ChatMain = ({navigation}: any) => {
   };
   //채팅방 조회
   const getChatRoom = () => {
+    console.log(userData.id);
     axiosAuth
       .get(`/chat/room/${userData.id}`)
       .then(res => {
