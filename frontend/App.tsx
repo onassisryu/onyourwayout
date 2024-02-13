@@ -23,6 +23,8 @@ import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 import 'moment/locale/ko';
 import Modal from 'react-native-modal';
+import {Platform, PermissionsAndroid} from 'react-native';
+
 //fcm
 import messaging from '@react-native-firebase/messaging';
 // 앱이 백그라운드에 있을때
@@ -36,7 +38,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 import MainStack from '@/navigations/MainStack';
 import AdminStack from '@/navigations/AdminStack';
-import LoginStack from '@/navigations/LoginStack';
 
 // import {NoticeTab, sendNotification} from '@/components/Noticepage/NoticeTab';
 
@@ -54,6 +55,15 @@ const App = () => {
   const setApartData = useSetRecoilState(apartDataState);
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const setFcmTokenState = useSetRecoilState(fcmTokenState);
+  async function requestPermissions() {
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+    }
+  }
+  useEffect(() => {
+    console.log('지도 인증할게요');
+    requestPermissions();
+  }, []);
 
   // FCM 토큰 발급
   const getFcmToken = async () => {
