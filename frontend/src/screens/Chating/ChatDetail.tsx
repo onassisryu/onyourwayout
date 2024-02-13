@@ -195,7 +195,13 @@ const ChatDetail = ({navigation}: Props) => {
         client.current?.subscribe(`/sub/channel/${params.roomId}`, message => {
           const json_body = JSON.parse(message.body);
           console.log('구독', json_body);
-          // setMessages(prev => [...prev, json_body])
+          const msg = {
+            msg: json_body.msg,
+            senderId: json_body.sendId,
+            imgUrl: json_body.img,
+            createdAt: '',
+          };
+          setMessages(prev => [...prev, msg]);
         });
         if (client.current?.connected) {
           console.log('연결됨');
@@ -208,7 +214,7 @@ const ChatDetail = ({navigation}: Props) => {
     console.log('채팅방 상세정보', params.roomId);
     console.log('채팅방 상세정보', params.name);
     getChatDetail();
-    // connectChat();
+    connectChat();
     return () => {
       client.current?.deactivate();
     };
@@ -239,17 +245,24 @@ const ChatDetail = ({navigation}: Props) => {
           renderItem={({item}) => (
             <View
               style={{
-                padding: 10,
-                backgroundColor: item.senderId === userData.id ? '#27D894' : '#EAEAEA',
                 alignSelf: item.senderId === userData.id ? 'flex-end' : 'flex-start',
-                borderRadius: 10,
                 marginBottom: 10,
               }}>
-              <Text>{item.msg}</Text>
-              <Text>{item.createdAt}</Text>
+              <View
+                style={{
+                  padding: 10,
+                  backgroundColor: item.senderId === userData.id ? '#27D894' : '#EAEAEA',
+                  borderRadius: 10,
+                }}>
+                <Text>{item.msg}</Text>
+              </View>
+              <View>
+                <Text>{item.createdAt}</Text>
+              </View>
             </View>
           )}
-          keyExtractor={(item, index) => index.toString()}></FlatList>
+          keyExtractor={(item, index) => index.toString()}
+        />
       </View>
       <ChatSendContainer>
         <ChatSendInput
