@@ -360,12 +360,16 @@ public class DealServiceImpl implements DealService{
         Long loginUserId = memberService.getLoginUserId();
         // 현재 매칭된 해줘요잉 개수
         Long numberOfMatchingDeals = dealRepository.countDealsByAcceptIdAndDealStatus(loginUserId, Deal.DealStatus.ING);
-        if (numberOfMatchingDeals >= 3) {
-            throw new IllegalArgumentException("현재 매칭 중인 거래가 3개입니다.");
-        }
+
         // 거래 상태 확인
         // 수락
         if (deal.getDealStatus() == Deal.DealStatus.OPEN) {
+            // 매칭된 해줘요잉이 3건이상이면 수락 안됨
+            if (numberOfMatchingDeals >= 3) {
+                log.info("현재 매칭 수: {}", numberOfMatchingDeals);
+                return new DealDto.Response(numberOfMatchingDeals);
+            }
+
             // 수락자 확인
             if (deal.getRequestId().equals(loginUserId)) {
                 throw new IllegalStateException("요청자와 수락자는 같을 수 없음");
@@ -377,21 +381,20 @@ public class DealServiceImpl implements DealService{
 
         // 수락 취소
         } else if (deal.getDealStatus() == Deal.DealStatus.ING) {
-
 //            // 엔티티 갱신
 //            deal.update(acceptDto);
             deal.setAcceptId(null);
             deal.setDealStatus(Deal.DealStatus.OPEN);
 
+
         } else {
             throw new IllegalStateException("현재 거래 상태에서는 수락할 수 없음");
         }
 
-        notificationService.sendNotificationDealAccept(deal);
-
         // 갱신된 엔티티 저장
+        notificationService.sendNotificationDealAccept(deal);
         return new DealDto.Response(deal);
-    }
+        }
 
 
     // 거래 완료(요청자) - 상태 CLOSE로 변환

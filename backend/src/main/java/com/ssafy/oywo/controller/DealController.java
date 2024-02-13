@@ -8,6 +8,7 @@ import com.ssafy.oywo.service.S3UploadService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -192,10 +193,15 @@ public class DealController {
             @PathVariable Long id) throws Exception {
 
         DealDto.Response response = dealService.acceptDeal(id);
-        if (response.getDealStatus() == Deal.DealStatus.ING) {
-            return ResponseEntity.ok("거래가 수락되었습니다.");
-        } else {
+        log.info("현재 매칭 수: {}", response.getNumberOfMatchingDeals());
+        if (response.getDealStatus() == Deal.DealStatus.OPEN) {
             return ResponseEntity.ok("거래수락이 취소되었습니다.");
+        } else if (response.getDealStatus() == Deal.DealStatus.ING) {
+            return ResponseEntity.ok("거래가 수락되었습니다.");
+        } else if (response.getNumberOfMatchingDeals() == 3) {
+            return ResponseEntity.ok("더이상 수락할 수 없습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("수락 실패");
         }
     }
 
