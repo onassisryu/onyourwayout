@@ -49,7 +49,7 @@ const App = () => {
 
   const [admin, setAdmin] = useState(false);
   const userData = useRecoilValue(userDataState);
-
+  const [minuteTimer, setMinuteTimer] = useState(60);
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const setUserData = useSetRecoilState(userDataState);
   const setApartData = useSetRecoilState(apartDataState);
@@ -78,9 +78,22 @@ const App = () => {
     onClose: () => void;
     dealId: string;
     acceptId: string;
+    nickname: string;
+    dong: string;
+    memberScore: number;
+    time: number;
   }
+  const startTimer = () => {
+    const timer = setInterval(() => {
+      setMinuteTimer(prevTime => prevTime - 1);
+    }, 1000);
 
+    // 0초가 되면 타이머 종료
+    setTimeout(() => clearInterval(timer), 60000);
+  };
   function acceptGoOut(dealId: string, acceptId: string) {
+    console.log('dealId', dealId);
+    console.log('acceptId', acceptId);
     axiosAuth
       .put(`deal/out-recommend/${dealId}/${acceptId}`)
       .then(resp => {
@@ -90,6 +103,20 @@ const App = () => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   }
+
+  function cancelGoOut(dealId: string, acceptId: string) {
+    console.log('dealId', dealId);
+    console.log('acceptId', acceptId);
+    axiosAuth
+      .get(`deal/out-recommend/${dealId}/${acceptId}/cancel`)
+      .then(resp => {
+        console.log('나가요잉 매칭 실패', resp.data);
+      })
+      .catch(error => {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      });
+  }
+
   const CustomAlert: FC<CustomAlertProps> = ({visible, title, onClose, dealId, acceptId}) => {
     return (
       <Modal isVisible={visible}>

@@ -19,7 +19,7 @@ import * as encoding from 'text-encoding';
 import {getAccessToken} from '@/utils/common';
 import ChatMessage from '@/components/Chatpage/ChatMessage';
 import {launchImageLibrary, ImageLibraryOptions, ImagePickerResponse, Asset} from 'react-native-image-picker';
-import {decode} from 'base-64';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const TextEncodingPolyfill = require('text-encoding');
 
@@ -91,6 +91,20 @@ const SendImg = styled(Pressable)`
   margin-right: 10px;
   margin-left: 10px;
 `;
+
+const DealContainer = styled.View`
+  min-height: 90px;
+  flex-direction: column;
+  height: auto;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  width: 100%; // 이 부분이 추가되었습니다.
+  position: absolute;
+  background-color: white;
+  margin-top: 60px;
+  top: 0;
+`;
 type ImgData = {
   uri: string | undefined;
   type: string | undefined;
@@ -99,12 +113,33 @@ type ImgData = {
   imgUrl: string | undefined;
 };
 
+interface MyObject {
+  id: number;
+  title: string;
+  content: string;
+  requestId: number;
+  acceptId: number;
+  cash: number;
+  item: null | string;
+  rewardType: string;
+  complaint: number;
+  dealStatus: 'OPEN' | 'ING' | 'CLOSE';
+  dealType: string;
+  expireAt: string;
+  dealImages: string[];
+  createdAt: string;
+  modifiedAt: string;
+  deletedAt: null | string;
+  complaints: null | string[];
+}
 const ChatDetail = ({navigation}: Props) => {
   const {params} = useRoute<ChatDetailScreenRouteProp>();
   const userData = useRecoilValue(userDataState);
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState('');
   const TextEncodingPolyfill = require('text-encoding');
+  const [isRecent, setIsRecent] = useState(false);
+  const [deal, setDeal] = useState<MyObject | null>(null);
   const [imageData, setImageData] = useState<ImgData>({
     uri: undefined,
     type: undefined,
@@ -150,7 +185,38 @@ const ChatDetail = ({navigation}: Props) => {
     room: params.roomId,
     id: userData.id,
   };
+  const closeReview = async () => {
+    console.log('거래 후기 작성', deal?.id);
+    const gb = 'good' || 'bad';
+    // await axiosAuth
+    //   .put(`/deal/review/${deal.id}/${gb}`)
+    //   .then()
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+  };
+  const closeDeal = async () => {
+    console.log('거래 완료', deal?.id);
+    // await axiosAuth
+    //   .put(`/deal/close/${deal.id}`)
+    //   .then()
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+  };
+  const getRecentDeal = async () => {
+    console.log('거래 최신 조회', userData.id, params.userId);
 
+    await axiosAuth
+      .get(`/deal/user/${userData.id}/${params.userId}`)
+      .then(res => {
+        console.log('거래 최신 조회 성공', res.data);
+        setDeal(res.data);
+      })
+      .catch(err => {
+        console.log('Fffffffffffffff', err);
+      });
+  };
   const getChatDetail = async () => {
     console.log('채팅방 메시지 전송 시작');
     await axiosAuth
@@ -259,23 +325,20 @@ const ChatDetail = ({navigation}: Props) => {
     if (response.didCancel) Alert.alert('취소');
     else if (response.errorMessage) Alert.alert('Error : ' + response.errorMessage);
     else {
-      console.log('이미지 파일입니다', response.assets[0].base64);
-
       const asset = response.assets[0];
       const uri = asset.uri;
       const type = asset.type;
       const fileSize = asset.fileSize;
       const fileName = asset.fileName;
+      const base64 = asset.base64;
 
-      console.log('이미지유', response.assets[0]);
-      const imgUrl = 'data:' + type + ';base64,' + response.assets[0].base64;
       // console.log('이미지유', imgUrl);
       const source: ImgData = {
         uri: uri,
         type: type,
         fileSize: fileSize,
         name: fileName,
-        imgUrl: imgUrl,
+        imgUrl: base64,
       };
       setImageData(source);
       setTextDisabled(false);
@@ -284,8 +347,9 @@ const ChatDetail = ({navigation}: Props) => {
 
   useEffect(() => {
     console.log('채팅방 상세정보', params.roomId);
-    getChatDetail();
-    connectChat();
+    getChatDetail(); //채팅방 메시지 기록 조회
+    connectChat(); // stomp 연결
+    getRecentDeal(); // 거래 최신 조회
     return () => {
       client.current?.deactivate();
     };
@@ -306,6 +370,85 @@ const ChatDetail = ({navigation}: Props) => {
           />
         </ReportButton>
       </Header>
+      <DealContainer>
+        <View
+          style={css`
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+            align-items: center;
+            justify-content: start;
+            min-height: 80px;
+            height: auto;
+            width: 100%;
+            background-color: #f8f8f8;
+            position: relative;
+            padding: 10px 0;
+          `}>
+          <View
+            style={css`
+              background-color: #00d282;
+              margin-left: 20px;
+              width: 6px;
+              height: 100%;
+            `}></View>
+          <View
+            style={css`
+              font-size: 20px;
+              color: #000;
+              margin-left: 10px;
+              display: flex;
+              flex-direction: row;
+              height: 100%;
+              width: 100%;
+            `}>
+            <View
+              style={css`
+                border-radius: 5px;
+                background-color: red;
+                width: 80px;
+              `}>
+              <Text>이미지 들어가유</Text>
+            </View>
+            <View
+              style={css`
+                padding-left: 10px;
+                font-size: 20px;
+              `}>
+              <View
+                style={css`
+                  display: flex;
+                  flex-direction: row;
+                  align-items: center;
+                  justify-content: start;
+                `}>
+                <Entypo name="dot-single" size={20} color={'#D8D7D7'} />
+                <Text>동호수 : </Text>
+              </View>
+              <Text>- 맡긴 일 : </Text>
+              <Text>- 현금 : </Text>
+            </View>
+          </View>
+        </View>
+        <View
+          style={css`
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            width: 100%;
+            justify-content: center;
+          `}>
+          <Button
+            onPress={() => {
+              closeDeal();
+            }}
+            title="완료하기"
+          />{' '}
+          <Button title="수락하기" />
+        </View>
+      </DealContainer>
       <View
         style={{
           marginBottom: 120,
