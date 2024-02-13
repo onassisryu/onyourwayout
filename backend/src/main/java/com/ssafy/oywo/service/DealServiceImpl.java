@@ -529,8 +529,14 @@ public class DealServiceImpl implements DealService{
     @Override
     @Transactional(readOnly = true)
     public List<DealDto.Response> recommendDeal(List<DealType> dealType) {
-        // 로그인 사용자 id
+        // 로그인 사용자 id (수행자)
         Long loginUserId = memberService.getLoginUserId();
+        // 현재 매칭된 해줘요잉 개수
+        Long numberOfMatchingDeals = dealRepository.countDealsByAcceptIdAndDealStatus(loginUserId, Deal.DealStatus.ING);
+        if (numberOfMatchingDeals >= 3) {
+            throw new IllegalArgumentException("현재 매칭 중인 거래가 3개입니다.");
+        }
+
         // 우리 동 id 구하기
         Long myDongId = dealRepository.findDongIdByMemberId(loginUserId);
         log.info("myDongId : {}", myDongId);
