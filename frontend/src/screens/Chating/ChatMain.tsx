@@ -53,7 +53,7 @@ const ChatMain = ({navigation}: any) => {
   // });
   const user = {
     memberNickname: '가영가영이',
-    otherNickname: '하구팟',
+    otherNickname: 'pppp',
   };
   //채팅방생성
   const makeChatRoom = () => {

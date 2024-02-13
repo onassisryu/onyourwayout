@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from '@/components/Header';
 import GoBack from '@/components/Signup/GoBack';
-import {Button, Text, View, ScrollView, TouchableOpacity, TextInput, Pressable} from 'react-native';
+import {Button, Text, View, ScrollView, TouchableOpacity, TextInput, Pressable, Alert, Image} from 'react-native';
 import {FlatList, ListRenderItemInfo} from 'react-native';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import Feather from 'react-native-vector-icons/Feather';
@@ -18,6 +18,8 @@ import StompJs, {Client} from '@stomp/stompjs';
 import * as encoding from 'text-encoding';
 import {getAccessToken} from '@/utils/common';
 import ChatMessage from '@/components/Chatpage/ChatMessage';
+import {launchImageLibrary, ImageLibraryOptions, ImagePickerResponse, Asset} from 'react-native-image-picker';
+import {decode} from 'base-64';
 
 const TextEncodingPolyfill = require('text-encoding');
 
@@ -30,13 +32,14 @@ const StyledText = styled.Text`
 `;
 const ChatSendContainer = styled.View`
   padding: 5px;
-  flex-direction: row;
-  height: 60px;
+  min-height: 60px;
+  flex-direction: column;
+  height: auto;
   align-items: center;
   border-top-width: 1px;
   border-top-color: #eaeaea;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%; // 이 부분이 추가되었습니다.
   position: absolute;
   background-color: white;
@@ -48,26 +51,10 @@ const ChatSendInput = styled.TextInput`
   margin-right: 5px;
   border-radius: 20px;
   padding: 10px;
+  padding-left: 20px;
   background-color: #f4f5f9;
 `;
-const MessageContainer = styled.View<{isSender: boolean}>`
-  align-self: ${({isSender}) => (isSender ? 'flex-end' : 'flex-start')};
-  margin-bottom: 10px;
-  background-color: white;
-`;
-const ChatRoomContainer = styled.TouchableOpacity`
-  height: 80px;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-  background-color: pink;
-`;
-const ChatTextContainer = styled.View`
-  flex: 1;
-  background-color: #eaeaea;
-`;
+
 const ReportButton = styled(GlobalButton)`
   background-color: white;
 `;
@@ -92,17 +79,25 @@ const SendButton = styled(Pressable)`
   padding-top: 10px;
   border-radius: 20px;
   margin-left: 10px;
+  margin-right: 5px;
 `;
 const SendImg = styled(Pressable)`
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #d9d9d9;
-  padding: 5px;
+  padding: 10px;
   border-radius: 20px;
+  margin-right: 10px;
   margin-left: 10px;
-  margin-right: 15px;
 `;
+type ImgData = {
+  uri: string | undefined;
+  type: string | undefined;
+  fileSize: number | undefined;
+  name: string | undefined;
+  imgUrl: string | undefined;
+};
 
 const ChatDetail = ({navigation}: Props) => {
   const {params} = useRoute<ChatDetailScreenRouteProp>();
@@ -110,7 +105,23 @@ const ChatDetail = ({navigation}: Props) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState('');
   const TextEncodingPolyfill = require('text-encoding');
+  const [imageData, setImageData] = useState<ImgData>({
+    uri: undefined,
+    type: undefined,
+    fileSize: undefined,
+    name: undefined,
+    imgUrl: undefined,
+  });
+  const [textDisabled, setTextDisabled] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(true);
 
+  useEffect(() => {
+    if (messageText || imageData.uri) {
+      setIsDisabled(false);
+    } else {
+      setIsDisabled(true);
+    }
+  }, [messageText, imageData]);
   Object.assign('global', {
     TextEncoder: TextEncodingPolyfill.TextEncoder,
     TextDecoder: TextEncodingPolyfill.TextDecoder,
@@ -165,17 +176,38 @@ const ChatDetail = ({navigation}: Props) => {
       });
     flatListRef.current?.scrollToEnd({animated: true});
   };
-  const sendMessage = (message: string) => {
-    client.current?.publish({
-      destination: `/pub/channel`,
-      skipContentLengthHeader: true,
-      body: JSON.stringify({
-        chatRoomId: params.roomId, // 채팅방 고유 번호
-        sendId: userData.id, //
-        msg: message,
-        img: '',
-      }),
-    });
+  const sendMessage = async () => {
+    console.log('메시지 전송중이여');
+    console.log('메시지', messageText);
+    console.log('이미지', imageData);
+    if (!imageData.imgUrl) {
+      console.log('이미지 없음');
+      await client.current?.publish({
+        destination: `/pub/channel`,
+        skipContentLengthHeader: true,
+        body: JSON.stringify({
+          chatRoomId: params.roomId, // 채팅방 고유 번호
+          sendId: userData.id, //
+          msg: messageText,
+          img: '',
+        }),
+      });
+    } else {
+      console.log('이미지 있음', imageData.imgUrl);
+      await client.current?.publish({
+        destination: `/pub/channel`,
+        skipContentLengthHeader: true,
+        body: JSON.stringify({
+          chatRoomId: params.roomId, // 채팅방 고유 번호
+          sendId: userData.id, //
+          msg: '',
+          img: imageData.imgUrl,
+        }),
+      });
+    }
+    setMessageText('');
+    setTextDisabled(true);
+    setImageData({uri: '', type: '', fileSize: 0, name: '', imgUrl: undefined});
   };
 
   const client = useRef<Client | null>(null);
@@ -199,6 +231,7 @@ const ChatDetail = ({navigation}: Props) => {
         client.current?.subscribe(`/sub/channel/${params.roomId}`, message => {
           const json_body = JSON.parse(message.body);
           console.log('구독', json_body);
+
           const msg = {
             msg: json_body.msg,
             senderId: json_body.sendId,
@@ -214,6 +247,39 @@ const ChatDetail = ({navigation}: Props) => {
       },
     });
     client.current.activate();
+  };
+
+  const showPhoto = async () => {
+    const option: ImageLibraryOptions = {
+      mediaType: 'photo',
+      selectionLimit: 5,
+      includeBase64: true,
+    };
+    const response = await launchImageLibrary(option);
+    if (response.didCancel) Alert.alert('취소');
+    else if (response.errorMessage) Alert.alert('Error : ' + response.errorMessage);
+    else {
+      console.log('이미지 파일입니다', response.assets[0].base64);
+
+      const asset = response.assets[0];
+      const uri = asset.uri;
+      const type = asset.type;
+      const fileSize = asset.fileSize;
+      const fileName = asset.fileName;
+
+      console.log('이미지유', response.assets[0]);
+      const imgUrl = 'data:' + type + ';base64,' + response.assets[0].base64;
+      // console.log('이미지유', imgUrl);
+      const source: ImgData = {
+        uri: uri,
+        type: type,
+        fileSize: fileSize,
+        name: fileName,
+        imgUrl: imgUrl,
+      };
+      setImageData(source);
+      setTextDisabled(false);
+    }
   };
 
   useEffect(() => {
@@ -258,22 +324,49 @@ const ChatDetail = ({navigation}: Props) => {
         />
       </View>
       <ChatSendContainer>
-        <SendImg>
-          <Feather name="camera" size={18} color="white" />
-        </SendImg>
-        <ChatSendInput
-          placeholder={'채팅을 입력해주세요.'}
-          onChangeText={text => {
-            setMessageText(text);
-          }}
-          value={messageText}></ChatSendInput>
-        <SendButton
-          onPress={() => {
-            sendMessage(messageText);
-          }}
-          disabled={messageText == ''}>
-          <Feather name="send" size={22} color="white" />
-        </SendButton>
+        <View
+          style={css`
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+          `}>
+          <SendImg onPress={showPhoto}>
+            <Feather name="camera" size={18} color="white" />
+          </SendImg>
+          <ChatSendInput
+            editable={textDisabled}
+            placeholder={'채팅을 입력해주세요.'}
+            onChangeText={text => {
+              setMessageText(text);
+            }}
+            value={messageText}></ChatSendInput>
+          <SendButton
+            onPress={() => {
+              sendMessage();
+            }}
+            disabled={isDisabled}>
+            <Feather name="send" size={22} color="white" />
+          </SendButton>
+        </View>
+        {imageData.uri && (
+          <View
+            style={css`
+              align-items: center;
+              justify-content: center;
+            `}>
+            <Image
+              source={imageData}
+              style={css`
+                width: 200px;
+                height: 200px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                margin-top: 10px;
+              `}
+            />
+          </View>
+        )}
       </ChatSendContainer>
     </GlobalContainer>
   );

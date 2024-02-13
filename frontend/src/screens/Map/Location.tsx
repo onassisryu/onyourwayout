@@ -134,7 +134,8 @@ const Location = ({navigation}: any) => {
   function getDongWithin50m(currentLocation: any, dongList: any) {
     const filteredDongList = dongList.filter(dong => {
       const distance = getDistance(currentLocation.lat, currentLocation.lng, dong.lat, dong.lng);
-      return distance <= 50;
+      console.log(distance, dong.name, dong.dongId);
+      return distance <= 20;
     });
 
     return filteredDongList;
@@ -155,7 +156,7 @@ const Location = ({navigation}: any) => {
     const a = Math.pow(Math.sin(dLat / 2), 2) + Math.pow(Math.sin(dLon / 2), 2) * Math.cos(lat1) * Math.cos(lat2);
     const c = 2 * Math.asin(Math.sqrt(a));
 
-    let finalDistance = RADIUS_OF_EARTH_IN_KM * c;
+    let finalDistance = RADIUS_OF_EARTH_IN_KM * c * 1000; // 거리를 미터로 변환
 
     return Number(finalDistance.toFixed(2));
   }
@@ -170,6 +171,7 @@ const Location = ({navigation}: any) => {
           lng: position.coords.longitude,
         };
         const dongsWithin50m = getDongWithin50m(currentLocation, apartDongData);
+        //동과 나의 위치
         const test = dongsWithin50m.filter(dong => lastDetectedDongs.dongId === dong.dongId);
         console.log('이미감지된동', lastDetectedDongs);
         // const isAlreadyDetected = lastDetectedDongs.some(detectedDong => detectedDong.dongId === dong.dongId);
