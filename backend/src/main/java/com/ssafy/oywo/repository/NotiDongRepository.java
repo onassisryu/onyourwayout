@@ -4,4 +4,5 @@ import com.ssafy.oywo.entity.NotiDong;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotiDongRepository extends JpaRepository<NotiDong,Long> {
+    void deleteAllByMemberId(Long memberId);
 }

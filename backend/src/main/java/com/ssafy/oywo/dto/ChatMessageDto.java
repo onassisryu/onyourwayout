@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 public class ChatMessageDto {
@@ -33,6 +35,7 @@ public class ChatMessageDto {
         private Long sendId;                // 보낸 사람 id
         private String msg;                 // 보낸 메시지
         private String imgUrl;              // 이미지 주소
+        private LocalDateTime createdAt;    // 채팅 생성 시간
 
         public ChatMessage toEntity(ChatRoom chatRoom){
             return ChatMessage.builder()
