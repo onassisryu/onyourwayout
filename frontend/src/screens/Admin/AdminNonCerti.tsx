@@ -5,6 +5,9 @@ import {NavigationProp, RouteProp} from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
+import Header from '@/components/Header';
+import GoBack from '@/components/Signup/GoBack';
+import {G} from 'react-native-svg';
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -70,6 +73,9 @@ const AdminNonCerti = ({navigation}: Props) => {
 
   return (
     <GlobalContainer>
+      <Header>
+        <GoBack />
+      </Header>
       <ScrollView overScrollMode="never">
         <AdminNonCertiCardComponent>
           {responseData.map((member, index) => (
