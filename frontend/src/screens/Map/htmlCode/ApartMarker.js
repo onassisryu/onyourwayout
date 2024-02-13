@@ -1,5 +1,5 @@
 const ApartMarker = (key, markers, location) => {
-  console.log('지도로딩중', location);
+  console.log('지도로딩중', key);
   console.log(markers);
   return `
       <html>

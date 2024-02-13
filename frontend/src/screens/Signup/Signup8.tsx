@@ -92,7 +92,7 @@ const Signup8 = ({navigation, route}: any) => {
     console.log(dongId);
     updateDongAndHo({dongId: dongId, hoName: ho});
     console.log(userSignUpData);
-    navigation.navigate('Signup9a');
+    navigation.navigate('Signup9');
   }
 
   useEffect(() => {
