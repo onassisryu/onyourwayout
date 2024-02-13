@@ -8,9 +8,6 @@ import ApartSelectionModal from '@components/DoItListpage/ApartSelectionModal';
 import ReportModal from '@components/DoItListpage/ReportModal';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
-import SvgIcon from '@components/SvgIcon';
-import {useRecoilValue} from 'recoil';
-import {userDataState} from '@/recoil/atoms';
 
 const DoItListCardComponent = styled(ScrollView)`
   padding: 10px 20px;
@@ -129,7 +126,6 @@ interface DoListCard {
 }
 
 const DoItList = ({navigation}: any) => {
-  const userData = useRecoilValue(userDataState);
   const [selectedApartCategory, setSelectedApartCategory] = useState<string>('');
   const [selectedTypeCategory, setSelectedTypeCategory] = useState<string>('');
 
@@ -177,28 +173,7 @@ const DoItList = ({navigation}: any) => {
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
-  }, [userData]);
-  //한번렌더링하고 새로고침하면 다시랜더링 해야됨~
-
-  const categoryToDealType = (category: string) => {
-    switch (category) {
-      case '반려동물 산책':
-        return 'PET';
-      case '심부름':
-        return 'SHOP';
-      case '분리수거':
-        return 'RECYCLE';
-      case '기타':
-        return 'ETC';
-      default:
-        return '';
-    }
-  };
-
-  let filteredData = cardListData;
-  if (selectedTypeCategory) {
-    filteredData = cardListData.filter(card => card.dealType === categoryToDealType(selectedTypeCategory));
-  }
+  }, []);
 
   return (
     <GlobalContainer>
@@ -214,7 +189,7 @@ const DoItList = ({navigation}: any) => {
       />
       <ScrollView overScrollMode="never">
         <DoItListCardComponent>
-          {filteredData.map((card, index) => (
+          {cardListData.map((card, index) => (
             <View key={index}>
               <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {id: card.id})}>
                 <DoItListCard>
@@ -254,7 +229,7 @@ const DoItList = ({navigation}: any) => {
                       <TextPrice>
                         {' '}
                         {card.rewardType === 'CASH'
-                          ? `${card.cash.toLocaleString()}원`
+                          ? `${card.cash}원`
                           : card.rewardType === 'ITEM'
                           ? card.item
                           : 'Unknown Reward Type'}

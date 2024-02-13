@@ -1,6 +1,6 @@
 // 아이디
 import React, {useEffect, useState} from 'react';
-import {TouchableOpacity, Alert} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {GlobalContainer} from '@/GlobalStyles';
 import Header from '@/components/Header';
@@ -12,7 +12,6 @@ import {SignupBodyContainer} from '@/components/Signup/SignupBodyContainer';
 import NextButton from '@/components/Signup/NextButton';
 import {userSignUpDataState} from '@/recoil/atoms';
 import {useSetRecoilState, useRecoilValue} from 'recoil';
-import axiosBasic from '@/axios/axios';
 
 const InputContainer = styled.View`
   width: 100%;
@@ -36,7 +35,7 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
 `;
 
 const Signup1 = ({navigation}: any) => {
-  const [value, setValue] = useState('2@gmail');
+  const [value, setValue] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -60,29 +59,16 @@ const Signup1 = ({navigation}: any) => {
   const userSignUpData = useRecoilValue(userSignUpDataState);
 
   const updateUserName = (username: string) => {
-    console.log('아이디인디유', username);
-    axiosBasic
-      .get(`/members/dup/id?value=${username}`)
-      .then(resp => {
-        console.log('성공', resp.data.data);
-        setUserSignUpData(prevState => ({
-          ...prevState,
-          username: username,
-        }));
-        navigation.navigate('Signup2');
-      })
-      .catch(error => {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
-        if (error.response.status === 409) {
-          Alert.alert('중복된 아이디입니다');
-          setIsDisabled(true);
-        }
-      });
+    setUserSignUpData(prevState => ({
+      ...prevState,
+      username: username,
+    }));
   };
 
   function SetValue() {
     updateUserName(value);
     console.log(userSignUpData);
+    navigation.navigate('Signup2');
   }
 
   return (

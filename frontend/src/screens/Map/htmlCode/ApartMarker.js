@@ -1,6 +1,5 @@
-const ApartMarker = (key, markers, location) => {
-  console.log('지도로딩중', location);
-  console.log(markers);
+const ApartMarker = (key, markers) => {
+  console.log(markers[0].x);
   return `
       <html>
         <head>
@@ -16,28 +15,29 @@ const ApartMarker = (key, markers, location) => {
         <body>
           <div id="map"></div>
           <script>
-          const markers = ${JSON.stringify(markers)};
-          kakao.maps.load(() => {
+            const markers = ${JSON.stringify(markers)};
+  
+            // Kakao 지도 API 초기화
+            kakao.maps.load(() => {
               const container = document.getElementById('map');
               const options = {
-                center: new kakao.maps.LatLng(${location.aptLat}, ${location.aptLng}), // 초기 지도 중심 좌표 설정
+                center: new kakao.maps.LatLng(37.499604, 127.047061), // 초기 지도 중심 좌표 설정
                 level: 3, // 초기 지도 확대 레벨 설정
               };
               const map = new kakao.maps.Map(container, options);
-              var bounds = new kakao.maps.LatLngBounds();    
+  
+              // 화장실 위치에 마커 생성
               markers.forEach((markerObj) => {
-                const markerPosition = new kakao.maps.LatLng(markerObj.lat, markerObj.lng);
+                const markerPosition = new kakao.maps.LatLng(markerObj.y, markerObj.x);
                 const marker = new kakao.maps.Marker({
                   position: markerPosition,
                 });
-                bounds.extend(markerPosition);
                 marker.setMap(map);
               });
             });
-            map.setBounds(bounds);
-        </script>
-      </body>
-    </html>
+          </script>
+        </body>
+      </html>
     `;
 };
 export default ApartMarker;

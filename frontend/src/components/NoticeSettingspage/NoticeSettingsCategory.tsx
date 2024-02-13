@@ -3,7 +3,7 @@ import React, {useState, useEffect} from 'react';
 import styled from '@emotion/native';
 import {NavigationProp} from '@react-navigation/native';
 import theme from '@/Theme';
-import axiosAuth from '@/axios/axiosAuth';
+
 import {View, TouchableOpacity, ImageSourcePropType, Switch, TextInput} from 'react-native';
 import {GlobalText, GlobalContainer, GlobalButton} from '@/GlobalStyles';
 
@@ -11,15 +11,13 @@ const SettingsComponent = styled(GlobalContainer)`
   justify-content: initial;
   align-items: initial;
   height: initial;
-  margin: 20px 20px 20px 20px;
-  border-bottom-width: 1px;
-  border-bottom-color: #b2b2b2;
+  margin: 0 20px;
+  margin-top: 20px;
 `;
 
 const CategorySettingsTitle = styled(GlobalContainer)`
   flex-direction: row;
   justify-content: space-between;
-  
   height: initial;
 `;
 
@@ -65,82 +63,54 @@ const CategoryText = styled(GlobalText)<{selected: boolean}>`
   color: ${({selected}) => (selected ? `${theme.color.primary}` : `${theme.color.gray}`)};
 `;
 
-interface NoticeSettingsCategoryProps {
-  categories: string[];
-  selectedCategories: string[];
-  selectAllText: string;
-  setCategories: (state: string[]) => void;
-  setSelectedCategories: React.Dispatch<React.SetStateAction<string[]>>;
-  setSelectAllText: React.Dispatch<React.SetStateAction<string>>;
-};
 
-type CategoryValue = 'PET' | 'RECYCLE' | 'SHOP' | 'ETC';
+const NoticeSettingsCategory = () => {
+  const categories = ['반려동물 산책', '분리수거', '심부름', '기타'];
+  const [selectAllText, setSelectAllText] = useState('모두 선택');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-const NoticeSettingsCategory = (props: NoticeSettingsCategoryProps) => {
-  
   const onSelectCategory = (category: string) => {
-    let value: CategoryValue;
-    switch (category) {
-      case '반려동물 산책':
-        value = 'PET';
-        break;
-      case '분리수거':
-        value = 'RECYCLE';
-        break;
-      case '심부름':
-        value = 'SHOP';
-        break;
-      case '기타':
-        value = 'ETC';
-        break;
-      default:
-        return;  // 알 수 없는 카테고리 이름이 들어온 경우 함수를 종료합니다.
-    }
-  
-    if (props.selectedCategories.includes(value)) {
-      props.setSelectedCategories(props.selectedCategories.filter(selected => selected !== value));
+    if (selectedCategories.includes(category)) {
+      setSelectedCategories(selectedCategories.filter(selected => selected !== category));
     } else {
-      props.setSelectedCategories([...props.selectedCategories, value]);
+      setSelectedCategories([...selectedCategories, category]);
     }
-    console.log(props.selectedCategories)
   };
 
   const onSelectAllCategories = () => {
-    if (props.selectedCategories.length === props.categories.length) {
-      props.setSelectedCategories([]);
+    if (selectedCategories.length === categories.length) {
+      setSelectedCategories([]);
     } else {
-      props.setSelectedCategories(['PET', 'RECYCLE', 'SHOP', 'ETC']);
+      setSelectedCategories(categories);
     }
-    console.log(props.selectedCategories)
   };
-  
+
   useEffect(() => {
-    const selectedValues = ['PET', 'RECYCLE', 'SHOP', 'ETC'];
-    props.setSelectAllText(props.selectedCategories.length === selectedValues.length ? '모두 해제' : '모두 선택');
-  }, [props.selectedCategories]);
+    setSelectAllText(selectedCategories.length === categories.length ? '모두 해제' : '모두 선택');
+  }, [selectedCategories]);
 
   return (
     <SettingsComponent>
       <CategorySettingsTitle>
         <SettingsTitle> 카테고리 설정 </SettingsTitle>
         <AllSelectionButton onPress={onSelectAllCategories}>
-          <AllSelection> {props.selectAllText} </AllSelection>
+          <AllSelection> {selectAllText} </AllSelection>
         </AllSelectionButton>
       </CategorySettingsTitle>
       <CategoryComponent>
         <Category
-          selected={props.selectedCategories.includes('PET')}
+          selected={selectedCategories.includes('반려동물 산책')}
           onPress={() => onSelectCategory('반려동물 산책')}>
-          <CategoryText selected={props.selectedCategories.includes('PET')}>반려동물 산책</CategoryText>
+          <CategoryText selected={selectedCategories.includes('반려동물 산책')}>반려동물 산책</CategoryText>
         </Category>
-        <Category selected={props.selectedCategories.includes('RECYCLE')} onPress={() => onSelectCategory('분리수거')}>
-          <CategoryText selected={props.selectedCategories.includes('RECYCLE')}>분리수거</CategoryText>
+        <Category selected={selectedCategories.includes('분리수거')} onPress={() => onSelectCategory('분리수거')}>
+          <CategoryText selected={selectedCategories.includes('분리수거')}>분리수거</CategoryText>
         </Category>
-        <Category selected={props.selectedCategories.includes('SHOP')} onPress={() => onSelectCategory('심부름')}>
-          <CategoryText selected={props.selectedCategories.includes('SHOP')}>심부름</CategoryText>
+        <Category selected={selectedCategories.includes('심부름')} onPress={() => onSelectCategory('심부름')}>
+          <CategoryText selected={selectedCategories.includes('심부름')}>심부름</CategoryText>
         </Category>
-        <Category selected={props.selectedCategories.includes('ETC')} onPress={() => onSelectCategory('기타')}>
-          <CategoryText selected={props.selectedCategories.includes('ETC')}>기타</CategoryText>
+        <Category selected={selectedCategories.includes('기타')} onPress={() => onSelectCategory('기타')}>
+          <CategoryText selected={selectedCategories.includes('기타')}>기타</CategoryText>
         </Category>
       </CategoryComponent>
     </SettingsComponent>

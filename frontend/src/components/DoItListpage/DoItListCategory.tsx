@@ -72,19 +72,7 @@ const CategoryComponent = ({name, selected, onSelect}: {name: string; selected: 
   </TypeCategory>
 );
 
-const categoryToDealType = {
-  '반려동물 산책': 'PET',
-  '분리수거': 'RECYCLE',
-  '심부름': 'SHOP',
-  '기타': 'ETC',
-};
-
-
 const DoItListCategory = (props: Props) => {
-
-  
-  
-
   return (
     <GlobalContainer
       style={css`

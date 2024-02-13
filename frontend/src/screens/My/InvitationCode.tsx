@@ -16,7 +16,7 @@ const BodyContainer = styled(MypageBodyContainer)`
 `;
 const HeadText = styled.Text`
   font-size: 25px;
-  font-weight: 700;
+  font-weight: 900;
   margin-top: 150px;
   padding-bottom: 30px;
 `;
@@ -31,7 +31,7 @@ const InvitationCode = () => {
 
   const copyToClipboard = () => {
     Clipboard.setString(userData.inviteCode);
-    // ToastAndroid.show('클립보드에 복사되었습니다.', ToastAndroid.SHORT);
+    ToastAndroid.show('클립보드에 복사되었습니다.', ToastAndroid.SHORT);
     setCopied(true);
   };
 
