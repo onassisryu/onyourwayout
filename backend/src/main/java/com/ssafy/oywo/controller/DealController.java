@@ -5,6 +5,7 @@ import com.ssafy.oywo.entity.*;
 import com.ssafy.oywo.service.DealService;
 
 import com.ssafy.oywo.service.S3UploadService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -269,6 +270,11 @@ public class DealController {
         return ResponseEntity.ok(dealService.recommendDeal(dealType));
     }
 
+    /**
+     * 나가요잉 추천 거래 신청
+     * @param dealId 거래 아이디
+     * @return 거래 요청 메시지
+     */
     @GetMapping("/out-recommend/{dealId}")
     public ResponseEntity<?> requestRecommendDeal(
             @PathVariable Long dealId) {
@@ -279,7 +285,27 @@ public class DealController {
         catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
 
+    /**
+     * 나가요잉 추천 거래 신청 거절 및 취소
+     * @param dealId 거래 아이디
+     * @param acceptId 거래 수락자 아이디(수행자)
+     * @return 거래 취소 메시지
+     */
+    @Operation(summary = "나가요잉 추천 거래 신청 거절 및 취소",
+            description = "나가요잉 추천 거래에 신청을 보냈을때 작성자가 거절하거나 시간이 지나 취소될 경우 사용하는 메서드")
+    @GetMapping("/out-recommend/{dealId}/{acceptId}/cancel")
+    public ResponseEntity<?> cancelRecommendDeal(
+            @PathVariable Long dealId,
+            @PathVariable Long acceptId) {
+        try {
+            dealService.cancelRecommendDeal(dealId, acceptId);
+            return ResponseEntity.ok("거래 요청이 취소되었습니다.");
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     /**

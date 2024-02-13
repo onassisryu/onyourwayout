@@ -34,6 +34,7 @@ public class NotificationServiceImpl implements NotificationService {
     //알림 메시지로 member들에게 알림을 보내는 메소드
     private void sendMessage(Notification notification, List<Member> members, Map<String, String> data){
         List<String> tokens = members.stream().map(Member::getFcmToken).filter(Objects::nonNull).toList();
+        data.put("notificationId", notification.getId().toString());
 
         try{
             firebaseMessaging.sendEachForMulticast(MulticastMessage.builder()
@@ -42,7 +43,6 @@ public class NotificationServiceImpl implements NotificationService {
                             .setTitle(notification.getTitle())
                             .setBody(notification.getMessage())
                             .build())
-                    .putData("notificationId", notification.getId().toString())
                     .putAllData(data)
                     .build());
 
@@ -251,5 +251,26 @@ public class NotificationServiceImpl implements NotificationService {
         data.put("acceptMemberScore",Integer.toString(acceptMember.getScore()));
 
         sendMessage(notificationSaved, List.of(requestMember), data);
+    }
+
+    /**
+     * 나가요잉 신청 취소시 알림 전송
+     * @param deal
+     * @param acceptMember
+     */
+    @Override
+    public void cancelRecommendDeal(Deal deal, Member acceptMember) {
+        Notification notification = Notification.builder()
+                .title("[나가요잉 취소]")
+                .message(deal.getTitle() + "에 대한 나가요잉 신청이 취소되었습니다.")
+                .notificationType(Notification.NotificationType.DEAL_CANCEL)
+                .build();
+        Notification notificationSaved = notificationRepository.save(notification);
+
+        Map<String, String> data = new HashMap<>();
+        data.put("dealId",deal.getId().toString());
+        data.put("title",deal.getTitle());
+
+        sendMessage(notificationSaved, List.of(acceptMember), data);
     }
 }
