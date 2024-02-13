@@ -22,6 +22,8 @@ public interface DealService {
     List<DealDto.Response> getDealsByMemberId(String requestOrAccept,Long memberId);
     // 요청자/수락자 현재 거래 조회
     DealDto.Response getDealByStatusING(Long requestId, Long acceptId);
+    // 내가 나온김에 해야할 일
+    List<DealDto.Response> getMyDealsByStatusING();
     // 거래 생성
     DealDto.Response createDeal(DealDto.Request dto, List<MultipartFile> dealImageFileList);
     // 거래 하나 조회

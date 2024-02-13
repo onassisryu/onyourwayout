@@ -113,6 +113,15 @@ public class DealController {
     }
 
 
+    /**
+     * 내가 나온김에 해야할 일
+     * @return 거래 리스트
+     */
+    @GetMapping("/mying")
+    public ResponseEntity<?> getMyDealsByStatusING() {
+        return ResponseEntity.ok(dealService.getMyDealsByStatusING());
+    }
+
 
 
     /**
