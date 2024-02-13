@@ -84,6 +84,7 @@ public class DealServiceImpl implements DealService{
 
     // 거래유형별 현재 거래에 대한 동 아이디 리스트
     @Override
+    @Transactional(readOnly = true)
     public List<Long> getDongIdsByDealType(List<DealType> dealType) {
 
         // 로그인 사용자 id
@@ -174,10 +175,27 @@ public class DealServiceImpl implements DealService{
 
     // 요청자/수행자 현재 거래 조회
     @Override
+    @Transactional(readOnly = true)
     public DealDto.Response getDealByStatusING(Long requestId, Long acceptId) {
         Deal deal = dealRepository.findTopByRequestIdAndAcceptIdAndDealStatusOrderByModifiedAtDesc(requestId, acceptId, Deal.DealStatus.ING)
                 .orElseThrow(() -> new IllegalArgumentException("현재 진행 중인 거래가 없습니다."));
         return new DealDto.Response(deal);
+    }
+
+
+    // 내가 나온김에 해야할 일
+    @Override
+    @Transactional(readOnly = true)
+    public List<DealDto.Response> getMyDealsByStatusING() {
+        // 로그인 사용자 id
+        Long loginUserId = memberService.getLoginUserId();
+
+        List<Deal> myIngDeals = dealRepository.findDealsByDealStatus(loginUserId, Deal.DealStatus.ING);
+
+        return myIngDeals
+                .stream()
+                .map(d -> new DealDto.Response(d, memberRepository.findById(d.getRequestId()).orElseThrow(() -> new IllegalArgumentException("해당 requestId의 사용자가 없음"))))
+                .collect(Collectors.toList());
     }
 
 
@@ -342,12 +360,16 @@ public class DealServiceImpl implements DealService{
         Long loginUserId = memberService.getLoginUserId();
         // 현재 매칭된 해줘요잉 개수
         Long numberOfMatchingDeals = dealRepository.countDealsByAcceptIdAndDealStatus(loginUserId, Deal.DealStatus.ING);
-        if (numberOfMatchingDeals >= 3) {
-            throw new IllegalArgumentException("현재 매칭 중인 거래가 3개입니다.");
-        }
+
         // 거래 상태 확인
         // 수락
         if (deal.getDealStatus() == Deal.DealStatus.OPEN) {
+            // 매칭된 해줘요잉이 3건이상이면 수락 안됨
+            if (numberOfMatchingDeals >= 3) {
+                log.info("현재 매칭 수: {}", numberOfMatchingDeals);
+                return new DealDto.Response(numberOfMatchingDeals);
+            }
+
             // 수락자 확인
             if (deal.getRequestId().equals(loginUserId)) {
                 throw new IllegalStateException("요청자와 수락자는 같을 수 없음");
@@ -359,21 +381,20 @@ public class DealServiceImpl implements DealService{
 
         // 수락 취소
         } else if (deal.getDealStatus() == Deal.DealStatus.ING) {
-
 //            // 엔티티 갱신
 //            deal.update(acceptDto);
             deal.setAcceptId(null);
             deal.setDealStatus(Deal.DealStatus.OPEN);
 
+
         } else {
             throw new IllegalStateException("현재 거래 상태에서는 수락할 수 없음");
         }
 
-        notificationService.sendNotificationDealAccept(deal);
-
         // 갱신된 엔티티 저장
+        notificationService.sendNotificationDealAccept(deal);
         return new DealDto.Response(deal);
-    }
+        }
 
 
     // 거래 완료(요청자) - 상태 CLOSE로 변환
@@ -511,8 +532,14 @@ public class DealServiceImpl implements DealService{
     @Override
     @Transactional(readOnly = true)
     public List<DealDto.Response> recommendDeal(List<DealType> dealType) {
-        // 로그인 사용자 id
+        // 로그인 사용자 id (수행자)
         Long loginUserId = memberService.getLoginUserId();
+        // 현재 매칭된 해줘요잉 개수
+        Long numberOfMatchingDeals = dealRepository.countDealsByAcceptIdAndDealStatus(loginUserId, Deal.DealStatus.ING);
+        if (numberOfMatchingDeals >= 3) {
+            throw new IllegalArgumentException("현재 매칭 중인 거래가 3개입니다.");
+        }
+
         // 우리 동 id 구하기
         Long myDongId = dealRepository.findDongIdByMemberId(loginUserId);
         log.info("myDongId : {}", myDongId);
@@ -629,5 +656,6 @@ public class DealServiceImpl implements DealService{
 
         notificationService.cancelRecommendDeal(deal, acceptMember);
     }
+
 
 }

@@ -153,6 +153,16 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             Deal.DealStatus dealStatus
     );
 
+    // 내가 나온김에 해야할 일
+    @Query("SELECT d FROM Deal d " +
+            "WHERE d.acceptId = :loginUserId " +
+            "AND d.dealStatus = :dealStatus " +
+            "AND d.expireAt > current_timestamp " +
+            "ORDER BY d.createdAt DESC ")
+    List<Deal> findDealsByDealStatus(
+            @Param("loginUserId") Long loginUserId,
+            @Param("dealStatus") Deal.DealStatus dealStatus);
+
     // 수락 기능 제한
     List<Deal> findDealsByAcceptIdAndDealStatus(Long acceptId, Deal.DealStatus dealStatus);
 
