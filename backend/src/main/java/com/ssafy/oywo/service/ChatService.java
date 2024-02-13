@@ -12,6 +12,6 @@ public interface ChatService {
     public List<ChatRoomDto.Response> getChatRoomById(Long memberId);
 
     public ChatRoomDto.Response getDetailChatRoom(Long roomId, Long memberId);
-    public void saveChatMessage(ChatMessageDto.Response message);
+    public ChatMessageDto.Response saveChatMessage(ChatMessageDto.Response message);
 
 }

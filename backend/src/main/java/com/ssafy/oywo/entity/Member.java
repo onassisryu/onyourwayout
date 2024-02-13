@@ -2,6 +2,7 @@ package com.ssafy.oywo.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
@@ -102,6 +103,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private List<MembersNotification> membersNotifications = new ArrayList<>();
 
     @ManyToOne
+    @JsonIgnore
     private Ho ho;
 
     @ManyToMany
