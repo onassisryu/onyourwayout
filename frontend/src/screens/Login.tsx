@@ -72,7 +72,7 @@ const Login = ({navigation}: any) => {
   };
   useEffect(() => {
     checkLogin();
-  }, []);
+  }, [isLoggedIn]);
 
   async function login() {
     console.log(fcmToken);
