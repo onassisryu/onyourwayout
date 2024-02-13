@@ -6,7 +6,6 @@ import DoItListHeader from '@components/DoItListpage/DoItListHeader';
 import DoItListCategory from '@components/DoItListpage/DoItListCategory';
 import ApartSelectionModal from '@components/DoItListpage/ApartSelectionModal';
 import ReportModal from '@components/DoItListpage/ReportModal';
-import SearchModal from '@components/DoItListpage/SearchModal';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
 import SvgIcon from '@components/SvgIcon';
@@ -34,8 +33,6 @@ const DoItListCard = styled(GlobalContainer)`
 
 
 const DoItListImage = styled.ImageBackground`
-  width: 100%;
-  height: 100%;
   border-radius: 10px;
   resize-mode: cover;
 `;
@@ -142,7 +139,6 @@ const DoItList = ({navigation}: any) => {
   const [selectedApart, setSelectedApart] = useState('');
 
   const [reportModalVisible, setReportModalVisible] = useState(false);
-  const [isSearchModalVisible, setSearchModalVisible] = useState(false);
   const [cardListData, setCardListData] = useState<DoListCard[]>([]);
 
   const calculateTimeAgo = (createdAt: string) => {
@@ -311,10 +307,7 @@ const DoItList = ({navigation}: any) => {
         selectedCard={selectedCard}
       />
 
-      <SearchModal
-        isSearchModalVisible={isSearchModalVisible}
-        setSearchModalVisible={setSearchModalVisible}
-      />
+
     </GlobalContainer>
   );
 };
