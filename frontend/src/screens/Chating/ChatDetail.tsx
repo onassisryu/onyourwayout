@@ -30,6 +30,21 @@ Object.assign('global', {
 const StyledText = styled.Text`
   font-size: 23px;
 `;
+const ModalContainer = styled.View`
+  padding: 5px;
+  min-height: 100px;
+  margin-top: 60px;
+  z-index: 100;
+  flex-direction: column;
+  height: auto;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  position: absolute;
+  background-color: pink;
+  top: 0;
+`;
 const ChatSendContainer = styled.View`
   padding: 5px;
   min-height: 60px;
@@ -57,6 +72,14 @@ const ChatSendInput = styled.TextInput`
 
 const ReportButton = styled(GlobalButton)`
   background-color: white;
+`;
+
+const ChatMessageContainer = styled.View<{isModal: boolean}>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
 `;
 
 type Message = {
@@ -157,6 +180,7 @@ const ChatDetail = ({navigation}: Props) => {
       .get(`/chat/room/detail`, {params: detailParams})
       .then(res => {
         const data = res.data.chatMessages;
+        console.log(res.data.chatRoom);
         const msg = data.map((message: any) => {
           const convertedTime = convertTimeFormat(message.createdAt);
 
@@ -306,6 +330,17 @@ const ChatDetail = ({navigation}: Props) => {
           />
         </ReportButton>
       </Header>
+      <ModalContainer>
+        <View
+          style={css`
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+          `}>
+          <Text>fff</Text>
+        </View>
+      </ModalContainer>
       <View
         style={{
           marginBottom: 120,
