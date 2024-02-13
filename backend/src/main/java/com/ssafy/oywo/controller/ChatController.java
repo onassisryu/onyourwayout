@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping
@@ -49,7 +50,6 @@ public class ChatController {
                 .chatRoomId(message.getChatRoomId())
                 .imgUrl(imgUrl).build();
 
-
         // message를 저장한다.
         ChatMessageDto.Response result=chatService.saveChatMessage(response);
 
@@ -63,20 +63,24 @@ public class ChatController {
     // 바이트 코드를 파일 형태로 변환하여 S3에 저장하고 링크를 반환
     public String changeBinaryImageChange(String byteCode, Long senderId){
         try{
-            String[] strings=byteCode.split(",");
-            String base64Image=strings[1];
-            String extension="";        // if 문을 통해 확장자명을 정해줌
-            if(strings[0].equals("data:image/jpeg;base64")){
-                extension="jpeg";
-            }else if(strings[0].equals("data:image/png;base64")){
-                extension="png";
-            }else{
-                extension="jpg";
-            }
+//            String[] strings=byteCode.split(",");
+//            String base64Image=strings[1];
+//            String extension="";        // if 문을 통해 확장자명을 정해줌
+//            if(strings[0].equals("data:image/jpeg;base64")){
+//                extension="jpeg";
+//            }else if(strings[0].equals("data:image/png;base64")){
+//                extension="png";
+//            }else{
+//                extension="jpg";
+//            }
 
-            byte[] imageBytes=Base64.decodeBase64(base64Image);
+//            byte[] imageBytes=Base64.decodeBase64(base64Image);
+//
+//            File tempFile=File.createTempFile("image","."+extension);
+            byte[] imageBytes=Base64.decodeBase64(byteCode);
 
-            File tempFile=File.createTempFile("image","."+extension);
+
+            File tempFile=new File("chatImage"+UUID.randomUUID());
             // 바이트 코드를 파일 형태로 변환
             try (OutputStream outputStream=new FileOutputStream(tempFile)){
                 outputStream.write(imageBytes);
@@ -113,7 +117,7 @@ public class ChatController {
 
         return chatService.createChatRoomByUsername(memberNickname,otherNickname);
     }
-    
+
     // 사용자의 uuid로 채팅방 목록 불러오기 + 채팅방 내 구성원 정보도 함께
     @GetMapping("chat/room/{id}")
     public ResponseEntity<?> getChatRooms(@PathVariable("id") Long id){
