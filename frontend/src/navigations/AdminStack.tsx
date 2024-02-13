@@ -5,6 +5,8 @@ import AdminMain from '@/screens/Admin/AdminMain';
 import AdminNonCerti from '@/screens/Admin/AdminNonCerti';
 import AdminNonCertiDetail from '@/screens/Admin/AdminNonCertiDetail';
 import AdminPaused from '@/screens/Admin/AdminPaused';
+import Login from '@/screens/Login';
+import Main from '@/screens/Main';
 
 import Ionic from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -56,6 +58,7 @@ const AdminStack = () => {
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName={'AdminMain'}>
+      <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="BottomTab" component={BottomTab} />
       <Stack.Screen name="AdminMain" component={AdminMain} />
       <Stack.Screen name="AdminNonCerti" component={AdminNonCerti} />
