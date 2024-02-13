@@ -56,6 +56,7 @@ public class ChatController {
         // message를 저장한다.
         ChatMessageDto.Response result=chatService.saveChatMessage(response);
         result.setCreatedAt(LocalDateTime.now());
+
         return result;
     }
 
