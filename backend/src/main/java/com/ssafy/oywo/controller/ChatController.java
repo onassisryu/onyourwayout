@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -54,6 +55,7 @@ public class ChatController {
 
         // message를 저장한다.
         ChatMessageDto.Response result=chatService.saveChatMessage(response);
+        result.setCreatedAt(LocalDateTime.now());
         return result;
     }
 
@@ -139,7 +141,7 @@ public class ChatController {
                 .sendId(message.getSendId())
                 .chatRoomId(message.getChatRoomId())
                 .imgUrl(imgUrl).build();
-        chatService.saveChatMessage(response);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        return new ResponseEntity<>(chatService.saveChatMessage(response),HttpStatus.OK);
     }
 }
