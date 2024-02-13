@@ -282,8 +282,14 @@ public class DealController {
     @GetMapping("/out-recommend")
     public ResponseEntity<?> recommendDeal(
             @RequestParam(name = "dealType", required = false) List<DealType> dealType) {
-        return ResponseEntity.ok(dealService.recommendDeal(dealType));
+        try {
+            List<DealDto.Response> recommendedDeals = dealService.recommendDeal(dealType);
+            return ResponseEntity.ok(recommendedDeals);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
+
 
     /**
      * 나가요잉 추천 거래 신청
