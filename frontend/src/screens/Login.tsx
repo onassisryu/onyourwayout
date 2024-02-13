@@ -1,6 +1,6 @@
 import axios, {get} from 'axios';
 import {useSetRecoilState, useRecoilValue} from 'recoil';
-import {isLoggedInState, userDataState, fcmTokenState} from '@/recoil/atoms';
+import {isLoggedInState, userDataState, apartDataState, fcmTokenState} from '@/recoil/atoms';
 import React, {useState, useEffect} from 'react';
 import {Text, Alert, View, Keyboard, TouchableWithoutFeedback, Image, TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
@@ -51,15 +51,28 @@ const LoginButton = styled(DefaultButton)`
 `;
 
 const Login = ({navigation}: any) => {
-  const [username, setusername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setusername] = useState('a@gmail');
+  const [password, setPassword] = useState('1234');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isnotValueid, setIsnotValueid] = useState(true);
   const [isnotValuepassword, setIsnotValuepassword] = useState(true);
   const fcmToken = useRecoilValue(fcmTokenState).fcmToken;
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const setUserData = useSetRecoilState(userDataState);
+  const setApartData = useSetRecoilState(apartDataState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
+
+  const checkLogin = async () => {
+    if (isLoggedIn) {
+      console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
+      navigation.navigate('Main');
+    } else {
+      console.log('로그인 상태가 아닙니다.======> 페이지 이동', isLoggedIn);
+    }
+  };
+  useEffect(() => {
+    checkLogin();
+  }, [isLoggedIn]);
 
   async function login() {
     console.log(fcmToken);
@@ -78,14 +91,18 @@ const Login = ({navigation}: any) => {
           const token = response.data.token.accessToken;
           const refreshToken = response.data.token.refreshToken;
           const user = response.data.memberInfo;
+          const adjDongs = response.data.adjDongs;
           console.log('로그인 성공', response.data);
           await setStorage('token', token);
           await setStorage('refreshToken', refreshToken);
           await setStorage('user', user);
+          await setStorage('adjDongs', adjDongs);
 
           //recoil에 저장
           setIsLoggedIn(true);
           setUserData(user);
+          setApartData(adjDongs);
+          navigation.navigate('Main');
           Keyboard.dismiss();
           console.log('123123');
           console.log(user);

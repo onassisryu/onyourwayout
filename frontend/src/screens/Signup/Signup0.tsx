@@ -1,6 +1,6 @@
 // 닉네임
 import React, {useEffect, useState} from 'react';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, Alert} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {GlobalContainer} from '@/GlobalStyles';
 import Header from '@/components/Header';
@@ -12,6 +12,7 @@ import {SignupBodyContainer} from '@/components/Signup/SignupBodyContainer';
 import NextButton from '@/components/Signup/NextButton';
 import {userSignUpDataState} from '@/recoil/atoms';
 import {useSetRecoilState, useRecoilValue} from 'recoil';
+import axiosBasic from '@/axios/axios';
 
 const InputContainer = styled.View`
   width: 100%;
@@ -35,7 +36,7 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
 `;
 
 const Signup0 = ({navigation}: any) => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState('닉네임');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -58,17 +59,29 @@ const Signup0 = ({navigation}: any) => {
   const setUserSignUpData = useSetRecoilState(userSignUpDataState);
   const userSignUpData = useRecoilValue(userSignUpDataState);
 
-  const updateNickName = (nickname: string) => {
-    setUserSignUpData(prevState => ({
-      ...prevState,
-      nickname: nickname,
-    }));
+  const updateNickName = (value: string) => {
+    axiosBasic
+      .get(`/members/dup/nickname?value=${value}`)
+      .then(resp => {
+        console.log('성공', resp.data.data);
+        setUserSignUpData(prevState => ({
+          ...prevState,
+          username: value,
+        }));
+        navigation.navigate('Signup1');
+      })
+      .catch(error => {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+        if (error.response.status === 409) {
+          Alert.alert('중복된 닉네임입니다');
+          setIsDisabled(true);
+        }
+      });
   };
 
   function SetValue() {
     updateNickName(value);
     console.log(userSignUpData);
-    navigation.navigate('Signup1');
   }
 
   return (
