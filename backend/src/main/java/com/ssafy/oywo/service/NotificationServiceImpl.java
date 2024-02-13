@@ -34,6 +34,7 @@ public class NotificationServiceImpl implements NotificationService {
     //알림 메시지로 member들에게 알림을 보내는 메소드
     private void sendMessage(Notification notification, List<Member> members, Map<String, String> data){
         List<String> tokens = members.stream().map(Member::getFcmToken).filter(Objects::nonNull).toList();
+        data.put("notificationId", notification.getId().toString());
 
         try{
             firebaseMessaging.sendEachForMulticast(MulticastMessage.builder()
@@ -42,7 +43,6 @@ public class NotificationServiceImpl implements NotificationService {
                             .setTitle(notification.getTitle())
                             .setBody(notification.getMessage())
                             .build())
-                    .putData("notificationId", notification.getId().toString())
                     .putAllData(data)
                     .build());
 
