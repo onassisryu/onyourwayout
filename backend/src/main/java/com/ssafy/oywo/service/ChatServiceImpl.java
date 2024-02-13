@@ -158,13 +158,20 @@ public class ChatServiceImpl implements ChatService{
 
     // 채팅 메시지 저장
     @Override
-    public void saveChatMessage(ChatMessageDto.Response message) {
+    public ChatMessageDto.Response saveChatMessage(ChatMessageDto.Response message) {
 
         ChatRoom chatRoom=chatRoomRepository.findById(message.getChatRoomId())
                 .orElseThrow(()->new NoSuchElementException("채팅방을 찾을 수 없습니다."));
 
         ChatMessage newMessage=message.toEntity(chatRoom);
 
-        chatMessageRepository.save(newMessage);
+        ChatMessage savedMessage=chatMessageRepository.save(newMessage);
+        return ChatMessageDto.Response.builder()
+                .msg(savedMessage.getMsg())
+                .chatRoomId(savedMessage.getChatRoom().getId())
+                .sendId(savedMessage.getSenderId())
+                .createdAt(savedMessage.getCreatedAt())
+                .imgUrl(savedMessage.getImgUrl())
+                .build();
     }
 }

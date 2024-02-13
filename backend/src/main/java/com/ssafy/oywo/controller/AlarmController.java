@@ -70,74 +70,17 @@ public class AlarmController {
     }
 
     // 알림 설정
-    @Transactional
     @PostMapping("/set")
     public ResponseEntity<?> setAlarm(@RequestBody AlarmSettingDto.Request alarmDto){
         HashMap<String,Object> payload=new HashMap<>();
 
-        // 사용자 정보 가져오기
-        MemberDto.Response memberDto=memberSerivce.getMemberInfo(alarmDto.getMemberId());
-        Member memberEntity=memberDto.toEntity();
-        // 전체 동 알림 여부 확인
-        if (alarmDto.getIsNotiCategoryAll()){
-            // 사용자 정보 전체 동 알림으로 수정
-            memberEntity=memberEntity.toBuilder().isNotiDongAll(true).build();
-        }
-        else{
+        MemberDto.Response response=memberSerivce.setMemberAlarm(alarmDto);
 
-            List<NotiDong> dongList=new ArrayList<>();
-
-            // 재설정
-            for (Long dongId:alarmDto.getDongIdList()){
-                dongList.add(NotiDong.builder().member(memberEntity).dongId(dongId).build());
-            }
-            memberEntity=memberEntity.toBuilder().notiDongs(dongList).build();
-        }
-        // 전체 카테고리 알림 여부 확인
-        if (alarmDto.getIsNotiDongAll()){
-            // 사용자 정보 전체 카테고리 알림으로 수정
-            memberEntity=memberEntity.toBuilder().isNotiCategoryAll(true).build();
-        }
-        else{
-            List<NotiDealCategory> notiDealCategoryList=new ArrayList<>();
-
-            // 재설정
-            for (DealType dealType:alarmDto.getDealTypeList()){
-                notiDealCategoryList.add(NotiDealCategory.builder().member(memberEntity).dealType(dealType).build());
-            }
-            memberEntity=memberEntity.toBuilder().notiDealCategories(notiDealCategoryList).build();
-        }
-
-        // 시작 시간과 마지막 시간 설정
-        memberEntity=memberEntity.toBuilder().notificationStart(alarmDto.getNotificationStart()).build();
-        memberEntity=memberEntity.toBuilder().notificationEnd(alarmDto.getNotificationEnd()).build();
-        // member entity로 사용자 알림 정보 수정
-        MemberDto.Response memberResponse=memberSerivce.modifyWithAlarm(memberEntity);
-
-        List<NotiDong> notiDongList=new ArrayList<>();
-        List<NotiDealCategory> notiDealCategoryList=new ArrayList<>();
-
-        for (NotiDong notiDong: memberResponse.getNotiDongs()){
-            NotiDong dong=new NotiDong();
-            notiDongList.add(dong.builder()
-                    .dongId(notiDong.getDongId())
-                    .build());
-        }
-
-        for (NotiDealCategory notiDealCategory:memberResponse.getNotiDealCategories()){
-            NotiDealCategory category=new NotiDealCategory();
-            notiDealCategoryList.add(
-                    category.builder()
-                            .dealType(notiDealCategory.getDealType())
-                            .build()
-            );
-        }
-
-        payload.put("memberId",memberResponse.getId());
-        payload.put("notiDongs",notiDongList);
-        payload.put("categories",notiDealCategoryList);
-        payload.put("notificationStart",memberResponse.getNotificationStart());
-        payload.put("notificationEnd",memberResponse.getNotificationEnd());
+        payload.put("memberId",response.getId());
+        payload.put("notiDongs",response.getNotiDongs());
+        payload.put("categories",response.getNotiDealCategories());
+        payload.put("notificationStart",response.getNotificationStart());
+        payload.put("notificationEnd",response.getNotificationEnd());
 
         return new ResponseEntity<>(payload, HttpStatus.OK);
     }

@@ -1,5 +1,6 @@
 package com.ssafy.oywo.service;
 
+import com.ssafy.oywo.dto.AlarmSettingDto;
 import com.ssafy.oywo.dto.JwtToken;
 import com.ssafy.oywo.dto.MemberDto;
 import com.ssafy.oywo.entity.*;
@@ -345,6 +346,55 @@ public class MemberServiceImpl implements MemberService {
             return MemberDto.Response.of(m);
         }
         return null;
+    }
+
+    @Transactional
+    @Override
+    public MemberDto.Response setMemberAlarm(AlarmSettingDto.Request alarmDto) {
+        // 사용자 정보 가져오기
+        Member member=memberRepository.findById(alarmDto.getMemberId())
+                .orElseThrow(()->new NoSuchElementException("존재하지 않는 사용자입니다."));
+
+        // 전체 동 알림 여부 확인
+        if (alarmDto.getIsNotiCategoryAll()){
+            // 사용자 정보 전체 동 알림으로 수정
+            member.setNotiDongAll(true);
+        }
+        else{
+
+            List<NotiDong> dongList=new ArrayList<>();
+            notiDongRepository.deleteAllByMemberId(alarmDto.getMemberId());
+            // 재설정
+            for (Long dongId:alarmDto.getDongIdList()){
+                NotiDong dong=NotiDong.builder().member(member).dongId(dongId).build();
+                dongList.add(dong);
+                notiDongRepository.save(dong);
+            }
+            member.setNotiDongs(dongList);
+        }
+        // 전체 카테고리 알림 여부 확인
+        if (alarmDto.getIsNotiDongAll()){
+            // 사용자 정보 전체 카테고리 알림으로 수정
+            member.setNotiCategoryAll(true);
+        }
+        else{
+            notiDealCategoryRepository.deleteAllByMemberId(alarmDto.getMemberId());
+            List<NotiDealCategory> notiDealCategoryList=new ArrayList<>();
+
+            // 재설정
+            for (DealType dealType:alarmDto.getDealTypeList()){
+                NotiDealCategory category=NotiDealCategory.builder().member(member).dealType(dealType).build();
+                notiDealCategoryList.add(category);
+                notiDealCategoryRepository.save(category);
+            }
+            member.setNotiDealCategories(notiDealCategoryList);
+        }
+
+        // 시작 시간과 마지막 시간 설정
+        member.setNotificationStart(alarmDto.getNotificationStart());
+        member.setNotificationEnd(alarmDto.getNotificationEnd());
+
+        return MemberDto.Response.of(member);
     }
 
     @Override
