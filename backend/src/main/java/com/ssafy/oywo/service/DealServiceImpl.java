@@ -84,6 +84,7 @@ public class DealServiceImpl implements DealService{
 
     // 거래유형별 현재 거래에 대한 동 아이디 리스트
     @Override
+    @Transactional(readOnly = true)
     public List<Long> getDongIdsByDealType(List<DealType> dealType) {
 
         // 로그인 사용자 id
@@ -174,10 +175,27 @@ public class DealServiceImpl implements DealService{
 
     // 요청자/수행자 현재 거래 조회
     @Override
+    @Transactional(readOnly = true)
     public DealDto.Response getDealByStatusING(Long requestId, Long acceptId) {
         Deal deal = dealRepository.findTopByRequestIdAndAcceptIdAndDealStatusOrderByModifiedAtDesc(requestId, acceptId, Deal.DealStatus.ING)
                 .orElseThrow(() -> new IllegalArgumentException("현재 진행 중인 거래가 없습니다."));
         return new DealDto.Response(deal);
+    }
+
+
+    // 내가 나온김에 해야할 일
+    @Override
+    @Transactional(readOnly = true)
+    public List<DealDto.Response> getMyDealsByStatusING() {
+        // 로그인 사용자 id
+        Long loginUserId = memberService.getLoginUserId();
+
+        List<Deal> myIngDeals = dealRepository.findDealsByDealStatus(loginUserId, Deal.DealStatus.ING);
+
+        return myIngDeals
+                .stream()
+                .map(d -> new DealDto.Response(d, memberRepository.findById(d.getRequestId()).orElseThrow(() -> new IllegalArgumentException("해당 requestId의 사용자가 없음"))))
+                .collect(Collectors.toList());
     }
 
 
@@ -511,8 +529,14 @@ public class DealServiceImpl implements DealService{
     @Override
     @Transactional(readOnly = true)
     public List<DealDto.Response> recommendDeal(List<DealType> dealType) {
-        // 로그인 사용자 id
+        // 로그인 사용자 id (수행자)
         Long loginUserId = memberService.getLoginUserId();
+        // 현재 매칭된 해줘요잉 개수
+        Long numberOfMatchingDeals = dealRepository.countDealsByAcceptIdAndDealStatus(loginUserId, Deal.DealStatus.ING);
+        if (numberOfMatchingDeals >= 3) {
+            throw new IllegalArgumentException("현재 매칭 중인 거래가 3개입니다.");
+        }
+
         // 우리 동 id 구하기
         Long myDongId = dealRepository.findDongIdByMemberId(loginUserId);
         log.info("myDongId : {}", myDongId);
@@ -629,5 +653,6 @@ public class DealServiceImpl implements DealService{
 
         notificationService.cancelRecommendDeal(deal, acceptMember);
     }
+
 
 }
