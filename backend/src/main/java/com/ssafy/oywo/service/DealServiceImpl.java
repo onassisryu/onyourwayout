@@ -568,7 +568,7 @@ public class DealServiceImpl implements DealService{
                                     .collect(Collectors.toList());
     }
 
-
+    // 나가요잉 추천 거래 신청
     @Override
     public void requestRecommendDeal(Long dealId){
         Long loginUserId = memberService.getLoginUserId();
@@ -611,5 +611,23 @@ public class DealServiceImpl implements DealService{
         return new DealDto.Response(deal);
     }
 
+    //나가요잉 신청 취소 및 거절
+    @Override
+    public void cancelRecommendDeal(Long dealId, Long acceptId) {
+        Deal deal = dealRepository.findById(dealId).orElseThrow(
+                () -> new IllegalArgumentException("해당 거래 아이디가 존재하지 않음")
+        );
+
+        // 로그인 사용자 id
+        Long loginUserId = memberService.getLoginUserId();
+        if (!deal.getRequestId().equals(loginUserId)) {
+            throw new IllegalStateException("거래 취소 불가능: 해당 거래의 요청자와 현재 로그인 사용자가 다름");
+        }
+
+        Member acceptMember = memberRepository.findById(acceptId).orElseThrow(
+                () -> new NoSuchElementException("해당하는 멤버가 없습니다."));
+
+        notificationService.cancelRecommendDeal(deal, acceptMember);
+    }
 
 }
