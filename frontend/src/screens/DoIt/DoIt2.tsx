@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {css} from '@emotion/native';
+import styled, {css} from '@emotion/native';
 import {ScrollView, View, TouchableOpacity, Text, Animated, useWindowDimensions} from 'react-native';
 import {ImageURISource, Alert, Button, Image, StyleSheet} from 'react-native';
 import {GlobalContainer, GlobalText} from '@/GlobalStyles';
@@ -7,7 +7,6 @@ import DefaultButton from '@/components/DefaultButton';
 import Header from '@/components/Header';
 import GoBack from '@components/Signup/GoBack';
 import {NavigationProp, RouteProp, useRoute} from '@react-navigation/native';
-import styled from '@emotion/native';
 import theme from '@/Theme';
 import {useEffect} from 'react';
 import SvgIcon from '@/components/SvgIcon';
@@ -37,7 +36,7 @@ interface Props {
 }
 const StyledInputTitle = styled(GlobalText)`
   font-size: 18px;
-  font-weight: 900;
+  font-weight: 700;
   color: ${props => props.theme.color.black};
   margin-bottom: 12px;
 `;
@@ -158,7 +157,7 @@ const DoIt2 = ({navigation}: Props) => {
   useEffect(() => {
     Animated.timing(animatedValue, {
       toValue: selectedTab === '물물' ? 1 : 0,
-      duration: 300, // 애니메이션 지속 시간 (ms)
+      duration: 150, // 애니메이션 지속 시간 (ms)
       useNativeDriver: true, // 네이티브 드라이버 사용 여부
     }).start();
   }, [selectedTab]);
@@ -187,7 +186,7 @@ const DoIt2 = ({navigation}: Props) => {
     });
   };
   const [img, setImg] = useState<ImageURISource>({
-    uri: 'https://cdn.pixabay.com/photo/2023/05/21/12/40/dog-8008483_1280.jpg',
+    uri: '',
   }); //setState를 대신하는 넘이랑 변수랑 같이 하기
   const [imageData, setImageData] = useState({});
   //버튼 동작
@@ -247,44 +246,18 @@ const DoIt2 = ({navigation}: Props) => {
     else {
       const uris: Asset[] = [];
       response.assets?.forEach(value => uris.push(value)); //선택한 사진 순서와 상관없이 들어옴
+      const uri = response.assets[0].uri; //assets 여러개가 올수 있는데 중에 0번방 거
+      const type = response.assets[0].type;
+      const fileSize = response.assets[0].fileSize;
+      const fileName = response.assets[0].fileName;
 
-      //원래는 FlatList로 이미지 보여줘야하지만
-      //첫번째 이미지만 보여주기
-      console.log('이미지 파일입니다', uris[0]);
-      setImg(uris[0]);
+      console.log('이미지 파일입니다', response.assets[0]);
+
+      const souce = {uri: uri, type: type, fileSize: fileSize, name: fileName};
+      setImageData(souce);
     }
   };
   function MakeDeal() {
-    //   const jwtAccessToken =
-    //     'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzM1ODI4N30.qU7yh9VK8SNoDHVMSPIBiejonl6AFXeIui_3ONrz2YQ';
-
-    //   // 만료 시간을 포함한 데이터 객체
-
-    //   // FormData 객체를 생성합니다.
-    //   const formData = new FormData();
-
-    //   // data 객체의 각 속성을 FormData에 추가합니다.
-    //   Object.entries(data).forEach(([key, value]) => {
-    //     formData.append(`dto[${key}]`, value);
-    //   });
-    //   console.log(formData);
-    //   try {
-    //     // Axios 인스턴스 생성
-    //     const axiosInstance = axios.create({
-    //       baseURL: 'http://i10a302.p.ssafy.io:8080', // 기본 URL 설정
-    //       headers: {
-    //         'Authorization': `Bearer ${jwtAccessToken}`, // JWT access token 추가
-    //         'Content-Type': 'multipart/form-data', // multipart/form-data 설정
-    //       },
-    //     });
-
-    //     // multipart 요청 보내기
-    //     const response = await axiosInstance.post('/deal', formData);
-
-    //     console.log('성공', response.data);
-    //   } catch (error) {
-    //     console.error('데이터를 가져오는 중 오류 발생:', error);
-    //   }
     const data = {
       title: '반려동물 산책시켜주세요',
       content: '저희 뽀삐 안물어요 1시간 산책시켜주세요',
@@ -295,7 +268,7 @@ const DoIt2 = ({navigation}: Props) => {
 
     const body = {
       jsonData: data,
-      dealImageFileList: imageData,
+      dealImageFileList: [imageData],
     };
 
     submitMultipart(body)
@@ -335,7 +308,7 @@ const DoIt2 = ({navigation}: Props) => {
             <SvgIcon name={params.icon} size={40} />
           </IconWrapper>
         </StyledInputContainer>
-        <View>
+        {/* <View>
           <View>
             <Button title="show camera app" onPress={showCamera}></Button>
             <Button title="show photo app" color={'green'} onPress={showPhoto}></Button>
@@ -343,8 +316,13 @@ const DoIt2 = ({navigation}: Props) => {
 
           <Text>{img.uri}</Text>
 
-          <Image source={img} width={10} height={10}></Image>
-        </View>
+          <Image
+            source={img}
+            style={css`
+              width: 100px;
+              height: 100px;
+            `}></Image>
+        </View> */}
         <View
           style={css`
             flex-direction: row;
@@ -388,28 +366,42 @@ const DoIt2 = ({navigation}: Props) => {
           <TouchableOpacity></TouchableOpacity>
         </View>
         <StyledInputTitle>사진</StyledInputTitle>
-        <TouchableOpacity>
-          <View
-            style={css`
-              width: 100%;
-              height: 200px;
-              background-color: ${theme.color.gray0};
-              border-radius: 10px;
-              margin-bottom: 20px;
-              align-items: center;
-              justify-content: center;
-            `}>
-            <Feather name="image" size={40} color={theme.color.gray300} />
-            <Text
+        <Button title="show camera app" onPress={showCamera}></Button>
+        <TouchableOpacity onPress={showPhoto}>
+          {Object.keys(imageData).length === 0 ? (
+            <View
               style={css`
-                font-size: 15px;
-                font-weight: 700;
-                color: ${theme.color.gray300};
-                margin-top: 10px;
+                width: 100%;
+                height: 200px;
+                background-color: ${theme.color.gray0};
+                border-radius: 10px;
+                margin-bottom: 20px;
+                align-items: center;
+                justify-content: center;
               `}>
-              사진을 업로드 해주세요
-            </Text>
-          </View>
+              <Feather name="image" size={40} color={theme.color.gray300} />
+              <Text
+                style={css`
+                  font-size: 15px;
+                  font-weight: 700;
+                  color: ${theme.color.gray300};
+                  margin-top: 10px;
+                `}>
+                사진을 업로드 해주세요
+              </Text>
+            </View>
+          ) : (
+            <Image
+              source={imageData}
+              style={css`
+                width: 100%;
+                height: 200px;
+                background-color: ${theme.color.gray0};
+                border-radius: 10px;
+                margin-bottom: 20px;
+              `}
+            />
+          )}
         </TouchableOpacity>
 
         <StyledInputTitle>거래방식&가격</StyledInputTitle>
@@ -520,8 +512,8 @@ const DoIt2 = ({navigation}: Props) => {
               <View
                 style={css`
                   position: absolute;
-                  top: 5px;
-                  left: 290px;
+                  top: 20%;
+                  right: 5%;
                 `}>
                 <Text
                   style={css`

@@ -35,10 +35,9 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
 `;
 
 const Signup2 = ({navigation}: any) => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState('1997-01-01');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
-
   useEffect(() => {
     setIsDisabled(!value);
   }, [value]);
@@ -64,6 +63,18 @@ const Signup2 = ({navigation}: any) => {
       birthDate: birthDate,
     }));
   };
+  const handleInputChange = (text: string) => {
+    const formattedBirthday = text.replace(/-/g, '');
+    if (formattedBirthday.length === 8) {
+      const formattedText = `${formattedBirthday.slice(0, 4)}-${formattedBirthday.slice(
+        4,
+        6
+      )}-${formattedBirthday.slice(6)}`;
+      setValue(formattedText);
+    } else {
+      setValue(text);
+    }
+  };
 
   function SetValue() {
     updateBirthDate(value);
@@ -80,12 +91,13 @@ const Signup2 = ({navigation}: any) => {
         <SignupHeadtext title="생년월일을 입력해주세요"></SignupHeadtext>
         <InputContainer>
           <StyledInput
-            placeholder="생년월일 입력"
+            placeholder="YYYY-MM-DD"
             placeholderTextColor={theme.color.gray200}
-            onChangeText={text => setValue(text)}
             value={value}
+            onChangeText={handleInputChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
+            maxLength={10}
           />
           <IconWrapper onPress={handleClearInput} visible={isFocused && value.length > 0}>
             <Ant name="closecircleo" size={20} color={theme.color.gray200} />

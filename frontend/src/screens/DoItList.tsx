@@ -9,9 +9,8 @@ import ReportModal from '@components/DoItListpage/ReportModal';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
 import SvgIcon from '@components/SvgIcon';
-import { useRecoilValue } from 'recoil';
-import { userDataState } from '@/recoil/atoms';
-
+import {useRecoilValue} from 'recoil';
+import {userDataState} from '@/recoil/atoms';
 
 const DoItListCardComponent = styled(ScrollView)`
   padding: 10px 20px;
@@ -31,8 +30,9 @@ const DoItListCard = styled(GlobalContainer)`
   height: 130px;
 `;
 
-
-const DoItListImage = styled.ImageBackground`
+const DoItListImage = styled.Image`
+  width: 100%;
+  height: 100%;
   border-radius: 10px;
   resize-mode: cover;
 `;
@@ -52,7 +52,6 @@ const ReportButton = styled(GlobalButton)`
   top: 7px;
   right: 5px;
 `;
-
 
 const TextTitle = styled(GlobalText)`
   font-size: ${props => props.theme.fontSize.medium};
@@ -183,7 +182,7 @@ const DoItList = ({navigation}: any) => {
     
   }, [userData]);
   //한번렌더링하고 새로고침하면 다시랜더링 해야됨~
-  
+
   const categoryToDealType = (category: string) => {
     switch (category) {
       case '반려동물 산책':
@@ -222,31 +221,12 @@ const DoItList = ({navigation}: any) => {
         <DoItListCardComponent>
           {filteredData.map((card, index) => (
             <View key={index}>
-              <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {card: card})}>
+              <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {id: card.id})}>
                 <DoItListCard>
-                  {card.dealImages.length > 0 ? (
-                    <DoItListImage src={card.dealImages[0].imgUrl} >
-                    {card.dealType === 'PET' && <SvgIcon name="puppy" size={30} style={css`position: absolute;`} />}
-                    {card.dealType === 'RECYCLE' && <SvgIcon name="shopping" size={30} style={css`position: absolute;`} />}
-                    {card.dealType === 'SHOP' && <SvgIcon name="bags" size={30} style={css`position: absolute;`} />}
-                    {card.dealType === 'ETC' && <SvgIcon name="building" size={30} style={css`position: absolute;`} />}
-                    </DoItListImage>
-                  )
-                   : (
-                    <View
-                      style={css`
-                        width: 100px;
-                        height: 110px;
-                        margin-right: 35px;
-                        border-radius: 15px;
-                        background-color: lightgray;
-                      `}>
-                      {card.dealType === 'PET' && <SvgIcon name="puppy" size={30} style={css`position: absolute;`} />}
-                      {card.dealType === 'RECYCLE' && <SvgIcon name="shopping" size={30} style={css`position: absolute;`} />}
-                      {card.dealType === 'SHOP' && <SvgIcon name="bags" size={30} style={css`position: absolute;`} />}
-                      {card.dealType === 'ETC' && <SvgIcon name="building" size={30} style={css`position: absolute;`} />}
-                      </View>
-                  )}
+                  <CardImageContainer>
+                    {card.dealImages.length > 0 && <DoItListImage src={card.dealImages[0].imgUrl} />}
+                  </CardImageContainer>
+
                   <CardTextContainer>
                     {userData.id === card.requestId ? (<></>) :
                     (
@@ -267,8 +247,11 @@ const DoItList = ({navigation}: any) => {
                         margin-top: 10px;
                       `}>
                       <TextTitle numberOfLines={1}>{card.title}</TextTitle>
-                      <TextApart>{card.requestInfo.dongName}동 / {calculateTimeAgo(card.createdAt)}</TextApart>
 
+                      <TextApart>
+                        {card.requestInfo.dongName}동 / {calculateTimeAgo(card.createdAt)}
+                        {card.id}
+                      </TextApart>
                     </View>
                     <View
                       style={css`
@@ -280,11 +263,11 @@ const DoItList = ({navigation}: any) => {
                       <TextPrice>
                         {' '}
                         {card.rewardType === 'CASH'
-                            ? `${card.cash.toLocaleString()}원`
-                            : card.rewardType === 'ITEM'
-                            ? card.item
-                            : 'Unknown Reward Type'}
-                    </TextPrice>
+                          ? `${card.cash.toLocaleString()}원`
+                          : card.rewardType === 'ITEM'
+                          ? card.item
+                          : 'Unknown Reward Type'}
+                      </TextPrice>
                     </View>
                   </CardTextContainer>
                 </DoItListCard>

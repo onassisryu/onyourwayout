@@ -34,8 +34,8 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
   ${({visible}) => !visible && 'opacity: 0;'};
 `;
 
-const Signup2 = ({navigation}: any) => {
-  const [value, setValue] = useState('');
+const Signup4 = ({navigation}: any) => {
+  const [value, setValue] = useState('1234');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -99,4 +99,4 @@ const Signup2 = ({navigation}: any) => {
   );
 };
 
-export default Signup2;
+export default Signup4;
