@@ -47,4 +47,6 @@ public interface DealService {
     // 나가요잉 최종확인(수락: 요청자)
     DealDto.Response checkOutRecommendDeal(Long id, Long acceptId);
 
+    void cancelRecommendDeal(Long dealId, Long acceptId);
+
 }

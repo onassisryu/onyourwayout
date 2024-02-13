@@ -27,4 +27,6 @@ public interface NotificationService {
     public void checkNearDong(Long dongId);
 
     public void requestRecommendDeal(Deal deal, Member acceptMember);
+
+    public void cancelRecommendDeal(Deal deal, Member acceptMember);
 }
