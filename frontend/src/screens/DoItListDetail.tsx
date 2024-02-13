@@ -468,9 +468,10 @@ const DoItListDetail = ({route, navigation}: any) => {
           </View>
         )}
       </View>
-      {modalVisible &&
-        (modalType === 'edit' ? (
-          <EditDeleteModal
+      {
+        modalVisible && (
+          modalType === 'edit'
+          ?  <EditDeleteModal 
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
             navigation={navigation}
