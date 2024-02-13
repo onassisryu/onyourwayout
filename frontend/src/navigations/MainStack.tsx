@@ -48,6 +48,8 @@ import BankAccount from '@/screens/My/BankAccount';
 import InvitationCode from '@/screens/My/InvitationCode';
 import ServiceCenter from '@/screens/My/ServiceCenter';
 import MyDoList from '@/screens/My/MyDoList';
+import DoItPut from '@/screens/DoItPut';
+import Report from '@/screens/Report';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -131,6 +133,8 @@ const MainStack = () => {
       <Stack.Screen name="InvitationCode" component={InvitationCode} />
       <Stack.Screen name="ServiceCenter" component={ServiceCenter} />
       <Stack.Screen name="MyDoList" component={MyDoList} />
+      <Stack.Screen name="DoItPut" component={DoItPut}/>
+      <Stack.Screen name="Report" component={Report}/>
     </Stack.Navigator>
   );
 };

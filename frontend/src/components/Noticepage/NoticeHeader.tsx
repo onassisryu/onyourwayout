@@ -34,7 +34,7 @@ const NoticeHeader = ({navigation}: Props) => {
   return (
     <HeaderContainer>
       <GoBack />
-      <NoticeTitle> 알림 </NoticeTitle>
+      <NoticeTitle>알림  </NoticeTitle>
       <TouchableOpacity onPress={() => navigation.navigate('NoticeSettings')}>
         <Feather name="settings" size={25} color={theme.color.black} />
       </TouchableOpacity>

@@ -4,6 +4,8 @@ import theme from '@/Theme';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import {Modal, View, ImageSourcePropType, TouchableWithoutFeedback} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {userDataState} from '@/recoil/atoms';
+import {useRecoilValue} from 'recoil';
 
 const ModalBackground = styled(GlobalContainer)`
   flex: 1;
@@ -17,7 +19,7 @@ const ModalComponent = styled(GlobalContainer)`
   position: absolute;
   left: 20px;
   top: 100px;
-  width: 200px;
+  width: 42%;
   height: initial;
   max-width: 250px;
   border: 2px solid #00d282;
@@ -32,7 +34,7 @@ const ModalSubComponent = styled(GlobalButton)`
   justify-content: flex-start;
   background-color: white;
   align-items: flex-start;
-  padding: 15px 2px 15px 2px;
+  padding: 15px 10px 15px 10px;
 `;
 
 const ModalText = styled(GlobalText)`
@@ -55,11 +57,12 @@ interface Props {
 }
 
 const MainModal = (props: Props) => {
-  const Apartlist = [
-    {id: 1, apart: '싸피아파트', name: '303동', default: true},
-    {id: 2, apart: '궁전아파트', name: '403동', default: false},
-    {id: 3, name: '503동', default: false},
-  ];
+  const userData = useRecoilValue(userDataState);
+
+  // apt 값이 배열인지 확인
+  const isAptArray = Array.isArray(userData.apt.name);
+  // apt 값이 배열이면 그대로 사용하고, 아니라면 배열로 변환
+  const aptArray = isAptArray ? userData.apt.name : [userData.apt.name];
 
   return (
     <GlobalContainer
@@ -77,17 +80,17 @@ const MainModal = (props: Props) => {
         <TouchableWithoutFeedback onPress={() => props.setApartModalVisible(false)} style={{zIndex: 1}}>
           <ModalBackground style={{zIndex: 1}}>
             <ModalComponent>
-              {Apartlist.map(apart => (
-                <View key={apart.id}>
+              {aptArray.map((apart:string) => (
+                <View>
                   <ModalSubComponent
                     onPress={() => {
-                      props.setSelectedApart(apart.name);
+                      props.setSelectedApart(apart);
                       props.setApartModalVisible(false);
                     }}>
                     <MaterialIcons name="apartment" size={25}></MaterialIcons>
                     <ModalText>
                       {' '}
-                      {apart.name} {apart.default ? '(기본)' : ''}
+                      {apart}
                     </ModalText>
                   </ModalSubComponent>
                   <DistinctLine />

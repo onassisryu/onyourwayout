@@ -2,7 +2,8 @@ import React, {useState, useEffect} from 'react';
 import styled, {css} from '@emotion/native';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import Ant from 'react-native-vector-icons/AntDesign';
-
+import { useRecoilState } from 'recoil';
+import { userDataState } from '@/recoil/atoms';
 import {TouchableOpacity, Text, View, Modal, Animated, ImageSourcePropType} from 'react-native';
 
 const ApartSelectionComponent = styled(GlobalContainer)`
@@ -72,18 +73,9 @@ const CategoryComponent = ({name, selected, onSelect}: {name: string; selected: 
   </TypeCategory>
 );
 
-const categoryToDealType = {
-  '반려동물 산책': 'PET',
-  '분리수거': 'RECYCLE',
-  '심부름': 'SHOP',
-  '기타': 'ETC',
-};
-
-
 const DoItListCategory = (props: Props) => {
-
-  
-  
+   
+  const [userData, setUserData] = useRecoilState(userDataState);
 
   return (
     <GlobalContainer
@@ -94,7 +86,7 @@ const DoItListCategory = (props: Props) => {
         <ApartSelectionButton onPress={() => props.setApartModalVisible(true)}>
           <ApartSelectionText>
             {' '}
-            싸피아파트 {props.selectedApart}
+            {props.selectedApart}
             <Ant
               name="down"
               size={17}
