@@ -5,6 +5,8 @@ import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import SvgIcon from "../SvgIcon";
 import { NavigationProp } from '@react-navigation/native';
 import Fontisto from 'react-native-vector-icons/Fontisto';
+import { Modal, TextInput, Button } from 'react-native';
+import SearchModal from '@components/DoItListpage/SearchModal';
 
 import { 
     TouchableOpacity, 
@@ -50,19 +52,26 @@ const NotificationIcon = ({navigation} : Props) => {
 };
 
 const DoItListHeader = ({ navigation }: Props) => {
+
+  const [isSearchModalVisible, setSearchModalVisible] = useState(false);
+  
   return (
     <Header>
       <IconButton onPress={() => navigation.goBack()}>
         <SvgIcon name='backspace' size={30} ></SvgIcon>
       </IconButton>
       <IconContainer>
-        <IconButton>
+        <IconButton onPress={() => setSearchModalVisible(true)}>
           <SvgIcon name='search' size={30} ></SvgIcon>
         </IconButton>
         <IconButton>
           <NotificationIcon navigation={navigation}/>
         </IconButton>
       </IconContainer>
+      <SearchModal
+        isSearchModalVisible={isSearchModalVisible}
+        setSearchModalVisible={setSearchModalVisible}
+        />
     </Header>
   );
 };

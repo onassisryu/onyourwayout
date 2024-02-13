@@ -12,6 +12,7 @@ const SettingsComponent = styled(GlobalContainer)`
   justify-content: initial;
   align-items: initial;
   height: initial;
+  width: 88%;
   margin: 0 20px;
 
 `;

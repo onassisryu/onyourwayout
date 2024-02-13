@@ -19,6 +19,7 @@ import {QueryClient, QueryClientProvider} from 'react-query';
 
 import {ThemeProvider} from '@emotion/react';
 import theme from '@/Theme';
+
 import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 import 'moment/locale/ko';
@@ -39,10 +40,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MainStack from '@/navigations/MainStack';
 import AdminStack from '@/navigations/AdminStack';
 
-// import {NoticeTab, sendNotification} from '@/components/Noticepage/NoticeTab';
-
 import {getStorage, setStorage} from '@/storage/common_storage';
 import axiosAuth from '@/axios/axiosAuth';
+
+interface Notice {
+  id: string;
+  title: string | undefined;
+  body: string | undefined;
+}
 
 const App = () => {
   const queryClient = new QueryClient();
@@ -232,27 +237,74 @@ const App = () => {
     checkLogin();
   }, [isLoggedIn]);
 
-  useEffect(() => {
-    getFcmToken(); // 토큰 발급
-    // 앱이 켜져있을때
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('[Remote Message] ', JSON.stringify(remoteMessage));
-      // 메시지 오면 띄우는 코드
-      const notice = {
-        id: remoteMessage.messageId,
-        title: remoteMessage.notification?.title || 'No Title',
-        content: remoteMessage.notification?.body || 'No content',
+
+  
+  PushNotification.createChannel(
+    {
+      channelId: 'channel-id',
+      channelName: 'My channel',
+      channelDescription: 'A channel to categorise your notifications',
+      soundName: 'default',
+      importance: 4,
+      vibrate: true,
+    },
+    created => console.log(`createChannel returned '${created}'`)
+  );
+
+  const sendNotification = (notice: Notice) => {
+    const now = moment();
+    const formattedTime = now.format('A hh:mm');
+    const message = `${notice.body} (${formattedTime})`;
+
+    PushNotification.localNotification({
+      channelId: 'channel-id',
+      id: notice.id,
+      title: notice.title || '',
+      message: message,
+      playSound: true,
+      soundName: 'default',
+    });
+  };
+
+  const handleNotification = (remoteMessage: any) => {
+    console.log('[Remote Message] ', JSON.stringify(remoteMessage));
+    if (remoteMessage.data) {
+      const notice: Notice = {
+        id: String(remoteMessage.data.notificationId),
+        title: remoteMessage.notification?.title,
+        body: remoteMessage.notification?.body,
       };
       setData(remoteMessage.data);
       console.log('data', data);
       sendNotification(notice);
-      if (remoteMessage.notification.title === '[나가요잉 신청]') {
-        setModalVisible(true);
-      }
-    });
+    }
+  };
+
+  useEffect(() => {
+    getFcmToken();
+    const unsubscribe = messaging().onMessage(handleNotification);
+    messaging().onNotificationOpenedApp(handleNotification);
+    messaging().getInitialNotification().then(handleNotification);
+
+    const sendTestNotification = () => {
+      const notice: Notice = {
+        id: 'testNotification',
+        title: 'Test Notification',
+        body: 'This is a test notification.',
+      };
+      sendNotification(notice);
+    };
+
+    sendTestNotification();
+
     return unsubscribe;
+
   }, []);
 
+
+  
+  // 사용 예
+ 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>

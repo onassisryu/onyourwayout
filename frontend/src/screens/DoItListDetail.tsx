@@ -47,7 +47,7 @@ const ShareButton = styled(GlobalButton)`
   margin: 30px 0px 30px 0px;
 `;
 
-const DoItListImage = styled.Image`
+const DoItListImage = styled.ImageBackground`
   height: 400px;
   width: 100%;
   padding: 0;
@@ -86,7 +86,7 @@ const TextApart = styled(GlobalText)`
 `;
 
 const DistinctLine = styled.View`
-  width: 100%;
+  width: 90%;
   border: 1px solid #b2b2b2;
 `;
 
@@ -119,7 +119,7 @@ const TextContent = styled(GlobalText)`
 const InfoComponent = styled(GlobalContainer)`
   flex-direction: row;
   align-items: flex-end;
-  width: 100%;
+  width: 90%;
   height: initial;
 `;
 
@@ -245,11 +245,10 @@ const DoItListDetail = ({route, navigation}: any) => {
   const [detailImage, setDetailImage] = useState([]);
   const loginuser = useRecoilValue(userDataState);
   console.log('로그인 유저', loginuser);
+
+
   useEffect(() => {
-    getStorage('user').then(data => {
-      setUserId(data?.id); // 로그인한 사용자의 ID를 state에 저장
-    });
-    console.log('param', param);
+
     axiosAuth
       .get(`/deal/${param.id}`)
       .then(resp => {
@@ -393,13 +392,17 @@ const DoItListDetail = ({route, navigation}: any) => {
                   {responseData.dealType === 'ETC' && <SvgIcon name="building" size={20} />}
                   <TextCategory> {dealTypeTextMap[responseData.dealType]}</TextCategory>
                 </InfoComponent>
-                <InfoComponent>
+                <InfoComponent style={css`justify-content: flex-end`}>                 
                   {responseData.rewardType === 'CASH' && <TextPrice>{responseData.cash.toLocaleString()}원</TextPrice>}
                   {responseData.rewardType === 'ITEM' && <TextPrice>{responseData.item}</TextPrice>}
                 </InfoComponent>
 
                 <TextContent>{responseData.content}</TextContent>
-                <TextReport>게시글 신고하기</TextReport>
+
+
+                <TouchableOpacity onPress={() => navigation.navigate('Report', {card: responseData})}>
+                  <TextReport>게시글 신고하기</TextReport>
+                </TouchableOpacity>
               </ContentComponent>
             </SubContainer>
           </View>
@@ -473,9 +476,15 @@ const DoItListDetail = ({route, navigation}: any) => {
             navigation={navigation}
             data={param}
           />
-        ) : (
-          <ReportModal modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} />
-        ))}
+          : <ReportModal 
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            navigation={navigation}
+            responseData={responseData}
+          />
+        )
+      }
+    
     </View>
   );
 };
