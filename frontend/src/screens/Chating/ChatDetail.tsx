@@ -1,7 +1,10 @@
 import React from 'react';
-import {Button, Text, View, ScrollView, TouchableOpacity} from 'react-native';
+import Header from '@/components/Header';
+import GoBack from '@/components/Signup/GoBack';
+import {Button, Text, View, ScrollView, TouchableOpacity, TextInput, Pressable, FlatList} from 'react-native';
 import DefaultButton from '@/components/DefaultButton';
-import {GlobalContainer, GlobalText} from '@/GlobalStyles';
+import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
+import Feather from 'react-native-vector-icons/Feather';
 import styled, {css} from '@emotion/native';
 import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
@@ -16,6 +19,8 @@ import * as encoding from 'text-encoding';
 import {get} from 'axios';
 import {getStorage} from '@/storage/common_storage';
 import {getAccessToken} from '@/utils/common';
+import {useNavigation} from '@react-navigation/native';
+import {send} from 'process';
 
 const TextEncodingPolyfill = require('text-encoding');
 
@@ -24,10 +29,27 @@ Object.assign('global', {
   TextDecoder: TextEncodingPolyfill.TextDecoder,
 });
 const StyledText = styled.Text`
-  font-size: 30px;
-  margin-bottom: 10px;
+  font-size: 23px;
 `;
+const ChatSendContainer = styled.View`
+  padding: 5px;
+  flex-direction: row;
+  height: 60px;
+  align-items: center;
+  border-top-width: 1px;
+  border-top-color: #eaeaea;
 
+  justify-content: space-between;
+  background-color: #ffffff;
+`;
+const ChatSendInput = styled.TextInput`
+  flex: 1;
+  height: 40px;
+  margin-right: 5px;
+  border-radius: 20px;
+  padding: 10px;
+  background-color: #f4f5f9;
+`;
 const ChatRoomsContainer = styled(ScrollView)`
   padding: 0 20px;
 `;
@@ -44,7 +66,9 @@ const ChatTextContainer = styled.View`
   flex: 1;
   background-color: #eaeaea;
 `;
-
+const ReportButton = styled(GlobalButton)`
+  background-color: white;
+`;
 interface ChatRoom {
   id: number;
   oppNickName: string;
@@ -56,6 +80,13 @@ interface ChatRoom {
     name: string;
   };
 }
+
+type Message = {
+  msg: string;
+  senderId: number;
+  imgUrl: string;
+  createdAt: string;
+};
 type ChatDetailScreenRouteProp = RouteProp<RootStackParamList, 'ChatDetail'>;
 
 interface Props {
@@ -66,13 +97,35 @@ const ChatDetail = ({navigation}: Props) => {
   const {params} = useRoute<ChatDetailScreenRouteProp>();
   const [chatRoom, setChatRoom] = useState<ChatRoom[]>([]);
   const userData = useRecoilValue(userDataState);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [messageText, setMessageText] = useState('');
   const TextEncodingPolyfill = require('text-encoding');
 
   Object.assign('global', {
     TextEncoder: TextEncodingPolyfill.TextEncoder,
     TextDecoder: TextEncodingPolyfill.TextDecoder,
   });
+  function convertTimeFormat(dateTime: string): string {
+    const dateObj = new Date(dateTime);
+    let hours: number = dateObj.getHours();
+    let minutes: number = dateObj.getMinutes();
+    let timeSuffix: string = '오전';
+
+    if (hours >= 12) {
+      timeSuffix = '오후';
+      hours -= 12;
+    }
+
+    if (hours === 0) {
+      hours = 12;
+    }
+
+    if (minutes < 10) {
+      minutes = Number('0' + minutes);
+    }
+
+    return timeSuffix + ' ' + hours + ':' + minutes;
+  }
   const detailParams = {
     room: params.roomId,
     id: userData.id,
@@ -83,26 +136,45 @@ const ChatDetail = ({navigation}: Props) => {
       .get(`/chat/room/detail`, {params: detailParams})
       .then(res => {
         console.log('채팅방 상세정보', res.data);
-        setChatRoom(res.data);
+        console.log('채팅방 상세정보', res.data.chatMessages);
+        const data = res.data.chatMessages;
+
+        const msg = data.map((message: any) => {
+          console.log('메시지', message.msg);
+          console.log('메시지', message.senderId);
+          console.log('메시지', message.imgUrl);
+          const convertedTime = convertTimeFormat(message.createdAt);
+          console.log('메시지', convertedTime);
+
+          return {
+            msg: message.msg,
+            senderId: message.senderId,
+            imgUrl: message.imgUrl,
+            createdAt: convertedTime,
+          };
+        });
+        console.log(msg);
+        setMessages(msg);
       })
       .catch(err => {
         console.log(err);
       });
   };
   const sendMessage = (message: string) => {
+    console.log('-----------------메시지 보낸다.', message);
+    console.log('-----------------채팅방 아이디', params.userId);
     client.current?.publish({
       destination: `/pub/channel`,
       skipContentLengthHeader: true,
       body: JSON.stringify({
         chatRoomId: params.roomId, // 채팅방 고유 번호
-        sendId: 3, // 메시지 발신자 uuid
+        sendId: 23, // 메시지 발신자 uuid
         msg: message,
-        img: 'data:image/jpeg;base64,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',
+        img: '',
       }),
     });
   };
   const client = useRef<Client | null>(null);
-  // const socket = new SockJS(`${API_BASE_URL}/stomp/chat`);
   const connectChat = async () => {
     client.current = new StompJs.Client();
     client.current.configure({
@@ -121,26 +193,92 @@ const ChatDetail = ({navigation}: Props) => {
       onConnect: e => {
         console.log('Connected to the WebSocket server', e);
         client.current?.subscribe(`/sub/channel/${params.roomId}`, message => {
-          console.log(message);
-          // const json_body = JSON.parse(body.body);
+          const json_body = JSON.parse(message.body);
+          console.log('구독', json_body);
+          const msg = {
+            msg: json_body.msg,
+            senderId: json_body.sendId,
+            imgUrl: json_body.img,
+            createdAt: '',
+          };
+          setMessages(prev => [...prev, msg]);
         });
         if (client.current?.connected) {
           console.log('연결됨');
         }
-        sendMessage('안녕하세요');
       },
     });
     client.current.activate();
   };
-  connectChat();
   useEffect(() => {
+    console.log('채팅방 상세정보', params.roomId);
+    console.log('채팅방 상세정보', params.name);
     getChatDetail();
+    connectChat();
+    return () => {
+      client.current?.deactivate();
+    };
   }, []);
 
   return (
     <GlobalContainer>
-      <StyledText>Chat</StyledText>
-      <Text>{params.roomId}</Text>
+      <Header>
+        <GoBack />
+        <StyledText>{params.name}</StyledText>
+        <ReportButton>
+          <Feather
+            name="more-vertical"
+            size={25}
+            style={css`
+              color: #c4c4c4;
+            `}
+          />
+        </ReportButton>
+      </Header>
+      <View
+        style={{
+          padding: 5,
+          flexGrow: 1,
+        }}>
+        <FlatList
+          data={messages}
+          renderItem={({item}) => (
+            <View
+              style={{
+                alignSelf: item.senderId === userData.id ? 'flex-end' : 'flex-start',
+                marginBottom: 10,
+              }}>
+              <View
+                style={{
+                  padding: 10,
+                  backgroundColor: item.senderId === userData.id ? '#27D894' : '#EAEAEA',
+                  borderRadius: 10,
+                }}>
+                <Text>{item.msg}</Text>
+              </View>
+              <View>
+                <Text>{item.createdAt}</Text>
+              </View>
+            </View>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
+      <ChatSendContainer>
+        <ChatSendInput
+          placeholder={'채팅을 입력해주세요.'}
+          onChangeText={text => {
+            setMessageText(text);
+          }}
+          value={messageText}></ChatSendInput>
+        <Pressable
+          onPress={() => {
+            sendMessage(messageText);
+          }}
+          disabled={messageText == ''}>
+          <Text>전송</Text>
+        </Pressable>
+      </ChatSendContainer>
     </GlobalContainer>
   );
 };
