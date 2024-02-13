@@ -53,8 +53,8 @@ public class ChatController {
         log.info("메시지 전송 성공");
 
         // message를 저장한다.
-        chatService.saveChatMessage(response);
-        return response;
+        ChatMessageDto.Response result=chatService.saveChatMessage(response);
+        return result;
     }
 
     // 바이트 코드를 파일 형태로 변환하여 S3에 저장하고 링크를 반환

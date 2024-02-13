@@ -1,6 +1,7 @@
 package com.ssafy.oywo.service;
 
 
+import com.ssafy.oywo.dto.AlarmSettingDto;
 import com.ssafy.oywo.dto.JwtToken;
 import com.ssafy.oywo.dto.MemberDto;
 
@@ -28,6 +29,8 @@ public interface MemberService {
 
     public MemberDto.Response getMemberInfo(String username, String password);
     public MemberDto.Response getMemberInfo(Long id);
+
+    public MemberDto.Response setMemberAlarm(AlarmSettingDto.Request alarmDto);
 
     public MemberDto.Response getMemberInfo(String username);
 
