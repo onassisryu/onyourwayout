@@ -263,7 +263,7 @@ const DoItList = ({navigation}: any) => {
                   </CardTextContainer>
                 </DoItListCard>
               </DoItListButton>
-              <DistinctLine></DistinctLine>
+              <DistinctLine />
             </View>
           ))}
         </DoItListCardComponent>
