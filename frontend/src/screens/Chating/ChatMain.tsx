@@ -52,8 +52,8 @@ const ChatMain = ({navigation}: any) => {
   //   TextDecoder: TextEncodingPolyfill.TextDecoder,
   // });
   const user = {
-    memberNickname: '가영가영이',
-    otherNickname: 'pppp',
+    memberNickname: userData.nickname,
+    otherNickname: '가영가영이',
   };
   //채팅방생성
   const makeChatRoom = () => {
@@ -127,7 +127,7 @@ const ChatMain = ({navigation}: any) => {
             onPress={() => {
               navigation.navigate('ChatDetail', {
                 roomId: chatRoom.id,
-                userId: userData.id,
+                userId: chatRoom.oppId,
                 name: chatRoom.oppNickName,
                 dong: chatRoom.dong.name,
               });
