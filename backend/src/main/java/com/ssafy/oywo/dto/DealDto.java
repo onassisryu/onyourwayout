@@ -105,6 +105,8 @@ public class DealDto {
 
         private List<DealComplaint> complaints;
         private MemberDto.ResponseWithDeal requestInfo;
+
+        private Long numberOfMatchingDeals = 0L;
 //        private String nickname;
 //        private int score;
 //        private Long hoId;
@@ -169,7 +171,16 @@ public class DealDto {
             this.modifiedAt = entity.getModifiedAt();
 
         }
+
+
+        public Response(Long numberOfMatchingDeals) {
+            this.numberOfMatchingDeals = numberOfMatchingDeals;
+        }
     }
+
+
+
+
 
 
 //    @Getter
