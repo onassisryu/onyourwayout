@@ -111,6 +111,8 @@ const App = () => {
     setTimeout(() => clearInterval(timer), 60000);
   };
   function acceptGoOut(dealId: string, acceptId: string) {
+    console.log('dealId', dealId);
+    console.log('acceptId', acceptId);
     axiosAuth
       .put(`deal/out-recommend/${dealId}/${acceptId}`)
       .then(resp => {
@@ -122,6 +124,8 @@ const App = () => {
   }
 
   function cancelGoOut(dealId: string, acceptId: string) {
+    console.log('dealId', dealId);
+    console.log('acceptId', acceptId);
     axiosAuth
       .get(`deal/out-recommend/${dealId}/${acceptId}/cancel`)
       .then(resp => {
@@ -143,17 +147,6 @@ const App = () => {
     memberScore,
     time,
   }) => {
-    useEffect(() => {
-      let timer: NodeJS.Timeout;
-
-      if (visible) {
-        timer = setInterval(() => {
-          setMinuteTimer(prevTime => Math.max(prevTime - 1, 0));
-        }, 1000);
-      }
-
-      return () => clearInterval(timer);
-    }, [visible]);
     return (
       <Modal isVisible={visible}>
         <View
@@ -317,7 +310,6 @@ const App = () => {
     );
   };
 
-
   const checkLogin = async () => {
     if (isLoggedIn) {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
@@ -351,8 +343,6 @@ const App = () => {
     checkLogin();
   }, [isLoggedIn]);
 
-
-  
   PushNotification.createChannel(
     {
       channelId: 'channel-id',
@@ -391,6 +381,9 @@ const App = () => {
       setData(remoteMessage.data);
       console.log('data', data);
       sendNotification(notice);
+      if (remoteMessage.notification.title === '[나가요잉 신청]') {
+        setModalVisible(true);
+      }
     }
   };
 
@@ -401,13 +394,10 @@ const App = () => {
     messaging().getInitialNotification().then(handleNotification);
 
     return unsubscribe;
-
   }, []);
 
-
-  
   // 사용 예
- 
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>

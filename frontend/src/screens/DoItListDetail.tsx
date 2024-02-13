@@ -246,9 +246,7 @@ const DoItListDetail = ({route, navigation}: any) => {
   const loginuser = useRecoilValue(userDataState);
   console.log('로그인 유저', loginuser);
 
-
   useEffect(() => {
-
     axiosAuth
       .get(`/deal/${param.id}`)
       .then(resp => {
@@ -265,7 +263,7 @@ const DoItListDetail = ({route, navigation}: any) => {
   }, [param]);
 
   const handleIconPress = () => {
-    if (requestUserId === userId) {
+    if (userInfo.id === loginuser.id) {
       setModalType('edit'); // 수정, 삭제 가능한 모달
     } else {
       setModalType('report'); // 신고 가능한 모달
@@ -392,13 +390,15 @@ const DoItListDetail = ({route, navigation}: any) => {
                   {responseData.dealType === 'ETC' && <SvgIcon name="building" size={20} />}
                   <TextCategory> {dealTypeTextMap[responseData.dealType]}</TextCategory>
                 </InfoComponent>
-                <InfoComponent style={css`justify-content: flex-end`}>                 
+                <InfoComponent
+                  style={css`
+                    justify-content: flex-end;
+                  `}>
                   {responseData.rewardType === 'CASH' && <TextPrice>{responseData.cash.toLocaleString()}원</TextPrice>}
                   {responseData.rewardType === 'ITEM' && <TextPrice>{responseData.item}</TextPrice>}
                 </InfoComponent>
 
                 <TextContent>{responseData.content}</TextContent>
-
 
                 <TouchableOpacity onPress={() => navigation.navigate('Report', {card: responseData})}>
                   <TextReport>게시글 신고하기</TextReport>
@@ -468,24 +468,22 @@ const DoItListDetail = ({route, navigation}: any) => {
           </View>
         )}
       </View>
-      {
-        modalVisible && (
-          modalType === 'edit'
-          ?  <EditDeleteModal 
+      {modalVisible &&
+        (modalType === 'edit' ? (
+          <EditDeleteModal
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
             navigation={navigation}
             data={param}
           />
-          : <ReportModal 
+        ) : (
+          <ReportModal
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
             navigation={navigation}
             responseData={responseData}
           />
-        )
-      }
-    
+        ))}
     </View>
   );
 };
