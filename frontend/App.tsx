@@ -192,8 +192,12 @@ const App = () => {
   const checkLogin = async () => {
     if (isLoggedIn) {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
-      if (userData.roles == 'ADMIN') {
-        setAdmin(true);
+      console.log('유저 데이터', userData.roles);
+      for (let i = 0; i < userData.roles.length; i++) {
+        if (userData.roles[i] === 'ADMIN') {
+          setAdmin(true);
+          console.log('관리자입니다.');
+        }
       }
     } else {
       getStorage('token').then(token => {
