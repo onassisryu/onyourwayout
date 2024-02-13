@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -48,12 +49,13 @@ public class ChatController {
                 .chatRoomId(message.getChatRoomId())
                 .imgUrl(imgUrl).build();
 
-        // /room/{roomId}를 구독하는 클라이언트로 메시지 객체가 전달
-        sendingOperations.convertAndSend("/sub/channel/"+response.getChatRoomId(),response);
-        log.info("메시지 전송 성공");
-
         // message를 저장한다.
         ChatMessageDto.Response result=chatService.saveChatMessage(response);
+
+        // /room/{roomId}를 구독하는 클라이언트로 메시지 객체가 전달
+        sendingOperations.convertAndSend("/sub/channel/"+response.getChatRoomId(),result);
+        log.info("메시지 전송 성공");
+
         return result;
     }
 
@@ -139,7 +141,7 @@ public class ChatController {
                 .sendId(message.getSendId())
                 .chatRoomId(message.getChatRoomId())
                 .imgUrl(imgUrl).build();
-        chatService.saveChatMessage(response);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        return new ResponseEntity<>(chatService.saveChatMessage(response),HttpStatus.OK);
     }
 }
