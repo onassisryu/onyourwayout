@@ -328,7 +328,7 @@ const NoticeTab = () => {
           <TouchableWithoutFeedback onPress={() => setModalVisible(false)} >
             <ModalBackground style={{zIndex: 1}}>
               <ModalComponent>
-                <ModalText>전체 알림을 삭제하시겠습니까?</ModalText>
+                <ModalText>알림을  '전체삭제'하시겠습니까?</ModalText>
                 <ModalSubComponent>
                   
                   <View style={css`flex-direction: row; margin-top: 10px; justify-content: space-between`}>

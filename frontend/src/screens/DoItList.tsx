@@ -10,6 +10,7 @@ import SearchModal from '@components/DoItListpage/SearchModal';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
 import SvgIcon from '@components/SvgIcon';
+import { useFocusEffect } from '@react-navigation/native';
 import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
 
@@ -169,20 +170,22 @@ const DoItList = ({navigation}: any) => {
       return `${minutesAgo}분 전`;
     }
   };
-
-  useEffect(() => {
-    axiosAuth
-      .get('deal/dong/list')
-      .then(resp => {
-        setCardListData(resp.data);
-        console.log('카드리스트 api 호출 성공', resp.data);
-      })
-      .catch(error => {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
-      });
-
-    
-  }, [userData]);
+ 
+  // useEffect 부분
+  useFocusEffect(
+    React.useCallback(() => {
+      axiosAuth
+        .get('deal/dong/list')
+        .then(resp => {
+          setCardListData(resp.data);
+          setSearchResults(resp.data);
+          console.log('카드리스트 api 호출 성공', resp.data);
+        })
+        .catch(error => {
+          console.error('데이터를 가져오는 중 오류 발생:', error);
+        });
+    }, [])
+  );
   //한번렌더링하고 새로고침하면 다시랜더링 해야됨~
 
   const categoryToDealType = (category: string) => {
