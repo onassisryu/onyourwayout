@@ -195,6 +195,25 @@ const ButtonText = styled(GlobalText)`
   margin-bottom: 4px;
 `;
 
+type ResponseData = {
+  id: number;
+  title: string;
+  dealType: 'PET' | 'RECYCLE' | 'SHOP' | 'ETC';
+  rewardType: 'CASH' | 'ITEM';
+  cash: number;
+  item: string;
+  content: string;
+  createdAt: string;
+  dealStatus: 'OPEN' | 'CLOSED'; // 등등...
+};
+
+type UserInfo = {
+  id: number;
+  nickname: string;
+  dongName: string;
+  // 등등...
+};
+
 
 const dealTypeTextMap = {
   PET: '애완동물 산책',
@@ -204,7 +223,7 @@ const dealTypeTextMap = {
 };
 
 const DoItListDetail = ({route, navigation}: any) => {
-  const [userData, setUserData] = useRecoilState(userDataState);
+
   const [requestUserId, setRequestUserId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
@@ -215,8 +234,6 @@ const DoItListDetail = ({route, navigation}: any) => {
   const [userInfo, setUserInfo] = useState({});
   const [detailImage, setDetailImage] = useState([]);
   const loginuser = useRecoilValue(userDataState);
-  console.log('로그인 유저', loginuser);
-
 
   useEffect(() => {
 
@@ -228,7 +245,7 @@ const DoItListDetail = ({route, navigation}: any) => {
         setUserInfo(resp.data.requestInfo);
         setDetailImage(resp.data.dealImages);
         console.log(detailImage);
-        console.log('성공', resp.data);
+        console.log('성공------', resp.data);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -356,10 +373,14 @@ const DoItListDetail = ({route, navigation}: any) => {
 
                 <TextContent>{responseData.content}</TextContent>
 
+                
+                {userInfo.id === loginuser.id ? (<></>) 
+                : (
+                  <TouchableOpacity onPress={() => navigation.navigate('Report', {card: responseData})}>
+                    <TextReport>게시글 신고하기</TextReport>
+                  </TouchableOpacity>
+                )}
 
-                <TouchableOpacity onPress={() => navigation.navigate('Report', {card: responseData})}>
-                  <TextReport>게시글 신고하기</TextReport>
-                </TouchableOpacity>
               </ContentComponent>
             </SubContainer>
           </View>
@@ -427,7 +448,7 @@ const DoItListDetail = ({route, navigation}: any) => {
       </View>
       {
         modalVisible && (
-          modalType === 'edit'
+          modalType === 'edit' && responseData.dealStatus === 'OPEN'
           ?  <EditDeleteModal 
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}

@@ -19,7 +19,7 @@ import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
 import axiosAuth from '@/axios/axiosAuth';
 import {getAccessToken} from '@/utils/common';
-import axios from 'axios';
+
 type DoItScreenRouteProp = RouteProp<RootStackParamList, 'DoIt2'>;
 
 interface Props {
@@ -60,8 +60,8 @@ type DealProps = {
 };
 
 const EditPage = ({route, navigation}: any) => {
-  const {data} = route.params; // 수정할 게시물의 ID를 가져옵니다.
-  const currentTime = new Date(data.createdAt);
+  const {card} = route.params; // 수정할 게시물의 ID를 가져옵니다.
+  const currentTime = new Date(card.createdAt);
   const currentHour = String(currentTime.getHours()).padStart(2, '0');
   const currentMinute = String(currentTime.getMinutes()).padStart(2, '0');
   const defaultTime = `${currentHour}:${currentMinute}`;
@@ -70,34 +70,51 @@ const EditPage = ({route, navigation}: any) => {
   const oneHourLaterMinute = String(oneHourLater.getMinutes()).padStart(2, '0');
   const oneHourLaterTime = `${oneHourLaterHour}:${oneHourLaterMinute}`;
 
-  console.log(data);
+  console.log('1', card);
   const formatNumber = (num: string) => {
     return num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
-  const [title, setTitle] = useState(data.title); // 제목을 관리하는 상태
-  const [expireAt, setExpireAt] = useState(data.expireAt); // 제목을 관리하는 상태
-  const [cash, setCash] = useState(formatNumber(data.cash.toString()));
-  const [content, setContent] = useState(data.content);
+  const [title, setTitle] = useState(card.title); // 제목을 관리하는 상태
+  const [content, setContent] = useState(card.content);
+  const [expireAtStr, setExpireAtStr] = useState(card.expireAt); 
+  const [dealType, setDealType] = useState(card.dealType);
+  const [cash, setCash] = useState(formatNumber(card.cash.toString()))
+  const [item, setItem] = useState(card.item);
+  const [selectedTab, setSelectedTab] = useState<'현금' | '물물'>(
+    card.rewardType === 'CASH' ? '현금' : '물물'
+  );
 
   // 제목을 변경하는 핸들러 함수
   const handleTitleChange = (text: string) => {
     setTitle(text);
   };
+  // 만료 시간 변경
   const handleExpireAtChange = (text: string) => {
-    setExpireAt(text);
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const date = String(today.getDate()).padStart(2, '0');
+    const formattedExpireAt = `${year}-${month}-${date}T${text}:00`;
+    console.log('314234123412342411111', formattedExpireAt)
+    setExpireAtStr(formattedExpireAt);
   };
+
+  const handleItemChange = (text: string) => {
+    setItem(text);
+  };
+
   // 현금 데이터를 변경하는 핸들러 함수
   const handleCashChange = (text: string) => {
     const formattedText = formatNumber(text.replace(/,/g, '')); // 쉼표를 제거한 후 새로운 값을 포맷팅합니다.
     setCash(formattedText); // 현금 데이터를 업데이트합니다.
   };
-
+  // 내용 변경
   const handleContentChange = (text: string) => {
     setContent(text);
   };
+  // 거래 유형 변경
 
-  const [selectedTab, setSelectedTab] = useState<'현금' | '물물'>('현금');
   const [tabcolor, settabcolor] = useState<'현금' | '물물'>('현금');
   const [animatedValue] = useState(new Animated.Value(0));
   function TradeType() {
@@ -130,58 +147,44 @@ const EditPage = ({route, navigation}: any) => {
   const token =
     'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzM1ODI4N30.qU7yh9VK8SNoDHVMSPIBiejonl6AFXeIui_3ONrz2YQ';
 
-  const editMultipart = (body: any) => {
-    const formData = new FormData();
-    formData.append('dto', JSON.stringify(body.jsonData));
-    formData.append('dealImageFileList', body.dealImageFileList);
-
-    console.log(JSON.stringify(body.jsonData));
-    const instance = axios.create();
-    return instance({
-      url: `http://i10a302.p.ssafy.io:8080/deal/${data.id}`,
-      method: 'put',
-      data: formData,
-      headers: {
-        'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzM1ODI4N30.qU7yh9VK8SNoDHVMSPIBiejonl6AFXeIui_3ONrz2YQ',
-        'content-type': 'multipart/form-data',
-      },
-    });
-  };
-
   function Edit() {
     const formatCash = (cash: string) => {
+      // cash가 문자열이 아니거나 undefined일 경우, 그대로 반환합니다.
+      if (typeof cash !== 'string') {
+        return cash;
+      }
+
       return Number(cash.replace(/,/g, '')); // 쉼표를 제거하고, 숫자 형식으로 변환합니다.
     };
 
-    const formatExpireAt = (expireAt: string) => {
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더해줍니다.
-      const date = String(today.getDate()).padStart(2, '0');
-
-      return `${year}-${month}-${date}T${expireAt}:00`; // "YYYY-MM-DDTHH:MM:SS" 형태로 만듭니다.
-    };
-
-    const data = {
-      title: title,
-      content: content,
-      cash: formatCash(cash), // 쉼표를 제거하고 숫자 형식으로 변환한 후 cash 데이터를 집어넣습니다.
-      dealType: 'PET',
-      expireAt: formatExpireAt(expireAt), // ":00"을 추가한 형태로 expireAt 데이터를 집어넣습니다.
-    };
-
-    const body = {
-      jsonData: data,
-      dealImageFileList: '',
-    };
-
-    editMultipart(body)
+    axiosAuth
+      .put(`deal/${card.id}`, {
+        dto: {
+          id: card.id,
+          title: title,
+          content: content,
+          cash: selectedTab === '현금' ? formatCash(cash) : null,
+          item: selectedTab === '물물' ? item : null,
+          dealType: 'PET',
+          expireAtStr: expireAtStr,
+        },
+        dealImageFileList: [
+          ''
+        ]
+      })
       .then(resp => {
-        console.log('성공', resp.data);
-        navigation.navigate('DoItListDetail', {id: resp.data.id});
+        console.log('성공11111', resp.data);
+        navigation.navigate('DoItListDetail', {card: resp.data});
       })
       .catch(error => {
+        console.log(card.id)
+        console.log(title)
+        console.log(content)
+        console.log(selectedTab === '현금' ? formatCash(cash) : null);
+        console.log(selectedTab === '물물' ? item : null)
+        console.log('PET')
+        console.log(expireAtStr)
+        console.log([''])
         console.error('데이터를 가져오는 중 오류 발생:', error);
         //
       });
@@ -203,7 +206,7 @@ const EditPage = ({route, navigation}: any) => {
             style={css`
               padding-left: 70px;
             `}
-            placeholder={data.title}
+            placeholder={card.title}
             placeholderTextColor={theme.color.gray100}
             defaultValue={title} // 제목의 초기값을 설정합니다.
             onChangeText={handleTitleChange} // 제목이 변경되면 이를 반영합니다.
@@ -407,7 +410,8 @@ const EditPage = ({route, navigation}: any) => {
               <StyledInput
                 placeholder="상품을 입력해주세요"
                 placeholderTextColor={theme.color.gray100}
-                defaultValue={data.item}
+                defaultValue={item}
+                onChangeText={handleItemChange}
               />
             </StyledInputContainer>
           )}
@@ -418,7 +422,7 @@ const EditPage = ({route, navigation}: any) => {
             style={css`
               height: 100px;
             `}
-            placeholder={data.content}
+            placeholder={card.content}
             placeholderTextColor={theme.color.gray100}
             defaultValue={content} // 제목의 초기값을 설정합니다.
             onChangeText={handleContentChange} // 제목이 변경되면 이를 반영합니다.

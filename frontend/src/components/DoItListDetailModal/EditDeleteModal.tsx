@@ -89,7 +89,7 @@ const EditDeleteModal = ( props: Props ) => {
               <ModalComponent>
                 <ModalSubComponent
                   onPress={() => {
-                    props.navigation.navigate('DoItPut', {data: props.data});
+                    props.navigation.navigate('DoItPut', {card: props.data});
                     props.setModalVisible(false);
                   }}>
   
