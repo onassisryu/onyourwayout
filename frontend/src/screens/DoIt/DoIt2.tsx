@@ -258,6 +258,7 @@ const DoIt2 = ({navigation}: Props) => {
     }
   };
   function MakeDeal() {
+    console.log('이미지파일', imageData);
     const data = {
       title: '반려동물 산책시켜주세요',
       content: '저희 뽀삐 안물어요 1시간 산책시켜주세요',
@@ -268,7 +269,7 @@ const DoIt2 = ({navigation}: Props) => {
 
     const body = {
       jsonData: data,
-      dealImageFileList: [imageData],
+      dealImageFileList: imageData,
     };
 
     submitMultipart(body)

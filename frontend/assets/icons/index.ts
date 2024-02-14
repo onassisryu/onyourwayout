@@ -19,5 +19,8 @@ export {default as bell_white} from './bell_white.svg';
 export {default as logo} from './logo.svg';
 export {default as profile} from './profile.svg';
 // export {default as send} from './send.svg';
-// // export {default as searchIcon} from '../icons/search.png';
+// export {default as searchIcon} from '../icons/search.png';
+
+// export {default as searchIcon} from '../icons/search.png';
+
 // export {default as notificationIcon} from '../icons/bell_black.png';

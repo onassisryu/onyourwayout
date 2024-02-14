@@ -236,7 +236,6 @@ const DoItListDetail = ({route, navigation}: any) => {
   const loginuser = useRecoilValue(userDataState);
 
   useEffect(() => {
-
     axiosAuth
       .get(`/deal/${param.id}`)
       .then(resp => {
@@ -366,21 +365,22 @@ const DoItListDetail = ({route, navigation}: any) => {
                   {responseData.dealType === 'ETC' && <SvgIcon name="building" size={20} />}
                   <TextCategory> {dealTypeTextMap[responseData.dealType]}</TextCategory>
                 </InfoComponent>
-                <InfoComponent style={css`justify-content: flex-end`}>                 
+                <InfoComponent
+                  style={css`
+                    justify-content: flex-end;
+                  `}>
                   {responseData.rewardType === 'CASH' && <TextPrice>{responseData.cash.toLocaleString()}원</TextPrice>}
                   {responseData.rewardType === 'ITEM' && <TextPrice>{responseData.item}</TextPrice>}
                 </InfoComponent>
 
                 <TextContent>{responseData.content}</TextContent>
 
-                
                 {userInfo.id === loginuser.id ? (<></>) 
                 : (
                   <TouchableOpacity onPress={() => navigation.navigate('Report', {card: responseData})}>
                     <TextReport>게시글 신고하기</TextReport>
                   </TouchableOpacity>
                 )}
-
               </ContentComponent>
             </SubContainer>
           </View>
@@ -449,21 +449,22 @@ const DoItListDetail = ({route, navigation}: any) => {
       {
         modalVisible && (
           modalType === 'edit' && responseData.dealStatus === 'OPEN'
-          ?  <EditDeleteModal 
+          ?  (<EditDeleteModal 
+
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
             navigation={navigation}
             data={param}
           />
-          : <ReportModal 
+        ) : (
+          <ReportModal
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
             navigation={navigation}
             responseData={responseData}
           />
         )
-      }
-    
+        )}
     </View>
   );
 };

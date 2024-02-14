@@ -10,7 +10,7 @@ import {Alert, TouchableOpacity} from 'react-native';
 import {StatusBar} from 'react-native';
 import {NavigationContainer, useNavigationContainerRef} from '@react-navigation/native';
 import {Text, View, Button} from 'react-native';
-import {css} from '@emotion/native';
+import styled, {css} from '@emotion/native';
 
 //recoil&react-query
 import {isLoggedInState, userDataState, apartDataState, fcmTokenState} from '@/recoil/atoms';
@@ -18,6 +18,7 @@ import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
 import {ThemeProvider} from '@emotion/react';
+
 import theme from '@/Theme';
 
 import PushNotification from 'react-native-push-notification';
@@ -42,6 +43,19 @@ import AdminStack from '@/navigations/AdminStack';
 
 import {getStorage, setStorage} from '@/storage/common_storage';
 import axiosAuth from '@/axios/axiosAuth';
+const Scorebarbackground = styled.View`
+  height: 15px;
+  width: 100%;
+  border-radius: 10px;
+  background-color: #eaeaea;
+  position: relative;
+`;
+const Scorebar = styled.View`
+  height: 15px;
+  border-radius: 10px;
+  background-color: ${theme.color.primary};
+  position: absolute;
+`;
 
 interface Notice {
   id: string;
@@ -54,7 +68,7 @@ const App = () => {
 
   const [admin, setAdmin] = useState(false);
   const userData = useRecoilValue(userDataState);
-
+  const [minuteTimer, setMinuteTimer] = useState(60);
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const setUserData = useSetRecoilState(userDataState);
   const setApartData = useSetRecoilState(apartDataState);
@@ -83,9 +97,22 @@ const App = () => {
     onClose: () => void;
     dealId: string;
     acceptId: string;
+    nickname: string;
+    dong: string;
+    memberScore: number;
+    time: number;
   }
+  const startTimer = () => {
+    const timer = setInterval(() => {
+      setMinuteTimer(prevTime => prevTime - 1);
+    }, 1000);
 
+    // 0초가 되면 타이머 종료
+    setTimeout(() => clearInterval(timer), 60000);
+  };
   function acceptGoOut(dealId: string, acceptId: string) {
+    console.log('dealId', dealId);
+    console.log('acceptId', acceptId);
     axiosAuth
       .put(`deal/out-recommend/${dealId}/${acceptId}`)
       .then(resp => {
@@ -95,7 +122,31 @@ const App = () => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   }
-  const CustomAlert: FC<CustomAlertProps> = ({visible, title, onClose, dealId, acceptId}) => {
+
+  function cancelGoOut(dealId: string, acceptId: string) {
+    console.log('dealId', dealId);
+    console.log('acceptId', acceptId);
+    axiosAuth
+      .get(`deal/out-recommend/${dealId}/${acceptId}/cancel`)
+      .then(resp => {
+        console.log('나가요잉 매칭 실패', resp.data);
+      })
+      .catch(error => {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      });
+  }
+
+  const CustomAlert: FC<CustomAlertProps> = ({
+    visible,
+    title,
+    onClose,
+    dealId,
+    acceptId,
+    nickname,
+    dong,
+    memberScore,
+    time,
+  }) => {
     return (
       <Modal isVisible={visible}>
         <View
@@ -110,7 +161,7 @@ const App = () => {
               padding: 20px;
               border-radius: 10px;
               width: 95%;
-              height: 50%;
+              height: 55%;
               align-items: center;
             `}>
             <Text
@@ -124,7 +175,7 @@ const App = () => {
             <Text
               style={css`
                 font-size: 17px;
-                margin-bottom: 10px;
+                margin-bottom: 20px;
                 color: gray;
               `}>
               매칭을 기다리고 있습니다
@@ -136,37 +187,121 @@ const App = () => {
                 border: 1px solid gray;
                 border-radius: 10px;
                 margin-bottom: 20px;
-              `}></View>
+              `}>
+              <View
+                style={css`
+                  flex-direction: row;
+                  align-items: center;
+                  height: 100%;
+                `}>
+                <View
+                  style={css`
+                    height: 100px;
+                    width: 40%;
+                    border-radius: 100px;
+                    margin: 10px;
+                    background-color: ${theme.color.gray100};
+                  `}></View>
+                <View
+                  style={css`
+                    width: 50%;
+                  `}>
+                  <Text
+                    style={css`
+                      font-size: 20px;
+                      font-weight: 700;
+                    `}>
+                    {nickname}
+                  </Text>
+                  <Text
+                    style={css`
+                      font-size: 15px;
+                      font-weight: 700;
+                      color: ${theme.color.gray300};
+                      margin-bottom: 10px;
+                    `}>
+                    {dong}동
+                  </Text>
+                  <Text>이웃지수</Text>
+                  <View
+                    style={css`
+                      width: 100%;
+                      margin-top: 5px;
+                    `}>
+                    <Scorebarbackground>
+                      <Scorebar
+                        style={css`
+                          width: ${memberScore}%;
+                        `}></Scorebar>
+                    </Scorebarbackground>
+                  </View>
+                </View>
+              </View>
+            </View>
             {/* 상대방 정보 카드 */}
             <View
               style={css`
                 height: 30px;
-                width: 80%;
-                background-color: green;
+                width: 90%;
                 margin-bottom: 20px;
-              `}></View>
+                border: 1px solid ${theme.color.primary};
+                border-radius: 10px;
+                justify-content: flex-start;
+                padding: 2px;
+              `}>
+              <View
+                style={css`
+                  background-color: ${theme.color.primary};
+                  height: 100%;
+                  width: 100 * (60-${time})/60%;
+                  border-radius: 8px;
+                `}></View>
+              <Text>{time}초</Text>
+            </View>
             {/* 타이머 */}
             <View
               style={css`
                 flex-direction: row;
                 justify-content: space-between;
-                width: 80%;
+                width: 90%;
               `}>
               <TouchableOpacity
                 onPress={() => acceptGoOut(dealId, acceptId)}
                 style={css`
-                  width: 45%;
-                  background-color: green;
+                  width: 47%;
+                  height: 50px;
+                  background-color: ${theme.color.primary};
+                  justify-content: center;
+                  align-items: center;
+                  border-radius: 10px;
                 `}>
-                <Text>수락하기</Text>
+                <Text
+                  style={css`
+                    color: white;
+                    font-size: 20px;
+                    font-weight: 700;
+                  `}>
+                  수락하기
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={onClose}
+                onPress={() => cancelGoOut(dealId, acceptId)}
                 style={css`
-                  width: 45%;
-                  background-color: green;
+                  width: 47%;
+                  height: 50px;
+                  background-color: ${theme.color.gray};
+                  justify-content: center;
+                  align-items: center;
+                  border-radius: 10px;
                 `}>
-                <Text>거절하기</Text>
+                <Text
+                  style={css`
+                    color: white;
+                    font-size: 20px;
+                    font-weight: 700;
+                  `}>
+                  거절하기
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -246,6 +381,9 @@ const App = () => {
       setData(remoteMessage.data);
       console.log('data', data);
       sendNotification(notice);
+      if (remoteMessage.notification.title === '[나가요잉 신청]') {
+        setModalVisible(true);
+      }
     }
   };
 
@@ -256,13 +394,10 @@ const App = () => {
     messaging().getInitialNotification().then(handleNotification);
 
     return unsubscribe;
-
   }, []);
 
-
-  
   // 사용 예
- 
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
@@ -273,8 +408,12 @@ const App = () => {
             visible={isModalVisible}
             onClose={handleCloseModal}
             title={data.title}
+            nickname={data.acceptMemberNickname}
+            dong={data.acceptMemberDong}
+            memberScore={data.acceptMemberScore}
             acceptId={data.acceptMemberId}
             dealId={data.dealId}
+            time={minuteTimer}
           />
           {admin ? <AdminStack /> : <MainStack />}
         </NavigationContainer>
