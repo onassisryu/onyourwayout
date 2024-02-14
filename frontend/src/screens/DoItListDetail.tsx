@@ -195,18 +195,24 @@ const ButtonText = styled(GlobalText)`
   margin-bottom: 4px;
 `;
 
-interface DoListCard {
+type ResponseData = {
   id: number;
-  category: string;
-  image: ImageSourcePropType;
   title: string;
-  apart: string;
-  uptime: string;
-  nickname: string;
+  dealType: 'PET' | 'RECYCLE' | 'SHOP' | 'ETC';
+  rewardType: 'CASH' | 'ITEM';
+  cash: number;
+  item: string;
   content: string;
-  price: string;
-  remaintime: string;
-}
+  createdAt: string;
+  dealStatus: 'OPEN' | 'CLOSED'; // 등등...
+};
+
+type UserInfo = {
+  id: number;
+  nickname: string;
+  dongName: string;
+  // 등등...
+};
 
 const dealTypeTextMap = {
   PET: '애완동물 산책',
@@ -214,76 +220,48 @@ const dealTypeTextMap = {
   SHOP: '장보기',
   ETC: '기타',
 };
-
+type User = {
+  id: number;
+  nickname: string;
+  username: string;
+  score: number;
+  dongId: number;
+  dongName: string;
+};
 const DoItListDetail = ({route, navigation}: any) => {
-  const [userData, setUserData] = useRecoilState(userDataState);
-
-  const handleEdit = (newData: object) => {
-    setUserData(newData); // userData를 수정합니다.
-  };
-
-  const card = {
-    id: 1,
-    category: 'PET',
-    title: '맛있는 김치를 구해요!',
-    apart: '삼성아파트',
-    uptime: '1시간 전',
-    price: '10,000원',
-    nickname: '호구팟',
-    content: '나는김치맨김치파워',
-  };
-
-  const [userId, setUserId] = useState(null); // 로그인한 사용자의 ID를 저장하는 state
   const [requestUserId, setRequestUserId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
 
-  const param = route.params;
-
   const [responseData, setResponseData] = useState({});
-  const [userInfo, setUserInfo] = useState({});
+  const [userInfo, setUserInfo] = useState<User | null>(null);
   const [detailImage, setDetailImage] = useState([]);
   const loginuser = useRecoilValue(userDataState);
-  console.log('로그인 유저', loginuser);
 
   useEffect(() => {
+    console.log('param', route.params.id);
     axiosAuth
-      .get(`/deal/${param.id}`)
+      .get(`/deal/${route.params.id}`)
       .then(resp => {
         setResponseData(resp.data);
         setRequestUserId(resp.data.requestId);
         setUserInfo(resp.data.requestInfo);
         setDetailImage(resp.data.dealImages);
-        console.log(detailImage);
-        console.log('성공', resp.data);
+        console.log('=====================유저', userInfo);
+        console.log(userInfo?.nickname);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
-  }, [param]);
+  }, []);
 
   const handleIconPress = () => {
-    if (userInfo.id === loginuser.id) {
+    if (userInfo?.id === loginuser.id) {
       setModalType('edit'); // 수정, 삭제 가능한 모달
     } else {
       setModalType('report'); // 신고 가능한 모달
     }
     setModalVisible(true); // 모달 열기
-  };
-
-  const categoryToDealType = (category: string) => {
-    switch (category) {
-      case '반려동물 산책':
-        return 'PET';
-      case '심부름':
-        return 'SHOP';
-      case '분리수거':
-        return 'RECYCLE';
-      case '기타':
-        return 'ETC';
-      default:
-        return '';
-    }
   };
 
   const calculateTimeAgo = (createdAt: string) => {
@@ -373,10 +351,10 @@ const DoItListDetail = ({route, navigation}: any) => {
               <SubHeader>
                 <SvgIcon name="profile" size={40} />
                 <ProfileComponent>
-                  <TextNickname> {userInfo.nickname}</TextNickname>
+                  <TextNickname> {userInfo?.nickname}</TextNickname>
                   <TextApart>
                     {' '}
-                    {userInfo.dongName}동 / {calculateTimeAgo(responseData.createdAt)}
+                    {userInfo?.dongName}동 / {calculateTimeAgo(responseData.createdAt)}
                   </TextApart>
                 </ProfileComponent>
               </SubHeader>
@@ -400,9 +378,13 @@ const DoItListDetail = ({route, navigation}: any) => {
 
                 <TextContent>{responseData.content}</TextContent>
 
-                <TouchableOpacity onPress={() => navigation.navigate('Report', {card: responseData})}>
-                  <TextReport>게시글 신고하기</TextReport>
-                </TouchableOpacity>
+                {userInfo?.id === loginuser.id ? (
+                  <></>
+                ) : (
+                  <TouchableOpacity onPress={() => navigation.navigate('Report', {card: responseData})}>
+                    <TextReport>게시글 신고하기</TextReport>
+                  </TouchableOpacity>
+                )}
               </ContentComponent>
             </SubContainer>
           </View>
@@ -440,7 +422,7 @@ const DoItListDetail = ({route, navigation}: any) => {
           bottom: 60px;
           z-index: 1;
         `}>
-        {userInfo.id === loginuser.id ? (
+        {userInfo?.id === loginuser.id ? (
           <View>
             <Text>내 작성글 입니다</Text>
           </View>
@@ -464,7 +446,7 @@ const DoItListDetail = ({route, navigation}: any) => {
         )}
       </View>
       {modalVisible &&
-        (modalType === 'edit' ? (
+        (modalType === 'edit' && responseData.dealStatus === 'OPEN' ? (
           <EditDeleteModal
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}

@@ -13,6 +13,7 @@ export const GlobalContainer = styled.View`
   height: 100%;
   width: 100%;
 `;
+
 export const GlobalComponent = styled.View`
   font-family: ${theme.font.primary};
   font-size: ${theme.fontSize.medium};

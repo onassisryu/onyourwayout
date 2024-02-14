@@ -7,6 +7,7 @@ import {View, TouchableOpacity, ImageSourcePropType} from 'react-native';
 import {GlobalText} from '@/GlobalStyles';
 import GoBack from '@/components/Signup/GoBack';
 import Header from '@/components/Header';
+import Ant from 'react-native-vector-icons/AntDesign';
 
 const BackImage = styled.View`
   width: 25px;
@@ -20,10 +21,19 @@ const NoticeTitle = styled(GlobalText)`
   padding-bottom: 5px;
 `;
 
-const NoticeSettingsHeader = () => {
+interface Props {
+  navigation: NavigationProp<any>;
+}
+
+const NoticeSettingsHeader = ({navigation}: Props) => {
   return (
     <Header>
-      <GoBack />
+      <Ant
+        name="arrowleft"
+        size={40}
+        color="black"
+        onPress={() => navigation.navigate('Notice')}
+      />
       <NoticeTitle> 알림설정 </NoticeTitle>
       <BackImage />
     </Header>

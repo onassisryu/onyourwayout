@@ -6,6 +6,7 @@ import axiosAuth from '@/axios/axiosAuth';
 import axiosBasic from '@/axios/axios';
 import DefaultButton from '@/components/DefaultButton';
 import {getAccessToken} from '@/utils/common';
+import {NavigationProp, RouteProp} from '@react-navigation/native';
 
 import NoticeSettingsHeader from '@components/NoticeSettingspage/NoticeSettingsHeader';
 import NoticeSettingsCategory from '@/components/NoticeSettingspage/NoticeSettingsCategory';
@@ -21,23 +22,37 @@ const SaveButton = styled(DefaultButton)`
   background-color: #00D282;
 `;
 
-type ApartmentData = {
-  apartment: {
-      aptCode: string;
-      areaCode: string;
-      createdAt: null;
-      deletedAt: null;
-      id: number;
-      lat: number;
-      lng: number;
-      modifiedAt: null;
-      name: string;
-  };
-  dongId: number;
-  name: string;
+type Category = {
+  createdAt: string;
+  dealType: string;
+  deletedAt: string | null;
+  id: number;
+  member: number;
+  modifiedAt: string;
 };
 
-const NoticeSettings = () => {
+type NotiDong = {
+  createdAt: string;
+  deletedAt: string | null;
+  dongId: number;
+  id: number;
+  member: number;
+  modifiedAt: string;
+};
+
+type ResponseData = {
+  categories: Category[];
+  memberId: number;
+  notiDongs: NotiDong[];
+  notificationEnd: string;
+  notificationStart: string;
+};
+
+interface Props {
+  navigation: NavigationProp<any>;
+}
+
+const NoticeSettings = ({navigation} : Props) => {
   const initialCategories = ['반려동물 산책', '분리수거', '심부름', '기타'];
 
   const [categories, setCategories] = useState<string[]>(initialCategories);
@@ -102,23 +117,14 @@ const NoticeSettings = () => {
       dongIdList: isNotiDongAll ? [] : selectedDongIds,
       notificationStart: formattedStart,
       notificationEnd: formattedEnd
-    // },  { headers: {
-    //   'Content-Type': 'application/json',
-    //   'Authorization': `Bearer ${await getAccessToken()}`
-    //   }
     })
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => {
-        console.log(selectedDongs.length === dongs.length)
-        console.log(selectedCategories.length === categories.length)
-        console.log(selectedCategories)
-        console.log(selectedDongIds)
-        console.log(formattedStart)
-        console.log(formattedEnd)
-        console.error(error);
-      });
+    .then(response => {
+      console.log(response.data);
+
+    })
+    .catch(error => {
+      console.error(error);
+    });
   };
 
   return (
@@ -126,7 +132,7 @@ const NoticeSettings = () => {
       style={css`
         height: 100%;
       `}>
-      <NoticeSettingsHeader></NoticeSettingsHeader>
+      <NoticeSettingsHeader navigation={navigation}></NoticeSettingsHeader>
       <NoticeSettingsContent></NoticeSettingsContent>
       <NoticeSettingsCategory
         categories={categories}

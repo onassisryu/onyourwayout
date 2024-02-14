@@ -6,9 +6,11 @@ import DoItListHeader from '@components/DoItListpage/DoItListHeader';
 import DoItListCategory from '@components/DoItListpage/DoItListCategory';
 import ApartSelectionModal from '@components/DoItListpage/ApartSelectionModal';
 import ReportModal from '@components/DoItListpage/ReportModal';
+import SearchModal from '@components/DoItListpage/SearchModal';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
 import SvgIcon from '@components/SvgIcon';
+import {useFocusEffect} from '@react-navigation/native';
 import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
 
@@ -167,17 +169,21 @@ const DoItList = ({navigation}: any) => {
     }
   };
 
-  useEffect(() => {
-    axiosAuth
-      .get('deal/dong/list')
-      .then(resp => {
-        setCardListData(resp.data);
-        console.log('카드리스트 api 호출 성공', resp.data);
-      })
-      .catch(error => {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
-      });
-  }, [userData]);
+  // useEffect 부분
+  useFocusEffect(
+    React.useCallback(() => {
+      axiosAuth
+        .get('deal/dong/list')
+        .then(resp => {
+          setCardListData(resp.data);
+          setSearchResults(resp.data);
+          console.log('카드리스트 api 호출 성공', resp.data);
+        })
+        .catch(error => {
+          console.error('데이터를 가져오는 중 오류 발생:', error);
+        });
+    }, [])
+  );
   //한번렌더링하고 새로고침하면 다시랜더링 해야됨~
 
   const categoryToDealType = (category: string) => {
@@ -202,9 +208,45 @@ const DoItList = ({navigation}: any) => {
 
   const [selectedCard, setSelectedCard] = useState({});
 
+  // 검색어를 기반으로 카드를 필터링하는 함수
+  const [isSearchModalVisible, setSearchModalVisible] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState<DoListCard[]>(cardListData);
+
+  const searchCards = (term: string) => {
+    let results = cardListData; // 먼저 카테고리 필터링이 적용될 것입니다.
+
+    // 카테고리 필터링
+    if (selectedTypeCategory) {
+      results = results.filter(card => card.dealType === categoryToDealType(selectedTypeCategory));
+    }
+
+    // 검색어가 있는 경우에만 검색 필터링을 적용합니다.
+    if (term !== '') {
+      results = results.filter(
+        card => card.title.includes(term) || card.content.includes(term) || card.cash.toString().includes(term)
+      );
+    }
+    setSearchResults(results); // 필터링된 결과를 searchResults에 저장합니다.
+  };
+
+  // useEffect 부분
+  useEffect(() => {
+    searchCards(searchTerm);
+  }, [searchTerm, selectedTypeCategory]);
+
   return (
     <GlobalContainer>
-      <DoItListHeader navigation={navigation}></DoItListHeader>
+      <SearchModal
+        isSearchModalVisible={isSearchModalVisible}
+        setSearchModalVisible={setSearchModalVisible}
+        searchResults={searchResults}
+        setSearchResults={setSearchResults}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchCards={searchCards}
+      />
+      <DoItListHeader navigation={navigation} setSearchModalVisible={setSearchModalVisible} />
       <DoItListCategory
         selectedApartCategory={selectedApartCategory}
         selectedTypeCategory={selectedTypeCategory}
@@ -216,7 +258,7 @@ const DoItList = ({navigation}: any) => {
       />
       <ScrollView overScrollMode="never">
         <DoItListCardComponent>
-          {filteredData.map((card, index) => (
+          {searchResults.map((card, index) => (
             <View key={index}>
               <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {id: card.id})}>
                 <DoItListCard>

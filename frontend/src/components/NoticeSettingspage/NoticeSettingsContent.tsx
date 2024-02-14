@@ -5,28 +5,20 @@ import {Switch} from 'react-native';
 import {GlobalText, GlobalContainer, GlobalButton} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {css} from '@emotion/native';
 
 const SettingsContainer = styled(GlobalContainer)`
   justify-content: initial;
   align-items: initial;
-  width: 88%;
+  width: 90%;
   height: initial;
   margin: 0 20px;
 `;
 
 const SettingComponent = styled(GlobalContainer)`
-  padding-top: 20px;
+  padding-top: 10px;
   padding-bottom: 10px;
-  border-bottom-width: 1px;
-  border-bottom-color: #b2b2b2;
   height: initial;
-`;
-
-const SettingsTitle = styled(GlobalText)`
-  font-size: ${props => props.theme.fontSize.subtitle};
-  color: ${props => props.theme.color.black};
-  font-weight: bold;
-  margin-bottom: 15px;
 `;
 
 const SettingsContent = styled(GlobalText)`
@@ -41,9 +33,36 @@ const SettingsSubcomponent = styled(GlobalContainer)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
   padding: 0 15px;
   height: initial;
+`;
+
+const DistinctLine = styled.View`
+  width: 95%;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border: 0.5px solid #b2b2b2;
+  background-color: #b2b2b2;
+`;
+
+const TimeComponent = styled(GlobalContainer)`
+  flex-direction: row;
+  align-items: center;
+  margin: 10px 15px 10px 15px;
+  height: initial;
+`;
+
+const StyledInput = styled.TextInput`
+  width: 100%;
+  font-size: 18px;
+  color: ${props => props.theme.color.primary};
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 5px 15px 5px 5px;
+  border: 1px solid ${props => props.theme.color.primary};
+  color: ${props => props.theme.color.black};
 `;
 
 interface Setting {
@@ -59,34 +78,15 @@ const NoticeSettings = () => {
     {id: 'vibration', title: '진동', value: false},
   ]);
 
-
-  // useEffect(() => {
-  //   AsyncStorage.getItem('token').then((token) => {
-  //     axiosAuth.get(`/alarm/get/1`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`, // 토큰을 Bearer 토큰으로 설정
-  //       }
-  //     })
-  //       .then(response => {
-  //         console.log(response.data);
-  //         const data = Array.isArray(response.data) ? response.data : [response.data];
-  //         console.log(data)
-
-  //       })
-  //       .catch(error => console.error(error));
-  //   });
-  // }, []);
-
   const handleSwitchChange = (settings: Setting[], setFunc: React.Dispatch<React.SetStateAction<Setting[]>>, id: string, value: boolean) => {
     setFunc(settings.map(setting => (setting.id === id ? {...setting, value} : setting)));
   };
 
   return (
     <SettingsContainer>
-      <SettingComponent>
-        <SettingsTitle> 일반 </SettingsTitle>
-        {generalSettings.map(setting => (
-          <SettingsSubcomponent key={setting.id}>
+      {generalSettings.map(setting => (
+        <SettingComponent key={setting.id}>
+          <SettingsSubcomponent>
             <SettingsContent>{setting.title}</SettingsContent>
             <Switch
               trackColor={{true: '#00D282', false: '#767577'}}
@@ -97,9 +97,34 @@ const NoticeSettings = () => {
               style={{transform: [{scaleX: 1.1}, {scaleY: 1.1}]}}
             />
           </SettingsSubcomponent>
-        ))}
-      </SettingComponent>
-
+          {setting.id === 'time' && setting.value && (
+            // 방해금지 시간 설정 스위치가 켜져 있을 때만 이 설정에 관련된 추가 컴포넌트를 렌더링합니다.
+            <>
+              <TimeComponent>
+                <SettingsContent>From : </SettingsContent>
+                <StyledInput
+                  style={css`
+                    width: 32%;
+                    font-weight: 500;
+                    height: 40px;
+                    color: ${theme.color.black};
+                  `}
+                />
+                <SettingsContent>To : </SettingsContent>
+                <StyledInput
+                  style={css`
+                    width: 32%;
+                    font-weight: 500;
+                    height: 40px;
+                    color: ${theme.color.black};
+                  `}
+                />
+              </TimeComponent>
+            </>
+          )}
+        </SettingComponent>
+    ))}
+    <DistinctLine></DistinctLine>
     </SettingsContainer>
   );
 };

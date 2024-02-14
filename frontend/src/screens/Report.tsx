@@ -159,7 +159,7 @@ const Report = ({route, navigation}: any) => {
 
       <SubComponent>
         <ReportArticleTitle>
-          <ArticleTitle> '{param.title}' 게시글을 </ArticleTitle>
+          <ArticleTitle> '{param.requestInfo.nickname}'님의 '{param.title}' 게시글을 </ArticleTitle>
           <ArticleTitle> 신고하려는 이유를 선택해주세요. </ArticleTitle>
           <DistinctLine></DistinctLine>
         </ReportArticleTitle>
@@ -189,7 +189,7 @@ const Report = ({route, navigation}: any) => {
         <DistinctLine></DistinctLine>
       </SubComponent>
 
-      <StyledInputTitle>상세정보</StyledInputTitle>
+      <StyledInputTitle>신고 상세정보</StyledInputTitle>
         <StyledInputContainer>
           <StyledInput
             style={css`
@@ -199,6 +199,8 @@ const Report = ({route, navigation}: any) => {
             placeholderTextColor={theme.color.gray100}
             defaultValue={reportContent}
             onChangeText={setReportContent}
+            multiline={true}
+            numberOfLines={4}
           />
       </StyledInputContainer>
       <ButtonContainer>
