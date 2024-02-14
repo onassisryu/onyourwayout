@@ -381,7 +381,7 @@ public class MemberServiceImpl implements MemberService {
                     notiDongRepository.save(dong);
                 }
             }
-            member.setNotiDongs(dongList);
+            //member.setNotiDongs(dongList);
         }
         // 전체 카테고리 알림 여부 확인
         if (alarmDto.getIsNotiDongAll()){
