@@ -176,11 +176,13 @@ public class DealServiceImpl implements DealService{
     // 요청자/수행자 현재 거래 조회
     @Override
     @Transactional(readOnly = true)
-    public DealDto.Response getDealByStatusING(Long requestId, Long acceptId) {
-        Deal deal = dealRepository.findTopByRequestIdAndAcceptIdAndDealStatusOrderByModifiedAtDesc(requestId, acceptId, Deal.DealStatus.ING)
-                .orElseThrow(() -> new IllegalArgumentException("현재 진행 중인 거래가 없습니다."));
-        return new DealDto.Response(deal);
+    public List<DealDto.Response> getDealsBetweenUsers(Long requestId, Long acceptId) {
+        List<Deal> deals = dealRepository.findByRequestIdAndAcceptIdAndDealStatus(requestId, acceptId, Deal.DealStatus.ING);
+        // acceptId와 requestId로도 확인
+        deals.addAll(dealRepository.findByRequestIdAndAcceptIdAndDealStatus(acceptId, requestId, Deal.DealStatus.ING));
+        return deals.stream().map(DealDto.Response::new).collect(Collectors.toList());
     }
+
 
 
     // 내가 나온김에 해야할 일

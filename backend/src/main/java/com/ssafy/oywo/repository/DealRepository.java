@@ -147,11 +147,10 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     List<Deal> findDealsByAcceptIdOrderByCreatedAtDesc(Long memberId);
 
     // reuqest_id와 accept_id로 현재 거래 들고오기(최신 1개)
-    Optional<Deal> findTopByRequestIdAndAcceptIdAndDealStatusOrderByModifiedAtDesc(
-            Long requestId,
-            Long acceptId,
-            Deal.DealStatus dealStatus
-    );
+    List<Deal> findByRequestIdAndAcceptIdAndDealStatus(Long requestId,
+                                                       Long acceptId,
+                                                       Deal.DealStatus dealStatus);
+
 
     // 내가 나온김에 해야할 일
     @Query("SELECT d FROM Deal d " +

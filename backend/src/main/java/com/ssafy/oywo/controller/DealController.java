@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -110,8 +111,17 @@ public class DealController {
     @GetMapping("/user/{requestId}/{acceptId}")
     public ResponseEntity<?> getDealByStatusING(
             @PathVariable Long requestId, @PathVariable Long acceptId) {
-        return ResponseEntity.ok(dealService.getDealByStatusING(requestId, acceptId));
+
+        List<DealDto.Response> deals = dealService.getDealsBetweenUsers(requestId, acceptId);
+        if (deals.isEmpty()) {
+            throw new IllegalArgumentException("현재 진행 중인 거래가 없습니다.");
+        }
+        // 거래를 클라이언트 측에서 최신 수정일 기준으로 정렬하여 최신 거래를 찾음
+        deals.sort(Comparator.comparing(DealDto.Response::getModifiedAt).reversed());
+        DealDto.Response latestDeal = deals.get(0);
+        return ResponseEntity.ok(latestDeal);
     }
+
 
 
     /**
