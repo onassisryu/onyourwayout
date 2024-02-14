@@ -177,7 +177,7 @@ const Location = ({navigation}: any) => {
         // const isAlreadyDetected = lastDetectedDongs.some(detectedDong => detectedDong.dongId === dong.dongId);
         if (dongsWithin50m.length > 0) {
           dongsWithin50m.map(dong => {
-            console.log('내 주변 동', dong.name, dong.dongId);
+            console.log('내 주변 동', dong.name, dong.dongId, distance);
             // axiosAuth.get(`/notification/near/${dong.dongId}`);
           });
         }

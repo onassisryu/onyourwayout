@@ -47,7 +47,7 @@ const ShareButton = styled(GlobalButton)`
   margin: 30px 0px 30px 0px;
 `;
 
-const DoItListImage = styled.Image`
+const DoItListImage = styled.ImageBackground`
   height: 400px;
   width: 100%;
   padding: 0;
@@ -86,7 +86,7 @@ const TextApart = styled(GlobalText)`
 `;
 
 const DistinctLine = styled.View`
-  width: 100%;
+  width: 90%;
   border: 1px solid #b2b2b2;
 `;
 
@@ -119,7 +119,7 @@ const TextContent = styled(GlobalText)`
 const InfoComponent = styled(GlobalContainer)`
   flex-direction: row;
   align-items: flex-end;
-  width: 100%;
+  width: 90%;
   height: initial;
 `;
 
@@ -195,18 +195,6 @@ const ButtonText = styled(GlobalText)`
   margin-bottom: 4px;
 `;
 
-interface DoListCard {
-  id: number;
-  category: string;
-  image: ImageSourcePropType;
-  title: string;
-  apart: string;
-  uptime: string;
-  nickname: string;
-  content: string;
-  price: string;
-  remaintime: string;
-}
 
 const dealTypeTextMap = {
   PET: '애완동물 산책',
@@ -217,39 +205,19 @@ const dealTypeTextMap = {
 
 const DoItListDetail = ({route, navigation}: any) => {
   const [userData, setUserData] = useRecoilState(userDataState);
-
-  const handleEdit = (newData: object) => {
-    setUserData(newData); // userData를 수정합니다.
-  };
-
-  const card = {
-    id: 1,
-    category: 'PET',
-    title: '맛있는 김치를 구해요!',
-    apart: '삼성아파트',
-    uptime: '1시간 전',
-    price: '10,000원',
-    nickname: '호구팟',
-    content: '나는김치맨김치파워',
-  };
-
-  const [userId, setUserId] = useState(null); // 로그인한 사용자의 ID를 저장하는 state
   const [requestUserId, setRequestUserId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
 
-  const param = route.params;
+  const param = route.params.card;
 
   const [responseData, setResponseData] = useState({});
   const [userInfo, setUserInfo] = useState({});
   const [detailImage, setDetailImage] = useState([]);
   const loginuser = useRecoilValue(userDataState);
   console.log('로그인 유저', loginuser);
+
   useEffect(() => {
-    getStorage('user').then(data => {
-      setUserId(data?.id); // 로그인한 사용자의 ID를 state에 저장
-    });
-    console.log('param', param);
     axiosAuth
       .get(`/deal/${param.id}`)
       .then(resp => {
@@ -266,7 +234,7 @@ const DoItListDetail = ({route, navigation}: any) => {
   }, [param]);
 
   const handleIconPress = () => {
-    if (requestUserId === userId) {
+    if (userInfo.id === loginuser.id) {
       setModalType('edit'); // 수정, 삭제 가능한 모달
     } else {
       setModalType('report'); // 신고 가능한 모달
@@ -274,20 +242,6 @@ const DoItListDetail = ({route, navigation}: any) => {
     setModalVisible(true); // 모달 열기
   };
 
-  const categoryToDealType = (category: string) => {
-    switch (category) {
-      case '반려동물 산책':
-        return 'PET';
-      case '심부름':
-        return 'SHOP';
-      case '분리수거':
-        return 'RECYCLE';
-      case '기타':
-        return 'ETC';
-      default:
-        return '';
-    }
-  };
 
   const calculateTimeAgo = (createdAt: string) => {
     const now = new Date(); // 현재 시간
@@ -393,13 +347,19 @@ const DoItListDetail = ({route, navigation}: any) => {
                   {responseData.dealType === 'ETC' && <SvgIcon name="building" size={20} />}
                   <TextCategory> {dealTypeTextMap[responseData.dealType]}</TextCategory>
                 </InfoComponent>
-                <InfoComponent>
+                <InfoComponent
+                  style={css`
+                    justify-content: flex-end;
+                  `}>
                   {responseData.rewardType === 'CASH' && <TextPrice>{responseData.cash.toLocaleString()}원</TextPrice>}
                   {responseData.rewardType === 'ITEM' && <TextPrice>{responseData.item}</TextPrice>}
                 </InfoComponent>
 
                 <TextContent>{responseData.content}</TextContent>
-                <TextReport>게시글 신고하기</TextReport>
+
+                <TouchableOpacity onPress={() => navigation.navigate('Report', {card: responseData})}>
+                  <TextReport>게시글 신고하기</TextReport>
+                </TouchableOpacity>
               </ContentComponent>
             </SubContainer>
           </View>
@@ -474,7 +434,12 @@ const DoItListDetail = ({route, navigation}: any) => {
             data={param}
           />
         ) : (
-          <ReportModal modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} />
+          <ReportModal
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            navigation={navigation}
+            responseData={responseData}
+          />
         ))}
     </View>
   );

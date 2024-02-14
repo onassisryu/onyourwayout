@@ -36,7 +36,7 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
 `;
 
 const Signup0 = ({navigation}: any) => {
-  const [value, setValue] = useState('닉네임');
+  const [value, setValue] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
 
