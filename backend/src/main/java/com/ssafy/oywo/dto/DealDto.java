@@ -83,7 +83,6 @@ public class DealDto {
     }
 
 
-
     @Getter
     public static class Response {
         private Long id;
@@ -107,9 +106,6 @@ public class DealDto {
         private MemberDto.ResponseWithDeal requestInfo;
 
         private Long numberOfMatchingDeals = 0L;
-//        private String nickname;
-//        private int score;
-//        private Long hoId;
 
         /*
         Entity -> Dto
@@ -133,7 +129,7 @@ public class DealDto {
 
         }
 
-        public Response (Deal entity, List<DealComplaint> complaints, Member member) {
+        public Response(Deal entity, List<DealComplaint> complaints, Member member) {
             this.id = entity.getId();
             this.title = entity.getTitle();
             this.content = entity.getContent();
@@ -158,6 +154,7 @@ public class DealDto {
             this.title = entity.getTitle();
             this.content = entity.getContent();
             this.requestId = entity.getRequestId();
+            this.acceptId = entity.getAcceptId();
             this.requestInfo = MemberDto.ResponseWithDeal.of(member, member.getHo());
             this.cash = entity.getCash();
             this.item = entity.getItem();
@@ -179,18 +176,48 @@ public class DealDto {
     }
 
 
+    @Getter
+    public static class ResponseWithHo {
+        private Long id;
+        private String title;
+        private String content;
+        private Long requestId;
+        private Long acceptId;
+        private int cash;
+        private String item;
+        private Deal.RewardType rewardType;
+        private int complaint;
+        private Deal.DealStatus dealStatus;
+        private DealType dealType;
+        private LocalDateTime expireAt;
+        private List<DealImage> dealImages;
+        private LocalDateTime createdAt;
+        private LocalDateTime modifiedAt;
 
+        private MemberDto.ResponseWithHo requestInfo;
 
+        public ResponseWithHo(Deal entity, Member member) {
+            this.id = entity.getId();
+            this.title = entity.getTitle();
+            this.content = entity.getContent();
+            this.requestId = entity.getRequestId();
+            this.acceptId = entity.getAcceptId();
+            this.requestInfo = MemberDto.ResponseWithHo.of(member, member.getHo());
+            this.cash = entity.getCash();
+            this.item = entity.getItem();
+            this.rewardType = entity.getRewardType();
+            this.complaint = entity.getComplaint();
+            this.dealStatus = entity.getDealStatus();
+            this.dealType = entity.getDealType();
+            this.expireAt = entity.getExpireAt();
+            this.dealImages = entity.getDealImages();
+            this.createdAt = entity.getCreatedAt();
+            this.modifiedAt = entity.getModifiedAt();
 
-
-//    @Getter
-//    public static class DealImageResponse {
-//        private Long id;
-//        private String imgUrl;
-//
-//        public DealImageResponse(DealImage dealImage) {
-//            this.id = dealImage.getId();
-//            this.imgUrl = dealImage.getImgUrl();
-//        }
-//    }
+        }
+    }
 }
+
+
+
+

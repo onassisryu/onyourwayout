@@ -176,11 +176,13 @@ public class DealServiceImpl implements DealService{
     // 요청자/수행자 현재 거래 조회
     @Override
     @Transactional(readOnly = true)
-    public List<DealDto.Response> getDealsBetweenUsers(Long requestId, Long acceptId) {
+    public List<DealDto.ResponseWithHo> getDealsBetweenUsers(Long requestId, Long acceptId) {
         List<Deal> deals = dealRepository.findByRequestIdAndAcceptIdAndDealStatus(requestId, acceptId, Deal.DealStatus.ING);
         // acceptId와 requestId로도 확인
         deals.addAll(dealRepository.findByRequestIdAndAcceptIdAndDealStatus(acceptId, requestId, Deal.DealStatus.ING));
-        return deals.stream().map(DealDto.Response::new).collect(Collectors.toList());
+        return deals.stream()
+                    .map(d -> new DealDto.ResponseWithHo(d, memberRepository.findById(d.getRequestId()).orElseThrow(() -> new IllegalArgumentException("해당 requestId의 사용자가 없음"))))
+                    .collect(Collectors.toList());
     }
 
 

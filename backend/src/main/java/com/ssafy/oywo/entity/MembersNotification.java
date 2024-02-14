@@ -1,5 +1,6 @@
 package com.ssafy.oywo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -24,6 +25,7 @@ public class MembersNotification extends BaseTimeEntity{
     private Notification notification;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "member_id")
     private Member member;
 

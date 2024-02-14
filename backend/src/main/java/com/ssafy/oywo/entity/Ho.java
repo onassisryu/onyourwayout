@@ -1,5 +1,6 @@
 package com.ssafy.oywo.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +34,8 @@ public class Ho extends BaseTimeEntity {
     private String name;
 
     private String inviteCode;
-    
+
+    @JsonManagedReference
     @OneToMany
     @JoinTable(name = "house",
             joinColumns = @JoinColumn(name = "ho_id"),

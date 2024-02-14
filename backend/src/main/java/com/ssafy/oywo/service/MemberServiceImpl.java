@@ -132,6 +132,7 @@ public class MemberServiceImpl implements MemberService {
                 ho.get().builder().member(members).build();
                 member.setHo(ho.get());
                 response=MemberDto.Response.of(member,ho.get());
+                member.setHo(ho.get());
             }
             // 등록되지 않은 호인 경우
             else{
@@ -363,12 +364,22 @@ public class MemberServiceImpl implements MemberService {
         else{
 
             List<NotiDong> dongList=new ArrayList<>();
-            notiDongRepository.deleteAllByMemberId(alarmDto.getMemberId());
+             notiDongRepository.deleteAllByMemberId(alarmDto.getMemberId());
             // 재설정
             for (Long dongId:alarmDto.getDongIdList()){
-                NotiDong dong=NotiDong.builder().member(member).dongId(dongId).build();
-                dongList.add(dong);
-                notiDongRepository.save(dong);
+
+                // 이미 설정한 알림인 경우 deletedAt null로 수정
+                Optional<NotiDong> notiDongResult=notiDongRepository.findByMemberIdAndDongId(member.getId(),dongId);
+                if (notiDongResult.isPresent()){
+                    notiDongResult.get().setDeletedAt(null);
+                    dongList.add(notiDongResult.get());
+                }
+                // 설정한 적이 없는 알림인 경우 새로 추가
+                else{
+                    NotiDong dong=NotiDong.builder().member(member).dongId(dongId).build();
+                    dongList.add(dong);
+                    notiDongRepository.save(dong);
+                }
             }
             member.setNotiDongs(dongList);
         }
@@ -378,16 +389,25 @@ public class MemberServiceImpl implements MemberService {
             member.setNotiCategoryAll(true);
         }
         else{
-            notiDealCategoryRepository.deleteAllByMemberId(alarmDto.getMemberId());
+             notiDealCategoryRepository.deleteAllByMemberId(alarmDto.getMemberId());
             List<NotiDealCategory> notiDealCategoryList=new ArrayList<>();
 
             // 재설정
             for (DealType dealType:alarmDto.getDealTypeList()){
-                NotiDealCategory category=NotiDealCategory.builder().member(member).dealType(dealType).build();
-                notiDealCategoryList.add(category);
-                notiDealCategoryRepository.save(category);
+
+                Optional<NotiDealCategory> categoryResult=notiDealCategoryRepository.findByMemberIdAndDealType(member.getId(),dealType);
+                if (categoryResult.isPresent()){
+                    categoryResult.get().setDeletedAt(null);
+                    notiDealCategoryList.add(categoryResult.get());
+                }
+                // 설정한 적이 없는 알림인 경우 추가
+                else{
+                    NotiDealCategory category=NotiDealCategory.builder().member(member).dealType(dealType).build();
+                    notiDealCategoryList.add(category);
+                    notiDealCategoryRepository.save(category);
+                }
             }
-            member.setNotiDealCategories(notiDealCategoryList);
+            //member.setNotiDealCategories(notiDealCategoryList);
         }
 
         // 시작 시간과 마지막 시간 설정

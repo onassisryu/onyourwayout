@@ -190,6 +190,40 @@ public class MemberDto {
                     .dongName(ho.getDong().getName())
                     .build();
         }
+
+    }
+
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder(toBuilder = true)
+    public static class ResponseWithHo{
+        private Long id;
+        private String nickname;
+        private String username;
+        private int score;
+
+        private ApartmentDto.Response apt;
+        private Long hoId;
+        private String hoName;
+        private Long dongId;
+        private String dongName;
+
+        public static ResponseWithHo of(Member member, Ho ho){
+            return ResponseWithHo.builder()
+                    .id(member.getId())
+                    .username(member.getUsername())
+                    .nickname(member.getNickname())
+                    .score(member.getScore())
+                    .apt(ApartmentDto.Response.of(ho.getDong().getApartment()))
+                    .dongId(ho.getDong().getId())
+                    .dongName(ho.getDong().getName())
+                    .hoId(ho.getId())
+                    .hoName(ho.getName())
+                    .build();
+        }
+
     }
 
 
