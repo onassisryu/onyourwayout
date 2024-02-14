@@ -228,7 +228,7 @@ const DoItListDetail = ({route, navigation}: any) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
 
-  const param = route.params.card;
+  const param = route.params.id;
 
   const [responseData, setResponseData] = useState({});
   const [userInfo, setUserInfo] = useState({});
@@ -237,7 +237,7 @@ const DoItListDetail = ({route, navigation}: any) => {
 
   useEffect(() => {
     axiosAuth
-      .get(`/deal/${param.id}`)
+      .get(`/deal/${param}`)
       .then(resp => {
         setResponseData(resp.data);
         setRequestUserId(resp.data.requestId);
@@ -259,7 +259,6 @@ const DoItListDetail = ({route, navigation}: any) => {
     }
     setModalVisible(true); // 모달 열기
   };
-
 
   const calculateTimeAgo = (createdAt: string) => {
     const now = new Date(); // 현재 시간
