@@ -184,7 +184,7 @@ const My = ({navigation}: any) => {
                 title="아파트 정보 인증"
                 iconType="MaterialCommunityIcons"
                 icon="office-building-marker-outline"
-                onPress={() => navigation.navigate('ApartCertification')}
+                onPress={() => navigation.navigate('ApartCertification', {certified: userData.certified, nickname: userData.nickname})}
               />
               <Mypagelist
                 title="초대 코드 발급"

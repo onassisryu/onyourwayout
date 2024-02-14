@@ -388,7 +388,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    getFcmToken();
+    // getFcmToken();
     const unsubscribe = messaging().onMessage(handleNotification);
     messaging().onNotificationOpenedApp(handleNotification);
     messaging().getInitialNotification().then(handleNotification);

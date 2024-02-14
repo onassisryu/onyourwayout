@@ -112,8 +112,9 @@ const NoticeSettingsDong = (props: NoticeSettingsDongProps) => {
     const index = props.dongs.indexOf(category);
   
     if (props.selectedDongs.includes(category)) {
+      const selectedIndex = props.selectedDongs.indexOf(category);
       props.setSelectedDongs(prevDongs => prevDongs.filter(selected => selected !== category));
-      props.setSelectedDongIds(prevIds => prevIds.filter((_, idIndex) => idIndex !== index));
+      props.setSelectedDongIds(prevIds => prevIds.filter((_, idIndex) => idIndex !== selectedIndex));
     } else if (!props.selectedDongs.includes(category)) {
       props.setSelectedDongs(prevDongs => [...prevDongs, category]);
       props.setSelectedDongIds(prevIds => [...prevIds, props.dongsId[index]]);

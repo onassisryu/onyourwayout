@@ -56,7 +56,7 @@ interface Props {
   setSelectedApart: (apart: string) => void;
 }
 
-const MainModal = (props: Props) => {
+const ApartSelectionModal = (props: Props) => {
   const userData = useRecoilValue(userDataState);
 
   // apt 값이 배열인지 확인
@@ -114,4 +114,4 @@ const MainModal = (props: Props) => {
   );
 };
 
-export default MainModal;
+export default ApartSelectionModal;
