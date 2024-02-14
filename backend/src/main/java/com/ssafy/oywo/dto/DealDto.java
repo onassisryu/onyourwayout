@@ -158,6 +158,7 @@ public class DealDto {
             this.title = entity.getTitle();
             this.content = entity.getContent();
             this.requestId = entity.getRequestId();
+            this.acceptId = entity.getAcceptId();
             this.requestInfo = MemberDto.ResponseWithDeal.of(member, member.getHo());
             this.cash = entity.getCash();
             this.item = entity.getItem();
