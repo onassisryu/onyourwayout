@@ -12,7 +12,6 @@ import {useRecoilValue} from 'recoil';
 import {isLoggedInState} from '@/recoil/atoms';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import theme from '@/Theme';
-import {logoutUser} from '@/utils/common';
 import styled from '@emotion/native';
 import apartImage from '../../assets/images/apart.png';
 import goOutMan from '../../assets/images/goOutMan.png';

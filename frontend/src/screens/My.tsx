@@ -84,7 +84,7 @@ const My = ({navigation}: any) => {
   const scorePercent = `${userData.score}%`;
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const setUserData = useSetRecoilState(userDataState);
-
+  const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const checkLogin = async () => {
     if (isLoggedIn) {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
@@ -262,7 +262,15 @@ const My = ({navigation}: any) => {
                 icon="setting"
                 onPress={() => navigation.navigate('MySetting')}
               />
-              <Mypagelist title="로그아웃" iconType="Ant" icon="setting" onPress={logoutUser} />
+              <Mypagelist
+                title="로그아웃"
+                iconType="Ant"
+                icon="setting"
+                onPress={() => {
+                  logoutUser;
+                  setIsLoggedIn(false);
+                }}
+              />
             </InnerContainer>
           </View>
         )}

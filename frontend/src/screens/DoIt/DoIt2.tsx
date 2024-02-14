@@ -284,11 +284,13 @@ const DoIt2 = ({navigation}: Props) => {
   };
   function MakeDeal() {
     const data = deal;
+
     console.log('-----------------------------------------------------------------------');
     console.log(imageData);
+
     const body = {
       jsonData: data,
-      dealImageFileList: imageData,
+      dealImageFileList: [imageData],
     };
     console.log('body 전송중', body);
 

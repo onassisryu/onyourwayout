@@ -1,4 +1,4 @@
-import axios, {get} from 'axios';
+import axios from 'axios';
 import {getAccessToken} from '@/utils/common';
 
 const axiosAuth = axios.create({
