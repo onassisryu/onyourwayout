@@ -3,7 +3,6 @@ import styled, {css} from '@emotion/native';
 import {ScrollView, View, TouchableOpacity, Text, Animated, useWindowDimensions} from 'react-native';
 import {ImageURISource, Alert, Button, Image, StyleSheet} from 'react-native';
 import {GlobalContainer, GlobalText} from '@/GlobalStyles';
-import DefaultButton from '@/components/DefaultButton';
 import Header from '@/components/Header';
 import GoBack from '@components/Signup/GoBack';
 import {NavigationProp, RouteProp, useRoute} from '@react-navigation/native';
@@ -15,10 +14,12 @@ import moment from 'moment';
 import 'moment/locale/ko';
 import Feather from 'react-native-vector-icons/Feather';
 import Ant from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
 import axiosAuth from '@/axios/axiosAuth';
 import {getAccessToken} from '@/utils/common';
+import DefaultButton from '@/components/DefaultButton';
 import {
   launchCamera,
   launchImageLibrary,
@@ -43,21 +44,34 @@ const StyledInputTitle = styled(GlobalText)`
 const StyledInput = styled.TextInput`
   width: 100%;
   font-size: 18px;
+  padding: 10px;
   color: ${props => props.theme.color.primary};
   background-color: white;
   border-radius: 10px;
-  padding: 10px;
   border: 1px solid ${props => props.theme.color.primary};
   color: ${props => props.theme.color.black};
 `;
 const StyledInputContainer = styled.View`
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  margin-top: 8px;
+  margin-bottom: 5px;
 `;
 const IconWrapper = styled.View`
   position: absolute;
-  left: 25px;
+  left: 20px;
   top: 4px;
+`;
+const MoneyButton = styled.TouchableOpacity`
+  width: 90px;
+  font-size: 20px;
+  background-color: #e6fbf4;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: row;
+  padding: 10px;
 `;
 
 type DealProps = {
@@ -291,9 +305,7 @@ const DoIt2 = ({navigation}: Props) => {
       <ScrollView
         style={css`
           padding: 0 32px;
-        `}
-        overScrollMode="never">
-        <StyledInputTitle>제목</StyledInputTitle>
+        `}>
         <StyledInputContainer>
           <StyledInput
             style={css`
@@ -308,25 +320,11 @@ const DoIt2 = ({navigation}: Props) => {
             <SvgIcon name={params.icon} size={40} />
           </IconWrapper>
         </StyledInputContainer>
-        {/* <View>
-          <View>
-            <Button title="show camera app" onPress={showCamera}></Button>
-            <Button title="show photo app" color={'green'} onPress={showPhoto}></Button>
-          </View>
-
-          <Text>{img.uri}</Text>
-
-          <Image
-            source={img}
-            style={css`
-              width: 100px;
-              height: 100px;
-            `}></Image>
-        </View> */}
         <View
           style={css`
             flex-direction: row;
             justify-content: space-between;
+            margin-bottom: 10px;
           `}>
           <StyledInputContainer
             style={css`
@@ -362,17 +360,13 @@ const DoIt2 = ({navigation}: Props) => {
             />
           </StyledInputContainer>
         </View>
-        <View>
-          <TouchableOpacity></TouchableOpacity>
-        </View>
-        <StyledInputTitle>사진</StyledInputTitle>
-        <Button title="show camera app" onPress={showCamera}></Button>
+        <DefaultButton size="md" color="primary" title="카메라 앱 열기" onPress={showCamera}></DefaultButton>
         <TouchableOpacity onPress={showPhoto}>
           {Object.keys(imageData).length === 0 ? (
             <View
               style={css`
                 width: 100%;
-                height: 200px;
+                height: 150px;
                 background-color: ${theme.color.gray0};
                 border-radius: 10px;
                 margin-bottom: 20px;
@@ -391,29 +385,27 @@ const DoIt2 = ({navigation}: Props) => {
               </Text>
             </View>
           ) : (
-            <Image
-              source={imageData}
+            <View
               style={css`
                 width: 100%;
-                height: 200px;
+                height: 150px;
                 background-color: ${theme.color.gray0};
                 border-radius: 10px;
                 margin-bottom: 20px;
-              `}
-            />
+              `}>
+              <Image source={imageData} />
+            </View>
           )}
         </TouchableOpacity>
 
-        <StyledInputTitle>거래방식&가격</StyledInputTitle>
         <View>
           <View
             style={css`
               flex-direction: row;
               background-color: ${theme.color.gray0};
-              height: 40px;
+              height: 32px;
               border-radius: 10px;
-              font-weight: 700;
-              margin-bottom: 20px;
+              margin-bottom: 10px;
               position: relative;
             `}>
             <Animated.View
@@ -421,7 +413,7 @@ const DoIt2 = ({navigation}: Props) => {
                 {
                   zIndex: 0,
                   position: 'absolute',
-                  backgroundColor: theme.color.black,
+                  backgroundColor: '#00D282',
                   borderRadius: 10,
                   height: '120%',
                   width: '50%',
@@ -434,6 +426,7 @@ const DoIt2 = ({navigation}: Props) => {
               style={css`
                 width: 50%;
                 height: 100%;
+                text-align: center;
                 align-items: center;
                 justify-content: center;
               `}
@@ -442,7 +435,7 @@ const DoIt2 = ({navigation}: Props) => {
                 style={css`
                   flex-direction: row;
                 `}>
-                <Ant
+                <FontAwesome
                   style={[
                     css`
                       z-index: 1;
@@ -450,14 +443,19 @@ const DoIt2 = ({navigation}: Props) => {
                       color: ${tabcolor === '현금' ? 'white' : theme.color.black};
                     `,
                   ]}
-                  name="wallet"
-                  size={30}
+                  name="dollar"
+                  size={25}
                 />
                 <Text
                   style={[
                     css`
                       z-index: 1;
-                      font-size: 20px;
+                      text-align: center;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      padding-top: 3px;
+                      font-size: 15px;
                       color: ${tabcolor === '현금' ? 'white' : theme.color.black};
                     `,
                   ]}>
@@ -492,7 +490,8 @@ const DoIt2 = ({navigation}: Props) => {
                   style={[
                     css`
                       z-index: 1;
-                      font-size: 20px;
+                      padding-top: 5px;
+                      font-size: 15px;
                       color: ${tabcolor === '물물' ? 'white' : theme.color.black};
                     `,
                   ]}>
@@ -506,8 +505,13 @@ const DoIt2 = ({navigation}: Props) => {
               <StyledInput
                 placeholder="가격을 입력해주세요"
                 placeholderTextColor={theme.color.gray200}
-                defaultValue=""
+                defaultValue="3000"
                 onChangeText={handleCash}
+                style={css`
+                  text-align: right;
+                  padding: 10px;
+                  padding-right: 50px;
+                `}
               />
               <View
                 style={css`
@@ -535,11 +539,52 @@ const DoIt2 = ({navigation}: Props) => {
             </StyledInputContainer>
           )}
         </View>
-        <StyledInputTitle>상세정보</StyledInputTitle>
+        <View
+          style={css`
+            flex-direction: row;
+            justify-content: space-between;
+            display: flex;
+          `}>
+          <MoneyButton>
+            <FontAwesome name="plus" size={18} color="#27D894" />
+            <Text
+              style={css`
+                color: ${theme.color.primary};
+              `}>
+              천원
+            </Text>
+          </MoneyButton>
+          <MoneyButton>
+            <FontAwesome name="plus" size={18} color="#27D894" />
+            <Text
+              style={css`
+                color: ${theme.color.primary};
+              `}>
+              오천원
+            </Text>
+          </MoneyButton>
+          <MoneyButton>
+            <FontAwesome name="plus" size={18} color="#27D894" />
+            <Text
+              style={css`
+                color: ${theme.color.primary};
+              `}>
+              만원
+            </Text>
+          </MoneyButton>
+        </View>
+        <StyledInputTitle
+          style={css`
+            margin-top: 10px;
+            margin-bottom: 0px;
+          `}>
+          상세정보
+        </StyledInputTitle>
         <StyledInputContainer>
           <StyledInput
             style={css`
-              height: 100px;
+              height: 60px;
+              margin-bottom: 10px;
             `}
             placeholder={deal.title}
             placeholderTextColor={theme.color.gray100}

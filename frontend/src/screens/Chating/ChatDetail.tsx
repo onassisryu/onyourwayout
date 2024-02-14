@@ -20,6 +20,7 @@ import {getAccessToken} from '@/utils/common';
 import ChatMessage from '@/components/Chatpage/ChatMessage';
 import {launchImageLibrary, ImageLibraryOptions, ImagePickerResponse, Asset} from 'react-native-image-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
+import DefaultButton from '@/components/DefaultButton';
 
 const TextEncodingPolyfill = require('text-encoding');
 
@@ -122,10 +123,12 @@ const DealContainer = styled.View`
   align-items: center;
   display: flex;
   justify-content: center;
-  width: 100%; // 이 부분이 추가되었습니다.
+  width: 100%;
   position: absolute;
   background-color: white;
   margin-top: 60px;
+  z-index: 1000;
+  flex: 1;
   top: 0;
 `;
 type ImgData = {
@@ -143,6 +146,7 @@ interface MyObject {
   requestId: number;
   acceptId: number;
   cash: number;
+  request: boolean;
   item: null | string;
   rewardType: string;
   complaint: number;
@@ -233,8 +237,15 @@ const ChatDetail = ({navigation}: Props) => {
     await axiosAuth
       .get(`/deal/user/${userData.id}/${params.userId}`)
       .then(res => {
-        console.log('거래 최신 조회 성공', res.data);
-        setDeal(res.data);
+        const data = res.data;
+
+        if (userData.id === res.data.requestId) {
+          data.request = true;
+        } else {
+          data.request = false;
+        }
+        setDeal(data);
+        console.log('거래 최신 조회 성공', data);
       })
       .catch(err => {
         console.log('Fffffffffffffff', err);
@@ -404,10 +415,11 @@ const ChatDetail = ({navigation}: Props) => {
             justify-content: start;
             min-height: 80px;
             height: auto;
-            width: 100%;
+            width: auto;
             background-color: #f8f8f8;
-            position: relative;
-            padding: 10px 0;
+            flex: 1;
+            padding: 10px;
+            z-index: 10;
           `}>
           <View
             style={css`
@@ -429,15 +441,15 @@ const ChatDetail = ({navigation}: Props) => {
             <View
               style={css`
                 border-radius: 5px;
-                background-color: red;
                 width: 80px;
               `}>
-              <Text>이미지 들어가유</Text>
+              <Image src={deal?.dealImages[0]} />
             </View>
             <View
               style={css`
                 padding-left: 10px;
                 font-size: 20px;
+                width: auto;
               `}>
               <View
                 style={css`
@@ -446,11 +458,30 @@ const ChatDetail = ({navigation}: Props) => {
                   align-items: center;
                   justify-content: start;
                 `}>
-                <Entypo name="dot-single" size={20} color={'#D8D7D7'} />
-                <Text>동호수 : </Text>
+                <Entypo name="dot-single" size={20} color={'black'} />
+                <Text> 동호수 : </Text>
               </View>
-              <Text>- 맡긴 일 : </Text>
-              <Text>- 현금 : </Text>
+              <View
+                style={css`
+                  display: flex;
+                  flex-direction: row;
+                  align-items: center;
+                  justify-content: start;
+                  height: auto;
+                `}>
+                <Entypo name="dot-single" size={20} color={'black'} />
+                <Text> 맡긴 일 : {deal?.title}</Text>
+              </View>
+              <View
+                style={css`
+                  display: flex;
+                  flex-direction: row;
+                  align-items: center;
+                  justify-content: start;
+                `}>
+                <Entypo name="dot-single" size={20} color={'black'} />
+                {deal?.rewardType === 'CASH' ? <Text> 현금 : {deal?.cash}원</Text> : <Text> 물품 : {deal?.item}</Text>}
+              </View>
             </View>
           </View>
         </View>
@@ -464,13 +495,21 @@ const ChatDetail = ({navigation}: Props) => {
             width: 100%;
             justify-content: center;
           `}>
-          <Button
-            onPress={() => {
-              closeDeal();
-            }}
-            title="완료하기"
-          />{' '}
-          <Button title="수락하기" />
+          {deal?.request ? (
+            <>
+              <DefaultButton
+                size={'sm'}
+                color="primary"
+                onPress={() => {
+                  closeDeal();
+                }}
+                title="완료하기"
+              />
+              <DefaultButton size={'sm'} color="gray" title="취소하기" />
+            </>
+          ) : (
+            <DefaultButton size={'sm'} color="gray" title="거절하기" onPress={closeReview} />
+          )}
         </View>
       </DealContainer>
       <View

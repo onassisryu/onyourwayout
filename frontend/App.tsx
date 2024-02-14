@@ -244,10 +244,10 @@ const App = () => {
         }
       });
     }
-    if (userData.roles.includes('ADMIN')) {
-      console.log('관리자유');
-      setAdmin(true);
-    }
+    // if (userData.roles.includes('ADMIN')) {
+    //   console.log('관리자유');
+    //   setAdmin(true);
+    // }
   };
 
   const [isModalVisible, setModalVisible] = useState(false);
