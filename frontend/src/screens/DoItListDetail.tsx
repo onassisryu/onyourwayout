@@ -214,45 +214,49 @@ type UserInfo = {
   // 등등...
 };
 
-
 const dealTypeTextMap = {
   PET: '애완동물 산책',
   RECYCLE: '분리수거',
   SHOP: '장보기',
   ETC: '기타',
 };
-
+type User = {
+  id: number;
+  nickname: string;
+  username: string;
+  score: number;
+  dongId: number;
+  dongName: string;
+};
 const DoItListDetail = ({route, navigation}: any) => {
-
   const [requestUserId, setRequestUserId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
 
-  const param = route.params.id;
-
   const [responseData, setResponseData] = useState({});
-  const [userInfo, setUserInfo] = useState({});
+  const [userInfo, setUserInfo] = useState<User | null>(null);
   const [detailImage, setDetailImage] = useState([]);
   const loginuser = useRecoilValue(userDataState);
 
   useEffect(() => {
+    console.log('param', route.params.id);
     axiosAuth
-      .get(`/deal/${param}`)
+      .get(`/deal/${route.params.id}`)
       .then(resp => {
         setResponseData(resp.data);
         setRequestUserId(resp.data.requestId);
         setUserInfo(resp.data.requestInfo);
         setDetailImage(resp.data.dealImages);
-        console.log(detailImage);
-        console.log('성공------', resp.data);
+        console.log('=====================유저', userInfo);
+        console.log(userInfo?.nickname);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
-  }, [param]);
+  }, []);
 
   const handleIconPress = () => {
-    if (userInfo.id === loginuser.id) {
+    if (userInfo?.id === loginuser.id) {
       setModalType('edit'); // 수정, 삭제 가능한 모달
     } else {
       setModalType('report'); // 신고 가능한 모달
@@ -347,10 +351,10 @@ const DoItListDetail = ({route, navigation}: any) => {
               <SubHeader>
                 <SvgIcon name="profile" size={40} />
                 <ProfileComponent>
-                  <TextNickname> {userInfo.nickname}</TextNickname>
+                  <TextNickname> {userInfo?.nickname}</TextNickname>
                   <TextApart>
                     {' '}
-                    {userInfo.dongName}동 / {calculateTimeAgo(responseData.createdAt)}
+                    {userInfo?.dongName}동 / {calculateTimeAgo(responseData.createdAt)}
                   </TextApart>
                 </ProfileComponent>
               </SubHeader>
@@ -374,8 +378,9 @@ const DoItListDetail = ({route, navigation}: any) => {
 
                 <TextContent>{responseData.content}</TextContent>
 
-                {userInfo.id === loginuser.id ? (<></>) 
-                : (
+                {userInfo?.id === loginuser.id ? (
+                  <></>
+                ) : (
                   <TouchableOpacity onPress={() => navigation.navigate('Report', {card: responseData})}>
                     <TextReport>게시글 신고하기</TextReport>
                   </TouchableOpacity>
@@ -422,7 +427,7 @@ const DoItListDetail = ({route, navigation}: any) => {
           bottom: 60px;
           z-index: 1;
         `}>
-        {userInfo.id === loginuser.id ? (
+        {userInfo?.id === loginuser.id ? (
           <View>
             <Text>내 작성글 입니다</Text>
           </View>
@@ -445,11 +450,9 @@ const DoItListDetail = ({route, navigation}: any) => {
           </View>
         )}
       </View>
-      {
-        modalVisible && (
-          modalType === 'edit' && responseData.dealStatus === 'OPEN'
-          ?  (<EditDeleteModal 
-
+      {modalVisible &&
+        (modalType === 'edit' && responseData.dealStatus === 'OPEN' ? (
+          <EditDeleteModal
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
             navigation={navigation}
@@ -462,8 +465,7 @@ const DoItListDetail = ({route, navigation}: any) => {
             navigation={navigation}
             responseData={responseData}
           />
-        )
-        )}
+        ))}
     </View>
   );
 };

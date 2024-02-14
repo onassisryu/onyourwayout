@@ -10,7 +10,7 @@ import SearchModal from '@components/DoItListpage/SearchModal';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
 import SvgIcon from '@components/SvgIcon';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
 
@@ -33,7 +33,6 @@ const DoItListCard = styled(GlobalContainer)`
 `;
 
 const DoItListImage = styled.Image`
-
   width: 100%;
   height: 100%;
   border-radius: 10px;
@@ -100,7 +99,6 @@ const CardImageContainer = styled(View)`
 interface DealImage {
   // DealImage에 대한 필드를 정의해주세요.
   imgUrl: string;
-
 }
 
 interface DoListCard {
@@ -170,7 +168,7 @@ const DoItList = ({navigation}: any) => {
       return `${minutesAgo}분 전`;
     }
   };
- 
+
   // useEffect 부분
   useFocusEffect(
     React.useCallback(() => {
@@ -202,41 +200,40 @@ const DoItList = ({navigation}: any) => {
         return '';
     }
   };
-  
+
   let filteredData = cardListData;
   if (selectedTypeCategory) {
-    filteredData = cardListData.filter((card) => card.dealType === categoryToDealType(selectedTypeCategory));
+    filteredData = cardListData.filter(card => card.dealType === categoryToDealType(selectedTypeCategory));
   }
 
-  const [selectedCard, setSelectedCard] = useState({})
-  
+  const [selectedCard, setSelectedCard] = useState({});
+
   // 검색어를 기반으로 카드를 필터링하는 함수
   const [isSearchModalVisible, setSearchModalVisible] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<DoListCard[]>(cardListData);
 
   const searchCards = (term: string) => {
     let results = cardListData; // 먼저 카테고리 필터링이 적용될 것입니다.
-  
+
     // 카테고리 필터링
     if (selectedTypeCategory) {
-      results = results.filter((card) => card.dealType === categoryToDealType(selectedTypeCategory));
+      results = results.filter(card => card.dealType === categoryToDealType(selectedTypeCategory));
     }
-  
+
     // 검색어가 있는 경우에만 검색 필터링을 적용합니다.
     if (term !== '') {
-      results = results.filter((card) =>
-        card.title.includes(term) || card.content.includes(term) || card.cash.toString().includes(term)
+      results = results.filter(
+        card => card.title.includes(term) || card.content.includes(term) || card.cash.toString().includes(term)
       );
     }
     setSearchResults(results); // 필터링된 결과를 searchResults에 저장합니다.
   };
 
-// useEffect 부분
-useEffect(() => {
-  searchCards(searchTerm);
-}, [searchTerm, selectedTypeCategory]);
-  
+  // useEffect 부분
+  useEffect(() => {
+    searchCards(searchTerm);
+  }, [searchTerm, selectedTypeCategory]);
 
   return (
     <GlobalContainer>
@@ -249,10 +246,7 @@ useEffect(() => {
         setSearchTerm={setSearchTerm}
         searchCards={searchCards}
       />
-      <DoItListHeader 
-        navigation={navigation}
-        setSearchModalVisible={setSearchModalVisible}
-      />
+      <DoItListHeader navigation={navigation} setSearchModalVisible={setSearchModalVisible} />
       <DoItListCategory
         selectedApartCategory={selectedApartCategory}
         selectedTypeCategory={selectedTypeCategory}
@@ -266,25 +260,29 @@ useEffect(() => {
         <DoItListCardComponent>
           {searchResults.map((card, index) => (
             <View key={index}>
-              <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {card: card})}>
+              <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {id: card.id})}>
                 <DoItListCard>
                   <CardImageContainer>
                     {card.dealImages.length > 0 && <DoItListImage src={card.dealImages[0].imgUrl} />}
                   </CardImageContainer>
 
                   <CardTextContainer>
-                    {userData.id === card.requestId ? (<></>) :
-                    (
-                      <ReportButton onPress={() => {setReportModalVisible(true); setSelectedCard(card);}}>
-                      <Feather
-                        name="more-vertical"
-                        size={25}
-                        style={css`
-                          color: #c4c4c4;
-                        `}></Feather>
+                    {userData.id === card.requestId ? (
+                      <></>
+                    ) : (
+                      <ReportButton
+                        onPress={() => {
+                          setReportModalVisible(true);
+                          setSelectedCard(card);
+                        }}>
+                        <Feather
+                          name="more-vertical"
+                          size={25}
+                          style={css`
+                            color: #c4c4c4;
+                          `}></Feather>
                       </ReportButton>
                     )}
-                    
 
                     <View
                       style={css`
@@ -327,9 +325,9 @@ useEffect(() => {
         setApartModalVisible={setApartModalVisible}
         setSelectedApart={setSelectedApart}
       />
-      
-      <ReportModal 
-        reportModalVisible={reportModalVisible} 
+
+      <ReportModal
+        reportModalVisible={reportModalVisible}
         setReportModalVisible={setReportModalVisible}
         navigation={navigation}
         selectedCard={selectedCard}
