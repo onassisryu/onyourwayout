@@ -407,7 +407,7 @@ public class MemberServiceImpl implements MemberService {
                     notiDealCategoryRepository.save(category);
                 }
             }
-            //member.setNotiDealCategories(notiDealCategoryList);
+            member.setNotiDealCategories(notiDealCategoryList);
         }
 
         // 시작 시간과 마지막 시간 설정
