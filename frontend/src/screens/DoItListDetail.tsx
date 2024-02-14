@@ -247,8 +247,8 @@ const DoItListDetail = ({route, navigation}: any) => {
         setRequestUserId(resp.data.requestId);
         setUserInfo(resp.data.requestInfo);
         setDetailImage(resp.data.dealImages);
-        console.log('성공------', resp.data);
-        console.log(userInfo);
+        console.log('=====================유저', userInfo);
+        console.log(userInfo?.nickname);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
