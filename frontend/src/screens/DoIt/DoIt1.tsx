@@ -25,8 +25,7 @@ const MainTextContainer = styled(GlobalContainer)`
   align-items: center;
   text-align: center;
   flex-shrink: 0;
-  margin-top: 40px;
-  margin-bottom: 20px;
+  margin-top: 80px;
   height: 100px;
 `;
 const MainButtonContainer = styled(GlobalContainer)`

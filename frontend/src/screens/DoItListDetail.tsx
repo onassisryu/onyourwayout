@@ -47,7 +47,7 @@ const ShareButton = styled(GlobalButton)`
   margin: 30px 0px 30px 0px;
 `;
 
-const DoItListImage = styled.ImageBackground`
+const DoItListImage = styled.Image`
   height: 400px;
   width: 100%;
   padding: 0;
@@ -86,7 +86,7 @@ const TextApart = styled(GlobalText)`
 `;
 
 const DistinctLine = styled.View`
-  width: 90%;
+  width: 100%;
   border: 1px solid #b2b2b2;
 `;
 
@@ -119,7 +119,7 @@ const TextContent = styled(GlobalText)`
 const InfoComponent = styled(GlobalContainer)`
   flex-direction: row;
   align-items: flex-end;
-  width: 90%;
+  width: 100%;
   height: initial;
 `;
 
@@ -245,8 +245,11 @@ const DoItListDetail = ({route, navigation}: any) => {
   const [detailImage, setDetailImage] = useState([]);
   const loginuser = useRecoilValue(userDataState);
   console.log('로그인 유저', loginuser);
-
   useEffect(() => {
+    getStorage('user').then(data => {
+      setUserId(data?.id); // 로그인한 사용자의 ID를 state에 저장
+    });
+    console.log('param', param);
     axiosAuth
       .get(`/deal/${param.id}`)
       .then(resp => {
@@ -263,7 +266,7 @@ const DoItListDetail = ({route, navigation}: any) => {
   }, [param]);
 
   const handleIconPress = () => {
-    if (userInfo.id === loginuser.id) {
+    if (requestUserId === userId) {
       setModalType('edit'); // 수정, 삭제 가능한 모달
     } else {
       setModalType('report'); // 신고 가능한 모달
@@ -390,19 +393,13 @@ const DoItListDetail = ({route, navigation}: any) => {
                   {responseData.dealType === 'ETC' && <SvgIcon name="building" size={20} />}
                   <TextCategory> {dealTypeTextMap[responseData.dealType]}</TextCategory>
                 </InfoComponent>
-                <InfoComponent
-                  style={css`
-                    justify-content: flex-end;
-                  `}>
+                <InfoComponent>
                   {responseData.rewardType === 'CASH' && <TextPrice>{responseData.cash.toLocaleString()}원</TextPrice>}
                   {responseData.rewardType === 'ITEM' && <TextPrice>{responseData.item}</TextPrice>}
                 </InfoComponent>
 
                 <TextContent>{responseData.content}</TextContent>
-
-                <TouchableOpacity onPress={() => navigation.navigate('Report', {card: responseData})}>
-                  <TextReport>게시글 신고하기</TextReport>
-                </TouchableOpacity>
+                <TextReport>게시글 신고하기</TextReport>
               </ContentComponent>
             </SubContainer>
           </View>
@@ -427,7 +424,12 @@ const DoItListDetail = ({route, navigation}: any) => {
               flex-direction: row;
               justify-content: space-between;
             `}>
-            <GoBack />
+            <Ant
+              name="arrowleft"
+              size={40}
+              color="black"
+              onPress={() => navigation.navigate('Bottom', {screen: '아파트'})}
+            />
             <Feather name="more-vertical" size={40} onPress={handleIconPress} />
           </TouchableOpacity>
         </View>
@@ -472,12 +474,7 @@ const DoItListDetail = ({route, navigation}: any) => {
             data={param}
           />
         ) : (
-          <ReportModal
-            modalVisible={modalVisible}
-            setModalVisible={setModalVisible}
-            navigation={navigation}
-            responseData={responseData}
-          />
+          <ReportModal modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} />
         ))}
     </View>
   );

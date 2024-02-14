@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {ImageSourcePropType, StatusBar, View, Text, ScrollView, TouchableOpacity, Touchable} from 'react-native';
+import {ImageSourcePropType, StatusBar, View, Text, ScrollView, TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
@@ -11,92 +11,142 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GoBack from '@/components/Signup/GoBack';
 import axiosAuth from '@/axios/axiosAuth';
-const DoItListCardComponent = styled(ScrollView)`
-  padding: 10px 20px;
+
+const Container = styled(GlobalContainer)``;
+
+const SubContainer = styled(GlobalContainer)`
+  margin: 10px;
+  margin-right: 20px;
+  margin-left: 20px;
 `;
 
-const DoItListButton = styled(GlobalButton)`
-  background-color: white;
-  border-radius: 0px;
-  padding: 10px 0px;
-`;
-
-const DoItListCard = styled(GlobalContainer)`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+const HeaderContainer = styled(Header)`
   width: 100%;
-  height: 130px;
+  height: 20px;
+`;
+
+const GoBackButton = styled(GlobalButton)`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: transparent;
+  margin: 30px 0px 30px 0px;
+`;
+
+const ShareButton = styled(GlobalButton)`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  margin: 30px 0px 30px 0px;
 `;
 
 const DoItListImage = styled.Image`
+  height: 400px;
   width: 100%;
-  height: 100%;
-  border-radius: 10px;
-  resize-mode: cover;
+  padding: 0;
 `;
 
-const CardTextContainer = styled(GlobalContainer)`
-  position: relative;
+const TotalComponent = styled(ScrollView)`
+  height: 2000px;
+`;
+
+const SubHeader = styled(GlobalContainer)`
+  flex-direction: row;
+  align-items: center;
+  height: 80px;
+`;
+
+const ProfileComponent = styled(GlobalContainer)`
+  height: initial;
   flex: 1;
-  width: 100%;
-  margin-left: 20px;
   flex-direction: column;
   align-items: flex-start;
+  padding: 7px 5px 0px 5px;
 `;
 
-const ReportButton = styled(GlobalButton)`
-  position: absolute;
-  background-color: white;
-  top: 7px;
-  right: 5px;
-`;
-
-const TextTitle = styled(GlobalText)`
+const TextNickname = styled(GlobalText)`
   font-size: ${props => props.theme.fontSize.medium};
   color: ${props => props.theme.color.black};
   font-weight: bold;
-  margin-bottom: 1px;
+  padding-bottom: 1px;
 `;
 
 const TextApart = styled(GlobalText)`
   font-size: ${props => props.theme.fontSize.short};
   color: ${props => props.theme.color.gray};
   font-weight: bold;
-  margin-top: 5px;
-  margin-bottom: 12px;
-`;
-
-const TextContent = styled(GlobalText)`
-  font-size: ${props => props.theme.fontSize.small};
-  color: ${props => props.theme.color.black};
-  padding: 5px 0px 5px 0px;
-`;
-
-const TextPrice = styled(GlobalText)`
-  font-size: ${props => props.theme.fontSize.medium};
-  margin-right: 10px;
-  font-weight: bold;
+  padding-bottom: 12px;
 `;
 
 const DistinctLine = styled.View`
   width: 100%;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  border: 1px solid #efefef;
+  border: 1px solid #b2b2b2;
 `;
 
-const CardImageContainer = styled(View)`
-  width: 130px;
-  height: 100%;
-  border-radius: 10px;
-  background-color: aliceblue;
+const ContentComponent = styled(GlobalContainer)`
+  flex-direction: column;
+  align-items: flex-start;
 `;
 
-interface DealImage {
-  // DealImage에 대한 필드를 정의해주세요.
-  imgUrl: string;
-}
+const TextTitle = styled(GlobalText)`
+  font-size: ${props => props.theme.fontSize.subtitle};
+  color: ${props => props.theme.color.black};
+  padding: 30px 0px 0px 0px;
+  font-weight: bold;
+`;
+
+const TextCategory = styled(GlobalText)`
+  font-size: ${props => props.theme.fontSize.small};
+  color: ${props => props.theme.color.gray};
+  padding: 10px 0px 0px 0px;
+`;
+
+const TextContent = styled(GlobalText)`
+  width: 390px;
+  line-height: 24px;
+  font-size: ${props => props.theme.fontSize.medium};
+  color: ${props => props.theme.color.black};
+  padding: 25px 0px 0px 0px;
+`;
+
+const InfoComponent = styled(GlobalContainer)`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  height: initial;
+`;
+
+const TextInfo = styled(GlobalText)`
+  font-size: ${props => props.theme.fontSize.short};
+  color: ${props => props.theme.color.gray};
+  padding: 25px 0px 5px 0px;
+`;
+
+const TextPrice = styled(GlobalText)`
+  font-size: ${props => props.theme.fontSize.subtitle};
+  color: ${props => props.theme.color.black};
+  font-weight: bold;
+`;
+
+const TextReport = styled(GlobalText)`
+  margin-top: 10px;
+  font-size: ${props => props.theme.fontSize.short};
+  color: ${props => props.theme.color.gray};
+  padding: 0px 0px 5px 0px;
+  text-decoration-line: underline;
+`;
+
+const ButtonComponent = styled(GlobalContainer)`
+  position: absolute;
+  top: 800px;
+  display: flex;
+  flex-direction: row;
+  padding: 10px 20px 10px 20px;
+  height: initial;
+`;
+
 interface DoListCard {
   id: number;
   category: string;
@@ -167,35 +217,7 @@ const GoOut2 = ({route, navigation}: any) => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   };
-  const currentTime = new Date();
-  const expireTime = new Date();
-  const calculateTimeAgo = (createdAt: string) => {
-    const now = new Date(); // 현재 시간
-    const created = new Date(createdAt); // createdAt을 Date 객체로 변환
-    const diff = now.getTime() - created.getTime(); // 현재 시간과 createdAt 사이의 차이(밀리초)
-    const minutesAgo = Math.floor(diff / (1000 * 60)); // 밀리초를 분으로 변환하여 계산
-    const hoursAgo = Math.floor(minutesAgo / 60); // 분을 시간으로 변환하여 계산
-    const daysAgo = Math.floor(hoursAgo / 24); // 시간을 일로 변환하여 계산
 
-    if (daysAgo > 30) {
-      // 30일 이상인 경우 한 달 전을 반환
-      const monthsAgo = Math.floor(daysAgo / 30);
-      return `${monthsAgo}달 전`;
-    } else if (daysAgo > 7) {
-      // 7일 이상인 경우 일주일 전을 반환
-      const weeksAgo = Math.floor(daysAgo / 7);
-      return `${weeksAgo}주일 전`;
-    } else if (daysAgo > 0) {
-      // 1일 이상인 경우 일수로 반환
-      return `${daysAgo}일 전`;
-    } else if (hoursAgo > 0) {
-      // 1시간 이상인 경우 시간으로 반환
-      return `${hoursAgo}시간 전`;
-    } else {
-      // 1시간 미만인 경우 분으로 반환
-      return `${minutesAgo}분 전`;
-    }
-  };
   useEffect(() => {
     loadData();
   }, []);
@@ -205,70 +227,26 @@ const GoOut2 = ({route, navigation}: any) => {
         width: 100%;
         height: 100%;
       `}>
-      <Header>
-        <GoBack />
-      </Header>
-      <View
-        style={css`
-          margin-left: 10px;
-          margin-right: 10px;
-          height: 90%;
-        `}>
-        <ScrollView overScrollMode="never">
-          {responseData.map((card, index) => (
-            <View key={index}>
-              <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {id: card.id})}>
-                <DoItListCard>
-                  <CardImageContainer>
-                    {card.dealImages.length > 0 && <DoItListImage src={card.dealImages[0].imgUrl} />}
-                  </CardImageContainer>
-
-                  <CardTextContainer>
-                    <View
-                      style={css`
-                        flex: 1;
-                        margin-top: 10px;
-                      `}>
-                      <TextTitle numberOfLines={1}>{card.title}</TextTitle>
-
-                      <TextApart>{calculateTimeAgo(card.createdAt)}</TextApart>
-                    </View>
-                    <View
-                      style={css`
-                        width: 100%;
-                        flex-direction: row;
-                        justify-content: space-between;
-                        margin-top: 10px;
-                      `}>
-                      {card.dealStatus === 'OPEN' && currentTime < new Date(card.expireAt) && <Text>[대기 중]</Text>}
-                      {card.dealStatus === 'OPEN' && currentTime > new Date(card.expireAt) && <Text>[시간만료]</Text>}
-                      {card.dealStatus === 'ING' && <Text>[진행 중]</Text>}
-                      {card.dealStatus === 'CLOSE' && <Text>[완료]</Text>}
-                      <TextPrice>
-                        {' '}
-                        {card.rewardType === 'CASH'
-                          ? `${card.cash.toLocaleString()}원`
-                          : card.rewardType === 'ITEM'
-                          ? card.item
-                          : 'Unknown Reward Type'}
-                      </TextPrice>
-                    </View>
-                  </CardTextContainer>
-                </DoItListCard>
-              </DoItListButton>
-              <DistinctLine />
-              {type === 'accept' && (
-                <TouchableOpacity
-                  onPress={() => {
-                    acceptDoit(card.id);
-                  }}>
-                  <Text>파토내기</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          ))}
-        </ScrollView>
-      </View>
+      <ScrollView>
+        {responseData.map((card, index) => (
+          <View
+            key={index}
+            style={css`
+              border: 1px solid black;
+            `}>
+            <Text>{card.title}</Text>
+            <Text>{card.content}</Text>
+            {type === 'accept' && (
+              <TouchableOpacity
+                onPress={() => {
+                  acceptDoit(card.id);
+                }}>
+                <Text>파토내기</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 };

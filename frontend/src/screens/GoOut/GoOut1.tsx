@@ -25,7 +25,7 @@ const MainTextContainer = styled(GlobalContainer)`
   align-items: center;
   text-align: center;
   flex-shrink: 0;
-  margin-top: 40px;
+  margin-top: 80px;
   height: 100px;
 `;
 const MainButtonContainer = styled(GlobalContainer)`
@@ -59,10 +59,10 @@ const TypeButtonText = styled(GlobalText)<{selected: boolean}>`
   color: ${({selected}) => (selected ? '#27D894' : '#B2B2B2')};
 `;
 const NextButton2 = styled(DefaultButton)`
-  width: 100%;
+  width: 82%;
   font-size: 18px;
   height: 50px;
-  margin-top: 40px;
+  margin-top: 20px;
   padding: 10px;
 `;
 type ButtonState = {
@@ -110,60 +110,56 @@ const GoOut1 = ({navigation}: Props) => {
     }
   };
   return (
-    <GlobalContainer>
+    <GlobalContainer
+      style={css`
+        justify-content: flex-start;
+        align-items: center;
+        height: 100%;
+      `}>
       <Header>
         <GoBack />
       </Header>
-      <GlobalContainer
-        style={css`
-          justify-content: flex-start;
-          align-items: center;
-          height: 100%;
-          padding-left: 20px;
-          padding-right: 20px;
-        `}>
-        <MainTextContainer>
-          <MainText>이웃의 어떤 일을</MainText>
-          <MainText>해주실건가요?</MainText>
-        </MainTextContainer>
-        <MainButtonContainer>
-          <GlobalComponent>
-            <TypeButton selected={selectedButton[0].status} onPress={() => handleButtonClick('PET')}>
-              {selectedButton[0].status ? <SvgIcon name="puppy" size={100} /> : <SvgIcon name="puppyOff" size={85} />}
-              <TypeButtonText selected={selectedButton[0].status}>반려동물 산책</TypeButtonText>
-            </TypeButton>
-            <TypeButton selected={selectedButton[1].status} onPress={() => handleButtonClick('SHOP')}>
-              {selectedButton[1].status ? (
-                <SvgIcon name="shopping" size={100} />
-              ) : (
-                <SvgIcon name="shoppingOff" size={90} />
-              )}
-              <TypeButtonText selected={selectedButton[1].status}>장보기</TypeButtonText>
-            </TypeButton>
-          </GlobalComponent>
-          <GlobalComponent>
-            <TypeButton selected={selectedButton[2].status} onPress={() => handleButtonClick('RECYCLE')}>
-              {selectedButton[2].status ? <SvgIcon name="bags" size={100} /> : <SvgIcon name="bagsOff" size={90} />}
-              <TypeButtonText selected={selectedButton[2].status}>분리수거</TypeButtonText>
-            </TypeButton>
-            <TypeButton selected={selectedButton[3].status} onPress={() => handleButtonClick('ETC')}>
-              {selectedButton[3].status ? (
-                <SvgIcon name="building" size={100} />
-              ) : (
-                <SvgIcon name="buildingOff" size={90} />
-              )}
-              <TypeButtonText selected={selectedButton[3].status}>기타</TypeButtonText>
-            </TypeButton>
-          </GlobalComponent>
-        </MainButtonContainer>
-        <NextButton2
-          title="다음"
-          color="primary"
-          size="lg"
-          onPress={() => {
-            navigation.navigate('GoOut2', {selectedButton});
-          }}></NextButton2>
-      </GlobalContainer>
+      <MainTextContainer>
+        <MainText>이웃의 어떤 일을</MainText>
+        <MainText>해주실건가요?</MainText>
+      </MainTextContainer>
+      <MainButtonContainer>
+        <GlobalComponent>
+          <TypeButton selected={selectedButton[0].status} onPress={() => handleButtonClick('PET')}>
+            {selectedButton[0].status ? <SvgIcon name="puppy" size={100} /> : <SvgIcon name="puppyOff" size={85} />}
+            <TypeButtonText selected={selectedButton[0].status}>반려동물 산책</TypeButtonText>
+          </TypeButton>
+          <TypeButton selected={selectedButton[1].status} onPress={() => handleButtonClick('SHOP')}>
+            {selectedButton[1].status ? (
+              <SvgIcon name="shopping" size={100} />
+            ) : (
+              <SvgIcon name="shoppingOff" size={90} />
+            )}
+            <TypeButtonText selected={selectedButton[1].status}>장보기</TypeButtonText>
+          </TypeButton>
+        </GlobalComponent>
+        <GlobalComponent>
+          <TypeButton selected={selectedButton[2].status} onPress={() => handleButtonClick('RECYCLE')}>
+            {selectedButton[2].status ? <SvgIcon name="bags" size={100} /> : <SvgIcon name="bagsOff" size={90} />}
+            <TypeButtonText selected={selectedButton[2].status}>분리수거</TypeButtonText>
+          </TypeButton>
+          <TypeButton selected={selectedButton[3].status} onPress={() => handleButtonClick('ETC')}>
+            {selectedButton[3].status ? (
+              <SvgIcon name="building" size={100} />
+            ) : (
+              <SvgIcon name="buildingOff" size={90} />
+            )}
+            <TypeButtonText selected={selectedButton[3].status}>기타</TypeButtonText>
+          </TypeButton>
+        </GlobalComponent>
+      </MainButtonContainer>
+      <NextButton2
+        title="다음"
+        color="primary"
+        size="lg"
+        onPress={() => {
+          navigation.navigate('GoOut2', {selectedButton});
+        }}></NextButton2>
     </GlobalContainer>
   );
 };

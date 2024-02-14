@@ -11,7 +11,6 @@ const SettingsComponent = styled(GlobalContainer)`
   justify-content: initial;
   align-items: initial;
   height: initial;
-  width: 88%;
   margin: 20px 20px 20px 20px;
   border-bottom-width: 1px;
   border-bottom-color: #b2b2b2;

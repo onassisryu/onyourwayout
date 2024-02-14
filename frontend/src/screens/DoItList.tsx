@@ -41,7 +41,7 @@ const CardTextContainer = styled(GlobalContainer)`
   position: relative;
   flex: 1;
   width: 100%;
-  margin-left: 10px;
+  margin-left: 20px;
   flex-direction: column;
   align-items: flex-start;
 `;
@@ -172,7 +172,7 @@ const DoItList = ({navigation}: any) => {
       .get('deal/dong/list')
       .then(resp => {
         setCardListData(resp.data);
-        console.log('카드리스트 api 호출 성공', resp.data);
+        console.log('카드리스트 api 호출 성공', resp.data[0]);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -200,8 +200,6 @@ const DoItList = ({navigation}: any) => {
     filteredData = cardListData.filter(card => card.dealType === categoryToDealType(selectedTypeCategory));
   }
 
-  const [selectedCard, setSelectedCard] = useState({});
-
   return (
     <GlobalContainer>
       <DoItListHeader navigation={navigation}></DoItListHeader>
@@ -225,22 +223,14 @@ const DoItList = ({navigation}: any) => {
                   </CardImageContainer>
 
                   <CardTextContainer>
-                    {userData.id === card.requestId ? (
-                      <></>
-                    ) : (
-                      <ReportButton
-                        onPress={() => {
-                          setReportModalVisible(true);
-                          setSelectedCard(card);
-                        }}>
-                        <Feather
-                          name="more-vertical"
-                          size={25}
-                          style={css`
-                            color: #c4c4c4;
-                          `}></Feather>
-                      </ReportButton>
-                    )}
+                    <ReportButton onPress={() => setReportModalVisible(true)}>
+                      <Feather
+                        name="more-vertical"
+                        size={25}
+                        style={css`
+                          color: #c4c4c4;
+                        `}></Feather>
+                    </ReportButton>
 
                     <View
                       style={css`
@@ -273,7 +263,7 @@ const DoItList = ({navigation}: any) => {
                   </CardTextContainer>
                 </DoItListCard>
               </DoItListButton>
-              <DistinctLine />
+              <DistinctLine></DistinctLine>
             </View>
           ))}
         </DoItListCardComponent>
@@ -283,13 +273,7 @@ const DoItList = ({navigation}: any) => {
         setApartModalVisible={setApartModalVisible}
         setSelectedApart={setSelectedApart}
       />
-
-      <ReportModal
-        reportModalVisible={reportModalVisible}
-        setReportModalVisible={setReportModalVisible}
-        navigation={navigation}
-        selectedCard={selectedCard}
-      />
+      <ReportModal reportModalVisible={reportModalVisible} setReportModalVisible={setReportModalVisible} />
     </GlobalContainer>
   );
 };

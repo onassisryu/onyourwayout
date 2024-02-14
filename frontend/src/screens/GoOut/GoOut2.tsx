@@ -12,7 +12,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import GoBack from '@/components/Signup/GoBack';
 import axiosAuth from '@/axios/axiosAuth';
 import Carousel from 'pinar';
-import theme from '@/Theme';
 import LinearGradient from 'react-native-linear-gradient';
 
 interface DoListCard {
@@ -70,7 +69,7 @@ const activeDotStyle = css`
 `;
 
 const CarouselContainer = styled.View`
-  height: 85%;
+  height: 80%;
 `;
 
 const GoOut2 = ({route, navigation}: any) => {
@@ -87,6 +86,7 @@ const GoOut2 = ({route, navigation}: any) => {
       .get(url)
       .then(resp => {
         setResponseData(resp.data);
+
         console.log('성공', resp.data);
       })
       .catch(error => {
@@ -114,7 +114,7 @@ const GoOut2 = ({route, navigation}: any) => {
           {responseData.map((card, index) => (
             <View
               style={css`
-                height: 85%;
+                height: 80%;
                 position: relative;
               `}
               key={index}>
@@ -126,7 +126,6 @@ const GoOut2 = ({route, navigation}: any) => {
                   bottom: 10px;
                   z-index: 1;
                   background-color: rgba(0, 0, 0, 0.1);
-                  padding: 10px;
                 `}>
                 <Text
                   style={css`
@@ -136,24 +135,8 @@ const GoOut2 = ({route, navigation}: any) => {
                   `}>
                   {card.title}
                 </Text>
-                {card.rewardType === 'CASH' && (
-                  <Text
-                    style={css`
-                      color: white;
-                      font-size: 17px;
-                    `}>
-                    {card.cash.toLocaleString()}원
-                  </Text>
-                )}
-                {card.rewardType === 'ITEM' && (
-                  <Text
-                    style={css`
-                      color: white;
-                      font-size: 17px;
-                    `}>
-                    {card.title}
-                  </Text>
-                )}
+                <Text>{card.content}</Text>
+                <Text>{card.id}</Text>
                 <TouchableOpacity
                   onPress={() => {
                     sendGoOutRequest(card.id);
@@ -187,34 +170,11 @@ const GoOut2 = ({route, navigation}: any) => {
       </CarouselContainer>
       <View
         style={css`
-          height: 15%;
+          height: 20%;
           width: 100%;
-          justify-content: center;
-          align-items: center;
         `}>
-        <TouchableOpacity
-          style={css`
-            height: 50%;
-            width: 90%;
-            border-radius: 10px;
-            background-color: ${theme.color.primary};
-          `}>
-          <View
-            style={css`
-              height: 100%;
-              width: 100%;
-              justify-content: center;
-              align-items: center;
-            `}>
-            <Text
-              style={css`
-                color: white;
-                font-size: 25px;
-                font-weight: 900;
-              `}>
-              수락하기
-            </Text>
-          </View>
+        <TouchableOpacity>
+          <Text>눌러</Text>
         </TouchableOpacity>
       </View>
     </View>

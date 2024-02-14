@@ -9,7 +9,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const SettingsContainer = styled(GlobalContainer)`
   justify-content: initial;
   align-items: initial;
-  width: 88%;
   height: initial;
   margin: 0 20px;
 `;

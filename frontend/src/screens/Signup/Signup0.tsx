@@ -36,7 +36,7 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
 `;
 
 const Signup0 = ({navigation}: any) => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState('닉네임');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -66,7 +66,7 @@ const Signup0 = ({navigation}: any) => {
         console.log('성공', resp.data.data);
         setUserSignUpData(prevState => ({
           ...prevState,
-          nickname: value,
+          username: value,
         }));
         navigation.navigate('Signup1');
       })
