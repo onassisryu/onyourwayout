@@ -2,9 +2,9 @@ import React, {useEffect} from 'react';
 import {ScrollView} from 'react-native';
 import {TouchableOpacity, Text, View, Image, StyleSheet} from 'react-native';
 import styled, {css} from '@emotion/native';
-import {useRecoilValue} from 'recoil';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {GlobalContainer, GlobalText} from '@/GlobalStyles';
-import {userDataState} from '@/recoil/atoms';
+import {userDataState, isLoggedInState} from '@/recoil/atoms';
 import {logoutUser} from '@/utils/common';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
@@ -82,6 +82,22 @@ const My = ({navigation}: any) => {
   const userData = useRecoilValue(userDataState); // userDataState 상태 가져오기
   console.log(userData);
   const scorePercent = `${userData.score}%`;
+  const isLoggedIn = useRecoilValue(isLoggedInState);
+  const setUserData = useSetRecoilState(userDataState);
+
+  const checkLogin = async () => {
+    if (isLoggedIn) {
+      console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
+      navigation.navigate('Main');
+    } else {
+      console.log('로그인 상태가 아닙니다.======> 페이지 이동', isLoggedIn);
+      setUserData({});
+      navigation.navigate('Login');
+    }
+  };
+  useEffect(() => {
+    checkLogin();
+  }, [isLoggedIn]);
 
   return (
     <GlobalContainer
@@ -161,7 +177,7 @@ const My = ({navigation}: any) => {
                     margin-left: 2px;
                   `}>
                   <ApartText>
-                    {userData.apt.name}아파트, {userData.dongName}동 {userData.hoName}호
+                    {userData?.apt.name}아파트, {userData?.dongName}동 {userData?.hoName}호
                   </ApartText>
                 </View>
               </View>
