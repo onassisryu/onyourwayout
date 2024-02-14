@@ -35,6 +35,7 @@ const TypeCategoryComponent = styled(GlobalContainer)`
   justify-content: flex-start;
   padding: 0px 20px 0px 15px;
   margin: 10px 5px 10px 0px;
+
   height: initial;
 `;
 
@@ -76,6 +77,7 @@ const CategoryComponent = ({name, selected, onSelect}: {name: string; selected: 
 const DoItListCategory = (props: Props) => {
    
   const [userData, setUserData] = useRecoilState(userDataState);
+  props.setSelectedApart(userData.apt.name)
 
   return (
     <GlobalContainer

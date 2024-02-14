@@ -16,8 +16,9 @@ import {
 } from 'react-native';
 
 const IconContainer = styled(GlobalContainer)`
-  justify-content: flex-end;
+  justify-content: space-between;
   flex-direction: row;
+  align-items: center;
 `;
 
 const IconButton = styled(GlobalButton)`
@@ -25,53 +26,25 @@ const IconButton = styled(GlobalButton)`
   margin: 0px 10px 0px 10px;
 `;
 
-// 알림 아이콘
-const BellNotifBadge = styled.View`
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-  background-color: red;
-  position: absolute;
-  right: 0;
-`;
-
 interface Props {
   navigation: NavigationProp<any>;
+  setSearchModalVisible: (state: boolean) => void;
 }
 
-// 알림 아이콘 컴포넌트
-const NotificationIcon = ({navigation} : Props) => {
-  const [hasNotifications, setHasNotifications] = useState<boolean>(true);
-
-  return (
-    <TouchableOpacity onPress={() => navigation.navigate('Notice')}>
-      <Fontisto name="bell" size={28} color="gray" />
-      {hasNotifications && <BellNotifBadge />}
-    </TouchableOpacity>
-  );
-};
-
-const DoItListHeader = ({ navigation }: Props) => {
-
-  const [isSearchModalVisible, setSearchModalVisible] = useState(false);
+const DoItListHeader = (props: Props) => {
   
   return (
     <Header>
-      <IconButton onPress={() => navigation.goBack()}>
+      <IconContainer>
+      <IconButton onPress={() => props.navigation.goBack()}>
         <SvgIcon name='backspace' size={30} ></SvgIcon>
       </IconButton>
-      <IconContainer>
-        <IconButton onPress={() => setSearchModalVisible(true)}>
-          <SvgIcon name='search' size={30} ></SvgIcon>
-        </IconButton>
-        <IconButton>
-          <NotificationIcon navigation={navigation}/>
-        </IconButton>
-      </IconContainer>
-      <SearchModal
-        isSearchModalVisible={isSearchModalVisible}
-        setSearchModalVisible={setSearchModalVisible}
-        />
+      
+      <IconButton onPress={() => props.setSearchModalVisible(true)}>
+        <SvgIcon name='search' size={30} ></SvgIcon>
+      </IconButton>
+    </IconContainer>
+
     </Header>
   );
 };

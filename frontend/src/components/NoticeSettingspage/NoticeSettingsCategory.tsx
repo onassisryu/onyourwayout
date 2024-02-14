@@ -6,6 +6,9 @@ import theme from '@/Theme';
 import axiosAuth from '@/axios/axiosAuth';
 import {View, TouchableOpacity, ImageSourcePropType, Switch, TextInput} from 'react-native';
 import {GlobalText, GlobalContainer, GlobalButton} from '@/GlobalStyles';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { userDataState } from '@/recoil/atoms';
+
 
 const SettingsComponent = styled(GlobalContainer)`
   justify-content: initial;
@@ -13,8 +16,6 @@ const SettingsComponent = styled(GlobalContainer)`
   height: initial;
   width: 88%;
   margin: 20px 20px 20px 20px;
-  border-bottom-width: 1px;
-  border-bottom-color: #b2b2b2;
 `;
 
 const CategorySettingsTitle = styled(GlobalContainer)`
@@ -66,6 +67,15 @@ const CategoryText = styled(GlobalText)<{selected: boolean}>`
   color: ${({selected}) => (selected ? `${theme.color.primary}` : `${theme.color.gray}`)};
 `;
 
+const DistinctLine = styled.View`
+  width: 95%;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border: 0.5px solid #b2b2b2;
+  background-color: #b2b2b2;
+`;
+
 interface NoticeSettingsCategoryProps {
   categories: string[];
   selectedCategories: string[];
@@ -77,7 +87,15 @@ interface NoticeSettingsCategoryProps {
 
 type CategoryValue = 'PET' | 'RECYCLE' | 'SHOP' | 'ETC';
 
+interface Category {
+  dealType: CategoryValue;
+  // 필요한 경우 다른 필드를 추가할 수 있습니다.
+}
+
+
 const NoticeSettingsCategory = (props: NoticeSettingsCategoryProps) => {
+
+  const [userData, setUserData] = useRecoilState(userDataState);
   
   const onSelectCategory = (category: string) => {
     let value: CategoryValue;
@@ -114,11 +132,25 @@ const NoticeSettingsCategory = (props: NoticeSettingsCategoryProps) => {
     }
     console.log(props.selectedCategories)
   };
+
+  useEffect(() => {
+    axiosAuth
+    .get(`/alarm/get/${userData.id}`)
+    .then(resp => {
+      console.log('성공----------------', resp.data);
+      // resp.data.categories를 이용하여 selectedCategories 상태를 업데이트합니다.
+      const selectedCategories = resp.data.categories.map((category :Category) => category.dealType);
+      props.setSelectedCategories(selectedCategories);
+    })
+    .catch(error => {
+      console.error('데이터를 가져오는 중 오류 발생:', error);
+    });
+  }, []);  // 의존성 배열에서 props.selectedCategories를 제거했습니다.
   
   useEffect(() => {
     const selectedValues = ['PET', 'RECYCLE', 'SHOP', 'ETC'];
     props.setSelectAllText(props.selectedCategories.length === selectedValues.length ? '모두 해제' : '모두 선택');
-  }, [props.selectedCategories]);
+  }, [props.selectedCategories]);  // 별도의 useEffect로 분리했습니다.
 
   return (
     <SettingsComponent>
@@ -144,6 +176,7 @@ const NoticeSettingsCategory = (props: NoticeSettingsCategoryProps) => {
           <CategoryText selected={props.selectedCategories.includes('ETC')}>기타</CategoryText>
         </Category>
       </CategoryComponent>
+      <DistinctLine></DistinctLine>
     </SettingsComponent>
   );
 };
