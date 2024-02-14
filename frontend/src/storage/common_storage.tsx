@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {logoutUser} from '@/utils/common';
 
 export const setStorage = async (key: string, value: string) => {
   try {

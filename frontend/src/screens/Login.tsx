@@ -74,7 +74,7 @@ const Login = ({navigation}: any) => {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
       navigation.navigate('Main');
     } else {
-      console.log('로그인 상태가 아닙니다.======> 페이지 이동', isLoggedIn);
+      console.log('로그인 상태가 아닙니다.======> 페이지 이동X', isLoggedIn);
     }
   };
   useEffect(() => {
@@ -99,7 +99,6 @@ const Login = ({navigation}: any) => {
           const refreshToken = response.data.token.refreshToken;
           const user = response.data.memberInfo;
           const adjDongs = response.data.adjDongs;
-          console.log('로그인 성공', response.data);
           await setStorage('token', token);
           await setStorage('refreshToken', refreshToken);
           await setStorage('user', user);
@@ -111,9 +110,6 @@ const Login = ({navigation}: any) => {
           setApartData(adjDongs);
           navigation.navigate('Main');
           Keyboard.dismiss();
-          console.log('123123');
-          console.log(user);
-          console.log(token);
           console.log('로그인 성공');
         } else {
           Alert.alert('로그인 실패', '아이디나 비밀번호를 확인하세요.');
