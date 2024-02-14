@@ -36,7 +36,7 @@ interface Props {
 }
 const StyledInputTitle = styled(GlobalText)`
   font-size: 18px;
-  font-weight: 900;
+  font-weight: 700;
   color: ${props => props.theme.color.black};
   margin-bottom: 12px;
 `;
@@ -157,7 +157,7 @@ const DoIt2 = ({navigation}: Props) => {
   useEffect(() => {
     Animated.timing(animatedValue, {
       toValue: selectedTab === '물물' ? 1 : 0,
-      duration: 300, // 애니메이션 지속 시간 (ms)
+      duration: 150, // 애니메이션 지속 시간 (ms)
       useNativeDriver: true, // 네이티브 드라이버 사용 여부
     }).start();
   }, [selectedTab]);
@@ -258,6 +258,7 @@ const DoIt2 = ({navigation}: Props) => {
     }
   };
   function MakeDeal() {
+    console.log('이미지파일', imageData);
     const data = {
       title: '반려동물 산책시켜주세요',
       content: '저희 뽀삐 안물어요 1시간 산책시켜주세요',
@@ -366,6 +367,7 @@ const DoIt2 = ({navigation}: Props) => {
           <TouchableOpacity></TouchableOpacity>
         </View>
         <StyledInputTitle>사진</StyledInputTitle>
+        <Button title="show camera app" onPress={showCamera}></Button>
         <TouchableOpacity onPress={showPhoto}>
           {Object.keys(imageData).length === 0 ? (
             <View
@@ -395,7 +397,6 @@ const DoIt2 = ({navigation}: Props) => {
               style={css`
                 width: 100%;
                 height: 200px;
-                aspectratio: 16 / 9;
                 background-color: ${theme.color.gray0};
                 border-radius: 10px;
                 margin-bottom: 20px;
@@ -512,8 +513,8 @@ const DoIt2 = ({navigation}: Props) => {
               <View
                 style={css`
                   position: absolute;
-                  top: 5px;
-                  left: 290px;
+                  top: 20%;
+                  right: 5%;
                 `}>
                 <Text
                   style={css`

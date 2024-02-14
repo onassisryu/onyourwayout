@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, ActivityIndicator} from 'react-native';
+import {View, ActivityIndicator, Text, ScrollView, Image, TouchableOpacity} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {GlobalButton, GlobalContainer, GlobalText} from '@/GlobalStyles';
 import {WebView} from 'react-native-webview';
@@ -12,7 +12,9 @@ import Config from 'react-native-config';
 import {useSetRecoilState, useRecoilValue} from 'recoil';
 import {isLoggedInState, userDataState, apartDataState} from '@/recoil/atoms';
 import axiosAuth from '@/axios/axiosAuth';
-
+import {error} from 'console';
+import theme from '@/Theme';
+import calculateTimeAgo from '@/components/CalculateTimeAgo';
 type ButtonState = {
   title: string;
   status: boolean;
@@ -60,6 +62,7 @@ const CategoryText = styled(GlobalText)<{selected: boolean}>`
 
 const MapContainer = styled.View`
   height: 100%;
+  position: relative;
 `;
 
 const Location = ({navigation}: any) => {
@@ -69,7 +72,7 @@ const Location = ({navigation}: any) => {
 
   const [location, setLocation] = useState<ILocation | null>(null);
   const [markers, setMarkers] = useState<Dong[]>([]);
-
+  const [dongName, setDongName] = useState<string>('');
   const [selectedButton, setSelectedButton] = useState<ButtonState>([
     {title: 'PET', status: true},
     {title: 'SHOP', status: true},
@@ -134,7 +137,7 @@ const Location = ({navigation}: any) => {
   function getDongWithin50m(currentLocation: any, dongList: any) {
     const filteredDongList = dongList.filter(dong => {
       const distance = getDistance(currentLocation.lat, currentLocation.lng, dong.lat, dong.lng);
-      return distance <= 50;
+      return distance <= 10;
     });
 
     return filteredDongList;
@@ -203,13 +206,40 @@ const Location = ({navigation}: any) => {
     getLocation();
   }, []);
 
+  const selectedDealTypes = selectedButton
+    .filter(button => button.status)
+    .map(button => button.title)
+    .join(',');
+
+  const [dealList, setDealList] = useState([]);
+  useEffect(() => {}, [dealList]);
+  function dongDoitList(dongId: number) {
+    axiosAuth
+      .get(`deal/dong/list?dong=${dongId}&dealType=${selectedDealTypes}`)
+      .then(resp => {
+        console.log('성공', resp.data);
+        setDealList(resp.data);
+      })
+      .catch(error => {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      });
+  }
+  const handleMessage = event => {
+    const message = event.nativeEvent.data;
+    // 수신된 메시지 처리
+    const markerData = JSON.parse(message);
+    console.log(markerData);
+    dongDoitList(markerData.dongId);
+    setDongName(markerData.name);
+  };
+
   return (
     <GlobalContainer
       style={css`
         height: 100%;
       `}>
       <LocationHeader>
-        <LocationHeadText>{userData.apt.name}</LocationHeadText>
+        <LocationHeadText>{userData.apt.name}아파트</LocationHeadText>
         <View
           style={css`
             flex-direction: row;
@@ -235,6 +265,7 @@ const Location = ({navigation}: any) => {
             source={{html: ApartMarker(key, markers, location)}}
             javaScriptEnabled={true}
             injectedJavaScript={''}
+            onMessage={handleMessage} // 메시지 수신
           />
         ) : (
           <ActivityIndicator
@@ -245,6 +276,103 @@ const Location = ({navigation}: any) => {
             color="#00D282"
           />
         )}
+        <View
+          style={css`
+            position: absolute;
+            height: 60%;
+            width: 100%;
+            bottom: 0%;
+            background-color: white;
+            border-radius: 20px;
+            padding-left: 20px;
+            padding-right: 20px;
+          `}>
+          {userData.apt.name && dongName && (
+            <Text
+              style={css`
+                margin: 10px;
+                margin-top: 20px;
+                margin-bottom: 20px;
+                font-weight: 700;
+                font-size: 20px;
+              `}>
+              {userData.apt.name}아파트 {dongName}동
+            </Text>
+          )}
+          <ScrollView overScrollMode="never">
+            {dealList.map((item, index) => (
+              <TouchableOpacity key={index} onPress={() => navigation.navigate('DoItListDetail', {id: item.id})}>
+                <View
+                  key={index}
+                  style={css`
+                    height: 130px;
+                    padding: 10px;
+                    border-bottom-width: 0.5px;
+                    border-bottom: 0.5px solid ${theme.color.black};
+                    flex-direction: row;
+                  `}>
+                  {item.dealImages[0] ? (
+                    <Image
+                      source={{uri: item.dealImages[0].imgUrl}}
+                      style={css`
+                        width: 100px;
+                        height: 100px;
+                        border-radius: 10px;
+                        margin-right: 15px;
+                      `}
+                    />
+                  ) : (
+                    <View
+                      style={css`
+                        width: 100px;
+                        height: 100px;
+                        border-radius: 10px;
+                        margin-right: 15px;
+                        background-color: ${theme.color.lightgray};
+                      `}>
+                      {/* 아이콘 또는 다른 표시할 내용을 여기에 추가 */}
+                    </View>
+                  )}
+                  <View
+                    style={css`
+                      margin-top: 5px;
+                    `}>
+                    <Text
+                      style={css`
+                        font-size: 15px;
+                        font-weight: 600;
+                      `}>
+                      {item.title}
+                    </Text>
+                    <Text
+                      style={css`
+                        font-size: 12px;
+                        color: ${theme.color.gray};
+                        margin-bottom: 30px;
+                      `}>
+                      {calculateTimeAgo(item.createdAt)}
+                    </Text>
+                    <Text
+                      style={css`
+                        font-size: 15px;
+                        font-weight: 600;
+                      `}>
+                      {item.rewardType === 'CASH'
+                        ? `${item.cash.toLocaleString()}원`
+                        : item.rewardType === 'ITEM'
+                        ? item.item
+                        : 'Unknown Reward Type'}
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+            <View
+              style={css`
+                height: 130px;
+              `}></View>
+          </ScrollView>
+        </View>
       </MapContainer>
     </GlobalContainer>
   );

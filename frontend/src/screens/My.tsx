@@ -1,13 +1,17 @@
 import React, {useEffect} from 'react';
 import {ScrollView} from 'react-native';
-import {TouchableOpacity, Text, View} from 'react-native';
+import {TouchableOpacity, Text, View, Image, StyleSheet} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {useRecoilValue} from 'recoil';
 import {GlobalContainer, GlobalText} from '@/GlobalStyles';
 import {userDataState} from '@/recoil/atoms';
+import {logoutUser} from '@/utils/common';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
 import Mypagelist from '@/components/Mypage/InnerContainerBoxhorizontal';
+import AcceptImage from '../../assets/images/나가요잉2.png';
+import RequestImage from '../../assets/images/해줘요잉2.png';
+import Mark from '../../assets/images/이웃지수마크.png';
 const MyHeader = styled(Header)`
   justify-content: flex-end;
   position: absolute;
@@ -65,6 +69,15 @@ const InnerContainerBox = styled.TouchableOpacity`
   justify-content: center;
 `;
 
+const StyledImage = styled.Image`
+  width: 50%;
+  height: 50%;
+  margin-bottom: 15px;
+`;
+const MarkImage = styled.Image`
+  width: 30px;
+  height: 30px;
+`;
 const My = ({navigation}: any) => {
   const userData = useRecoilValue(userDataState); // userDataState 상태 가져오기
   console.log(userData);
@@ -161,6 +174,14 @@ const My = ({navigation}: any) => {
                   style={css`
                     width: ${scorePercent};
                   `}></Scorebar>
+                <View
+                  style={css`
+                    position: absolute;
+                    top: -7px;
+                    left: ${scorePercent};
+                  `}>
+                  <MarkImage source={Mark}></MarkImage>
+                </View>
               </Scorebarbackground>
             </InnerContainer>
             <InnerContainer>
@@ -171,10 +192,22 @@ const My = ({navigation}: any) => {
                   justify-content: space-around;
                 `}>
                 <InnerContainerBox onPress={() => navigation.navigate('MyDoList', {type: 'accept'})}>
-                  <Text>내가 한일</Text>
+                  <StyledImage source={AcceptImage}></StyledImage>
+                  <Text
+                    style={css`
+                      font-weight: 600;
+                    `}>
+                    내가 한일
+                  </Text>
                 </InnerContainerBox>
                 <InnerContainerBox onPress={() => navigation.navigate('MyDoList', {type: 'request'})}>
-                  <Text>내가 맡긴일</Text>
+                  <StyledImage source={RequestImage}></StyledImage>
+                  <Text
+                    style={css`
+                      font-weight: 600;
+                    `}>
+                    내가 맡긴일
+                  </Text>
                 </InnerContainerBox>
               </View>
             </InnerContainer>
@@ -213,6 +246,7 @@ const My = ({navigation}: any) => {
                 icon="setting"
                 onPress={() => navigation.navigate('MySetting')}
               />
+              <Mypagelist title="로그아웃" iconType="Ant" icon="setting" onPress={logoutUser} />
             </InnerContainer>
           </View>
         )}

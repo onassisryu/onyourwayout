@@ -9,6 +9,9 @@ import DefaultButton from '@/components/DefaultButton';
 import theme from '@/Theme';
 import {getStorage, setStorage} from '@/storage/common_storage';
 
+//icons
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 interface StyledInputProps {
   isnotValue?: boolean;
 }
@@ -35,7 +38,7 @@ const StyledInput = styled.TextInput<StyledInputProps>`
   border-radius: 30px;
   border: 2px solid ${theme.color.gray200};
   padding: 10px;
-  padding-left: 40px;
+  padding-left: 55px;
   border: 2px solid ${({isnotValue}) => (isnotValue ? theme.color.gray200 : theme.color.primary)};
   color: ${theme.color.primary};
 `;
@@ -62,6 +65,10 @@ const Login = ({navigation}: any) => {
   const setApartData = useSetRecoilState(apartDataState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
 
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const toggleSecureTextEntry = () => {
+    setSecureTextEntry(prevState => !prevState);
+  };
   const checkLogin = async () => {
     if (isLoggedIn) {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
@@ -147,23 +154,75 @@ const Login = ({navigation}: any) => {
           `}>
           나온김에
         </StyledText>
-        <StyledInput
-          placeholder="아이디 입력"
-          placeholderTextColor={theme.color.gray200}
-          value={username}
-          onChangeText={text => setusername(text)}
-          isnotValue={isnotValueid}
-        />
-
-        <StyledInput
-          placeholder="비밀번호 입력"
-          placeholderTextColor={theme.color.gray200}
-          value={password}
-          onChangeText={text => setPassword(text)}
-          secureTextEntry
-          isnotValue={isnotValuepassword}
-        />
-
+        <View
+          style={css`
+            width: 100%;
+            position: relative;
+          `}>
+          <StyledInput
+            placeholder="아이디 입력"
+            placeholderTextColor={theme.color.gray200}
+            value={username}
+            onChangeText={text => setusername(text)}
+            isnotValue={isnotValueid}
+          />
+          <View
+            style={css`
+              position: absolute;
+              top: 45%;
+              left: 5%;
+            `}>
+            {username !== '' ? (
+              <FontAwesome5 name="user-circle" size={25} color={theme.color.primary} />
+            ) : (
+              <FontAwesome5 name="user-circle" size={25} color={theme.color.gray200} />
+            )}
+          </View>
+        </View>
+        <View
+          style={css`
+            width: 100%;
+            position: relative;
+          `}>
+          <StyledInput
+            placeholder="비밀번호 입력"
+            placeholderTextColor={theme.color.gray200}
+            value={password}
+            onChangeText={text => setPassword(text)}
+            secureTextEntry={secureTextEntry}
+            isnotValue={isnotValuepassword}
+          />
+          <View
+            style={css`
+              position: absolute;
+              top: 45%;
+              left: 6%;
+            `}>
+            {password !== '' ? (
+              <FontAwesome5 name="lock" size={22} color={theme.color.primary} />
+            ) : (
+              <FontAwesome5 name="lock" size={22} color={theme.color.gray200} />
+            )}
+          </View>
+          <View
+            style={css`
+              position: absolute;
+              top: 47%;
+              right: 6%;
+            `}>
+            <TouchableOpacity onPress={toggleSecureTextEntry}>
+              {password === '' && secureTextEntry ? (
+                <Ionicons name="eye-outline" size={22} color={theme.color.gray200} />
+              ) : password === '' && !secureTextEntry ? (
+                <Ionicons name="eye-off-outline" size={22} color={theme.color.gray200} />
+              ) : password !== '' && secureTextEntry ? (
+                <Ionicons name="eye-outline" size={22} color={theme.color.primary} />
+              ) : (
+                <Ionicons name="eye-off-outline" size={22} color={theme.color.primary} />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
         <LoginButton title="로그인" color="primary" size="lg" disabled={isDisabled} onPress={() => login()} />
 
         <View

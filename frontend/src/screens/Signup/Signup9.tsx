@@ -14,7 +14,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import {userSignUpDataState} from '@/recoil/atoms';
 import {useRecoilValue} from 'recoil';
 import axios from 'axios';
-
 import {
   launchCamera,
   launchImageLibrary,
@@ -131,7 +130,7 @@ const Signup9 = ({navigation}: any) => {
     console.log(userSignUpData);
     const body = {
       jsonData: userSignUpData,
-      dealImageFileList: '',
+      dealImageFileList: imageData,
     };
 
     submitMultipart(body)
@@ -150,13 +149,21 @@ const Signup9 = ({navigation}: any) => {
         <GoBack />
       </Header>
       <SignupBodyContainer>
-        <SignupHeadtext title="명세서 사진을 넣어주세요"></SignupHeadtext>
+        <SignupHeadtext
+          title="거주지 주소가 나온 
+관리비 명세서를 업로드해주세요"></SignupHeadtext>
         <Text
           style={css`
             margin-top: 10px;
             color: ${theme.color.gray};
           `}>
-          명세서 사진이 없다면 건너뛰기 가능
+          관리비 명세서를 인증받는데
+        </Text>
+        <Text
+          style={css`
+            color: ${theme.color.gray};
+          `}>
+          최대 1주일 정도의 시간이 소요됩니다
         </Text>
         <View
           style={css`
@@ -191,7 +198,6 @@ const Signup9 = ({navigation}: any) => {
                 style={css`
                   width: 100%;
                   height: 200px;
-                  aspectratio: 16 / 9;
                   background-color: ${theme.color.gray0};
                   border-radius: 10px;
                   margin-bottom: 20px;
