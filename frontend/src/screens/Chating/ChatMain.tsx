@@ -33,6 +33,7 @@ const ChatTextContainer = styled.View`
 interface ChatRoom {
   id: number;
   oppNickName: string;
+  oppId: number;
   createdAt: string;
   // 추가적인 채팅방 정보를 정의할 수 있습니다.
   dong: {
@@ -52,7 +53,7 @@ const ChatMain = ({navigation}: any) => {
   // });
   const user = {
     memberNickname: '가영가영이',
-    otherNickname: '태양태양이',
+    otherNickname: '하구팟',
   };
   //채팅방생성
   const makeChatRoom = () => {
@@ -67,6 +68,7 @@ const ChatMain = ({navigation}: any) => {
   };
   //채팅방 조회
   const getChatRoom = () => {
+    console.log(userData.id);
     axiosAuth
       .get(`/chat/room/${userData.id}`)
       .then(res => {
@@ -123,7 +125,12 @@ const ChatMain = ({navigation}: any) => {
           <ChatRoomContainer
             key={chatRoom.id}
             onPress={() => {
-              navigation.navigate('ChatDetail', {roomId: chatRoom.id});
+              navigation.navigate('ChatDetail', {
+                roomId: chatRoom.id,
+                userId: userData.id,
+                name: chatRoom.oppNickName,
+                dong: chatRoom.dong.name,
+              });
             }}>
             <View
               style={css`
@@ -136,6 +143,7 @@ const ChatMain = ({navigation}: any) => {
             />
             <ChatTextContainer>
               <Text>상대방 닉네임: {chatRoom.oppNickName}</Text>
+              <Text>상대방 id: {chatRoom.oppId}</Text>
               <Text>동: {chatRoom.dong.name}</Text>
               <Text>시간: {chatRoom.createdAt}</Text>
             </ChatTextContainer>

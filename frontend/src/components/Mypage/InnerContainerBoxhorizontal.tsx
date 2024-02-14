@@ -99,6 +99,7 @@ const Mypagelist = (props: Innertext) => {
           <Text
             style={css`
               font-size: 15px;
+              font-weight: 500;
             `}
             {...props}>
             {props.title}

@@ -15,13 +15,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import GoBack from '@/components/Signup/GoBack';
 import axiosAuth from '@/axios/axiosAuth';
 import Feather from 'react-native-vector-icons/Feather';
-import { getStorage } from '@/storage/common_storage';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { userDataState } from '@/recoil/atoms';
-
-
+import {getStorage} from '@/storage/common_storage';
+import {useRecoilState, useRecoilValue} from 'recoil';
+import {userDataState} from '@/recoil/atoms';
 
 const SubContainer = styled(GlobalContainer)`
+  width: 100%;
   margin: 10px;
   margin-right: 20px;
   margin-left: 20px;
@@ -204,10 +203,8 @@ const dealTypeTextMap = {
   ETC: '기타',
 };
 
-
 const DoItListDetail = ({route, navigation}: any) => {
   const [userData, setUserData] = useRecoilState(userDataState);
-
   const [requestUserId, setRequestUserId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
@@ -346,17 +343,17 @@ const DoItListDetail = ({route, navigation}: any) => {
               <ContentComponent>
                 <TextTitle numberOfLines={1}>{responseData.title}</TextTitle>
                 <InfoComponent>
-                  {responseData.dealType === 'PET' && <SvgIcon name="puppy" size={20}/>}
-                  {responseData.dealType === 'RECYCLE' && <SvgIcon name="bags" size={23}/>}
-                  {responseData.dealType === 'SHOP' && <SvgIcon name="shopping" size={20}/>}
-                  {responseData.dealType === 'ETC' && <SvgIcon name="building" size={20}/>}
+                  {responseData.dealType === 'PET' && <SvgIcon name="puppy" size={20} />}
+                  {responseData.dealType === 'RECYCLE' && <SvgIcon name="bags" size={23} />}
+                  {responseData.dealType === 'SHOP' && <SvgIcon name="shopping" size={20} />}
+                  {responseData.dealType === 'ETC' && <SvgIcon name="building" size={20} />}
                   <TextCategory> {dealTypeTextMap[responseData.dealType]}</TextCategory>
                 </InfoComponent>
                 <InfoComponent style={css`justify-content: flex-end`}>                 
                   {responseData.rewardType === 'CASH' && <TextPrice>{responseData.cash.toLocaleString()}원</TextPrice>}
                   {responseData.rewardType === 'ITEM' && <TextPrice>{responseData.item}</TextPrice>}
                 </InfoComponent>
-                  
+
                 <TextContent>{responseData.content}</TextContent>
 
 
@@ -387,17 +384,13 @@ const DoItListDetail = ({route, navigation}: any) => {
               flex-direction: row;
               justify-content: space-between;
             `}>
-              <Ant
-                name="arrowleft"
-                size={40}
-                color="black"
-                onPress={() => navigation.navigate('Bottom', {screen: '아파트'})}
-              />
-              <Feather
-                name="more-vertical"
-                size={40}
-                onPress={handleIconPress}
-              />
+            <Ant
+              name="arrowleft"
+              size={40}
+              color="black"
+              onPress={() => navigation.navigate('Bottom', {screen: '아파트'})}
+            />
+            <Feather name="more-vertical" size={40} onPress={handleIconPress} />
           </TouchableOpacity>
         </View>
       </View>
@@ -432,7 +425,7 @@ const DoItListDetail = ({route, navigation}: any) => {
           </View>
         )}
       </View>
-      { 
+      {
         modalVisible && (
           modalType === 'edit'
           ?  <EditDeleteModal 
@@ -451,7 +444,6 @@ const DoItListDetail = ({route, navigation}: any) => {
       }
     
     </View>
-    
   );
 };
 

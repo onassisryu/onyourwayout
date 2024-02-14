@@ -59,45 +59,43 @@ type DealProps = {
   cash: number;
 };
 
+const EditPage = ({route, navigation}: any) => {
+  const {data} = route.params; // 수정할 게시물의 ID를 가져옵니다.
+  const currentTime = new Date(data.createdAt);
+  const currentHour = String(currentTime.getHours()).padStart(2, '0');
+  const currentMinute = String(currentTime.getMinutes()).padStart(2, '0');
+  const defaultTime = `${currentHour}:${currentMinute}`;
+  const oneHourLater = new Date(currentTime.getTime() + 60 * 60 * 1000); // 현재 시간에 1시간을 더함
+  const oneHourLaterHour = String(oneHourLater.getHours()).padStart(2, '0');
+  const oneHourLaterMinute = String(oneHourLater.getMinutes()).padStart(2, '0');
+  const oneHourLaterTime = `${oneHourLaterHour}:${oneHourLaterMinute}`;
 
-const EditPage = ({ route, navigation } : any) => {
-    const { data } = route.params;  // 수정할 게시물의 ID를 가져옵니다.
-    const currentTime = new Date(data.createdAt);
-    const currentHour = String(currentTime.getHours()).padStart(2, '0');
-    const currentMinute = String(currentTime.getMinutes()).padStart(2, '0');
-    const defaultTime = `${currentHour}:${currentMinute}`;
-    const oneHourLater = new Date(currentTime.getTime() + 60 * 60 * 1000); // 현재 시간에 1시간을 더함
-    const oneHourLaterHour = String(oneHourLater.getHours()).padStart(2, '0');
-    const oneHourLaterMinute = String(oneHourLater.getMinutes()).padStart(2, '0');
-    const oneHourLaterTime = `${oneHourLaterHour}:${oneHourLaterMinute}`;
+  console.log(data);
+  const formatNumber = (num: string) => {
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
 
-    console.log(data)
-    const formatNumber = (num: string) => {
-        return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      };
-    
-    const [title, setTitle] = useState(data.title);  // 제목을 관리하는 상태
-    const [expireAt, setExpireAt] = useState(data.expireAt);  // 제목을 관리하는 상태
-    const [cash, setCash] = useState(formatNumber(data.cash.toString()));
-    const [content, setContent] = useState(data.content);
+  const [title, setTitle] = useState(data.title); // 제목을 관리하는 상태
+  const [expireAt, setExpireAt] = useState(data.expireAt); // 제목을 관리하는 상태
+  const [cash, setCash] = useState(formatNumber(data.cash.toString()));
+  const [content, setContent] = useState(data.content);
 
-    
-    // 제목을 변경하는 핸들러 함수
-    const handleTitleChange = (text: string) => {
-      setTitle(text);
-    };
-    const handleExpireAtChange = (text: string) => {
-        setExpireAt(text);
-    };
-    // 현금 데이터를 변경하는 핸들러 함수
-    const handleCashChange = (text: string) => {
-        const formattedText = formatNumber(text.replace(/,/g, ''));  // 쉼표를 제거한 후 새로운 값을 포맷팅합니다.
-        setCash(formattedText);  // 현금 데이터를 업데이트합니다.
-        };
+  // 제목을 변경하는 핸들러 함수
+  const handleTitleChange = (text: string) => {
+    setTitle(text);
+  };
+  const handleExpireAtChange = (text: string) => {
+    setExpireAt(text);
+  };
+  // 현금 데이터를 변경하는 핸들러 함수
+  const handleCashChange = (text: string) => {
+    const formattedText = formatNumber(text.replace(/,/g, '')); // 쉼표를 제거한 후 새로운 값을 포맷팅합니다.
+    setCash(formattedText); // 현금 데이터를 업데이트합니다.
+  };
 
-    const handleContentChange = (text: string) => {
-        setContent(text);
-    };
+  const handleContentChange = (text: string) => {
+    setContent(text);
+  };
 
   const [selectedTab, setSelectedTab] = useState<'현금' | '물물'>('현금');
   const [tabcolor, settabcolor] = useState<'현금' | '물물'>('현금');
@@ -133,7 +131,6 @@ const EditPage = ({ route, navigation } : any) => {
     'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzM1ODI4N30.qU7yh9VK8SNoDHVMSPIBiejonl6AFXeIui_3ONrz2YQ';
 
   const editMultipart = (body: any) => {
-    
     const formData = new FormData();
     formData.append('dto', JSON.stringify(body.jsonData));
     formData.append('dealImageFileList', body.dealImageFileList);
@@ -153,28 +150,26 @@ const EditPage = ({ route, navigation } : any) => {
   };
 
   function Edit() {
-
     const formatCash = (cash: string) => {
-      return Number(cash.replace(/,/g, "")); // 쉼표를 제거하고, 숫자 형식으로 변환합니다.
-    }
-  
+      return Number(cash.replace(/,/g, '')); // 쉼표를 제거하고, 숫자 형식으로 변환합니다.
+    };
+
     const formatExpireAt = (expireAt: string) => {
       const today = new Date();
       const year = today.getFullYear();
       const month = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더해줍니다.
       const date = String(today.getDate()).padStart(2, '0');
-  
+
       return `${year}-${month}-${date}T${expireAt}:00`; // "YYYY-MM-DDTHH:MM:SS" 형태로 만듭니다.
-    }
-  
-      const data = {
-        title: title,
-        content: content,
-        cash: formatCash(cash),  // 쉼표를 제거하고 숫자 형식으로 변환한 후 cash 데이터를 집어넣습니다.
-        dealType: 'PET',
-        expireAt: formatExpireAt(expireAt),  // ":00"을 추가한 형태로 expireAt 데이터를 집어넣습니다.
-      };
-  
+    };
+
+    const data = {
+      title: title,
+      content: content,
+      cash: formatCash(cash), // 쉼표를 제거하고 숫자 형식으로 변환한 후 cash 데이터를 집어넣습니다.
+      dealType: 'PET',
+      expireAt: formatExpireAt(expireAt), // ":00"을 추가한 형태로 expireAt 데이터를 집어넣습니다.
+    };
 
     const body = {
       jsonData: data,
@@ -210,13 +205,10 @@ const EditPage = ({ route, navigation } : any) => {
             `}
             placeholder={data.title}
             placeholderTextColor={theme.color.gray100}
-            defaultValue={title}  // 제목의 초기값을 설정합니다.
-            onChangeText={handleTitleChange}  // 제목이 변경되면 이를 반영합니다.
-
+            defaultValue={title} // 제목의 초기값을 설정합니다.
+            onChangeText={handleTitleChange} // 제목이 변경되면 이를 반영합니다.
           />
-          <IconWrapper>
-            {/* <SvgIcon name={params.icon} size={40} /> */}
-          </IconWrapper>
+          <IconWrapper>{/* <SvgIcon name={params.icon} size={40} /> */}</IconWrapper>
         </StyledInputContainer>
         <View
           style={css`
@@ -387,10 +379,13 @@ const EditPage = ({ route, navigation } : any) => {
               <StyledInput
                 keyboardType="numeric"
                 placeholderTextColor={theme.color.gray200}
-                defaultValue={cash}  // 현금 데이터를 표시합니다.
-                onChangeText={handleCashChange}  // 현금 데이터가 변경되면 이를 반영합니다.
-                style={css`text-align: right; padding-right: 60px`}
-                 />
+                defaultValue={cash} // 현금 데이터를 표시합니다.
+                onChangeText={handleCashChange} // 현금 데이터가 변경되면 이를 반영합니다.
+                style={css`
+                  text-align: right;
+                  padding-right: 60px;
+                `}
+              />
               <View
                 style={css`
                   position: absolute;
@@ -425,13 +420,12 @@ const EditPage = ({ route, navigation } : any) => {
             `}
             placeholder={data.content}
             placeholderTextColor={theme.color.gray100}
-            defaultValue={content}  // 제목의 초기값을 설정합니다.
-            onChangeText={handleContentChange}  // 제목이 변경되면 이를 반영합니다.
+            defaultValue={content} // 제목의 초기값을 설정합니다.
+            onChangeText={handleContentChange} // 제목이 변경되면 이를 반영합니다.
             // onChangeText={handleContents}
           />
         </StyledInputContainer>
         <DefaultButton color="primary" title="수정 완료" onPress={() => Edit()} />
-
       </ScrollView>
     </GlobalContainer>
   );

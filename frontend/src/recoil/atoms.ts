@@ -8,6 +8,12 @@ export const userDataState = atom({
   default: userData,
 });
 
+//아파트 데이터
+export const apartDataState = atom({
+  key: 'apartDataState',
+  default: [],
+});
+
 export const fcmTokenState = atom({
   key: 'fcmTokenState',
   default: {
@@ -22,6 +28,7 @@ export const userSignUpDataState = atom({
     phoneNumber: '',
     birthDate: '',
     password: '',
+    inviteCode: '',
   },
 });
 
