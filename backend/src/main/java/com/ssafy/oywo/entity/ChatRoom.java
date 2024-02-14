@@ -1,6 +1,7 @@
 package com.ssafy.oywo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,7 @@ public class ChatRoom extends BaseTimeEntity {
     private Long id;
 
     @OneToMany(mappedBy = "chatRoom")
+    @JsonManagedReference
     @JsonIgnore
     private List<ChatMessage> chatMessages = new ArrayList<>();
 }

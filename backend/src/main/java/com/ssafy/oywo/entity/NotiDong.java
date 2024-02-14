@@ -1,5 +1,6 @@
 package com.ssafy.oywo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,7 @@ public class NotiDong extends BaseTimeEntity{
     private Long id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "member_id")
     private Member member;
 

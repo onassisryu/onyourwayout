@@ -1,9 +1,7 @@
 package com.ssafy.oywo.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -93,15 +91,19 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     private String certificationImg;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "member")
     private List<NotiDong> notiDongs = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "member")
     private List<NotiDealCategory> notiDealCategories = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "member")
     private List<MembersNotification> membersNotifications = new ArrayList<>();
 
+    @JsonBackReference
     @ManyToOne
     @JsonIgnore
     private Ho ho;

@@ -1,5 +1,6 @@
 package com.ssafy.oywo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,7 @@ public class ChatMessage extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
 
