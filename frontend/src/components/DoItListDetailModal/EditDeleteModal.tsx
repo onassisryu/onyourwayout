@@ -4,7 +4,7 @@ import theme from '@/Theme';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import {Modal, View, ImageSourcePropType, TouchableWithoutFeedback} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { NavigationProp } from '@react-navigation/native';
+import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import axiosAuth from '@/axios/axiosAuth';
 
 const ModalBackground = styled(GlobalContainer)`
@@ -48,11 +48,16 @@ const DistinctLine = styled(GlobalContainer)`
   border: 0.51px solid #b2b2b2;
 `;
 
+interface Data {
+  id: string;
+  [key: string]: any;
+}
+
 interface Props {
   modalVisible: boolean;
   setModalVisible: (state: boolean) => void;
-  navigation: NavigationProp<any>
-  data: object;
+  navigation: NavigationProp<ParamListBase>;
+  data: Data;
 }
 
 const EditDeleteModal = ( props: Props ) => {
@@ -79,7 +84,7 @@ const EditDeleteModal = ( props: Props ) => {
           visible={props.modalVisible}
           onRequestClose={() => props.setModalVisible(false)}
           style={{zIndex: 1}}>
-          <TouchableWithoutFeedback onPress={() => props.setModalVisible(false)} style={{zIndex: 1}}>
+          <TouchableWithoutFeedback onPress={() => props.setModalVisible(false)}>
             <ModalBackground style={{zIndex: 1}}>
               <ModalComponent>
                 <ModalSubComponent

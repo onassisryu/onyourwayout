@@ -24,8 +24,7 @@ const ModalComponent = styled(GlobalContainer)`
   border: 2px solid #00d282;
   border-radius: 15px;
   background-color: white;
-  justify-content: center;
-  align-items: center;
+  padding: 0px 10px 0px 10px;
 `;
 
 const ModalInputComponent = styled(TextInput)`
@@ -39,6 +38,7 @@ const ModalInputComponent = styled(TextInput)`
 
 const ModalSubComponent = styled(GlobalButton)`
   position: absolute;
+  top: 4px;
   right: 2px;
   justify-content: center;
   background-color: ${props => props.theme.color.primary};
@@ -54,15 +54,54 @@ const ModalText = styled(GlobalText)`
   font-weight: bold;
 
 `;
+interface DealImage {
+    // DealImage에 대한 필드를 정의해주세요.
+    imgUrl: string;
+  
+  }
+
+interface DoListCard {
+    id: number;
+    title: string;
+    content: string;
+    requestId: number;
+    acceptId: number | null;
+    cash: number;
+    item: any;
+    rewardType: string;
+    complaint: number;
+    dealStatus: string;
+    dealType: string;
+    expireAt: string;
+    dealImages: DealImage[];
+    createdAt: string;
+    modifiedAt: string;
+    deletedAt: string | null;
+    requestInfo: {
+      dongId: number;
+      dongName: string;
+      requestType: string;
+      requestContent: string;
+      requestStatus: string;
+      createdAt: string;
+      modifiedAt: string;
+      deletedAt: string | null;
+    };
+  }
 
 interface Props {
   isSearchModalVisible: boolean;
   setSearchModalVisible: (state: boolean) => void;
+  searchResults: DoListCard[];
+  setSearchResults: (object: DoListCard[]) => void;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  searchCards: (term: string) => void;
 }
 
 const MainModal = (props: Props) => {
   
-  const [searchTerm, setSearchTerm] = useState('');
+
 
   return (
     <GlobalContainer
@@ -82,9 +121,9 @@ const MainModal = (props: Props) => {
             <ModalComponent>
               <ModalInputComponent 
                 placeholder="검색어를 입력하세요..." 
-                onChangeText={text => setSearchTerm(text)}  
+                onChangeText={text => props.setSearchTerm(text)}  
               />
-              <ModalSubComponent>
+              <ModalSubComponent onPress={() => {props.searchCards(props.searchTerm); props.setSearchModalVisible(false)}}>
                 <ModalText>검색</ModalText>
               </ModalSubComponent>
             </ModalComponent>

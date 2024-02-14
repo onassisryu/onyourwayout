@@ -12,7 +12,7 @@ interface Props {
 
 const Notice = ({navigation}: Props) => {
   return (
-    <ScrollView>
+    <ScrollView overScrollMode='never'>
       <NoticeHeader navigation={navigation}></NoticeHeader>
       <NoticeTab></NoticeTab>
     </ScrollView>

@@ -63,8 +63,6 @@ const App = () => {
     console.log('[FCM Token] ', fcmToken);
   };
   
-  
-
   const checkLogin = async () => {
     if (isLoggedIn) {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
@@ -88,8 +86,6 @@ const App = () => {
     checkLogin();
   }, [isLoggedIn]);
 
-
-  
   PushNotification.createChannel(
     {
       channelId: 'channel-id',
@@ -134,17 +130,6 @@ const App = () => {
     const unsubscribe = messaging().onMessage(handleNotification);
     messaging().onNotificationOpenedApp(handleNotification);
     messaging().getInitialNotification().then(handleNotification);
-
-    const sendTestNotification = () => {
-      const notice: Notice = {
-        id: 'testNotification',
-        title: 'Test Notification',
-        body: 'This is a test notification.',
-      };
-      sendNotification(notice);
-    };
-
-    sendTestNotification();
 
     return unsubscribe;
 
