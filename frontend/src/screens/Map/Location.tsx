@@ -145,7 +145,7 @@ const Location = ({navigation}: any) => {
   }
 
   function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-    const toRadian = angle => (Math.PI / 180) * angle;
+    const toRadian = (angle: any) => (Math.PI / 180) * angle;
     const distance = (a: number, b: number) => (Math.PI / 180) * (a - b);
 
     const RADIUS_OF_EARTH_IN_KM = 6371;
@@ -174,16 +174,30 @@ const Location = ({navigation}: any) => {
           lng: position.coords.longitude,
         };
         const dongsWithin50m = getDongWithin50m(currentLocation, apartDongData);
-        //동과 나의 위치
-        const test = dongsWithin50m.filter(dong => lastDetectedDongs.dongId === dong.dongId);
-        console.log('이미감지된동', lastDetectedDongs);
-        // const isAlreadyDetected = lastDetectedDongs.some(detectedDong => detectedDong.dongId === dong.dongId);
-        if (dongsWithin50m.length > 0) {
-          dongsWithin50m.map(dong => {
+
+        const filteredDongs = dongsWithin50m.filter(dong => {
+          const isAlreadyDetected = lastDetectedDongs.some(detectedDong => detectedDong.dongId === dong.dongId);
+          return !isAlreadyDetected;
+        });
+
+        if (filteredDongs.length > 0) {
+          filteredDongs.map(dong => {
             console.log('내 주변 동', dong.name, dong.dongId);
-            // axiosAuth.get(`/notification/near/${dong.dongId}`);
+            axiosAuth.get(`/notification/near/${dong.dongId}`);
+            lastDetectedDongs.push({
+              dongId: dong.dongId,
+              detectedAt: new Date(),
+            });
           });
         }
+
+        // 10분 이상 경과한 감지된 동 제거
+        const currentTime = new Date();
+        lastDetectedDongs = lastDetectedDongs.filter(detectedDong => {
+          const timeDifference = currentTime - detectedDong.detectedAt;
+          const tenMinutesInMilliseconds = 10 * 60 * 1000; //10분
+          return timeDifference < tenMinutesInMilliseconds;
+        });
       },
       error => {
         console.log(error.code, error.message);
@@ -198,7 +212,7 @@ const Location = ({navigation}: any) => {
       await requestPermissions();
 
       updateLocation();
-      const intervalId = setInterval(updateLocation, 60000);
+      const intervalId = setInterval(updateLocation, 30000);
 
       return () => {
         clearInterval(intervalId);
