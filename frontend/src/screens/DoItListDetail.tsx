@@ -220,6 +220,23 @@ const dealTypeTextMap = {
   SHOP: '장보기',
   ETC: '기타',
 };
+
+
+const getBackgroundColor = (dealType: string): string => {
+  switch (dealType) {
+    case 'PET':
+      return 'yellow';
+    case 'SHOP':
+      return 'blue';
+    case 'RECYCLE':
+      return '#00D282';
+    case 'ETC':
+      return 'yellow';
+    default:
+      return 'gray'; // 기본값
+  }
+};
+
 type User = {
   id: number;
   nickname: string;
@@ -228,6 +245,7 @@ type User = {
   dongId: number;
   dongName: string;
 };
+
 const DoItListDetail = ({route, navigation}: any) => {
   const [requestUserId, setRequestUserId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
@@ -341,9 +359,14 @@ const DoItListDetail = ({route, navigation}: any) => {
                   style={css`
                     height: 400px;
                     width: 100%;
-                    background-color: gray;
+                    background-color: ${getBackgroundColor(responseData.dealType)};
                   `}
-                />
+                >
+                  {responseData.dealType === 'PET' && <SvgIcon name="puppy" size={415} style={css`justify-content: center; align-items: center;`} />}
+                  {responseData.dealType === 'SHOP' && <SvgIcon name="shopping" size={400} style={css`justify-content: center; align-items: center;`} />}
+                  {responseData.dealType === 'RECYCLE' && <SvgIcon name="bags" size={415} style={css`justify-content: center; align-items: center;`} />}
+                  {responseData.dealType === 'ETC' && <SvgIcon name="building" size={415} style={css`justify-content: center; align-items: center;`}/>}
+                </View>
               )}
             </View>
             <SubContainer>
