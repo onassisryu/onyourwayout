@@ -23,7 +23,7 @@ import org.hibernate.annotations.SQLRestriction;
 public class DealComplaint extends BaseTimeEntity{
 
     public enum ComplaintType {
-        CONTENT, MEMBER, ETC
+        Sexual, LegalIssue, Violent, Harmful, Spam, ETC
     }
 
     @Id
