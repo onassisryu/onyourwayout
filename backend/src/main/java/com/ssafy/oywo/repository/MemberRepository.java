@@ -39,6 +39,7 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
 
     List<Member> findMembersByIsCertifiedIsFalse();
 
+    List<Member> findMembersByIsCertifiedIsFalseAndCertificationImgIsNotNull();
     Optional<Member> findByIdAndIsCertifiedIsFalse(Long memberId);
 
     // 이웃지수 높은 사용자
