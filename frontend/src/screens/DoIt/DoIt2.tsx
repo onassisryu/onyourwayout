@@ -290,7 +290,7 @@ const DoIt2 = ({navigation}: Props) => {
 
     const body = {
       jsonData: data,
-      dealImageFileList: [imageData],
+      dealImageFileList: Object.keys(imageData).length === 0 ? [] : imageData,
     };
     console.log('body 전송중', body);
 
