@@ -589,7 +589,11 @@ public class DealServiceImpl implements DealService{
                 .collect(Collectors.toList());
 
         for (Member sortedMember : sortedMembers) {
+<<<<<<< Updated upstream
             List<Deal> dealsForMember = dealRepository.findDealsByRequestIdAndDealTypeAndDealStatus(sortedMember.getId(), dealType, Deal.DealStatus.OPEN, loginUserId);
+=======
+            List<Deal> dealsForMember = dealRepository.findDealsByRequestIdAndDealTypeAndDealStatus(sortedMember.getId(), dealType, Deal.DealStatus.OPEN);
+>>>>>>> Stashed changes
             recommendedDeals.addAll(dealsForMember); // 종합 점수가 높은 순서대로 멤버들의 거래가 포함
         }
 
@@ -597,6 +601,7 @@ public class DealServiceImpl implements DealService{
                                     .stream()
                                     .map(DealDto.Response::new)
                                     .collect(Collectors.toList());
+<<<<<<< Updated upstream
     }
 
     // 나가요잉 추천 거래 신청
@@ -659,6 +664,8 @@ public class DealServiceImpl implements DealService{
                 () -> new NoSuchElementException("해당하는 멤버가 없습니다."));
 
         notificationService.cancelRecommendDeal(deal, acceptMember);
+=======
+>>>>>>> Stashed changes
     }
 
 

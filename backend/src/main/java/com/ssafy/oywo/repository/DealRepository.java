@@ -182,6 +182,7 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
 
     // 전체 거래 수
     Long countDealsByRequestIdOrAcceptId(Long requestId, Long acceptId);
+<<<<<<< Updated upstream
     // 전체 거래 조회
     @Query("SELECT d FROM Deal d " +
             "WHERE (d.requestId = :requestId) " +
@@ -198,6 +199,20 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
             @Param("memberId") Long memberId);
 
     List<Deal> findTop3DealsByRequestIdOrAcceptIdAndDealStatusOrderByCreatedAtDesc(
+=======
+    // 전체 거래
+    @Query("SELECT d FROM Deal d " +
+            "WHERE (d.requestId = :requestId) " +
+            "AND (:dealType IS NULL OR d.dealType IN :dealType) " +
+            "AND d.dealStatus = :dealStatus")
+    List<Deal> findDealsByRequestIdAndDealTypeAndDealStatus(
+            @Param("requestId") Long requestId,
+            @Param("dealType") List<DealType> dealType,
+            @Param("dealStatus") Deal.DealStatus dealStatus
+    );
+
+    List<Deal> findTop3DealsByRequestIdOrAcceptIdAndDealStatusOrderByCreatedAtAsc(
+>>>>>>> Stashed changes
             Long requestId,
             Long acceptId,
             Deal.DealStatus dealStatus
