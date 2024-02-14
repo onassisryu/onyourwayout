@@ -97,7 +97,6 @@ const CardImageContainer = styled(View)`
 interface DealImage {
   // DealImage에 대한 필드를 정의해주세요.
   imgUrl: string;
-
 }
 
 interface DoListCard {
@@ -178,8 +177,6 @@ const DoItList = ({navigation}: any) => {
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
-
-    
   }, [userData]);
   //한번렌더링하고 새로고침하면 다시랜더링 해야됨~
 
@@ -197,13 +194,13 @@ const DoItList = ({navigation}: any) => {
         return '';
     }
   };
-  
+
   let filteredData = cardListData;
   if (selectedTypeCategory) {
-    filteredData = cardListData.filter((card) => card.dealType === categoryToDealType(selectedTypeCategory));
+    filteredData = cardListData.filter(card => card.dealType === categoryToDealType(selectedTypeCategory));
   }
 
-  const [selectedCard, setSelectedCard] = useState({})
+  const [selectedCard, setSelectedCard] = useState({});
 
   return (
     <GlobalContainer>
@@ -228,18 +225,22 @@ const DoItList = ({navigation}: any) => {
                   </CardImageContainer>
 
                   <CardTextContainer>
-                    {userData.id === card.requestId ? (<></>) :
-                    (
-                      <ReportButton onPress={() => {setReportModalVisible(true); setSelectedCard(card);}}>
-                      <Feather
-                        name="more-vertical"
-                        size={25}
-                        style={css`
-                          color: #c4c4c4;
-                        `}></Feather>
+                    {userData.id === card.requestId ? (
+                      <></>
+                    ) : (
+                      <ReportButton
+                        onPress={() => {
+                          setReportModalVisible(true);
+                          setSelectedCard(card);
+                        }}>
+                        <Feather
+                          name="more-vertical"
+                          size={25}
+                          style={css`
+                            color: #c4c4c4;
+                          `}></Feather>
                       </ReportButton>
                     )}
-                    
 
                     <View
                       style={css`
@@ -282,15 +283,13 @@ const DoItList = ({navigation}: any) => {
         setApartModalVisible={setApartModalVisible}
         setSelectedApart={setSelectedApart}
       />
-      
-      <ReportModal 
-        reportModalVisible={reportModalVisible} 
+
+      <ReportModal
+        reportModalVisible={reportModalVisible}
         setReportModalVisible={setReportModalVisible}
         navigation={navigation}
         selectedCard={selectedCard}
       />
-
-
     </GlobalContainer>
   );
 };

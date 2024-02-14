@@ -16,15 +16,13 @@ import {logoutUser} from '@/utils/common';
 import styled from '@emotion/native';
 import apartImage from '../../assets/images/apart.png';
 import goOutMan from '../../assets/images/goOutMan.png';
+
 const BoxText = styled(GlobalText)`
   font-size: 27px;
   font-weight: 500;
   color: ${theme.color.black};
 `;
-const StyledImage = styled.Image`
-  height: 80%;
-  margin-right: 8%;
-`;
+
 const Home = ({navigation}: any) => {
   const isLoggedIn = useRecoilValue(isLoggedInState);
 
@@ -88,26 +86,13 @@ const Home = ({navigation}: any) => {
               height: 100%;
               background-color: ${theme.color.white};
               border-radius: 20px;
-              padding: 5%;
+              padding: 10%;
               flex-direction: row;
-              align-items: center;
             `}>
-            <StyledImage source={goOutMan} />
+            <Image source={goOutMan} />
             <View>
-              <Text
-                style={css`
-                  font-weight: 500;
-                  font-size: 17px;
-                `}>
-                나가기전 나가요잉으로
-              </Text>
-              <Text
-                style={css`
-                  font-weight: 500;
-                  font-size: 15px;
-                `}>
-                우리동의 부탁을 추천받아 볼까요?
-              </Text>
+              <Text>나가기전 나가요잉으로 </Text>
+              <Text>우리동의 부탁을 추천받아 볼까요?</Text>
             </View>
           </View>
         </TouchableOpacity>
