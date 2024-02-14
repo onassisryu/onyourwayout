@@ -364,7 +364,7 @@ public class MemberServiceImpl implements MemberService {
         else{
 
             List<NotiDong> dongList=new ArrayList<>();
-            // notiDongRepository.deleteAllByMemberId(alarmDto.getMemberId());
+             notiDongRepository.deleteAllByMemberId(alarmDto.getMemberId());
             // 재설정
             for (Long dongId:alarmDto.getDongIdList()){
 
@@ -389,13 +389,13 @@ public class MemberServiceImpl implements MemberService {
             member.setNotiCategoryAll(true);
         }
         else{
-            // notiDealCategoryRepository.deleteAllByMemberId(alarmDto.getMemberId());
+             notiDealCategoryRepository.deleteAllByMemberId(alarmDto.getMemberId());
             List<NotiDealCategory> notiDealCategoryList=new ArrayList<>();
 
             // 재설정
             for (DealType dealType:alarmDto.getDealTypeList()){
 
-                Optional<NotiDealCategory> categoryResult=notiDealCategoryRepository.findByMemberIdAAndDealType(member.getId(),dealType);
+                Optional<NotiDealCategory> categoryResult=notiDealCategoryRepository.findByMemberIdAndDealType(member.getId(),dealType);
                 if (categoryResult.isPresent()){
                     categoryResult.get().setDeletedAt(null);
                     notiDealCategoryList.add(categoryResult.get());
@@ -407,7 +407,7 @@ public class MemberServiceImpl implements MemberService {
                     notiDealCategoryRepository.save(category);
                 }
             }
-            member.setNotiDealCategories(notiDealCategoryList);
+            //member.setNotiDealCategories(notiDealCategoryList);
         }
 
         // 시작 시간과 마지막 시간 설정
