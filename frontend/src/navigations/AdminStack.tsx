@@ -58,7 +58,6 @@ const AdminStack = () => {
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName={'AdminMain'}>
-      <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="BottomTab" component={BottomTab} />
       <Stack.Screen name="AdminMain" component={AdminMain} />
       <Stack.Screen name="AdminNonCerti" component={AdminNonCerti} />

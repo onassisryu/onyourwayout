@@ -6,13 +6,7 @@ import {isLoggedInState} from '@/recoil/atoms';
 import styled, {css} from '@emotion/native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 
-import {ScrollView} from 'react-native';
 import {GlobalButton, GlobalText, GlobalContainer} from '@/GlobalStyles';
-import MainComponent from '@components/Mainpage/MainNotice';
-import MainHeader from '@components/Mainpage/MainHeader';
-import MainDoList from '@components/Mainpage/MainDoList';
-import MainModal from '@/components/Mainpage/MainModal';
-import AdminNonCerti from './AdminNonCerti';
 import {logoutUser} from '@/utils/common';
 
 // 배경
@@ -33,6 +27,7 @@ const NotificationBottom = styled.View`
   width: 100%;
   height: 90%;
   align-items: center;
+  justify-content: center;
   padding: 25px;
 `;
 
@@ -74,6 +69,36 @@ const AnimatedCard = Animated.createAnimatedComponent(Card);
 const Card1 = styled(AnimatedCard)`
   margin-bottom: 20px;
 `;
+
+interface AdminWorkCardProps {
+  navigation: any;
+  navigateTo: any;
+  textBold: string;
+  text: string;
+  imageSource: string;
+}
+
+const AdminWorkCard = ({navigation, navigateTo, textBold, text, imageSource}: AdminWorkCardProps) => {
+  return (
+    <Card1>
+      <TouchableOpacity onPress={() => navigation.navigate(navigateTo)}>
+        <CardComponent
+          style={css`
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+          `}>
+          <View>
+            <CardText style={{fontWeight: 'bold'}}>{textBold} </CardText>
+            <CardText>{text}</CardText>
+          </View>
+          <CardImage1 src={imageSource} />
+          {/* <CardImage1 source={require(imageSource)} />   */}
+        </CardComponent>
+      </TouchableOpacity>
+    </Card1>
+  );
+};
 
 // 나온김에 로고 이미지
 const StyledText = styled(GlobalText)`
@@ -119,43 +144,30 @@ const AdminMain = ({navigation}: any) => {
           `}>
           관리자 페이지
         </Text>
-        <SimpleLineIcons name="logout" size={24} color="black" />
+        <SimpleLineIcons name="logout" size={24} style={{opacity: 0}} /> //반대쪽 투명화
       </NotificationBar>
       <NotificationBottom>
-        <Card1>
-          <TouchableOpacity onPress={() => navigation.navigate('AdminNonCerti')}>
-            <CardComponent>
-              <CardText>
-                {`회원 아파트\n`}
-                <Text style={{fontWeight: 'bold'}}>명세서 </Text>
-                {`인증\n 신청내역 ➔`}
-              </CardText>
-              <CardImage1 source={require('images/trash2.png')} />
-            </CardComponent>
-          </TouchableOpacity>
-        </Card1>
-        <Card1>
-          <TouchableOpacity onPress={() => navigation.navigate('AdminPaused')}>
-            <CardComponent>
-              <CardText>
-                <Text style={{fontWeight: 'bold'}}>신고 내역 </Text>
-                {`\n 확인하기 ➔`}
-              </CardText>
-              <CardImage1 source={require('images/trash.png')} />
-            </CardComponent>
-          </TouchableOpacity>
-        </Card1>
-        <Card1>
-          <TouchableOpacity onPress={() => navigation.navigate('AdminNonCerti')}>
-            <CardComponent>
-              <CardText>
-                <Text style={{fontWeight: 'bold'}}>정지 유저</Text>
-                {`\n관리하기 ➔`}
-              </CardText>
-              <CardImage1 source={require('images/trash.png')} />
-            </CardComponent>
-          </TouchableOpacity>
-        </Card1>
+        <AdminWorkCard
+          navigation={navigation}
+          navigateTo="AdminNonCerti"
+          textBold="인증신청"
+          text="확인하기 ➔"
+          imageSource="https://oywo.s3.ap-northeast-2.amazonaws.com/src/trash2.png"
+        />
+        <AdminWorkCard
+          navigation={navigation}
+          navigateTo="AdminPaused"
+          textBold="신고내역"
+          text="확인하기 ➔"
+          imageSource="https://oywo.s3.ap-northeast-2.amazonaws.com/src/trash2.png"
+        />
+        <AdminWorkCard
+          navigation={navigation}
+          navigateTo="AdminPaused"
+          text="정지유저"
+          textBold="관리하기 ➔"
+          imageSource="https://oywo.s3.ap-northeast-2.amazonaws.com/src/trash2.png"
+        />
       </NotificationBottom>
       {/* <AdminNonCerti navigation={navigation} />; */}
       <GlobalButton onPress={logoutUser}>

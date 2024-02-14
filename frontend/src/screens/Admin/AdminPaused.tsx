@@ -80,12 +80,12 @@ const AdminPaused = () => {
             <PausedListCard>
               <TextComponent>
                 <TextContent>
-                  {member.username}
+                  {/* {member.username}
                   {member.nickname}
                   {member.phoneNumber}
                   {member.aptName}
                   {member.dongName}
-                  {member.hoName}
+                  {member.hoName} */}
                 </TextContent>
               </TextComponent>
             </PausedListCard>
