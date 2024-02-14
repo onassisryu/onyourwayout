@@ -296,7 +296,8 @@ const DoIt2 = ({navigation}: Props) => {
       .then(resp => {
         console.log(body);
         console.log('성공', resp.data);
-        navigation.navigate('DoItListDetail', {card: resp.data});
+        console.log('성공', resp.data.id);
+        navigation.navigate('DoItListDetail', {id: resp.data.id});
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
