@@ -409,12 +409,7 @@ const DoItListDetail = ({route, navigation}: any) => {
               flex-direction: row;
               justify-content: space-between;
             `}>
-            <Ant
-              name="arrowleft"
-              size={40}
-              color="black"
-              onPress={() => navigation.navigate('Bottom', {screen: '아파트'})}
-            />
+            <GoBack />
             <Feather name="more-vertical" size={40} onPress={handleIconPress} />
           </TouchableOpacity>
         </View>

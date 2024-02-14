@@ -14,7 +14,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import {userSignUpDataState} from '@/recoil/atoms';
 import {useRecoilValue} from 'recoil';
 import axios from 'axios';
-
 import {
   launchCamera,
   launchImageLibrary,

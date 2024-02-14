@@ -23,6 +23,7 @@ import Signup2 from '@/screens/Signup/Signup2';
 import Signup3 from '@/screens/Signup/Signup3';
 import Signup4 from '@/screens/Signup/Signup4';
 import Signup5 from '@/screens/Signup/Signup5';
+import Signup5a from '@/screens/Signup/Signup5a';
 import Signup6 from '@/screens/Signup/Signup6';
 import Signup7 from '@/screens/Signup/Signup7';
 import Signup8 from '@/screens/Signup/Signup8';
@@ -110,6 +111,7 @@ const MainStack = () => {
       <Stack.Screen name="Signup3" component={Signup3} />
       <Stack.Screen name="Signup4" component={Signup4} />
       <Stack.Screen name="Signup5" component={Signup5} />
+      <Stack.Screen name="Signup5a" component={Signup5a} />
       <Stack.Screen name="Signup6" component={Signup6} />
       <Stack.Screen name="Signup7" component={Signup7} />
       <Stack.Screen name="Signup8" component={Signup8} />
@@ -133,8 +135,8 @@ const MainStack = () => {
       <Stack.Screen name="InvitationCode" component={InvitationCode} />
       <Stack.Screen name="ServiceCenter" component={ServiceCenter} />
       <Stack.Screen name="MyDoList" component={MyDoList} />
-      <Stack.Screen name="DoItPut" component={DoItPut}/>
-      <Stack.Screen name="Report" component={Report}/>
+      <Stack.Screen name="DoItPut" component={DoItPut} />
+      <Stack.Screen name="Report" component={Report} />
     </Stack.Navigator>
   );
 };
