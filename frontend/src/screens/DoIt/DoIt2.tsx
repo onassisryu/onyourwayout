@@ -29,6 +29,8 @@ import {
   Asset,
 } from 'react-native-image-picker';
 import axios from 'axios';
+import {parse} from 'path';
+import {text} from 'stream/consumers';
 
 type DoItScreenRouteProp = RouteProp<RootStackParamList, 'DoIt2'>;
 
@@ -91,15 +93,8 @@ const DoIt2 = ({navigation}: Props) => {
   const oneHourLaterHour = String(oneHourLater.getHours()).padStart(2, '0');
   const oneHourLaterMinute = String(oneHourLater.getMinutes()).padStart(2, '0');
   const oneHourLaterTime = `${oneHourLaterHour}:${oneHourLaterMinute}`;
-  const formattedDate = `${oneHourLater.getFullYear() + 1}-${(oneHourLater.getMonth() + 1)
-    .toString()
-    .padStart(2, '0')}-${oneHourLater.getDate().toString().padStart(2, '0')} ${oneHourLater
-    .getHours()
-    .toString()
-    .padStart(2, '0')}:${oneHourLater.getMinutes().toString().padStart(2, '0')}:${oneHourLater
-    .getSeconds()
-    .toString()
-    .padStart(2, '0')}`;
+
+  const [time, setTime] = useState(oneHourLaterTime);
 
   const {params} = useRoute<DoItScreenRouteProp>();
   const convertType = (type: string): string => {
@@ -120,17 +115,25 @@ const DoIt2 = ({navigation}: Props) => {
 
   const [deal, setDeal] = useState<DealProps>({
     title: '',
-    content: '', //내용
+    content: '',
     dealType: englishType, //거래유형
-    expireAtStr: '2025-03-03 00:00:00', //만료시간
-    cash: 0,
+    expireAtStr: convertTimeToExpireAtStr(time), //만료시간
+    cash: 3000,
   });
+
+  useEffect(() => {
+    console.log('deal', deal);
+  }, [deal]);
 
   useEffect(() => {
     handleTitle();
     console.log(moment().fromNow());
   }, []);
-
+  const handleTime = (text: string) => {
+    setTime(text);
+    const expireAtStr = convertTimeToExpireAtStr(text);
+    setDeal({...deal, expireAtStr: expireAtStr});
+  };
   const handleTitle = () => {
     let text = '';
     if (params.type === '반려동물') {
@@ -138,19 +141,27 @@ const DoIt2 = ({navigation}: Props) => {
     } else {
       text = params.type + ' 해주세요';
     }
-    setDeal({...deal, title: text});
-  };
-  const handleContents = (text: string) => {
-    setDeal({...deal, content: text});
+    setDeal({...deal, title: text, content: text});
   };
   const handleCash = (text: string) => {
     const cashValue = parseFloat(text);
     setDeal({...deal, cash: cashValue});
   };
-  const handleexpireAtStr = (text: string) => {
-    setDeal({...deal, expireAtStr: text});
-  };
-  // handleexpireAtStr(formattedDate);
+  function convertTimeToExpireAtStr(time: string) {
+    const [hour, minute] = time.split(':');
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+
+    const selectedHour = hour.padStart(2, '0');
+    const selectedMinute = minute.padStart(2, '0');
+    const expireAtStr = `${year + 1}-${month}-${day} ${selectedHour}:${selectedMinute}:00`;
+
+    return expireAtStr;
+  }
+
   const [selectedTab, setSelectedTab] = useState<'현금' | '물물'>('현금');
   const [tabcolor, settabcolor] = useState<'현금' | '물물'>('현금');
   const [animatedValue] = useState(new Animated.Value(0));
@@ -234,9 +245,8 @@ const DoIt2 = ({navigation}: Props) => {
 
           console.log('이미지 파일입니다', response.assets[0]);
 
-          const souce = {uri: uri, type: type, fileSize: fileSize, name: fileName};
-          setImageData(souce);
-          // setImg(souce);
+          const source = {uri: uri, type: type, fileSize: fileSize, name: fileName};
+          setImageData(source);
         }
       }
     }); //파라미터로 응답객체 받음
@@ -267,24 +277,20 @@ const DoIt2 = ({navigation}: Props) => {
 
       console.log('이미지 파일입니다', response.assets[0]);
 
-      const souce = {uri: uri, type: type, fileSize: fileSize, name: fileName};
-      setImageData(souce);
+      const source = {uri: uri, type: type, fileSize: fileSize, name: fileName};
+      console.log('이미지 파일입니다', source);
+      setImageData(source);
     }
   };
   function MakeDeal() {
-    console.log('이미지파일', imageData);
-    const data = {
-      title: '반려동물 산책시켜주세요',
-      content: '저희 뽀삐 안물어요 1시간 산책시켜주세요',
-      cash: 1110,
-      dealType: 'PET',
-      expireAtStr: '2024-03-03 00:00:00',
-    };
-
+    const data = deal;
+    console.log('-----------------------------------------------------------------------');
+    console.log(imageData);
     const body = {
       jsonData: data,
       dealImageFileList: imageData,
     };
+    console.log('body 전송중', body);
 
     submitMultipart(body)
       .then(resp => {
@@ -314,8 +320,10 @@ const DoIt2 = ({navigation}: Props) => {
             `}
             placeholder={deal.title}
             placeholderTextColor={theme.color.gray100}
-            defaultValue=""
-            onChangeText={handleTitle}
+            defaultValue={deal.title}
+            value={deal.title}
+            onFocus={() => setDeal({...deal, title: ''})}
+            onChangeText={text => setDeal({...deal, title: text})}
           />
           <IconWrapper>
             <SvgIcon name={params.icon} size={40} />
@@ -356,8 +364,12 @@ const DoIt2 = ({navigation}: Props) => {
                 font-weight: 500;
                 height: 40px;
               `}
-              defaultValue={oneHourLaterTime}
-              onChangeText={handleTitle}
+              placeholder={oneHourLaterTime}
+              value={time}
+              onFocus={() => setTime('')}
+              onChangeText={text => {
+                handleTime(text);
+              }}
             />
           </StyledInputContainer>
         </View>
@@ -390,11 +402,18 @@ const DoIt2 = ({navigation}: Props) => {
               style={css`
                 width: 100%;
                 height: 150px;
-                background-color: ${theme.color.gray0};
                 border-radius: 10px;
                 margin-bottom: 20px;
               `}>
-              <Image source={imageData} />
+              <Image
+                style={css`
+                  width: 100%;
+                  height: 100%;
+                  border-radius: 10px;
+                `}
+                source={imageData}
+                resizeMode="contain"
+              />
             </View>
           )}
         </TouchableOpacity>
@@ -414,7 +433,7 @@ const DoIt2 = ({navigation}: Props) => {
                 {
                   zIndex: 0,
                   position: 'absolute',
-                  backgroundColor: '#00D282',
+                  backgroundColor: 'black',
                   borderRadius: 10,
                   height: '120%',
                   width: '50%',
@@ -506,8 +525,10 @@ const DoIt2 = ({navigation}: Props) => {
               <StyledInput
                 placeholder="가격을 입력해주세요"
                 placeholderTextColor={theme.color.gray200}
-                defaultValue="3000"
-                onChangeText={handleCash}
+                value={deal.cash.toString()}
+                onChangeText={text => {
+                  handleCash(text);
+                }}
                 style={css`
                   text-align: right;
                   padding: 10px;
@@ -546,7 +567,11 @@ const DoIt2 = ({navigation}: Props) => {
             justify-content: space-between;
             display: flex;
           `}>
-          <MoneyButton>
+          <MoneyButton
+            onPress={() => {
+              const number = deal.cash + 1000;
+              setDeal({...deal, cash: number});
+            }}>
             <FontAwesome name="plus" size={18} color="#27D894" />
             <Text
               style={css`
@@ -555,22 +580,30 @@ const DoIt2 = ({navigation}: Props) => {
               천원
             </Text>
           </MoneyButton>
-          <MoneyButton>
+          <MoneyButton
+            onPress={() => {
+              const number = deal.cash + 3000;
+              setDeal({...deal, cash: number});
+            }}>
+            <FontAwesome name="plus" size={18} color="#27D894" />
+            <Text
+              style={css`
+                color: ${theme.color.primary};
+              `}>
+              삼천원
+            </Text>
+          </MoneyButton>
+          <MoneyButton
+            onPress={() => {
+              const number = deal.cash + 5000;
+              setDeal({...deal, cash: number});
+            }}>
             <FontAwesome name="plus" size={18} color="#27D894" />
             <Text
               style={css`
                 color: ${theme.color.primary};
               `}>
               오천원
-            </Text>
-          </MoneyButton>
-          <MoneyButton>
-            <FontAwesome name="plus" size={18} color="#27D894" />
-            <Text
-              style={css`
-                color: ${theme.color.primary};
-              `}>
-              만원
             </Text>
           </MoneyButton>
         </View>
@@ -587,10 +620,11 @@ const DoIt2 = ({navigation}: Props) => {
               height: 60px;
               margin-bottom: 10px;
             `}
-            placeholder={deal.title}
+            placeholder={deal.content}
             placeholderTextColor={theme.color.gray100}
-            defaultValue=""
-            onChangeText={handleContents}
+            value={deal.content}
+            onFocus={() => setDeal({...deal, content: ''})}
+            onChangeText={text => setDeal({...deal, content: text})}
           />
         </StyledInputContainer>
         <DefaultButton onPress={() => MakeDeal()} color="primary" title="작성 완료" />
