@@ -32,14 +32,19 @@ const TimestampText = styled.Text`
   width: 100%;
   background-color: white;
 `;
+const ChatImage = styled.Image`
+  height: 400px;
+  width: 100%;
+  padding: 0;
+`;
 
 const ChatMessage = ({item, userId}: any) => {
   const isSender = item.senderId === userId;
-
   return (
     <MessageContainer isSender={isSender}>
       <MessageBubble isSender={isSender}>
         <MessageText>{item.msg}</MessageText>
+        {item.imgUrl && <ChatImage source={{uri: item.imgUrl}} />}
       </MessageBubble>
       <MessageTimestamp isSender={isSender}>
         <TimestampText>{item.createdAt}</TimestampText>

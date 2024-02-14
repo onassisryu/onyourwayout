@@ -60,10 +60,11 @@ const Signup0 = ({navigation}: any) => {
   const userSignUpData = useRecoilValue(userSignUpDataState);
 
   const updateNickName = (value: string) => {
+    console.log('닉네임', value);
     axiosBasic
       .get(`/members/dup/nickname?value=${value}`)
       .then(resp => {
-        console.log('성공', resp.data.data);
+        console.log('성공', resp.data);
         setUserSignUpData(prevState => ({
           ...prevState,
           nickname: value,
