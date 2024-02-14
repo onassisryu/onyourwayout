@@ -34,7 +34,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<MemberDto.Response> getNonCertifiedMembers() {
-        List<Member> nonCertifiedMembers = memberRepository.findMembersByIsCertifiedIsFalse();
+        List<Member> nonCertifiedMembers = memberRepository.findMembersByIsCertifiedIsFalseAndCertificationImgIsNotNull();
 
         List<MemberDto.Response> nonCertifiedMembersInfo=new ArrayList<>();
 
