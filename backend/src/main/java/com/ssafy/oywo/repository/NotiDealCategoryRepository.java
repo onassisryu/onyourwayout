@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface NotiDealCategoryRepository extends JpaRepository<NotiDealCategory,Long> {
     void deleteAllByMemberId(Long memberId);
 
-    @Query("select n from NotiDealCategory n where n.member.id= :memberId and n.dealType= :dealType")
-    Optional<NotiDealCategory> findByMemberIdAAndDealType(Long memberId, DealType dealType);
+    @Query(value = "select * from noti_deal_category n where n.member_id= :memberId and n.deal_type= :dealType",
+    nativeQuery = true)
+    Optional<NotiDealCategory> findByMemberIdAndDealType(Long memberId, DealType dealType);
 }
