@@ -131,7 +131,7 @@ const Signup9 = ({navigation}: any) => {
     console.log(userSignUpData);
     const body = {
       jsonData: userSignUpData,
-      dealImageFileList: '',
+      dealImageFileList: imageData,
     };
 
     submitMultipart(body)

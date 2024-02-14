@@ -314,7 +314,7 @@ useEffect(() => {
                   </CardTextContainer>
                 </DoItListCard>
               </DoItListButton>
-              <DistinctLine></DistinctLine>
+              <DistinctLine />
             </View>
           ))}
         </DoItListCardComponent>
