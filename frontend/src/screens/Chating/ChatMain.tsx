@@ -7,15 +7,18 @@ import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
 import {useRef, useEffect, useState} from 'react';
 import axiosAuth from '@/axios/axiosAuth';
+import SvgIcon from '@/components/SvgIcon';
 
 const StyledText = styled.Text`
-  font-size: 30px;
-  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 22px;
+  margin: 10px 0 20px 20px;
 `;
 
 const ChatRoomsContainer = styled(ScrollView)`
-  padding: 0 20px;
+  padding: 10px 20px 0 20px;
 `;
+
 const ChatRoomContainer = styled.TouchableOpacity`
   height: 80px;
   padding: 10px;
@@ -23,12 +26,51 @@ const ChatRoomContainer = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
   flex-direction: row;
-  background-color: pink;
+  background-color: white;
+  border: 1px solid #00D282;
 `;
+
 const ChatTextContainer = styled.View`
   flex: 1;
-  background-color: #eaeaea;
+  background-color: white;
 `;
+
+const ChatSubTextContainer = styled.View`
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-start;
+  background-color: white;
+  width: 70%;
+  margin: 0 10px 10px 0;
+`;
+
+const NicknameText = styled.Text`
+  font-weight: bold;
+  font-size: 18px;
+`;
+
+const DongText = styled.Text`
+  font-weight: bold;
+  font-size: 13px;
+  color: ${props => props.theme.color.gray300};
+  margin-left: 7px;
+`;
+
+const TimeText = styled.Text`
+  font-weight: bold;
+  font-size: 10px;
+  color: ${props => props.theme.color.gray200};
+  margin-left: 120px;
+  padding-bottom: 2px;
+`;
+
+const RecentlyChat = styled.Text`
+  font-weight: bold;
+  font-size: 16px;
+  color: ${props => props.theme.color.gray300};
+
+`;
+
 
 interface ChatRoom {
   id: number;
@@ -118,8 +160,9 @@ const ChatMain = ({navigation}: any) => {
 
   return (
     <GlobalContainer>
-      <StyledText>Chat</StyledText>
-      <DefaultButton color="primary" title="채팅방생성" onPress={makeChatRoom} />
+      <StyledText>채팅</StyledText>
+      
+
       <ChatRoomsContainer contentInsetAdjustmentBehavior="automatic">
         {chatRooms.map(chatRoom => (
           <ChatRoomContainer
@@ -132,23 +175,31 @@ const ChatMain = ({navigation}: any) => {
                 dong: chatRoom.dong.name,
               });
             }}>
-            <View
-              style={css`
-                height: 52px;
-                width: 52px;
-                border-radius: 30px;
-                background-color: #eaeaea;
-                margin-right: 10px;
-              `}
-            />
+            <View style={css`
+              height: 52px;
+              width: 52px;
+              border-radius: 30px;
+              background-color: #eaeaea;
+              margin-right: 15px;
+              justify-content: center;
+              align-items: center;
+            `}>
+              <SvgIcon name="profile" size={60} />
+            </View>
+            
             <ChatTextContainer>
-              <Text>상대방 닉네임: {chatRoom.oppNickName}</Text>
-              <Text>상대방 id: {chatRoom.oppId}</Text>
-              <Text>동: {chatRoom.dong.name}</Text>
-              <Text>시간: {chatRoom.createdAt}</Text>
+              <ChatSubTextContainer>
+                <NicknameText>{chatRoom.oppNickName}</NicknameText>
+                <DongText>{chatRoom.dong.name}동</DongText>
+                <TimeText>{chatRoom.createdAt}</TimeText>
+              </ChatSubTextContainer>
+              <RecentlyChat>'ChatDetail'에서 불러오기</RecentlyChat>
             </ChatTextContainer>
+            
           </ChatRoomContainer>
+          
         ))}
+        <DefaultButton color="primary" title="채팅방생성" onPress={makeChatRoom} />
       </ChatRoomsContainer>
     </GlobalContainer>
   );
