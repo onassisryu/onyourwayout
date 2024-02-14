@@ -313,9 +313,6 @@ const App = () => {
   const checkLogin = async () => {
     if (isLoggedIn) {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
-      if (userData.roles == 'ADMIN') {
-        setAdmin(true);
-      }
     } else {
       getStorage('token').then(token => {
         console.log(token);
@@ -331,6 +328,10 @@ const App = () => {
         }
       });
     }
+    // if (userData.roles.includes('ADMIN')) {
+    //   console.log('관리자유');
+    //   setAdmin(true);
+    // }
   };
 
   const [isModalVisible, setModalVisible] = useState(false);
