@@ -5,12 +5,12 @@ import Header from '@/components/Header';
 import styled from '@emotion/native';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import {NavigationProp} from '@react-navigation/native';
-import {View, TouchableOpacity, ImageSourcePropType} from 'react-native';
+import {View, TouchableOpacity, Text, ImageSourcePropType} from 'react-native';
 
 // 헤더 컨테이너
 const HeaderContainer = styled(Header)`
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   background-color: white;
 `;
 
@@ -21,11 +21,13 @@ const StyledText = styled(GlobalText)`
   font-size: 27px;
 `;
 
+const EmptyView = styled.View`
+  width: 28px;
+  height: 28px;
+`;
+
 // 아이콘 컨테이너
 const IconsContainer = styled(GlobalContainer)`
-  position: absolute;
-  right: 15px;
-  top: 15px;
   flex-direction: row;
   justify-content: flex-end;
 `;
@@ -63,14 +65,11 @@ const NotificationIcon = ({navigation}: Props) => {
 // HeaderFunc 컴포넌트
 const MainHeader = ({navigation}: Props) => {
   return (
-    <View>
-      <HeaderContainer>
-        <StyledText>나온김에</StyledText>
-        <IconsContainer>
-          <NotificationIcon navigation={navigation} />
-        </IconsContainer>
-      </HeaderContainer>
-    </View>
+    <HeaderContainer>
+      <EmptyView></EmptyView>
+      <StyledText>나온김에</StyledText>
+      <NotificationIcon navigation={navigation} />
+    </HeaderContainer>
   );
 };
 

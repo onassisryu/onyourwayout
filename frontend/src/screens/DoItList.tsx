@@ -9,7 +9,7 @@ import ReportModal from '@components/DoItListpage/ReportModal';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
 import SvgIcon from '@components/SvgIcon';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
 
@@ -98,7 +98,6 @@ const CardImageContainer = styled(View)`
 interface DealImage {
   // DealImage에 대한 필드를 정의해주세요.
   imgUrl: string;
-
 }
 
 interface DoListCard {
@@ -168,7 +167,7 @@ const DoItList = ({navigation}: any) => {
       return `${minutesAgo}분 전`;
     }
   };
- 
+
   // useEffect 부분
   useFocusEffect(
     React.useCallback(() => {
@@ -205,21 +204,32 @@ const DoItList = ({navigation}: any) => {
     }
   };
 
-  const [selectedCard, setSelectedCard] = useState({})
-  
+
+  let filteredData = cardListData;
+  if (selectedTypeCategory) {
+    filteredData = cardListData.filter(card => card.dealType === categoryToDealType(selectedTypeCategory));
+  }
+
+
+  const [selectedCard, setSelectedCard] = useState({});
+
   // 검색어를 기반으로 카드를 필터링하는 함수
+
   const [openSearch, setOpenSearch] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('')
+
+  const [isSearchModalVisible, setSearchModalVisible] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
   const [searchResults, setSearchResults] = useState<DoListCard[]>(cardListData);
 
   const filterAndUpdateResults = React.useCallback(() => {
     let results = cardListData; // 먼저 카테고리 필터링이 적용될 것입니다.
-  
+
     // 카테고리 필터링
     if (selectedTypeCategory) {
-      results = results.filter((card) => card.dealType === categoryToDealType(selectedTypeCategory));
+      results = results.filter(card => card.dealType === categoryToDealType(selectedTypeCategory));
     }
-  
+
     // 검색어가 있는 경우에만 검색 필터링을 적용합니다.
     if (searchTerm !== '') {
       results = results.filter((card) =>
@@ -309,6 +319,7 @@ const DoItList = ({navigation}: any) => {
       >
 
       </DoItListHeader>
+
       <DoItListCategory
         selectedApartCategory={selectedApartCategory}
         selectedTypeCategory={selectedTypeCategory}
@@ -333,7 +344,7 @@ const DoItList = ({navigation}: any) => {
         
           {searchResults.map((card, index) => (
             <View key={index}>
-              <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {card: card})}>
+              <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {id: card.id})}>
                 <DoItListCard>
 
                     {
@@ -351,17 +362,23 @@ const DoItList = ({navigation}: any) => {
 
 
                   <CardTextContainer>
-                    {userData.id === card.requestId ? (<></>) :
-                    (
-                      <ReportButton onPress={() => {setReportModalVisible(true); setSelectedCard(card);}}>
-                      <Feather
-                        name="more-vertical"
-                        size={25}
-                        style={css`
-                          color: #c4c4c4;
-                        `}></Feather>
+                    {userData.id === card.requestId ? (
+                      <></>
+                    ) : (
+                      <ReportButton
+                        onPress={() => {
+                          setReportModalVisible(true);
+                          setSelectedCard(card);
+                        }}>
+                        <Feather
+                          name="more-vertical"
+                          size={25}
+                          style={css`
+                            color: #c4c4c4;
+                          `}></Feather>
                       </ReportButton>
                     )}
+
                     <View
                       style={css`
                         flex: 1;
@@ -403,9 +420,9 @@ const DoItList = ({navigation}: any) => {
         setApartModalVisible={setApartModalVisible}
         setSelectedApart={setSelectedApart}
       />
-      
-      <ReportModal 
-        reportModalVisible={reportModalVisible} 
+
+      <ReportModal
+        reportModalVisible={reportModalVisible}
         setReportModalVisible={setReportModalVisible}
         navigation={navigation}
         selectedCard={selectedCard}

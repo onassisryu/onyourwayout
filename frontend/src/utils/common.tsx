@@ -33,6 +33,5 @@ export const logoutUser = async () => {
   await removeStorage('refreshToken');
   await removeStorage('user');
   setIsLoggedIn(false);
-  setUserData({});
   console.log('로그아웃 완료');
 };
