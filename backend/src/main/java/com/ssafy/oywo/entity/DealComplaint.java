@@ -15,7 +15,6 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 @Table(name = "deal_complaint")
 @Getter @Setter
-@NoArgsConstructor
 @SQLDelete(sql = "UPDATE deal_complaint SET deleted_at = NOW() WHERE uuid = ?")
 @SQLRestriction("deleted_at IS NULL")
 @AllArgsConstructor
@@ -23,7 +22,7 @@ import org.hibernate.annotations.SQLRestriction;
 public class DealComplaint extends BaseTimeEntity{
 
     public enum ComplaintType {
-        CONTENT, MEMBER, ETC
+        Sexual, LegalIssue, Violent, Harmful, Spam, ETC
     }
 
     @Id
@@ -48,4 +47,11 @@ public class DealComplaint extends BaseTimeEntity{
 
     @ColumnDefault("false")
     private boolean isRead;
+
+
+    public DealComplaint() {
+        this.complaintType = ComplaintType.ETC;
+    }
+
+
 }

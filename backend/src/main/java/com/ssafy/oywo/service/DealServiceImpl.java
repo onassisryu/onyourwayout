@@ -190,7 +190,7 @@ public class DealServiceImpl implements DealService{
     // 내가 나온김에 해야할 일
     @Override
     @Transactional(readOnly = true)
-    public List<DealDto.Response> getMyDealsByStatusING() {
+    public List<DealDto.ResponseWithHo> getMyDealsByStatusING() {
         // 로그인 사용자 id
         Long loginUserId = memberService.getLoginUserId();
 
@@ -198,7 +198,7 @@ public class DealServiceImpl implements DealService{
 
         return myIngDeals
                 .stream()
-                .map(d -> new DealDto.Response(d, memberRepository.findById(d.getRequestId()).orElseThrow(() -> new IllegalArgumentException("해당 requestId의 사용자가 없음"))))
+                .map(d -> new DealDto.ResponseWithHo(d, memberRepository.findById(d.getRequestId()).orElseThrow(() -> new IllegalArgumentException("해당 requestId의 사용자가 없음"))))
                 .collect(Collectors.toList());
     }
 
