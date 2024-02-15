@@ -50,6 +50,10 @@ public class NotificationDto {
         @Schema(description = "알림 타입")
         private Notification.NotificationType notificationType;
 
+        private DealDto.Response deal;
+
+        private DongDto.Response dong;
+
         public static Response of(Notification notification){
             return Response.builder().
                     id(notification.getId()).

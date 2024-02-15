@@ -48,6 +48,12 @@ public class DongDto {
             this.lng = lng;
         }
 
+        public Response(Dong dong){
+            this.dongId = dong.getId();
+            this.name = dong.getName();
+            this.apartment = dong.getApartment();
+        }
+
 
     }
 }

@@ -3,6 +3,8 @@ package com.ssafy.oywo.service;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.MulticastMessage;
+import com.ssafy.oywo.dto.DealDto;
+import com.ssafy.oywo.dto.DongDto;
 import com.ssafy.oywo.dto.NotificationDto;
 import com.ssafy.oywo.entity.*;
 import com.ssafy.oywo.repository.*;
@@ -76,6 +78,8 @@ public class NotificationServiceImpl implements NotificationService {
                 .title("[새로운 해줘요잉]")
                 .message(ho.getDong().getName() + "동 "+ho.getName() +"호에서 새로운 해줘요잉이 등록되었습니다.")
                 .notificationType(Notification.NotificationType.DEAL_NEW)
+                .DealId(deal.getId())
+                .DongId(ho.getDong().getId())
                 .build();
         Notification notificationSaved = notificationRepository.save(notification);
 
@@ -103,6 +107,7 @@ public class NotificationServiceImpl implements NotificationService {
                     .title("[해줘요잉 수락]")
                     .message(member.getNickname() + "님이 요청하신 해줘요잉이 수락되었습니다.")
                     .notificationType(Notification.NotificationType.DEAL_ACCEPT)
+                    .DealId(deal.getId())
                     .build();
         }
 
@@ -112,6 +117,7 @@ public class NotificationServiceImpl implements NotificationService {
                     .title("[해줘요잉 수락 취소]")
                     .message(member.getNickname() + "님이 요청하신 해줘요잉의 수락이 취소되었습니다.")
                     .notificationType(Notification.NotificationType.DEAL_CANCEL)
+                    .DealId(deal.getId())
                     .build();
         }
 
@@ -134,14 +140,18 @@ public class NotificationServiceImpl implements NotificationService {
         Long id = memberService.getLoginUserId();
         List<Optional[]> notifications = notificationRepository.findByMemberId(id);
 
+
         List<NotificationDto.Response> responses = notifications.stream().map(notification -> {
             Notification noti = (Notification) notification[0].get();
             MembersNotification membersNotification = (MembersNotification) notification[1].get();
+
             return NotificationDto.Response.builder()
                     .id(noti.getId())
                     .title(noti.getTitle())
                     .message(noti.getMessage())
                     .isRead(membersNotification.isRead())
+                    .deal(noti.getDealId()==null?null:new DealDto.Response(Objects.requireNonNull(dealRepository.findById(noti.getDealId()).orElse(null))))
+                    .dong(noti.getDongId()==null?null:new DongDto.Response(Objects.requireNonNull(dongRepository.findById(noti.getDongId()).orElse(null))))
                     .notificationType(noti.getNotificationType())
                     .build();
         }).toList();
@@ -216,11 +226,16 @@ public class NotificationServiceImpl implements NotificationService {
                 .title("[해줘요잉 추천]")
                 .message(dong.getName()  + "동에 해줘요잉 요청이 있어요.")
                 .notificationType(Notification.NotificationType.DEAL_NEW)
+                .DealId(deals.get(0).getId()==null?null:deals.get(0).getId())
+                .DongId(dongId)
                 .build();
 
         Notification notificationSaved = notificationRepository.save(notification);
 
-        sendMessage(notificationSaved, List.of(member), null);
+        HashMap<String, String> data = new HashMap<>();
+        data.put("dongId",dongId.toString());
+
+        sendMessage(notificationSaved, List.of(member), data);
     }
 
     /**
@@ -240,6 +255,8 @@ public class NotificationServiceImpl implements NotificationService {
                 .title("[나가요잉 신청]")
                 .message(acceptMember.getNickname() + "님이 \"" + deal.getTitle() + "\"에 나가요잉을 신청하였습니다.")
                 .notificationType(Notification.NotificationType.DEAL_ACCEPT)
+                .DongId(ho.getDong().getId())
+                .DealId(deal.getId())
                 .build();
         Notification notificationSaved = notificationRepository.save(notification);
 
@@ -266,6 +283,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .title("[나가요잉 취소]")
                 .message(deal.getTitle() + "에 대한 나가요잉 신청이 취소되었습니다.")
                 .notificationType(Notification.NotificationType.DEAL_CANCEL)
+                .DealId(deal.getId())
                 .build();
         Notification notificationSaved = notificationRepository.save(notification);
 
