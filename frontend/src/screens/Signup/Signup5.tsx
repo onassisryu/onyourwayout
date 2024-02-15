@@ -88,7 +88,7 @@ const Signup5 = ({navigation}: any) => {
       .then(resp => {
         console.log('성공', resp.data);
         updateInviteCode(value);
-        navigation.navigate('Signup10', {responseData: resp.data});
+        navigation.navigate('Signup5a', {responseData: resp.data});
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
