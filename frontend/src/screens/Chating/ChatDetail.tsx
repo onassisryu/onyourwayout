@@ -248,7 +248,6 @@ const ChatDetail = ({navigation}: Props) => {
       .get(`/deal/user/${userData.id}/${params.userId}`)
       .then(res => {
         const data = res.data;
-
         if (userData.id === res.data.requestId) {
           data.request = true;
         } else {
@@ -267,7 +266,6 @@ const ChatDetail = ({navigation}: Props) => {
         } else if (data?.dealType === 'RECYCLE') {
           setIcon('bags');
         }
-
         const userDong = data.requestInfo.dongName + '동 ' + data.requestInfo.hoName + '호';
         data.userDong = userDong;
         setDeal(data);
