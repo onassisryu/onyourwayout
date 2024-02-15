@@ -56,8 +56,8 @@ const MainHeader = ({navigation}: Props) => {
   const [noticeCount, setNoticeCount] = useRecoilState(noticeCountState)
   
   useEffect(() => {
-    
-  }, [noticeCount]); // noticeCount를 의존성 배열에 추가합니다.
+
+  }, [noticeCount]); 
 
   return (
     <HeaderContainer>
@@ -65,7 +65,7 @@ const MainHeader = ({navigation}: Props) => {
       <StyledText>나온김에</StyledText>
       <TouchableOpacity onPress={() => navigation.navigate('Notice')}>
         <Fontisto name="bell" size={28} color="gray" />
-        {noticeCount > 1 && <BellNotifBadge />}
+        {noticeCount > 0 && <BellNotifBadge />}
       </TouchableOpacity>
     </HeaderContainer>
   );

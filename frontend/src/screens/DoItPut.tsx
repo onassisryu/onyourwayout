@@ -317,7 +317,6 @@ const DoItPut = ({route, navigation}: any) => {
             placeholderTextColor={theme.color.gray100}
             defaultValue={deal.title}
             value={deal.title}
-            onFocus={() => setDeal({...deal, title: ''})}
             onChangeText={text => setDeal({...deal, title: text})}
           />
           <IconWrapper>
@@ -622,7 +621,6 @@ const DoItPut = ({route, navigation}: any) => {
             placeholder={deal.content}
             placeholderTextColor={theme.color.gray100}
             value={deal.content}
-            onFocus={() => setDeal({...deal, content: ''})}
             onChangeText={text => setDeal({...deal, content: text})}
           />
         </StyledInputContainer>
