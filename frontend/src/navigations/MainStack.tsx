@@ -11,7 +11,7 @@ import {createNativeStackNavigator, NativeStackNavigationOptions} from '@react-n
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer, useNavigationContainerRef} from '@react-navigation/native';
 
-//recoil&react-query
+//recoil&react-queryimport Signup5a from '@/screens/Signup/Signup5a';
 import {userDataState} from '@/recoil/atoms';
 import {useRecoilValue} from 'recoil';
 
@@ -70,6 +70,7 @@ const MainStack = () => {
             paddingBottom: 5,
             height: 60,
             fontweight: 'bold',
+            zIndex: 1000000000000000,
           },
           tabBarActiveTintColor: '#27D894',
           tabBarLabelStyle: {

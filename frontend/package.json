@@ -14,6 +14,8 @@
     "@emotion/css": "^11.11.2",
     "@emotion/native": "^11.11.0",
     "@emotion/react": "^11.11.3",
+    "@gorhom/bottom-sheet": "^4.6.0",
+    "@nonam4/react-native-bottom-sheet": "^2.2.4",
     "@react-native-async-storage/async-storage": "^1.21.0",
     "@react-native-clipboard/clipboard": "github:react-native-clipboard/clipboard",
     "@react-native-firebase/app": "^18.8.0",

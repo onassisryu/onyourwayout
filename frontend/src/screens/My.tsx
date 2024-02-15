@@ -78,6 +78,10 @@ const MarkImage = styled.Image`
   width: 30px;
   height: 30px;
 `;
+const MarkView = styled.View`
+  transform: [{translateX: -50}],
+`;
+
 const My = ({navigation}: any) => {
   const userData = useRecoilValue(userDataState); // userDataState 상태 가져오기
   console.log(userData);
@@ -191,11 +195,16 @@ const My = ({navigation}: any) => {
                     width: ${scorePercent};
                   `}></Scorebar>
                 <View
-                  style={css`
-                    position: absolute;
-                    top: -7px;
-                    left: ${scorePercent};
-                  `}>
+                  style={[
+                    css`
+                      position: absolute;
+                      top: -7px;
+                      left: ${scorePercent};
+                    `,
+                    {
+                      transform: [{translateX: -10}],
+                    },
+                  ]}>
                   <MarkImage source={Mark}></MarkImage>
                 </View>
               </Scorebarbackground>

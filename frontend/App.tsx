@@ -314,6 +314,7 @@ const App = () => {
     if (isLoggedIn) {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
     } else {
+      zz;
       getStorage('token').then(token => {
         console.log(token);
         if (token) {
