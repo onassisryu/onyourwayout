@@ -21,7 +21,7 @@ import ChatMessage from '@/components/Chatpage/ChatMessage';
 import {launchImageLibrary, ImageLibraryOptions, ImagePickerResponse, Asset} from 'react-native-image-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
 import DefaultButton from '@/components/DefaultButton';
-
+import SvgIcon from '@/components/SvgIcon';
 const TextEncodingPolyfill = require('text-encoding');
 
 Object.assign('global', {
@@ -164,28 +164,24 @@ interface MyObject {
 const ChatDetail = ({navigation}: Props) => {
   const {params} = useRoute<ChatDetailScreenRouteProp>();
   const userData = useRecoilValue(userDataState);
+  const [icon, setIcon] = useState('puppy');
+  const [img, setImg] = useState('');
+  const [imageData, setImageData] = useState<ImgData>({uri: '', type: '', fileSize: 0, name: '', imgUrl: ''});
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState('');
   const TextEncodingPolyfill = require('text-encoding');
   const [isRecent, setIsRecent] = useState(false);
   const [deal, setDeal] = useState<MyObject | null>(null);
-  const [imageData, setImageData] = useState<ImgData>({
-    uri: undefined,
-    type: undefined,
-    fileSize: undefined,
-    name: undefined,
-    imgUrl: undefined,
-  });
   const [textDisabled, setTextDisabled] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
 
   useEffect(() => {
-    if (messageText || imageData.uri) {
+    if (messageText) {
       setIsDisabled(false);
     } else {
       setIsDisabled(true);
     }
-  }, [messageText, imageData]);
+  }, [messageText]);
   Object.assign('global', {
     TextEncoder: TextEncodingPolyfill.TextEncoder,
     TextDecoder: TextEncodingPolyfill.TextDecoder,
@@ -258,16 +254,27 @@ const ChatDetail = ({navigation}: Props) => {
         } else {
           data.request = false;
         }
-        if (deal?.dealImages[0]) {
-          data.imgUrl = data.dealImages[0].imgUrl;
+        if (data?.dealImages[0]) {
+          setImg(data.dealImages[0].imgUrl);
+          console.log('최신조회 이미지', img);
         }
-        const userDong = data.requestInfo.dongName + '동 ' + data.requestInfo.hoName;
+        if (data?.dealType === 'PET') {
+          setIcon('puppy');
+        } else if (data?.dealType === 'ETC') {
+          setIcon('building');
+        } else if (data?.dealType === 'SHOP') {
+          setIcon('shopping');
+        } else if (data?.dealType === 'RECYCLE') {
+          setIcon('bags');
+        }
+
+        const userDong = data.requestInfo.dongName + '동 ' + data.requestInfo.hoName + '호';
         data.userDong = userDong;
         setDeal(data);
         console.log('거래 최신 조회 성공', data);
       })
       .catch(err => {
-        console.log('Fffffffffffffff', err.response);
+        console.log('error', err.response);
       });
   };
   const getChatDetail = async () => {
@@ -299,35 +306,18 @@ const ChatDetail = ({navigation}: Props) => {
   const sendMessage = async () => {
     console.log('메시지 전송중이여');
     console.log('메시지', messageText);
-    console.log('이미지', imageData);
-    if (!imageData.imgUrl) {
-      console.log('이미지 없음');
-      await client.current?.publish({
-        destination: `/pub/channel`,
-        skipContentLengthHeader: true,
-        body: JSON.stringify({
-          chatRoomId: params.roomId, // 채팅방 고유 번호
-          sendId: userData.id, //
-          msg: messageText,
-          img: '',
-        }),
-      });
-    } else {
-      console.log('이미지 있음', imageData.imgUrl);
-      await client.current?.publish({
-        destination: `/pub/channel`,
-        skipContentLengthHeader: true,
-        body: JSON.stringify({
-          chatRoomId: params.roomId, // 채팅방 고유 번호
-          sendId: userData.id, //
-          msg: '',
-          img: imageData.imgUrl,
-        }),
-      });
-    }
+    await client.current?.publish({
+      destination: `/pub/channel`,
+      skipContentLengthHeader: true,
+      body: JSON.stringify({
+        chatRoomId: params.roomId, // 채팅방 고유 번호
+        sendId: userData.id, //
+        msg: messageText,
+        img: '',
+      }),
+    });
     setMessageText('');
     setTextDisabled(true);
-    setImageData({uri: '', type: '', fileSize: 0, name: '', imgUrl: undefined});
   };
 
   const client = useRef<Client | null>(null);
@@ -401,9 +391,9 @@ const ChatDetail = ({navigation}: Props) => {
 
   useEffect(() => {
     console.log('채팅방 상세정보', params.roomId);
+    getRecentDeal(); // 거래 최신 조회
     getChatDetail(); //채팅방 메시지 기록 조회
     connectChat(); // stomp 연결
-    getRecentDeal(); // 거래 최신 조회
     return () => {
       client.current?.deactivate();
     };
@@ -461,19 +451,22 @@ const ChatDetail = ({navigation}: Props) => {
               style={css`
                 width: 80px;
                 height: 100%;
-                margin-bottom: 20px;
-                background-color: gray;
                 border-radius: 5px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
               `}>
-              {deal?.imgUrl && (
+              {img ? (
                 <Image
                   style={css`
                     width: 100%;
                     height: 100%;
                     border-radius: 5px;
                   `}
-                  src={deal?.imgUrl}
+                  src={img}
                 />
+              ) : (
+                <SvgIcon name={icon} size={60} style={css``} />
               )}
             </View>
             <View

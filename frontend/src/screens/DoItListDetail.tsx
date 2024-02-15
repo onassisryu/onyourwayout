@@ -280,10 +280,11 @@ const DoItListDetail = ({route, navigation}: any) => {
       .then(res => {
         console.log('채팅방생성', res.data);
         const chatRoom = res.data;
+        console.log('채팅방생성', chatRoom.id, userInfo?.id, memberNickname, chatRoom.dong.name);
         navigation.navigate('ChatDetail', {
           roomId: chatRoom.id,
-          userId: chatRoom.oppId,
-          name: chatRoom.oppNickName,
+          userId: userInfo?.id,
+          name: memberNickname,
           dong: chatRoom.dong.name,
         });
       })
@@ -330,15 +331,15 @@ const DoItListDetail = ({route, navigation}: any) => {
   };
   const acceptDoit = async (id: number, nickname: string) => {
     console.log(id);
-    await axiosAuth
-      .put(`deal/accept/${id}`)
-      .then(resp => {
-        console.log('성공', resp.data);
-      })
-      .catch(error => {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
-      });
-    goChat(nickname, loginuser.nickname);
+    try {
+      const resp = await axiosAuth.put(`deal/accept/${id}`);
+      const data = resp.data;
+      console.log('성공', data);
+
+      goChat(nickname, loginuser.nickname);
+    } catch (error) {
+      console.error('데이터를 가져오는 중 오류 발생:', error);
+    }
   };
   useFocusEffect(
     React.useCallback(() => {
