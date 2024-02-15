@@ -169,7 +169,8 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     Long countDealsByAcceptIdAndDealStatus(Long acceptId, Deal.DealStatus dealStatus);
 
     // 신고 수에 따른 거래 내림차순
-    List<Deal> findDealsByOrderByComplaintDesc();
+    @Query("SELECT d FROM Deal d WHERE d.complaint > 0 ORDER BY d.complaint DESC")
+    List<Deal> findDealsByComplaintGreaterThanOrderByComplaintDesc();
 
     // RequestId의 완료된 거래
     Long countDealsByRequestIdAndDealStatus(Long requestId, Deal.DealStatus dealStatus);
