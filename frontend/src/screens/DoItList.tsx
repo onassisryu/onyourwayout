@@ -93,6 +93,8 @@ const CardImageContainer = styled(View)`
   height: 100%;
   border-radius: 10px;
   background-color: yellow;
+  justify-content: center; 
+  align-items: center;
 `;
 
 interface DealImage {
@@ -347,11 +349,11 @@ const DoItList = ({navigation}: any) => {
 
                     {
                       card.dealImages.length === 0 ? (
-                        <CardImageContainer style={{backgroundColor: card.dealType === 'PET' ? 'yellow' : card.dealType === 'SHOP' ? 'blue' : card.dealType === 'RECYCLE' ? '#00D282' : 'gray'}}>
-                          {card.dealType === 'PET' && <SvgIcon name="puppy" size={130} style={css`justify-content: center; align-items: center;`} />}
-                          {card.dealType === 'SHOP' && <SvgIcon name="shopping" size={125} style={css`justify-content: center; align-items: center;`} />}
-                          {card.dealType === 'RECYCLE' && <SvgIcon name="bags" size={130} style={css`justify-content: center; align-items: center;`} />}
-                          {card.dealType === 'ETC' && <SvgIcon name="building" size={130} style={css`justify-content: center; align-items: center;`}/>}
+                        <CardImageContainer style={{backgroundColor: card.dealType === 'PET' ? '#FADE6C' : card.dealType === 'SHOP' ? '#2C70C1' : card.dealType === 'RECYCLE' ? '#00D282' : 'gray'}}>
+                          {card.dealType === 'PET' && <SvgIcon name="puppy" size={100}  />}
+                          {card.dealType === 'SHOP' && <SvgIcon name="shopping" size={90} />}
+                          {card.dealType === 'RECYCLE' && <SvgIcon name="bags" size={100} />}
+                          {card.dealType === 'ETC' && <SvgIcon name="building" size={100}/>}
                         </CardImageContainer>
                       ) : (
                       <DoItListImage src={card.dealImages[0].imgUrl} />
