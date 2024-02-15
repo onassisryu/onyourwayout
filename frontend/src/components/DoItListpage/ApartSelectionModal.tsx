@@ -17,8 +17,8 @@ const ModalBackground = styled(GlobalContainer)`
 
 const ModalComponent = styled(GlobalContainer)`
   position: absolute;
-  left: 20px;
-  top: 100px;
+  left: 15px;
+  top: 120px;
   width: 42%;
   height: initial;
   max-width: 250px;
@@ -83,7 +83,7 @@ const ApartSelectionModal = (props: Props) => {
                 <View>
                   <ModalSubComponent
                     onPress={() => {
-                      props.setSelectedApart(`${userData.apt.name} ${userData.dongName}동`);
+                      props.setSelectedApart(`${userData.dongName}`);
                       props.setApartModalVisible(false);
                     }}>
                     <MaterialIcons name="apartment" size={25}></MaterialIcons>
@@ -96,7 +96,7 @@ const ApartSelectionModal = (props: Props) => {
                 </View>
               <ModalSubComponent
                 onPress={() => {
-                  props.setSelectedApart(userData.apt.name);
+                  props.setSelectedApart('');
                   props.setApartModalVisible(false);
                 }}>
                 <GlobalText

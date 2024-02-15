@@ -120,10 +120,32 @@ const Report = ({route, navigation}: any) => {
   const param = route.params.card
   console.log(param)
 
-  const [reportContent, setReportContent] = useState('')
+  const [reportContent, setReportContent] = useState('');
+  const [reportType, setReportType] = useState('');
+
+  const reportHandle = (type: string) => {
+    switch (type) {
+      case '사기인 것 같아요.':
+        return 'Spam';
+      case '비매너 사용자에요.':
+        return 'Harmful';
+      case '거래 금지 물품이에요.':
+        return 'LegalIssue';
+      case '욕설, 비방, 혐오 표현을 해요.':
+        return 'Violent';
+      case '다른 대화를 시도해요.':
+        return 'Sexual'
+      default:
+        return 'ETC';
+    }
+  };
+
 
   const submitReport = () => {
-    axiosAuth.put(`deal/complain/${param.id}`, { content: reportContent })
+    axiosAuth.put(`deal/complain/${param.id}`, { 
+      complainType: reportType,
+      content: reportContent 
+    })
       .then(response => {
         if (response.status === 200) {
           // 요청이 성공하면 실행할 코드
@@ -163,30 +185,48 @@ const Report = ({route, navigation}: any) => {
           <ArticleTitle> 신고하려는 이유를 선택해주세요. </ArticleTitle>
           <DistinctLine></DistinctLine>
         </ReportArticleTitle>
-        <ReportArticleContent onPress={() => setReportContent(prevContent => `${prevContent} 사기인 것 같아요. `)}>
-          <ArticleContent> 사기인 것 같아요. </ArticleContent>
-        </ReportArticleContent>
-        <DistinctLine></DistinctLine>
-        <ReportArticleContent onPress={() => setReportContent(prevContent => `${prevContent} 거래 중 분쟁이 있었어요. `)}>
-          <ArticleContent> 거래 중 분쟁이 있었어요. </ArticleContent>
-        </ReportArticleContent>
-        <DistinctLine></DistinctLine>
-        <ReportArticleContent onPress={() => setReportContent(prevContent => `${prevContent} 거래 금지 물품이에요. `)}>
-          <ArticleContent> 거래 금지 물품이에요. </ArticleContent>
-        </ReportArticleContent>
-        <DistinctLine></DistinctLine>
-        <ReportArticleContent onPress={() => setReportContent(prevContent => `${prevContent} 욕설, 비방, 혐오 표현을 해요. `)}>
-          <ArticleContent> 욕설, 비방, 혐오 표현을 해요. </ArticleContent>
-        </ReportArticleContent>
-        <DistinctLine></DistinctLine>
-        <ReportArticleContent onPress={() => setReportContent(prevContent => `${prevContent} 다른 대화를 시도해요. `)}>
-          <ArticleContent> 다른 대화를 시도해요. </ArticleContent>
-        </ReportArticleContent>
-        <DistinctLine></DistinctLine>
-        <ReportArticleContent onPress={() => setReportContent(prevContent => `${prevContent} 비매너 사용자에요. `)}>
-          <ArticleContent> 비매너 사용자에요. </ArticleContent>
-        </ReportArticleContent>
-        <DistinctLine></DistinctLine>
+          <ReportArticleContent onPress={() => {
+            setReportContent(prevContent => `${prevContent} 사기인 것 같아요. `);
+            setReportType(reportHandle('사기인 것 같아요.'));
+          }}>
+            <ArticleContent> 사기인 것 같아요. </ArticleContent>
+          </ReportArticleContent>
+          <DistinctLine></DistinctLine>
+          <ReportArticleContent onPress={() => {
+            setReportContent(prevContent => `${prevContent} 거래 중 분쟁이 있었어요. `);
+            setReportType(reportHandle('거래 중 분쟁이 있었어요.'));
+          }}>
+            <ArticleContent> 거래 중 분쟁이 있었어요. </ArticleContent>
+          </ReportArticleContent>
+          <DistinctLine></DistinctLine>
+          <ReportArticleContent onPress={() => {
+            setReportContent(prevContent => `${prevContent} 거래 금지 물품이에요. `);
+            setReportType(reportHandle('거래 금지 물품이에요.'));
+          }}>
+            <ArticleContent> 거래 금지 물품이에요. </ArticleContent>
+          </ReportArticleContent>
+          <DistinctLine></DistinctLine>
+          <ReportArticleContent onPress={() => {
+            setReportContent(prevContent => `${prevContent} 욕설, 비방, 혐오 표현을 해요. `);
+            setReportType(reportHandle('욕설, 비방, 혐오 표현을 해요.'));
+          }}>
+            <ArticleContent> 욕설, 비방, 혐오 표현을 해요. </ArticleContent>
+          </ReportArticleContent>
+          <DistinctLine></DistinctLine>
+          <ReportArticleContent onPress={() => {
+            setReportContent(prevContent => `${prevContent} 다른 대화를 시도해요. `);
+            setReportType(reportHandle('다른 대화를 시도해요.'));
+          }}>
+            <ArticleContent> 다른 대화를 시도해요. </ArticleContent>
+          </ReportArticleContent>
+          <DistinctLine></DistinctLine>
+          <ReportArticleContent onPress={() => {
+            setReportContent(prevContent => `${prevContent} 비매너 사용자에요. `);
+            setReportType(reportHandle('비매너 사용자에요.'));
+          }}>
+            <ArticleContent> 비매너 사용자에요. </ArticleContent>
+          </ReportArticleContent>
+          <DistinctLine></DistinctLine>
       </SubComponent>
 
       <StyledInputTitle>신고 상세정보</StyledInputTitle>

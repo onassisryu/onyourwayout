@@ -246,10 +246,11 @@ type User = {
 };
 
 const DoItListDetail = ({route, navigation}: any) => {
+
   const [requestUserId, setRequestUserId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
-
+  
   const [responseData, setResponseData] = useState({});
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [detailImage, setDetailImage] = useState([]);
@@ -263,7 +264,7 @@ const DoItListDetail = ({route, navigation}: any) => {
         setRequestUserId(resp.data.requestId);
         setUserInfo(resp.data.requestInfo);
         setDetailImage(resp.data.dealImages);
-        console.log('게시글 상세===================유저', resp.data.requestInfo);
+        console.log('게시글 상세===================유저', resp.data);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -501,9 +502,7 @@ const DoItListDetail = ({route, navigation}: any) => {
           z-index: 1;
         `}>
         {userInfo?.id === loginuser.id ? (
-          <View>
-            <Text>내 작성글 입니다</Text>
-          </View>
+          <></>
         ) : (
           <View
             style={css`

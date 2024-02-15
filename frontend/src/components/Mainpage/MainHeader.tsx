@@ -48,31 +48,21 @@ interface Props {
   navigation: NavigationProp<any>;
 }
 
-// 알림 아이콘 컴포넌트
-const NotificationIcon = ({navigation}: Props) => {
-  
-  const noticeCount = useRecoilState(noticeCountState)
-  console.log('저기다 저기', noticeCount)
 
-  const handlePress = () => {
-    navigation.navigate('Notice');
-  };
-
-  return (
-    <TouchableOpacity onPress={handlePress}>
-      <Fontisto name="bell" size={28} color="gray" />
-      {(Number(noticeCount) > 0) && <BellNotifBadge />}
-    </TouchableOpacity>
-  );
-};
 
 // HeaderFunc 컴포넌트
 const MainHeader = ({navigation}: Props) => {
+
+  const [noticeCount, setNoticeCount] = useRecoilState(noticeCountState)
+  console.log(noticeCount)
   return (
     <HeaderContainer>
       <EmptyView></EmptyView>
       <StyledText>나온김에</StyledText>
-      <NotificationIcon navigation={navigation} />
+      <TouchableOpacity onPress={() => navigation.navigate('Notice')}>
+        <Fontisto name="bell" size={28} color="gray" />
+        {noticeCount > 1 && <BellNotifBadge />}
+      </TouchableOpacity>
     </HeaderContainer>
   );
 };

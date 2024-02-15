@@ -9,10 +9,10 @@ import {GlobalButton, GlobalContainer, GlobalComponent} from '@/GlobalStyles';
 import {View, TouchableOpacity, ImageSourcePropType, Modal, Button, Text, TouchableWithoutFeedback} from 'react-native';
 import {GlobalText} from '@/GlobalStyles';
 import SvgIcon from '@components/SvgIcon';
-import PushNotification from 'react-native-push-notification';
 import axiosAuth from '@/axios/axiosAuth';
 import Entypo from 'react-native-vector-icons/Entypo'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+
 
 const TotalDeleteContainer = styled(GlobalComponent)`
   flex-direction: row;
@@ -76,13 +76,17 @@ const CardTitle = styled(GlobalText)`
 
 const CardContentComponent = styled(GlobalContainer)`
   height: initial;
+  background-color: pink;
+
 `
 
 const CardContent = styled(GlobalText)`
   font-size: ${theme.fontSize.small};
   color: ${theme.color.black};
   font-weight: 900;
-  margin-bottom: 20px;
+  padding-bottom: 10px;
+  justify-content: flex-start;
+  align-items: flex-start;
 `;
 
 const XImage = styled.Image`
@@ -104,6 +108,7 @@ const DistinctLineGray = styled.View`
   width: 100%;
   border: 1px solid #b2b2b2;
   background-color: #b2b2b2;
+  margin-bottom: 5px;
 `;
 
 const DistinctLineGreen = styled.View`
@@ -162,6 +167,7 @@ const ModalText = styled(GlobalText)`
 const xImage: ImageSourcePropType = require('icons/x.png');
 
 type Notice = {
+  deal: object;
   id: number;
   isRead: boolean;
   title: string;
@@ -184,16 +190,29 @@ const NoticeTab = (props: Props) => {
   const notificationTime = new Date();
   const [notices, setNotices] = useState<Notice[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-
   const [readNoticeId, setReadNoticeId] = useState(null);
-  console.log('1111', notices)
+  // console.log('1111', notices)
+  const categoryToDealType = (category: string) => {
+    switch (category) {
+      case 'PET':
+        return '반려동물 산책';
+      case 'SHOP':
+        return '장보기';
+      case 'RECYCLE':
+        return '분리수거';
+      case 'ETC':
+        return '기타';
+      default:
+        return '';
+    }
+  };
 
   useEffect(() => {
     if (readNoticeId !== null) {
       axiosAuth
       .put(`/notification/${readNoticeId}`)
       .then(resp => {
-        console.log('알림', resp.data)
+
         setNotices(notices.map(notice => notice.id === readNoticeId ? {...notice, isRead: true} : notice));
         const unreadNoticesCount = notices.filter(notice => !notice.isRead).length;
         props.setNoticeCount(unreadNoticesCount);
@@ -208,7 +227,7 @@ const NoticeTab = (props: Props) => {
     axiosAuth
     .put(`/notification`)
     .then(resp => {
-      console.log('전체알림', resp.data)
+
       setNotices(notices.map(notice => ({...notice, isRead: true})));
       props.setNoticeCount(0);
     })
@@ -250,16 +269,17 @@ const NoticeTab = (props: Props) => {
   };
 
   useEffect(() => {
-    console.log('알림 데이터가 업데이트되었습니다:', notices);
+    // console.log('알림 데이터가 업데이트되었습니다:', notices);
   }, [notices]);
 
   useEffect(() => {
     axiosAuth
     .get(`/notification`)
     .then(resp => {
-      console.log('성공----------------', resp.data);
+      console.log('알림이 조회 : ', resp.data)
+      console.log('이미지 : ', resp.data[1].deal)
       setNotices(resp.data)
-
+      console.log(notices.map(notice => notice))
     })
     .catch(error => {
       console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -286,11 +306,9 @@ const NoticeTab = (props: Props) => {
             <CardHeader>
               
               <View style={css`flex-direction: row; align-items: center;`}>
-                {notice.dealType === 'PET' && <SvgIcon name="puppy" size={30} />}
-                {notice.dealType === 'RECYCLE' && <SvgIcon name="shopping" size={30} />}
-                {notice.dealType === 'SHOP' && <SvgIcon name="bags" size={30}/>}
-                {notice.dealType === 'ETC' && <SvgIcon name="building" size={30} />}
-                <CardTitle> {notice.title}</CardTitle>
+                
+                <CardTitle>{notice.title} </CardTitle>
+                <MaterialCommunityIcons name='bell-ring-outline' size={25}></MaterialCommunityIcons>
               </View>
               <TouchableOpacity onPress={() => deleteNotice(notice.id)}>
                 <XImage source={xImage}></XImage>
@@ -298,13 +316,21 @@ const NoticeTab = (props: Props) => {
             </CardHeader>
 
             <CardContentComponent>
-              <View>
-                {notice.notificationType === 'CHAT' && <CardContent>{notice.dong}의 {notice.nickname}님과 채팅이 시작되었습니다.</CardContent>}
-                {notice.notificationType === 'DEAL_NEW' && <CardContent>{notice.dong}의 {notice.nickname}님과 거래가 생성되었습니다.</CardContent>}
-                {notice.notificationType === 'DEAL_ACCEPT' && <CardContent>{notice.dong}의 {notice.nickname}님과 거래가 수락되었습니다.</CardContent>}
-                {notice.notificationType === 'DEAL_REJECT' && <CardContent>{notice.dong}의 {notice.nickname}님과 거래가 거절되었습니다.</CardContent>}
-                {notice.notificationType === 'DEAL_CANCEL' && <CardContent>{notice.dong}의 {notice.nickname}님과 거래가 취소되었습니다.</CardContent>}
-              </View>
+
+                {notice.notificationType === 'CHAT' && <CardContent>{notice.deal.dong}의 {notice.nickname}님과 채팅이 시작되었습니다.</CardContent>}
+
+                {notice.notificationType === 'DEAL_NEW' && 
+                  <CardContent>{notice.deal.dong}에서
+                    {notice.deal.dealType === 'PET' && <SvgIcon name="puppy" size={25}/>}
+                    {notice.deal.dealType === 'RECYCLE' && <SvgIcon name="shopping" size={25} />}
+                    {notice.deal.dealType === 'SHOP' && <SvgIcon name="bags" size={25}/>}
+                    {notice.deal.dealType === 'ETC' && <SvgIcon name="building" size={25}/>}
+                    거래가 생성되었습니다.
+                  </CardContent>}
+
+                {notice.notificationType === 'DEAL_ACCEPT' && <CardContent>{notice.deal.dong}의 {notice.nickname}님과 거래가 수락되었습니다.</CardContent>}
+                {notice.notificationType === 'DEAL_REJECT' && <CardContent>{notice.deal.dong}의 {notice.nickname}님과 거래가 거절되었습니다.</CardContent>}
+                {notice.notificationType === 'DEAL_CANCEL' && <CardContent>{notice.deal.dong}의 {notice.nickname}님과 거래가 취소되었습니다.</CardContent>}
             </CardContentComponent>
 
           <NoticeTime></NoticeTime>
