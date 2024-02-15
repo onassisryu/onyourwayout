@@ -14,14 +14,14 @@ import styled, {css} from '@emotion/native';
 import {AppState} from 'react-native';
 
 //recoil&react-query
-import {isLoggedInState, userDataState, apartDataState, fcmTokenState, alaramState} from '@/recoil/atoms';
-import {useRecoilValue, useSetRecoilState, useRecoilState} from 'recoil';
+import {isLoggedInState, userDataState, apartDataState, fcmTokenState} from '@/recoil/atoms';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
 import {ThemeProvider} from '@emotion/react';
 
 import theme from '@/Theme';
-
+import ProgressBarComponent from '@/components/ProgressBarComponent';
 import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 import 'moment/locale/ko';
@@ -120,6 +120,7 @@ const App = () => {
       .put(`deal/out-recommend/${dealId}/${acceptId}`)
       .then(resp => {
         console.log('나가요잉 매칭 성공', resp.data);
+        setModalVisible(false);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -133,6 +134,7 @@ const App = () => {
       .get(`deal/out-recommend/${dealId}/${acceptId}/cancel`)
       .then(resp => {
         console.log('나가요잉 매칭 실패', resp.data);
+        setModalVisible(false);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -242,25 +244,8 @@ const App = () => {
               </View>
             </View>
             {/* 상대방 정보 카드 */}
-            <View
-              style={css`
-                height: 30px;
-                width: 90%;
-                margin-bottom: 20px;
-                border: 1px solid ${theme.color.primary};
-                border-radius: 10px;
-                justify-content: flex-start;
-                padding: 2px;
-              `}>
-              <View
-                style={css`
-                  background-color: ${theme.color.primary};
-                  height: 100%;
-                  width: 100 * (60-${time})/60%;
-                  border-radius: 8px;
-                `}></View>
-              <Text>{time}초</Text>
-            </View>
+            <ProgressBarComponent dealId={dealId} acceptId={acceptId} setModalVisible={setModalVisible} />
+
             {/* 타이머 */}
             <View
               style={css`
@@ -370,18 +355,6 @@ const App = () => {
       soundName: 'default',
     });
   };
-  const updateData = (newData: any) => {
-    setData(newData);
-  };
-  const [notification, setNotification] = useRecoilState(alaramState);
-  let test = {
-    title: '',
-    acceptMemberNickname: '',
-    acceptMemberDong: '',
-    acceptMemberScore: 0,
-    acceptMemberId: '',
-    dealId: '',
-  };
 
   const handleNotification = (remoteMessage: any) => {
     console.log('[Remote Message] ', JSON.stringify(remoteMessage));
@@ -391,11 +364,10 @@ const App = () => {
         title: remoteMessage.notification?.title,
         body: remoteMessage.notification?.body,
       };
-      // // setData(remoteMessage.data);
-      // // console.log('data', data);
+
+      console.log('data', data);
       if (remoteMessage.notification?.title === '[나가요잉 신청]') {
-        test = remoteMessage.data;
-        // setData(remoteMessage.data);
+        setData(remoteMessage.data);
         setModalVisible(true);
       }
       sendNotification(notice);
@@ -422,12 +394,12 @@ const App = () => {
           <CustomAlert
             visible={isModalVisible}
             onClose={handleCloseModal}
-            title={test.title}
-            nickname={test.acceptMemberNickname}
-            dong={test.acceptMemberDong}
-            memberScore={test.acceptMemberScore}
-            acceptId={test.acceptMemberId}
-            dealId={test.dealId}
+            title={data.title}
+            nickname={data.acceptMemberNickname}
+            dong={data.acceptMemberDong}
+            memberScore={data.acceptMemberScore}
+            acceptId={data.acceptMemberId}
+            dealId={data.dealId}
             time={minuteTimer}
           />
           {admin ? <AdminStack /> : <MainStack />}
