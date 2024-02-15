@@ -289,7 +289,21 @@ const App = ({navigation}: any) => {
       </Modal>
     );
   };
-
+  if (!String.prototype.padStart) {
+    String.prototype.padStart = function padStart(targetLength, padString) {
+      targetLength = targetLength >> 0; //truncate if number, or convert non-number to 0;
+      padString = String(typeof padString !== 'undefined' ? padString : ' ');
+      if (this.length >= targetLength) {
+        return String(this);
+      } else {
+        targetLength = targetLength - this.length;
+        if (targetLength > padString.length) {
+          padString += padString.repeat(targetLength / padString.length);
+        }
+        return padString.slice(0, targetLength) + String(this);
+      }
+    };
+  }
   const checkLogin = async () => {
     console.log('데이터 세팅중이여!!!!!!!!');
     getStorage('token').then(token => {

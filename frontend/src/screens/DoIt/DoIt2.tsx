@@ -81,7 +81,8 @@ type DealProps = {
   content: string;
   dealType: string;
   expireAtStr: string;
-  cash: number;
+  cash: string;
+  item: string;
 };
 
 const DoIt2 = ({navigation}: Props) => {
@@ -118,7 +119,8 @@ const DoIt2 = ({navigation}: Props) => {
     content: '',
     dealType: englishType, //거래유형
     expireAtStr: convertTimeToExpireAtStr(time), //만료시간
-    cash: 3000,
+    cash: '3000',
+    item: '',
   });
 
   useEffect(() => {
@@ -283,11 +285,20 @@ const DoIt2 = ({navigation}: Props) => {
     }
   };
   function MakeDeal() {
-    const data = deal;
-
+    let data = {
+      title: deal.title,
+      content: deal.content,
+      dealType: deal.dealType,
+      expireAtStr: deal.expireAtStr,
+    };
     console.log('-----------------------------------------------------------------------');
     console.log(imageData);
-
+    if (selectedTab === '현금') {
+      data.cash = deal.cash;
+    } else {
+      data.item = deal.item;
+    }
+    console.log('33333333333333333333333', data);
     const body = {
       jsonData: data,
       dealImageFileList: Object.keys(imageData).length === 0 ? [] : imageData,
@@ -528,10 +539,11 @@ const DoIt2 = ({navigation}: Props) => {
               <StyledInput
                 placeholder="가격을 입력해주세요"
                 placeholderTextColor={theme.color.gray200}
-                value={deal.cash.toString()}
+                value={deal.cash}
                 onChangeText={text => {
                   handleCash(text);
                 }}
+                onFocus={() => setDeal({...deal, cash: ''})}
                 style={css`
                   text-align: right;
                   padding: 10px;
@@ -559,7 +571,10 @@ const DoIt2 = ({navigation}: Props) => {
               <StyledInput
                 placeholder="상품을 입력해주세요"
                 placeholderTextColor={theme.color.gray100}
-                defaultValue=""
+                value={deal.item}
+                onChangeText={text => {
+                  setDeal({...deal, item: text});
+                }}
               />
             </StyledInputContainer>
           )}
@@ -572,8 +587,8 @@ const DoIt2 = ({navigation}: Props) => {
           `}>
           <MoneyButton
             onPress={() => {
-              const number = deal.cash + 1000;
-              setDeal({...deal, cash: number});
+              const number = parseInt(deal.cash) + 1000;
+              setDeal({...deal, cash: number.toString()});
             }}>
             <FontAwesome name="plus" size={18} color="#27D894" />
             <Text
@@ -585,8 +600,8 @@ const DoIt2 = ({navigation}: Props) => {
           </MoneyButton>
           <MoneyButton
             onPress={() => {
-              const number = deal.cash + 3000;
-              setDeal({...deal, cash: number});
+              const number = parseInt(deal.cash) + 3000;
+              setDeal({...deal, cash: number.toString()});
             }}>
             <FontAwesome name="plus" size={18} color="#27D894" />
             <Text
@@ -598,8 +613,8 @@ const DoIt2 = ({navigation}: Props) => {
           </MoneyButton>
           <MoneyButton
             onPress={() => {
-              const number = deal.cash + 5000;
-              setDeal({...deal, cash: number});
+              const number = parseInt(deal.cash) + 5000;
+              setDeal({...deal, cash: number.toString()});
             }}>
             <FontAwesome name="plus" size={18} color="#27D894" />
             <Text
