@@ -247,11 +247,6 @@ const Location = ({navigation}: any) => {
     setDongName(markerData.name);
     this.RBSheet.open();
   };
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['25%', '50%'], []);
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
-  }, []);
   return (
     <GlobalContainer
       style={css`
@@ -402,6 +397,10 @@ const Location = ({navigation}: any) => {
                   </View>
                 </TouchableOpacity>
               ))}
+              <View
+                style={css`
+                  height: 100px;
+                `}></View>
             </ScrollView>
           </View>
         </RBSheet>
