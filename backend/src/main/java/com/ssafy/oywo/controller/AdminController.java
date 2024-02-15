@@ -100,8 +100,9 @@ public class AdminController {
      * 사용자 페널티 수 추가 및 정지시간 재설정
      */
     @PutMapping("/pause")
-    public ResponseEntity<?> givePenaltyAndSetPause(@RequestParam("id") Long memberId){
-        return ResponseEntity.ok(adminService.updatePenaltyAndPauseTime(memberId));
+    public ResponseEntity<?> givePenaltyAndSetPause(@RequestParam("memberId") Long memberId,@RequestParam("dealId") Long dealId){
+
+        return ResponseEntity.ok(adminService.updatePenaltyAndPauseTime(memberId,dealId));
     }
 
     /**

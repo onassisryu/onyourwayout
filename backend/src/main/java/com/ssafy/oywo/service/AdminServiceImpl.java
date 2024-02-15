@@ -128,7 +128,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public HashMap<String,Object> updatePenaltyAndPauseTime(Long memberId) {
+    public HashMap<String,Object> updatePenaltyAndPauseTime(Long memberId,Long dealId) {
         Member member=memberRepository.findById(memberId)
                 .orElseThrow(()->new NoSuchElementException("찾을 수 없는 사용자입니다."));
         int penaltyCount=member.getPenaltyCount();
@@ -144,7 +144,12 @@ public class AdminServiceImpl implements AdminService {
         payload.put("penaltyCount",member.getPenaltyCount());
         payload.put("pauseStartAt",member.getPauseStartAt());
         payload.put("pauseEndAt",member.getPauseEndAt());
+
         memberRepository.save(member);
+
+        Deal deal=dealRepository.findById(dealId)
+                .orElseThrow(()->new NoSuchElementException("존재하지 않는 거래입니다."));
+        deal.setDealStatus(Deal.DealStatus.PAUSE);
         return payload;
     }
 
