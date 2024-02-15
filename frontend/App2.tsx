@@ -14,14 +14,14 @@ import styled, {css} from '@emotion/native';
 import {AppState} from 'react-native';
 
 //recoil&react-query
-import {isLoggedInState, userDataState, apartDataState, fcmTokenState} from '@/recoil/atoms';
-import {useRecoilValue, useSetRecoilState} from 'recoil';
+import {isLoggedInState, userDataState, apartDataState, fcmTokenState, alaramState} from '@/recoil/atoms';
+import {useRecoilValue, useSetRecoilState, useRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
 import {ThemeProvider} from '@emotion/react';
 
 import theme from '@/Theme';
-import ProgressBarComponent from '@/components/ProgressBarComponent';
+
 import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 import 'moment/locale/ko';
@@ -44,7 +44,8 @@ import AdminStack from '@/navigations/AdminStack';
 
 import {getStorage, setStorage} from '@/storage/common_storage';
 import axiosAuth from '@/axios/axiosAuth';
-import {get} from 'axios';
+import ProgressBarComponent from '@/components/ProgressBarComponent';
+
 const Scorebarbackground = styled.View`
   height: 15px;
   width: 100%;
@@ -105,14 +106,6 @@ const App = () => {
     console.log('[FCM Token] ', fcmToken);
   };
 
-  const startTimer = () => {
-    const timer = setInterval(() => {
-      setMinuteTimer(prevTime => prevTime - 1);
-    }, 1000);
-
-    // 0초가 되면 타이머 종료
-    setTimeout(() => clearInterval(timer), 60000);
-  };
   function acceptGoOut(dealId: string, acceptId: string) {
     console.log('dealId', dealId);
     console.log('acceptId', acceptId);
@@ -120,7 +113,6 @@ const App = () => {
       .put(`deal/out-recommend/${dealId}/${acceptId}`)
       .then(resp => {
         console.log('나가요잉 매칭 성공', resp.data);
-        setModalVisible(false);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -134,7 +126,6 @@ const App = () => {
       .get(`deal/out-recommend/${dealId}/${acceptId}/cancel`)
       .then(resp => {
         console.log('나가요잉 매칭 실패', resp.data);
-        setModalVisible(false);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -244,8 +235,16 @@ const App = () => {
               </View>
             </View>
             {/* 상대방 정보 카드 */}
-            <ProgressBarComponent dealId={dealId} acceptId={acceptId} setModalVisible={setModalVisible} />
-
+            <View
+              style={css`
+                height: 30px;
+                width: 90%;
+                margin-bottom: 20px;
+                justify-content: flex-start;
+                padding: 2px;
+              `}>
+              <ProgressBarComponent dealId={dealId} acceptId={acceptId} />
+            </View>
             {/* 타이머 */}
             <View
               style={css`
@@ -356,6 +355,15 @@ const App = () => {
     });
   };
 
+  let test = {
+    title: '',
+    acceptMemberNickname: '',
+    acceptMemberDong: '',
+    acceptMemberScore: 0,
+    acceptMemberId: '',
+    dealId: '',
+  };
+
   const handleNotification = (remoteMessage: any) => {
     console.log('[Remote Message] ', JSON.stringify(remoteMessage));
     if (remoteMessage.data) {
@@ -364,10 +372,11 @@ const App = () => {
         title: remoteMessage.notification?.title,
         body: remoteMessage.notification?.body,
       };
-      setData(remoteMessage.data);
-
-      console.log('data', data);
+      // // setData(remoteMessage.data);
+      // // console.log('data', data);
       if (remoteMessage.notification?.title === '[나가요잉 신청]') {
+        test = remoteMessage.data;
+        // setData(remoteMessage.data);
         setModalVisible(true);
       }
       sendNotification(notice);
@@ -394,12 +403,12 @@ const App = () => {
           <CustomAlert
             visible={isModalVisible}
             onClose={handleCloseModal}
-            title={data.title}
-            nickname={data.acceptMemberNickname}
-            dong={data.acceptMemberDong}
-            memberScore={data.acceptMemberScore}
-            acceptId={data.acceptMemberId}
-            dealId={data.dealId}
+            title={test.title}
+            nickname={test.acceptMemberNickname}
+            dong={test.acceptMemberDong}
+            memberScore={test.acceptMemberScore}
+            acceptId={test.acceptMemberId}
+            dealId={test.dealId}
             time={minuteTimer}
           />
           {admin ? <AdminStack /> : <MainStack />}
