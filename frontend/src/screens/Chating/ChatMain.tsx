@@ -15,7 +15,6 @@ import Header from '@/components/Header';
 const StyledText = styled.Text`
   font-weight: bold;
   font-size: 22px;
-
 `;
 
 const ChatRoomsContainer = styled(ScrollView)`
@@ -30,7 +29,7 @@ const ChatRoomContainer = styled.TouchableOpacity`
   justify-content: center;
   flex-direction: row;
   background-color: white;
-  border: 1px solid #00D282;
+  border: 1px solid #00d282;
 `;
 
 const ChatTextContainer = styled.View`
@@ -71,7 +70,6 @@ const RecentlyChat = styled.Text`
   font-weight: bold;
   font-size: 16px;
   color: ${props => props.theme.color.gray300};
-
 `;
 
 // 알림 아이콘
@@ -120,21 +118,6 @@ const NotificationIcon = ({navigation}: Props) => {
 const ChatMain = ({navigation}: any) => {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const userData = useRecoilValue(userDataState);
-  const user = {
-    memberNickname: userData.nickname,
-    otherNickname: '가영가영이',
-  };
-  //채팅방생성
-  const makeChatRoom = () => {
-    axiosAuth
-      .post('/chat/room', user)
-      .then(res => {
-        console.log('채팅방생성', res.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
   //채팅방 조회
   const getChatRoom = () => {
     console.log(userData.id);
@@ -187,15 +170,16 @@ const ChatMain = ({navigation}: any) => {
 
   return (
     <GlobalContainer>
-      <Header style={css`
-        width: 99%;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        height: 60px;
-        margin-left: 5px;
-      `}>
+      <Header
+        style={css`
+          width: 99%;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          height: 60px;
+          margin-left: 5px;
+        `}>
         <StyledText>채팅</StyledText>
         <NotificationIcon navigation={navigation} />
       </Header>
@@ -212,18 +196,19 @@ const ChatMain = ({navigation}: any) => {
                 dong: chatRoom.dong.name,
               });
             }}>
-            <View style={css`
-              height: 52px;
-              width: 52px;
-              border-radius: 30px;
-              background-color: #eaeaea;
-              margin-right: 15px;
-              justify-content: center;
-              align-items: center;
-            `}>
+            <View
+              style={css`
+                height: 52px;
+                width: 52px;
+                border-radius: 30px;
+                background-color: #eaeaea;
+                margin-right: 15px;
+                justify-content: center;
+                align-items: center;
+              `}>
               <SvgIcon name="profile" size={60} />
             </View>
-            
+
             <ChatTextContainer>
               <ChatSubTextContainer>
                 <NicknameText>{chatRoom.oppNickName}</NicknameText>
@@ -232,11 +217,8 @@ const ChatMain = ({navigation}: any) => {
               </ChatSubTextContainer>
               <RecentlyChat>'ChatDetail'에서 불러오기</RecentlyChat>
             </ChatTextContainer>
-            
           </ChatRoomContainer>
-          
         ))}
-        <DefaultButton color="primary" title="채팅방생성" onPress={makeChatRoom} />
       </ChatRoomsContainer>
     </GlobalContainer>
   );
