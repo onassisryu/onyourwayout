@@ -221,7 +221,6 @@ const dealTypeTextMap = {
   ETC: '기타',
 };
 
-
 const getBackgroundColor = (dealType: string): string => {
   switch (dealType) {
     case 'PET':
@@ -256,7 +255,6 @@ const DoItListDetail = ({route, navigation}: any) => {
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [detailImage, setDetailImage] = useState([]);
   const loginuser = useRecoilValue(userDataState);
-
   useEffect(() => {
     console.log('param', route.params.id);
     axiosAuth
@@ -272,7 +270,29 @@ const DoItListDetail = ({route, navigation}: any) => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   }, []);
-
+  const goChat = (memberNickname: string, otherNickname: string) => {
+    console.log('수락-채팅이동', memberNickname, otherNickname);
+    const user = {
+      memberNickname: memberNickname,
+      otherNickname: otherNickname,
+    };
+    axiosAuth
+      .post('/chat/room', user)
+      .then(res => {
+        console.log('채팅방생성', res.data);
+        const chatRoom = res.data;
+        navigation.navigate('ChatDetail', {
+          roomId: chatRoom.id,
+          userId: chatRoom.oppId,
+          name: chatRoom.oppNickName,
+          dong: chatRoom.dong.name,
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    // navigation.navigate('ChatDetail', {id: requestUserId});
+  };
   const handleIconPress = () => {
     if (userInfo?.id === loginuser.id) {
       setModalType('edit'); // 수정, 삭제 가능한 모달
@@ -309,9 +329,9 @@ const DoItListDetail = ({route, navigation}: any) => {
       return `${minutesAgo}분 전`;
     }
   };
-  function acceptDoit(id: number) {
+  const acceptDoit = async (id: number, nickname: string) => {
     console.log(id);
-    axiosAuth
+    await axiosAuth
       .put(`deal/accept/${id}`)
       .then(resp => {
         console.log('성공', resp.data);
@@ -319,7 +339,8 @@ const DoItListDetail = ({route, navigation}: any) => {
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
-  }
+    goChat(nickname, loginuser.nickname);
+  };
   useFocusEffect(
     React.useCallback(() => {
       StatusBar.setTranslucent(true);
@@ -361,12 +382,47 @@ const DoItListDetail = ({route, navigation}: any) => {
                     height: 400px;
                     width: 100%;
                     background-color: ${getBackgroundColor(responseData.dealType)};
-                  `}
-                >
-                  {responseData.dealType === 'PET' && <SvgIcon name="puppy" size={415} style={css`justify-content: center; align-items: center;`} />}
-                  {responseData.dealType === 'SHOP' && <SvgIcon name="shopping" size={400} style={css`justify-content: center; align-items: center;`} />}
-                  {responseData.dealType === 'RECYCLE' && <SvgIcon name="bags" size={415} style={css`justify-content: center; align-items: center;`} />}
-                  {responseData.dealType === 'ETC' && <SvgIcon name="building" size={415} style={css`justify-content: center; align-items: center;`}/>}
+                  `}>
+                  {responseData.dealType === 'PET' && (
+                    <SvgIcon
+                      name="puppy"
+                      size={415}
+                      style={css`
+                        justify-content: center;
+                        align-items: center;
+                      `}
+                    />
+                  )}
+                  {responseData.dealType === 'SHOP' && (
+                    <SvgIcon
+                      name="shopping"
+                      size={400}
+                      style={css`
+                        justify-content: center;
+                        align-items: center;
+                      `}
+                    />
+                  )}
+                  {responseData.dealType === 'RECYCLE' && (
+                    <SvgIcon
+                      name="bags"
+                      size={415}
+                      style={css`
+                        justify-content: center;
+                        align-items: center;
+                      `}
+                    />
+                  )}
+                  {responseData.dealType === 'ETC' && (
+                    <SvgIcon
+                      name="building"
+                      size={415}
+                      style={css`
+                        justify-content: center;
+                        align-items: center;
+                      `}
+                    />
+                  )}
                 </View>
               )}
             </View>
@@ -454,7 +510,7 @@ const DoItListDetail = ({route, navigation}: any) => {
             `}>
             <AgreeButton
               onPress={() => {
-                acceptDoit(responseData.id);
+                acceptDoit(responseData.id, userInfo.nickname);
               }}>
               <FontAwesome name="handshake-o" size={20} color="white"></FontAwesome>
               <ButtonText> 수락하기 </ButtonText>

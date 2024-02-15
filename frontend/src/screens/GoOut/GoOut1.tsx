@@ -64,6 +64,7 @@ const NextButton2 = styled(DefaultButton)`
   height: 50px;
   margin-top: 40px;
   padding: 10px;
+  background-color: #27d894;
 `;
 type ButtonState = {
   title: string;

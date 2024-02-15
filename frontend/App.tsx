@@ -11,10 +11,11 @@ import {StatusBar} from 'react-native';
 import {NavigationContainer, useNavigationContainerRef} from '@react-navigation/native';
 import {Text, View, Button} from 'react-native';
 import styled, {css} from '@emotion/native';
+import {AppState} from 'react-native';
 
 //recoil&react-query
-import {isLoggedInState, userDataState, apartDataState, fcmTokenState} from '@/recoil/atoms';
-import {useRecoilValue, useSetRecoilState} from 'recoil';
+import {isLoggedInState, userDataState, apartDataState, fcmTokenState, alaramState} from '@/recoil/atoms';
+import {useRecoilValue, useSetRecoilState, useRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
 import {ThemeProvider} from '@emotion/react';
@@ -43,6 +44,7 @@ import AdminStack from '@/navigations/AdminStack';
 
 import {getStorage, setStorage} from '@/storage/common_storage';
 import axiosAuth from '@/axios/axiosAuth';
+import {get} from 'axios';
 const Scorebarbackground = styled.View`
   height: 15px;
   width: 100%;
@@ -62,6 +64,17 @@ interface Notice {
   title: string | undefined;
   body: string | undefined;
 }
+interface CustomAlertProps {
+  visible: boolean;
+  title: string;
+  onClose: () => void;
+  dealId: string;
+  acceptId: string;
+  nickname: string;
+  dong: string;
+  memberScore: number;
+  time: number;
+}
 
 const App = () => {
   const queryClient = new QueryClient();
@@ -79,6 +92,7 @@ const App = () => {
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
     }
   }
+
   useEffect(() => {
     console.log('지도 인증할게요');
     requestPermissions();
@@ -91,17 +105,6 @@ const App = () => {
     console.log('[FCM Token] ', fcmToken);
   };
 
-  interface CustomAlertProps {
-    visible: boolean;
-    title: string;
-    onClose: () => void;
-    dealId: string;
-    acceptId: string;
-    nickname: string;
-    dong: string;
-    memberScore: number;
-    time: number;
-  }
   const startTimer = () => {
     const timer = setInterval(() => {
       setMinuteTimer(prevTime => prevTime - 1);
@@ -367,6 +370,18 @@ const App = () => {
       soundName: 'default',
     });
   };
+  const updateData = (newData: any) => {
+    setData(newData);
+  };
+  const [notification, setNotification] = useRecoilState(alaramState);
+  let test = {
+    title: '',
+    acceptMemberNickname: '',
+    acceptMemberDong: '',
+    acceptMemberScore: 0,
+    acceptMemberId: '',
+    dealId: '',
+  };
 
   const handleNotification = (remoteMessage: any) => {
     console.log('[Remote Message] ', JSON.stringify(remoteMessage));
@@ -376,17 +391,19 @@ const App = () => {
         title: remoteMessage.notification?.title,
         body: remoteMessage.notification?.body,
       };
-      setData(remoteMessage.data);
-      console.log('data', data);
-      sendNotification(notice);
-      if (remoteMessage.notification.title === '[나가요잉 신청]') {
+      // // setData(remoteMessage.data);
+      // // console.log('data', data);
+      if (remoteMessage.notification?.title === '[나가요잉 신청]') {
+        test = remoteMessage.data;
+        // setData(remoteMessage.data);
         setModalVisible(true);
       }
+      sendNotification(notice);
     }
   };
 
   useEffect(() => {
-    // getFcmToken();
+    getFcmToken();
     const unsubscribe = messaging().onMessage(handleNotification);
     messaging().onNotificationOpenedApp(handleNotification);
     messaging().getInitialNotification().then(handleNotification);
@@ -405,12 +422,12 @@ const App = () => {
           <CustomAlert
             visible={isModalVisible}
             onClose={handleCloseModal}
-            title={data.title}
-            nickname={data.acceptMemberNickname}
-            dong={data.acceptMemberDong}
-            memberScore={data.acceptMemberScore}
-            acceptId={data.acceptMemberId}
-            dealId={data.dealId}
+            title={test.title}
+            nickname={test.acceptMemberNickname}
+            dong={test.acceptMemberDong}
+            memberScore={test.acceptMemberScore}
+            acceptId={test.acceptMemberId}
+            dealId={test.dealId}
             time={minuteTimer}
           />
           {admin ? <AdminStack /> : <MainStack />}
