@@ -181,19 +181,19 @@ const Location = ({navigation}: any) => {
         };
         const dongsWithin50m = getDongWithin50m(currentLocation, apartDongData);
         //동과 나의 위치
-        const test = dongsWithin50m.filter(dong => lastDetectedDongs.dongId === dong.dongId);
-        console.log('이미감지된동', lastDetectedDongs);
-        // const isAlreadyDetected = lastDetectedDongs.some(detectedDong => detectedDong.dongId === dong.dongId);
-        if (dongsWithin50m.length > 0) {
-          dongsWithin50m.map(dong => {
+        const dongsWithin50mFilter = dongsWithin50m.filter(dong => {
+          return !lastDetectedDongs.some(detectedDong => detectedDong.dongId === dong.dongId);
+        });
+        if (dongsWithin50mFilter.length > 0) {
+          dongsWithin50mFilter.map(dong => {
             console.log('내 주변 동', dong.name, dong.dongId);
             axiosAuth.get(`/notification/near/${dong.dongId}`).then(resp => {
               console.log('동 알림 성공');
             });
-            lastDetectedDongs.push({
-              dongId: dong.dongId,
-              detectedAt: new Date(),
-            });
+            const existingDong = lastDetectedDongs.find(detectedDong => detectedDong.dongId === dong.dongId);
+            if (!existingDong) {
+              lastDetectedDongs.push(dong);
+            }
           });
         }
       },
