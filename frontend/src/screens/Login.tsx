@@ -64,7 +64,7 @@ const Login = ({navigation}: any) => {
   const setUserData = useSetRecoilState(userDataState);
   const setApartData = useSetRecoilState(apartDataState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
-
+  const userData = useRecoilValue(userDataState);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const toggleSecureTextEntry = () => {
     setSecureTextEntry(prevState => !prevState);
@@ -72,7 +72,15 @@ const Login = ({navigation}: any) => {
   const checkLogin = async () => {
     if (isLoggedIn) {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
-      navigation.navigate('Main');
+
+      if (userData.roles[0] === 'ADMIN') {
+        console.log('관리자 페이지로 이동');
+        navigation.navigate('AdminMain');
+        return;
+      } else {
+        navigation.navigate('Main');
+        return;
+      }
     } else {
       console.log('로그인 상태가 아닙니다.======> 페이지 이동X', isLoggedIn);
     }

@@ -40,7 +40,6 @@ import Ionic from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import MainStack from '@/navigations/MainStack';
-import AdminStack from '@/navigations/AdminStack';
 
 import {getStorage, setStorage} from '@/storage/common_storage';
 import axiosAuth from '@/axios/axiosAuth';
@@ -76,8 +75,7 @@ interface CustomAlertProps {
   time: number;
 }
 
-const App = () => {
-
+const App = ({navigation}: any) => {
   const queryClient = new QueryClient();
 
   const [admin, setAdmin] = useState(false);
@@ -93,6 +91,7 @@ const App = () => {
   async function requestPermissions() {
     if (Platform.OS === 'android') {
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
     }
   }
 
@@ -108,14 +107,6 @@ const App = () => {
     console.log('[FCM Token] ', fcmToken);
   };
 
-  const startTimer = () => {
-    const timer = setInterval(() => {
-      setMinuteTimer(prevTime => prevTime - 1);
-    }, 1000);
-
-    // 0초가 되면 타이머 종료
-    setTimeout(() => clearInterval(timer), 60000);
-  };
   function acceptGoOut(dealId: string, acceptId: string) {
     console.log('dealId', dealId);
     console.log('acceptId', acceptId);
@@ -300,7 +291,21 @@ const App = () => {
       </Modal>
     );
   };
-
+  if (!String.prototype.padStart) {
+    String.prototype.padStart = function padStart(targetLength, padString) {
+      targetLength = targetLength >> 0; //truncate if number, or convert non-number to 0;
+      padString = String(typeof padString !== 'undefined' ? padString : ' ');
+      if (this.length >= targetLength) {
+        return String(this);
+      } else {
+        targetLength = targetLength - this.length;
+        if (targetLength > padString.length) {
+          padString += padString.repeat(targetLength / padString.length);
+        }
+        return padString.slice(0, targetLength) + String(this);
+      }
+    };
+  }
   const checkLogin = async () => {
     console.log('데이터 세팅중이여!!!!!!!!');
     getStorage('token').then(token => {
@@ -315,11 +320,6 @@ const App = () => {
         });
       }
     });
-
-    // if (userData.roles.includes('ADMIN')) {
-    //   console.log('관리자유');
-    //   setAdmin(true);
-    // }
   };
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -331,6 +331,9 @@ const App = () => {
   useEffect(() => {
     checkLogin();
   }, []);
+  useEffect(() => {
+    checkLogin();
+  }, [isLoggedIn]);
 
   PushNotification.createChannel(
     {
@@ -361,17 +364,18 @@ const App = () => {
 
   const handleNotification = (remoteMessage: any) => {
     console.log('[Remote Message] ', JSON.stringify(remoteMessage));
-    if (remoteMessage.data) {
+    if (remoteMessage?.data) {
       const notice: Notice = {
         id: String(remoteMessage.data.notificationId),
         title: remoteMessage.notification?.title,
         body: remoteMessage.notification?.body,
       };
 
-      console.log('data', data);
       if (remoteMessage.notification?.title === '[나가요잉 신청]') {
         setData(remoteMessage.data);
         setModalVisible(true);
+      } else if (remoteMessage.notification?.title === '[해줘요잉 추천]') {
+        console.log('지도 알림');
       }
       sendNotification(notice);
     }
@@ -405,7 +409,7 @@ const App = () => {
             dealId={data.dealId}
             time={minuteTimer}
           />
-          {admin ? <AdminStack /> : <MainStack />}
+          <MainStack />
         </NavigationContainer>
       </ThemeProvider>
     </QueryClientProvider>

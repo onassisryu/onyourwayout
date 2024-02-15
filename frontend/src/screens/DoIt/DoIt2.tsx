@@ -81,7 +81,8 @@ type DealProps = {
   content: string;
   dealType: string;
   expireAtStr: string;
-  cash: number;
+  cash: string;
+  item: string;
 };
 
 const DoIt2 = ({navigation}: Props) => {
@@ -118,7 +119,8 @@ const DoIt2 = ({navigation}: Props) => {
     content: '',
     dealType: englishType, //거래유형
     expireAtStr: convertTimeToExpireAtStr(time), //만료시간
-    cash: 3000,
+    cash: '3000',
+    item: '',
   });
 
   useEffect(() => {
@@ -270,24 +272,35 @@ const DoIt2 = ({navigation}: Props) => {
     else {
       const uris: Asset[] = [];
       response.assets?.forEach(value => uris.push(value)); //선택한 사진 순서와 상관없이 들어옴
-      const uri = response.assets[0].uri; //assets 여러개가 올수 있는데 중에 0번방 거
-      const type = response.assets[0].type;
-      const fileSize = response.assets[0].fileSize;
-      const fileName = response.assets[0].fileName;
-
+      const {uri, type, fileName, fileSize} = response.assets[0];
+      const fileSizeLimit = 3 * 1024 * 1024;
       console.log('이미지 파일입니다', response.assets[0]);
 
-      const source = {uri: uri, type: type, fileSize: fileSize, name: fileName};
-      console.log('이미지 파일입니다', source);
-      setImageData(source);
+      if (fileSize > fileSizeLimit) {
+        // 파일 크기가 3MB를 초과하는 경우
+        alert('이미지 파일 크기는 3MB를 초과할 수 없습니다.');
+      } else {
+        const source = {uri: uri, type: type, fileSize: fileSize, name: fileName};
+        console.log('이미지 파일입니다', source);
+        setImageData(source);
+      }
     }
   };
   function MakeDeal() {
-    const data = deal;
-
+    let data = {
+      title: deal.title,
+      content: deal.content,
+      dealType: deal.dealType,
+      expireAtStr: deal.expireAtStr,
+    };
     console.log('-----------------------------------------------------------------------');
     console.log(imageData);
-
+    if (selectedTab === '현금') {
+      data.cash = deal.cash;
+    } else {
+      data.item = deal.item;
+    }
+    console.log('33333333333333333333333', data);
     const body = {
       jsonData: data,
       dealImageFileList: Object.keys(imageData).length === 0 ? [] : imageData,
@@ -528,10 +541,11 @@ const DoIt2 = ({navigation}: Props) => {
               <StyledInput
                 placeholder="가격을 입력해주세요"
                 placeholderTextColor={theme.color.gray200}
-                value={deal.cash.toString()}
+                value={deal.cash}
                 onChangeText={text => {
                   handleCash(text);
                 }}
+                onFocus={() => setDeal({...deal, cash: ''})}
                 style={css`
                   text-align: right;
                   padding: 10px;
@@ -559,7 +573,10 @@ const DoIt2 = ({navigation}: Props) => {
               <StyledInput
                 placeholder="상품을 입력해주세요"
                 placeholderTextColor={theme.color.gray100}
-                defaultValue=""
+                value={deal.item}
+                onChangeText={text => {
+                  setDeal({...deal, item: text});
+                }}
               />
             </StyledInputContainer>
           )}
@@ -572,8 +589,8 @@ const DoIt2 = ({navigation}: Props) => {
           `}>
           <MoneyButton
             onPress={() => {
-              const number = deal.cash + 1000;
-              setDeal({...deal, cash: number});
+              const number = parseInt(deal.cash) + 1000;
+              setDeal({...deal, cash: number.toString()});
             }}>
             <FontAwesome name="plus" size={18} color="#27D894" />
             <Text
@@ -585,8 +602,8 @@ const DoIt2 = ({navigation}: Props) => {
           </MoneyButton>
           <MoneyButton
             onPress={() => {
-              const number = deal.cash + 3000;
-              setDeal({...deal, cash: number});
+              const number = parseInt(deal.cash) + 3000;
+              setDeal({...deal, cash: number.toString()});
             }}>
             <FontAwesome name="plus" size={18} color="#27D894" />
             <Text
@@ -598,8 +615,8 @@ const DoIt2 = ({navigation}: Props) => {
           </MoneyButton>
           <MoneyButton
             onPress={() => {
-              const number = deal.cash + 5000;
-              setDeal({...deal, cash: number});
+              const number = parseInt(deal.cash) + 5000;
+              setDeal({...deal, cash: number.toString()});
             }}>
             <FontAwesome name="plus" size={18} color="#27D894" />
             <Text

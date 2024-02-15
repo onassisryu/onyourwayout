@@ -70,9 +70,29 @@ const activeDotStyle = css`
 `;
 
 const CarouselContainer = styled.View`
-  height: 85%;
+  height: 100%;
 `;
-
+const dotsContainerStyle = css`
+  width: 100%;
+  position: absolute;
+  flex-direction: row;
+  justify-content: center;
+  top: 80%;
+`;
+const dealTypeToCategory = (dealType: string) => {
+  switch (dealType) {
+    case 'PET':
+      return '반려동물 산책';
+    case 'SHOP':
+      return '장보기';
+    case 'RECYCLE':
+      return '분리수거';
+    case 'ETC':
+      return '기타';
+    default:
+      return '';
+  }
+};
 const GoOut2 = ({route, navigation}: any) => {
   const [responseData, setResponseData] = useState([]);
   const selectedTitles: string[] = route.params.selectedButton
@@ -110,14 +130,19 @@ const GoOut2 = ({route, navigation}: any) => {
     {offset: '100%', color: 'black', opacity: '0.5'},
   ];
   return (
-    <View style={css``}>
+    <View
+      style={css`
+        height: 100%;
+      `}>
       <CarouselContainer>
-        <Carousel dotStyle={dotStyle} activeDotStyle={activeDotStyle}>
-          {responseData.map((card, index) => (
+        <Carousel dotStyle={dotStyle} activeDotStyle={activeDotStyle} dotsContainerStyle={dotsContainerStyle}>
+          {responseData.map((card: any, index: number) => (
             <View
               style={css`
-                height: 85%;
+                height: 100%;
                 position: relative;
+                z-index: 100;
+                background-color: red;
               `}
               key={index}>
               <View
@@ -125,7 +150,7 @@ const GoOut2 = ({route, navigation}: any) => {
                   width: 100%;
                   height: 300px;
                   position: absolute;
-                  bottom: 0px;
+                  top: 55%;
                   z-index: 1;
                 `}>
                 <LinearGradient colorList={colorList} angle={270} />
@@ -135,7 +160,7 @@ const GoOut2 = ({route, navigation}: any) => {
                   width: 100%;
                   height: 150px;
                   position: absolute;
-                  bottom: 10px;
+                  top: 65%;
                   z-index: 1;
                   padding: 10px;
                 `}>
@@ -147,30 +172,38 @@ const GoOut2 = ({route, navigation}: any) => {
                   `}>
                   {card.title}
                 </Text>
-                {card.rewardType === 'CASH' && (
+                <View
+                  style={css`
+                    flex-direction: row;
+                    justify-content: space-between;
+                  `}>
                   <Text
                     style={css`
                       color: white;
-                      font-size: 17px;
+                      font-size: 20px;
+                      font-weight: 700;
                     `}>
-                    {card.cash.toLocaleString()}원
+                    {dealTypeToCategory(card.dealType)}
                   </Text>
-                )}
-                {card.rewardType === 'ITEM' && (
-                  <Text
-                    style={css`
-                      color: white;
-                      font-size: 17px;
-                    `}>
-                    {card.title}
-                  </Text>
-                )}
-                <TouchableOpacity
-                  onPress={() => {
-                    sendGoOutRequest(card.id);
-                  }}>
-                  <Text>수락하기</Text>
-                </TouchableOpacity>
+                  {card.rewardType === 'CASH' && (
+                    <Text
+                      style={css`
+                        color: white;
+                        font-size: 17px;
+                      `}>
+                      {card.cash.toLocaleString()}원
+                    </Text>
+                  )}
+                  {card.rewardType === 'ITEM' && (
+                    <Text
+                      style={css`
+                        color: white;
+                        font-size: 17px;
+                      `}>
+                      {card.title}
+                    </Text>
+                  )}
+                </View>
               </View>
               {card.dealImages.length > 0 ? (
                 <Image
@@ -192,16 +225,68 @@ const GoOut2 = ({route, navigation}: any) => {
                   `}
                 />
               )}
+              {/* <TouchableOpacity
+                onPress={() => {
+                  sendGoOutRequest(card.id);
+                }}
+                style={css`
+                  height: 20%;
+                  width: 100%;
+                  position: absolute;
+                  bottom: 0;
+                  background-color: transparent;
+                  z-index: 1000;
+                `}></TouchableOpacity> */}
+              <View
+                style={css`
+                  position: absolute;
+                  bottom: 0;
+                  height: 15%;
+                  width: 100%;
+                  justify-content: center;
+                  align-items: center;
+                  background-color: white;
+                  z-index: 100;
+                `}>
+                <TouchableOpacity
+                  style={css`
+                    height: 50%;
+                    width: 90%;
+                    border-radius: 10px;
+                    background-color: ${theme.color.primary};
+                    z-index: 10;
+                  `}>
+                  <View
+                    style={css`
+                      height: 100%;
+                      width: 100%;
+                      justify-content: center;
+                      align-items: center;
+                    `}>
+                    <Text
+                      style={css`
+                        color: white;
+                        font-size: 25px;
+                        font-weight: 900;
+                      `}>
+                      수락하기
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
           ))}
         </Carousel>
       </CarouselContainer>
-      <View
+      {/* <View
         style={css`
+          position: absolute;
+          bottom: 0;
           height: 15%;
           width: 100%;
           justify-content: center;
           align-items: center;
+          background-color: white;
         `}>
         <TouchableOpacity
           style={css`
@@ -209,6 +294,7 @@ const GoOut2 = ({route, navigation}: any) => {
             width: 90%;
             border-radius: 10px;
             background-color: ${theme.color.primary};
+            z-index: 10;
           `}>
           <View
             style={css`
@@ -227,7 +313,7 @@ const GoOut2 = ({route, navigation}: any) => {
             </Text>
           </View>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </View>
   );
 };

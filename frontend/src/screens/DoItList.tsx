@@ -104,7 +104,7 @@ const CardImageContainer = styled(View)`
   height: 100%;
   border-radius: 10px;
   background-color: yellow;
-  justify-content: center; 
+  justify-content: center;
   align-items: center;
 `;
 
@@ -353,19 +353,26 @@ const DoItList = ({navigation}: any) => {
             <View key={index}>
               <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {id: card.id})}>
                 <DoItListCard>
-
-                    {
-                      card.dealImages.length === 0 ? (
-                        <CardImageContainer style={{backgroundColor: card.dealType === 'PET' ? '#FADE6C' : card.dealType === 'SHOP' ? '#2C70C1' : card.dealType === 'RECYCLE' ? '#00D282' : 'gray'}}>
-                          {card.dealType === 'PET' && <SvgIcon name="puppy" size={100}  />}
-                          {card.dealType === 'SHOP' && <SvgIcon name="shopping" size={90} />}
-                          {card.dealType === 'RECYCLE' && <SvgIcon name="bags" size={100} />}
-                          {card.dealType === 'ETC' && <SvgIcon name="building" size={100}/>}
-                        </CardImageContainer>
-                      ) : (
-                      <DoItListImage src={card.dealImages[0].imgUrl} />
-                      )
-                    }
+                  {card.dealImages.length === 0 ? (
+                    <CardImageContainer
+                      style={{
+                        backgroundColor:
+                          card.dealType === 'PET'
+                            ? '#FADE6C'
+                            : card.dealType === 'SHOP'
+                            ? '#2C70C1'
+                            : card.dealType === 'RECYCLE'
+                            ? '#00D282'
+                            : 'gray',
+                      }}>
+                      {card.dealType === 'PET' && <SvgIcon name="puppy" size={100} />}
+                      {card.dealType === 'SHOP' && <SvgIcon name="shopping" size={90} />}
+                      {card.dealType === 'RECYCLE' && <SvgIcon name="bags" size={100} />}
+                      {card.dealType === 'ETC' && <SvgIcon name="building" size={100} />}
+                    </CardImageContainer>
+                  ) : (
+                    <DoItListImage src={card.dealImages[0].imgUrl} />
+                  )}
 
                   <CardTextContainer>
                     {userData.id === card.requestId ? (
@@ -394,7 +401,6 @@ const DoItList = ({navigation}: any) => {
 
                       <TextApart>
                         {card.requestInfo.dongName}동 / {calculateTimeAgo(card.createdAt)}
-                        {card.id}
                       </TextApart>
                     </View>
                     <View

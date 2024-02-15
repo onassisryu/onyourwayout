@@ -118,7 +118,10 @@ const Home = ({navigation}: any) => {
                 style={css`
                   margin-top: 5%;
                   margin-bottom: 5%;
-                `}>
+                `}
+                onPress={() => {
+                  navigation.navigate('DoIt1');
+                }}>
                 <View
                   style={css`
                     height: 100%;
@@ -156,7 +159,10 @@ const Home = ({navigation}: any) => {
                 style={css`
                   margin-top: 5%;
                   margin-bottom: 5%;
-                `}>
+                `}
+                onPress={() => {
+                  navigation.navigate('GoOut1');
+                }}>
                 <View
                   style={css`
                     height: 100%;

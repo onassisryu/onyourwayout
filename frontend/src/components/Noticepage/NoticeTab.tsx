@@ -52,14 +52,13 @@ const NoticeCard = styled(GlobalContainer)`
   height: initial;
   margin-left: 20px;
   margin-top: 10px;
- 
 `;
 
 const CardButton = styled(GlobalButton)`
   background-color: white;
   padding-right: 5px;
   padding-left: 5px;
-`
+`;
 
 const CardHeader = styled(GlobalContainer)`
   height: initial;
@@ -112,8 +111,8 @@ const DistinctLineGray = styled.View`
 
 const DistinctLineGreen = styled.View`
   width: 100%;
-  border: 1px solid #00D282;
-  background-color: #00D282;
+  border: 1px solid #00d282;
+  background-color: #00d282;
   margin-top: 10px;
   margin-bottom: 10px;
 `;
@@ -153,7 +152,6 @@ const ButtonText = styled(GlobalText)`
   font-size: ${theme.fontSize.medium};
   color: ${theme.color.white};
   font-weight: bold;
-
 `;
 
 const ModalText = styled(GlobalText)`
@@ -215,7 +213,7 @@ type NoticeId = {
 interface Props {
   noticeCount: number;
   setNoticeCount: (notice: number) => void;
-};
+}
 
 const categoryToDealType = (category: string) => {
   switch (category) {
@@ -403,7 +401,7 @@ const NoticeTab = (props: Props) => {
               <View style={css`flex-direction: row; align-items: center;`}>
                 
                 <CardTitle>{notice.title} </CardTitle>
-                <MaterialCommunityIcons name='bell-ring-outline' size={25}></MaterialCommunityIcons>
+                <MaterialCommunityIcons name="bell-ring-outline" size={25}></MaterialCommunityIcons>
               </View>
               <TouchableOpacity onPress={() => deleteNotice(notice.id)}>
                 <XImage source={xImage}></XImage>
@@ -411,6 +409,11 @@ const NoticeTab = (props: Props) => {
             </CardHeader>
 
             <CardContentComponent>
+              {notice.notificationType === 'CHAT' && (
+                <CardContent>
+                  {notice.deal.dong}의 {notice.nickname}님과 채팅이 시작되었습니다.
+                </CardContent>
+              )}
 
                 {notice.notificationType === 'CHAT' && <CardContent>{notice.dong.name}의 {notice.nickname}님과 채팅이 시작되었습니다.</CardContent>}
                 {/* 해줘요잉 추천 */}
@@ -498,17 +501,21 @@ const NoticeTab = (props: Props) => {
           visible={modalVisible}
           onRequestClose={() => setModalVisible(false)}
           style={{zIndex: 1}}>
-          <TouchableWithoutFeedback onPress={() => setModalVisible(false)} >
+          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
             <ModalBackground style={{zIndex: 1}}>
               <ModalComponent>
-                <ModalText>알림을  '전체삭제'하시겠습니까?</ModalText>
+                <ModalText>알림을 '전체삭제'하시겠습니까?</ModalText>
                 <ModalSubComponent>
-                  
-                  <View style={css`flex-direction: row; margin-top: 10px; justify-content: space-between`}>
+                  <View
+                    style={css`
+                      flex-direction: row;
+                      margin-top: 10px;
+                      justify-content: space-between;
+                    `}>
                     <SelectButton onPress={deleteAllNotices}>
                       <ButtonText>확인</ButtonText>
                     </SelectButton>
-                    <SelectButton onPress={() => setModalVisible(false)} >
+                    <SelectButton onPress={() => setModalVisible(false)}>
                       <ButtonText>취소</ButtonText>
                     </SelectButton>
                   </View>

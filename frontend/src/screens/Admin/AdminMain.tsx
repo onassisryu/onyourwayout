@@ -4,8 +4,8 @@ import {Animated, Text, TouchableOpacity, View} from 'react-native';
 import {isLoggedInState} from '@/recoil/atoms';
 import styled, {css} from '@emotion/native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import {useRecoilValue} from 'recoil';
-
+import {useRecoilValue, useSetRecoilState} from 'recoil';
+import MainStack from '@/navigations/MainStack';
 import {GlobalButton, GlobalText} from '@/GlobalStyles';
 import {logoutUser} from '@/utils/common';
 
@@ -101,22 +101,25 @@ const StyledText = styled(GlobalText)`
 
 const AdminMain = ({navigation}: any) => {
   const isLoggedIn = useRecoilValue(isLoggedInState);
-
-  useEffect(() => {
-    console.log('AdminMain');
-  }, []);
+  const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const checkLogin = async () => {
     if (isLoggedIn) {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
-      navigation.navigate('AdminMain');
     } else {
       console.log('로그인 상태가 아닙니다.======> 페이지 이동', isLoggedIn);
       navigation.navigate('Login');
     }
   };
+
   useEffect(() => {
     checkLogin();
   }, [isLoggedIn]);
+  const handleLogout = async () => {
+    await logoutUser();
+    setIsLoggedIn(false);
+    console.log('test');
+    navigation.reset({routes: [{name: 'Login'}]});
+  };
 
   return (
     <View
@@ -160,7 +163,11 @@ const AdminMain = ({navigation}: any) => {
           imageSource="https://oywo.s3.ap-northeast-2.amazonaws.com/src/trash2.png"
         />
       </NotificationBottom>
-      <GlobalButton onPress={logoutUser}>
+      <GlobalButton
+        onPress={() => {
+          logoutUser();
+          setIsLoggedIn(false);
+        }}>
         <GlobalText>리셋</GlobalText>
       </GlobalButton>
     </View>
