@@ -19,9 +19,7 @@ import * as encoding from 'text-encoding';
 import {getAccessToken} from '@/utils/common';
 import ChatMessage from '@/components/Chatpage/ChatMessage';
 import {launchImageLibrary, ImageLibraryOptions, ImagePickerResponse, Asset} from 'react-native-image-picker';
-import Entypo from 'react-native-vector-icons/Entypo';
-import DefaultButton from '@/components/DefaultButton';
-import SvgIcon from '@/components/SvgIcon';
+import DealContent from '@/components/Chatpage/DealContent';
 const TextEncodingPolyfill = require('text-encoding');
 
 Object.assign('global', {
@@ -75,14 +73,6 @@ const ReportButton = styled(GlobalButton)`
   background-color: white;
 `;
 
-const ChatMessageContainer = styled.View<{isModal: boolean}>`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-`;
-
 type Message = {
   msg: string;
   senderId: number;
@@ -116,21 +106,6 @@ const SendImg = styled(Pressable)`
   margin-left: 10px;
 `;
 
-const DealContainer = styled.View`
-  min-height: 90px;
-  flex-direction: column;
-  height: auto;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  position: absolute;
-  background-color: white;
-  margin-top: 60px;
-  z-index: 1000;
-  flex: 1;
-  top: 0;
-`;
 type ImgData = {
   uri: string | undefined;
   type: string | undefined;
@@ -164,7 +139,7 @@ interface MyObject {
 const ChatDetail = ({navigation}: Props) => {
   const {params} = useRoute<ChatDetailScreenRouteProp>();
   const userData = useRecoilValue(userDataState);
-  const [icon, setIcon] = useState('puppy');
+  const [icon, setIcon] = useState('building');
   const [img, setImg] = useState('');
   const [imageData, setImageData] = useState<ImgData>({uri: '', type: '', fileSize: 0, name: '', imgUrl: ''});
   const [messages, setMessages] = useState<Message[]>([]);
@@ -231,17 +206,7 @@ const ChatDetail = ({navigation}: Props) => {
         console.log(err);
       });
   };
-  const closeDeal = async () => {
-    console.log('거래 완료', deal?.id);
-    await axiosAuth
-      .put(`/deal/close/${deal?.id}`)
-      .then(res => {
-        closeReview();
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+
   const getRecentDeal = async () => {
     console.log('거래 최신 조회 시작', userData.id, params.userId);
     await axiosAuth
@@ -284,7 +249,6 @@ const ChatDetail = ({navigation}: Props) => {
         console.log(res.data.chatRoom);
         const msg = data.map((message: any) => {
           const convertedTime = convertTimeFormat(message.createdAt);
-
           return {
             msg: message.msg,
             senderId: message.senderId,
@@ -302,8 +266,7 @@ const ChatDetail = ({navigation}: Props) => {
     flatListRef.current?.scrollToEnd({animated: true});
   };
   const sendMessage = async () => {
-    console.log('메시지 전송중이여');
-    console.log('메시지', messageText);
+    console.log('메시지 ', messageText);
     await client.current?.publish({
       destination: `/pub/channel`,
       skipContentLengthHeader: true,
@@ -339,15 +302,17 @@ const ChatDetail = ({navigation}: Props) => {
         client.current?.subscribe(`/sub/channel/${params.roomId}`, message => {
           const json_body = JSON.parse(message.body);
           console.log('구독', json_body);
-
           const msg = {
             msg: json_body.msg,
             senderId: json_body.sendId,
             imgUrl: json_body.img,
             createdAt: convertTimeFormat(json_body.createdAt),
           };
-
-          setMessages(prev => [msg, ...prev]);
+          if (msg.msg == '--거래완료--') {
+            getRecentDeal();
+          } else {
+            setMessages(prev => [msg, ...prev]);
+          }
         });
         if (client.current?.connected) {
           console.log('연결됨');
@@ -398,7 +363,7 @@ const ChatDetail = ({navigation}: Props) => {
   }, []);
 
   return (
-    <GlobalContainer style={{position: 'relative'}}>
+    <GlobalContainer>
       <Header>
         <GoBack />
         <StyledText>{params.name}</StyledText>
@@ -412,130 +377,8 @@ const ChatDetail = ({navigation}: Props) => {
           />
         </ReportButton>
       </Header>
-      <DealContainer>
-        <View
-          style={css`
-            display: flex;
-            flex: 1;
-            flex-direction: row;
-            align-items: center;
-            justify-content: start;
-            min-height: 80px;
-            height: auto;
-            width: auto;
-            background-color: #f8f8f8;
-            flex: 1;
-            padding: 10px;
-            z-index: 10;
-          `}>
-          <View
-            style={css`
-              background-color: #00d282;
-              margin-left: 20px;
-              width: 6px;
-              height: 100%;
-            `}></View>
-          <View
-            style={css`
-              font-size: 20px;
-              color: #000;
-              margin-left: 10px;
-              display: flex;
-              flex-direction: row;
-              height: 100%;
-              width: 100%;
-            `}>
-            <View
-              style={css`
-                width: 80px;
-                height: 100%;
-                border-radius: 5px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              `}>
-              {img ? (
-                <Image
-                  style={css`
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 5px;
-                  `}
-                  src={img}
-                />
-              ) : (
-                <SvgIcon name={icon} size={60} style={css``} />
-              )}
-            </View>
-            <View
-              style={css`
-                padding-left: 10px;
-                font-size: 20px;
-                width: auto;
-              `}>
-              <View
-                style={css`
-                  display: flex;
-                  flex-direction: row;
-                  align-items: center;
-                  justify-content: start;
-                `}>
-                <Entypo name="dot-single" size={20} color={'black'} />
-                <Text> 동호수 : {deal?.userDong}</Text>
-              </View>
-              <View
-                style={css`
-                  display: flex;
-                  flex-direction: row;
-                  align-items: center;
-                  justify-content: start;
-                  height: auto;
-                `}>
-                <Entypo name="dot-single" size={20} color={'black'} />
-                <Text> 맡긴 일 : {deal?.title}</Text>
-              </View>
-              <View
-                style={css`
-                  display: flex;
-                  flex-direction: row;
-                  align-items: center;
-                  justify-content: start;
-                `}>
-                <Entypo name="dot-single" size={20} color={'black'} />
-                {deal?.rewardType === 'CASH' ? <Text> 현금 : {deal?.cash}원</Text> : <Text> 물품 : {deal?.item}</Text>}
-              </View>
-            </View>
-          </View>
-        </View>
-        <View
-          style={css`
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            margin-top: 10px;
-            width: 100%;
-            justify-content: center;
-          `}>
-          {deal?.request ? (
-            <>
-              <DefaultButton
-                size={'sm'}
-                color="primary"
-                onPress={() => {
-                  closeDeal();
-                }}
-                title="완료하기"
-              />
-              <DefaultButton size={'sm'} color="gray" title="취소하기" onPress={cancleDeal} />
-            </>
-          ) : (
-            deal?.dealStatus === 'ING' && (
-              <DefaultButton size={'sm'} color="gray" title="거절하기" onPress={cancleDeal} />
-            )
-          )}
-        </View>
-      </DealContainer>
+
+      <DealContent img={img} icon={icon} deal={deal} client={client} roomId={params.roomId} sendId={userData.id} />
       <View
         style={{
           marginBottom: 120,
