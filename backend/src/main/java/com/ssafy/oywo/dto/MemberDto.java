@@ -113,6 +113,7 @@ public class MemberDto {
                     .roles(member.getRoles())
                     .pauseStartAt(member.getPauseStartAt())
                     .pauseEndAt(member.getPauseEndAt())
+                    .penaltyCount(member.getPenaltyCount())
                     .build();
         }
 
@@ -139,6 +140,7 @@ public class MemberDto {
                     .roles(member.getRoles())
                     .pauseStartAt(member.getPauseStartAt())
                     .pauseEndAt(member.getPauseEndAt())
+                    .penaltyCount(member.getPenaltyCount())
                     .build();
         }
 

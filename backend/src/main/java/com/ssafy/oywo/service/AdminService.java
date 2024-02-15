@@ -20,7 +20,7 @@ public interface AdminService {
     List<MemberDto.Response> manageSuspendedMembers();
     MemberDto.Response processUnlockMember(Long memberId);
 
-    HashMap<String,Object> updatePenaltyAndPauseTime(Long memberId);
+    HashMap<String,Object> updatePenaltyAndPauseTime(Long memberId,Long dealId);
 
     DealDto.Response changeStatusToOpen(Long dealId);
 
