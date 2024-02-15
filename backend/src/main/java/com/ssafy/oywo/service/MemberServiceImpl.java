@@ -88,7 +88,8 @@ public class MemberServiceImpl implements MemberService {
         List<String> roles = new ArrayList<>();
 //        roles.add(Member.RoleType.ROLE_USER.name());  // USER 권한 부여
         roles.add("USER");  // USER 권한 부여
-        roles.add("ADMIN");
+
+//        roles.add("ADMIN");
         // 먼저 회원 정보를 저장
         MemberDto.SignUp signup=new MemberDto.SignUp();
 

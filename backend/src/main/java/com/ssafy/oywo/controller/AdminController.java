@@ -76,7 +76,6 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getDealsWithComplaint());
     }
 
-
     /**
      * 거래 세부 내용 조회 + 신고내역 포함
      * @param dealId 거래 아이디

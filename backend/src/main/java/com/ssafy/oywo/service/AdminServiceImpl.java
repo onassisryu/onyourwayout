@@ -149,7 +149,8 @@ public class AdminServiceImpl implements AdminService {
 
         Deal deal=dealRepository.findById(dealId)
                 .orElseThrow(()->new NoSuchElementException("존재하지 않는 거래입니다."));
-        deal.setDealStatus(Deal.DealStatus.PAUSE);
+        dealRepository.deleteById(deal.getId());
+
         return payload;
     }
 
