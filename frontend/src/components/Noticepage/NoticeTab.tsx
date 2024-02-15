@@ -76,8 +76,7 @@ const CardTitle = styled(GlobalText)`
 
 const CardContentComponent = styled(GlobalContainer)`
   height: initial;
-  background-color: pink;
-
+  
 `
 
 const CardContent = styled(GlobalText)`
@@ -85,8 +84,9 @@ const CardContent = styled(GlobalText)`
   color: ${theme.color.black};
   font-weight: 900;
   padding-bottom: 10px;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
+
 `;
 
 const XImage = styled.Image`
@@ -183,6 +183,21 @@ type NoticeId = {
 interface Props {
   noticeCount: number;
   setNoticeCount: (notice: number) => void;
+};
+
+const categoryToDealType = (category: string) => {
+  switch (category) {
+    case 'PET':
+      return '반려동물 산책';
+    case 'SHOP':
+      return '장보기';
+    case 'RECYCLE':
+      return '분리수거';
+    case 'ETC':
+      return '기타';
+    default:
+      return '';
+  }
 };
 
 const NoticeTab = (props: Props) => {
@@ -320,11 +335,29 @@ const NoticeTab = (props: Props) => {
                 {notice.notificationType === 'CHAT' && <CardContent>{notice.deal.dong}의 {notice.nickname}님과 채팅이 시작되었습니다.</CardContent>}
 
                 {notice.notificationType === 'DEAL_NEW' && 
-                  <CardContent>{notice.deal.dong}에서
-                    {notice.deal.dealType === 'PET' && <SvgIcon name="puppy" size={25}/>}
-                    {notice.deal.dealType === 'RECYCLE' && <SvgIcon name="shopping" size={25} />}
-                    {notice.deal.dealType === 'SHOP' && <SvgIcon name="bags" size={25}/>}
-                    {notice.deal.dealType === 'ETC' && <SvgIcon name="building" size={25}/>}
+                  <CardContent>{notice.deal.dong}에서 
+                    {notice.deal.dealType === 'PET' && <View style={css`
+                      position: absolute;
+                      top: 5px;
+                      flex-direction: row;
+                      align-items: center;
+                      font-size: 18px; 
+                      font-weight: bold;
+                      margin-top: -10px;
+                    `}>
+                      <Text style={css`
+                        font-size: 21px; 
+                        font-weight: bold;
+                      `}> "</Text>
+                      <SvgIcon name="puppy" size={35}/>
+                      <Text style={css`
+                        font-size: 21px; 
+                        font-weight: bold;
+                      `}>반려동물 산책" </Text>
+                    </View>}
+                    {notice.deal.dealType === 'RECYCLE' && <Text style={css`font-size: 20px; font-weight: bold;`}> "<SvgIcon name="bags" size={40}/> 분리수거" </Text>}
+                    {notice.deal.dealType === 'SHOP' && <Text style={css`font-size: 20px; font-weight: bold;`}> "<SvgIcon name="shopping" size={40}/> 장보기" </Text>}
+                    {notice.deal.dealType === 'ETC' && <Text style={css`font-size: 20px; font-weight: bold;`}> "<SvgIcon name="building" size={40}/> 기타" </Text>}
                     거래가 생성되었습니다.
                   </CardContent>}
 

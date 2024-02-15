@@ -382,45 +382,31 @@ const DoItListDetail = ({route, navigation}: any) => {
                     height: 400px;
                     width: 100%;
                     background-color: ${getBackgroundColor(responseData.dealType)};
+                    justify-content: center;
+                    align-items: center;
                   `}>
                   {responseData.dealType === 'PET' && (
                     <SvgIcon
                       name="puppy"
-                      size={415}
-                      style={css`
-                        justify-content: center;
-                        align-items: center;
-                      `}
+                      size={300}
                     />
                   )}
                   {responseData.dealType === 'SHOP' && (
                     <SvgIcon
                       name="shopping"
-                      size={400}
-                      style={css`
-                        justify-content: center;
-                        align-items: center;
-                      `}
+                      size={300}
                     />
                   )}
                   {responseData.dealType === 'RECYCLE' && (
                     <SvgIcon
                       name="bags"
-                      size={415}
-                      style={css`
-                        justify-content: center;
-                        align-items: center;
-                      `}
+                      size={300}
                     />
                   )}
                   {responseData.dealType === 'ETC' && (
                     <SvgIcon
                       name="building"
-                      size={415}
-                      style={css`
-                        justify-content: center;
-                        align-items: center;
-                      `}
+                      size={300}
                     />
                   )}
                 </View>

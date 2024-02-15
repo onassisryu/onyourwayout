@@ -195,8 +195,6 @@ const DoItList = ({navigation}: any) => {
   // 검색어를 기반으로 카드를 필터링하는 함수
 
   const [openSearch, setOpenSearch] = useState(false);
-
-  const [isSearchModalVisible, setSearchModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
   const [searchResults, setSearchResults] = useState<DoListCard[]>(cardListData);
