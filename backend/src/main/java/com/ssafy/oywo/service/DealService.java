@@ -20,7 +20,7 @@ public interface DealService {
     Long countDealsByDong(Long dongId, List<DealType> dealType);
     // 사용자별 거래(요청 or 수행) 전체 조회
     List<DealDto.Response> getDealsByMemberId(String requestOrAccept,Long memberId);
-    // 요청자/수락자 현재 거래 조회
+    // 요청자/수행자 최신거래(ING, CLOSE) 조회
     List<DealDto.ResponseWithHo> getDealsBetweenUsers(Long requestId, Long acceptId);
     // 내가 나온김에 해야할 일
     List<DealDto.ResponseWithHo> getMyDealsByStatusING();

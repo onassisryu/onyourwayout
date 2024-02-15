@@ -103,7 +103,7 @@ public class DealController {
     }
 
     /**
-     * 요청자/수락자 현재 거래 조회
+     * 요청자/수행자 최신거래(ING, CLOSE) 조회
      * @param requestId 요청자 아이디
      * @param acceptId 수락자 아이디
      * @return 거래 정보
