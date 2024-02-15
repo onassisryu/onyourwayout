@@ -23,7 +23,7 @@ const DealContainer = styled.View`
   top: 0;
 `;
 
-const DealContent = ({img, icon, deal, client, roomId, sendId}: any) => {
+const DealContent = ({img, icon, deal, client, roomId, sendId, setModalVisible, reviewStatus}: any) => {
   const cancleDeal = async () => {
     console.log('거래 취소', deal?.id);
     await axiosAuth
@@ -35,26 +35,43 @@ const DealContent = ({img, icon, deal, client, roomId, sendId}: any) => {
         console.log(err);
       });
   };
-  const closeDeal = async () => {
-    console.log('거래 완료', deal?.id);
+  useEffect(() => {
+    // deal 데이터를 가져오는 로직 추가
+    if (reviewStatus != '') {
+      closeReview();
+    }
+  }, [reviewStatus]);
+  const closeReview = async () => {
     await axiosAuth
-      .put(`/deal/close/${deal?.id}`)
-      .then(res => {
-        // closeReview();
+      .put(`/deal/review/${deal.id}/${reviewStatus}`)
+      .then(resp => {
+        console.log(resp.data);
+        client.current?.publish({
+          destination: `/pub/channel`,
+          skipContentLengthHeader: true,
+          body: JSON.stringify({
+            chatRoomId: roomId, // 채팅방 고유 번호
+            sendId: sendId, //
+            msg: '--거래완료--',
+            img: '',
+          }),
+        });
       })
       .catch(err => {
         console.log(err);
       });
-    client.current?.publish({
-      destination: `/pub/channel`,
-      skipContentLengthHeader: true,
-      body: JSON.stringify({
-        chatRoomId: roomId, // 채팅방 고유 번호
-        sendId: sendId, //
-        msg: '--거래완료--',
-        img: '',
-      }),
-    });
+  };
+  const closeDeal = async () => {
+    console.log('거래 완료', deal?.id);
+    setModalVisible(true);
+    await axiosAuth
+      .put(`/deal/close/${deal?.id}`)
+      .then(res => {
+        setModalVisible(true);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {

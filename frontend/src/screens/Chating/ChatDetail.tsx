@@ -8,7 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import styled, {css} from '@emotion/native';
 import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
-import {useRef, useEffect, useState} from 'react';
+import {useRef, useEffect, useState, FC} from 'react';
 import axiosAuth from '@/axios/axiosAuth';
 import {NavigationProp} from '@react-navigation/native';
 import {RouteProp, useRoute} from '@react-navigation/native';
@@ -20,6 +20,8 @@ import {getAccessToken} from '@/utils/common';
 import ChatMessage from '@/components/Chatpage/ChatMessage';
 import {launchImageLibrary, ImageLibraryOptions, ImagePickerResponse, Asset} from 'react-native-image-picker';
 import DealContent from '@/components/Chatpage/DealContent';
+import theme from '@/Theme';
+import Modal from 'react-native-modal';
 const TextEncodingPolyfill = require('text-encoding');
 
 Object.assign('global', {
@@ -149,6 +151,8 @@ const ChatDetail = ({navigation}: Props) => {
   const [deal, setDeal] = useState<MyObject | null>(null);
   const [textDisabled, setTextDisabled] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [reviewStatus, setReviewStatus] = useState('');
 
   useEffect(() => {
     if (messageText) {
@@ -185,28 +189,6 @@ const ChatDetail = ({navigation}: Props) => {
     room: params.roomId,
     id: userData.id,
   };
-  const closeReview = async () => {
-    console.log('거래 후기 작성', deal?.id);
-    const gb = 'good' || 'bad';
-    // await axiosAuth
-    //   .put(`/deal/review/${deal.id}/${gb}`)
-    //   .then()
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
-  };
-  const cancleDeal = async () => {
-    console.log('거래 취소', deal?.id);
-    await axiosAuth
-      .put(`/deal/accept/${deal?.id}`)
-      .then(res => {
-        console.log(res.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-
   const getRecentDeal = async () => {
     console.log('거래 최신 조회 시작', userData.id, params.userId);
     await axiosAuth
@@ -361,9 +343,167 @@ const ChatDetail = ({navigation}: Props) => {
       client.current?.deactivate();
     };
   }, []);
+  const Scorebarbackground = styled.View`
+    height: 15px;
+    width: 100%;
+    border-radius: 10px;
+    background-color: #eaeaea;
+    position: relative;
+  `;
+  const Scorebar = styled.View`
+    height: 15px;
+    border-radius: 10px;
+    background-color: ${theme.color.primary};
+    position: absolute;
+  `;
+  interface CustomAlertProps {
+    visible: boolean;
+    nickname: string;
+    dong: string;
+  }
+  const CustomAlert: FC<CustomAlertProps> = ({visible, nickname, dong}) => {
+    return (
+      <Modal isVisible={visible}>
+        <View
+          style={css`
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+          `}>
+          <View
+            style={css`
+              background-color: white;
+              padding: 20px;
+              border-radius: 10px;
+              width: 95%;
+              height: 55%;
+              align-items: center;
+            `}>
+            <View
+              style={css`
+                height: 20%;
+                width: 100%;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 10px;
+              `}>
+              <Text
+                style={css`
+                  font-size: 20px;
+                  font-weight: 700;
+                `}>
+                [{nickname}]님과의 {'\n'}거래는 어떠셨나요?
+              </Text>
+            </View>
+            <View
+              style={css`
+                width: 90%;
+                height: 150px;
+                border: 1px solid gray;
+                border-radius: 10px;
+                margin-bottom: 20px;
+              `}>
+              <View
+                style={css`
+                  flex-direction: row;
+                  align-items: center;
+                  height: 100%;
+                `}>
+                <View
+                  style={css`
+                    height: 100px;
+                    width: 100px;
+                    border-radius: 100px;
+                    margin: 10px;
+                    background-color: ${theme.color.gray100};
+                  `}></View>
+                <View
+                  style={css`
+                    width: 50%;
+                  `}>
+                  <Text
+                    style={css`
+                      font-size: 20px;
+                      font-weight: 700;
+                    `}>
+                    {nickname}
+                  </Text>
+                  <Text
+                    style={css`
+                      font-size: 15px;
+                      font-weight: 700;
+                      color: ${theme.color.gray300};
+                      margin-bottom: 10px;
+                    `}>
+                    {dong}동
+                  </Text>
+                </View>
+              </View>
+            </View>
+            {/* 상대방 정보 카드 */}
+            <View
+              style={css`
+                flex-direction: row;
+                justify-content: space-between;
+                width: 90%;
+              `}>
+              <TouchableOpacity
+                onPress={() => {
+                  setReviewStatus('good');
+                  setModalVisible(false);
+                }}
+                style={css`
+                  width: 47%;
+                  height: 50px;
+                  background-color: ${theme.color.primary};
+                  justify-content: center;
+                  align-items: center;
+                  border-radius: 10px;
+                `}>
+                <Text
+                  style={css`
+                    color: white;
+                    font-size: 20px;
+                    font-weight: 700;
+                  `}>
+                  좋아요
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setReviewStatus('bad');
+                  setModalVisible(false);
+                }}
+                style={css`
+                  width: 47%;
+                  height: 50px;
+                  background-color: ${theme.color.gray};
+                  justify-content: center;
+                  align-items: center;
+                  border-radius: 10px;
+                `}>
+                <Text
+                  style={css`
+                    color: white;
+                    font-size: 20px;
+                    font-weight: 700;
+                  `}>
+                  싫어요
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
 
   return (
-    <GlobalContainer>
+    <GlobalContainer
+      style={css`
+        position: 'relative';
+      `}>
+      <CustomAlert visible={isModalVisible} nickname={params.name} dong={params.dong} />
       <Header>
         <GoBack />
         <StyledText>{params.name}</StyledText>
@@ -378,7 +518,16 @@ const ChatDetail = ({navigation}: Props) => {
         </ReportButton>
       </Header>
 
-      <DealContent img={img} icon={icon} deal={deal} client={client} roomId={params.roomId} sendId={userData.id} />
+      <DealContent
+        img={img}
+        icon={icon}
+        deal={deal}
+        client={client}
+        roomId={params.roomId}
+        sendId={userData.id}
+        setModalVisible={setModalVisible}
+        reviewStatus={reviewStatus}
+      />
       <View
         style={{
           marginBottom: 120,
