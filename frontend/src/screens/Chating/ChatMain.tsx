@@ -111,6 +111,10 @@ const ChatMain = ({navigation}: any) => {
     otherNickname: '가영가영이',
   };
   const [noticeCount, setNoticeCount] = useRecoilState(noticeCountState)
+
+  useEffect(() => {
+
+  }, [noticeCount]); 
   //채팅방생성
   const makeChatRoom = () => {
     axiosAuth

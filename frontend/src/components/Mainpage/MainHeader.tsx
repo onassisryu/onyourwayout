@@ -54,7 +54,11 @@ interface Props {
 const MainHeader = ({navigation}: Props) => {
 
   const [noticeCount, setNoticeCount] = useRecoilState(noticeCountState)
-  console.log(noticeCount)
+  
+  useEffect(() => {
+    
+  }, [noticeCount]); // noticeCount를 의존성 배열에 추가합니다.
+
   return (
     <HeaderContainer>
       <EmptyView></EmptyView>

@@ -255,8 +255,8 @@ const DoItListDetail = ({route, navigation}: any) => {
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [detailImage, setDetailImage] = useState([]);
   const loginuser = useRecoilValue(userDataState);
-  useEffect(() => {
-    console.log('param', route.params.id);
+
+  const fetchPostDetail = () => {
     axiosAuth
       .get(`/deal/${route.params.id}`)
       .then(resp => {
@@ -269,7 +269,14 @@ const DoItListDetail = ({route, navigation}: any) => {
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
-  }, []);
+  };
+  
+  useEffect(() => {
+    fetchPostDetail();
+  }, [route.params.id]);
+
+
+
   const goChat = (memberNickname: string, otherNickname: string) => {
     console.log('수락-채팅이동', memberNickname, otherNickname);
     const user = {
