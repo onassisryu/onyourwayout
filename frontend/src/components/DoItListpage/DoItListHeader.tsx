@@ -4,7 +4,7 @@ import styled, { css } from '@emotion/native';
 import theme from '@/Theme';
 import {GlobalContainer, GlobalText, GlobalButton} from '@/GlobalStyles';
 import SvgIcon from "../SvgIcon";
-import { NavigationProp } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import { Modal, TextInput, TouchableWithoutFeedback, Button, Animated, View, Dimensions} from 'react-native';
 
@@ -119,6 +119,16 @@ const DoItListHeader = (props: Props) => {
   const slideAnim = useRef(new Animated.Value(700)).current;  // 초기값을 화면 오른쪽 밖으로 설정
   const iconSlideAnim = useRef(new Animated.Value(0)).current;  // 아이콘 애니메이션 초기값
   const windowWidth = Dimensions.get('window').width; // 추가
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      props.setOpenSearch(false);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const slideIn = () => {
     Animated.timing(slideAnim, {

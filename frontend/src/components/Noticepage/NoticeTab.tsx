@@ -1,17 +1,20 @@
 // import 내용
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import styled, {css} from '@emotion/native';
-import {NavigationProp} from '@react-navigation/native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import theme from '@/Theme';
 import moment from 'moment';
 import 'moment/locale/ko';
 import {GlobalButton, GlobalContainer, GlobalComponent} from '@/GlobalStyles';
-import {View, TouchableOpacity, ImageSourcePropType, Modal, Button, Text, TouchableWithoutFeedback} from 'react-native';
+import {View, TouchableOpacity, ImageSourcePropType, Modal, Button, Text, TouchableWithoutFeedback, Animated} from 'react-native';
 import {GlobalText} from '@/GlobalStyles';
 import SvgIcon from '@components/SvgIcon';
 import axiosAuth from '@/axios/axiosAuth';
-import Entypo from 'react-native-vector-icons/Entypo';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entypo from 'react-native-vector-icons/Entypo'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import {userDataState} from '@/recoil/atoms';
+import {useRecoilValue} from 'recoil';
+
 
 const TotalDeleteContainer = styled(GlobalComponent)`
   flex-direction: row;
@@ -62,27 +65,32 @@ const CardHeader = styled(GlobalContainer)`
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 `;
 
 const CardTitle = styled(GlobalText)`
-  font-size: ${theme.fontSize.medium};
+  font-size: 18px;
   color: ${theme.color.black};
   font-weight: 900;
 `;
 
 const CardContentComponent = styled(GlobalContainer)`
   height: initial;
-  background-color: pink;
-`;
+  flex-direction: column;
+  align-items: flex-start;
+  
+`
 
 const CardContent = styled(GlobalText)`
-  font-size: ${theme.fontSize.small};
+  flex-direction: row;
+  font-size: ${theme.fontSize.medium};
   color: ${theme.color.black};
   font-weight: 900;
   padding-bottom: 10px;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
+  background-color: pink;
+
 `;
 
 const XImage = styled.Image`
@@ -93,12 +101,6 @@ const XImage = styled.Image`
   margin-top: 5px;
 `;
 
-const NoticeTime = styled(GlobalText)`
-  font-size: ${theme.fontSize.small};
-  color: #727272;
-  font-weight: 900;
-  margin-bottom: 20px;
-`;
 
 const DistinctLineGray = styled.View`
   width: 100%;
@@ -159,6 +161,29 @@ const ModalText = styled(GlobalText)`
   margin-bottom: 15px;
 `;
 
+// 알림
+const InfoComponent = styled(GlobalContainer)`
+  flex-direction: row;
+  align-items: flex-end;
+  width: 90%;
+  height: initial;
+`;
+
+const TextCategory = styled(GlobalText)`
+  font-size: 18px;
+  color: ${props => props.theme.color.black};
+  padding: 10px 0px 0px 0px;
+`;
+
+const NoticeTime = styled(GlobalText)`
+  font-size: ${theme.fontSize.small};
+  color: #727272;
+  font-weight: 900;
+  margin-bottom: 15px;
+  background-color: pink;
+  padding: 1px;
+`;
+
 const xImage: ImageSourcePropType = require('icons/x.png');
 
 type Notice = {
@@ -171,18 +196,46 @@ type Notice = {
   notificationType: string;
 };
 
+type AnimatedNotice = {
+  notice: Notice;
+  position: Animated.ValueXY;
+};
+
 type NoticeId = {
   id: number;
 };
+
+// type AnimatedNotice = {
+//   notice: Notice;
+//   position: Animated.ValueXY;
+// };
 
 interface Props {
   noticeCount: number;
   setNoticeCount: (notice: number) => void;
 }
 
+const categoryToDealType = (category: string) => {
+  switch (category) {
+    case 'PET':
+      return '반려동물 산책';
+    case 'SHOP':
+      return '장보기';
+    case 'RECYCLE':
+      return '분리수거';
+    case 'ETC':
+      return '기타';
+    default:
+      return '';
+  }
+};
+
 const NoticeTab = (props: Props) => {
+
+  const userData = useRecoilValue(userDataState);
+  const navigation = useNavigation();
   const notificationTime = new Date();
-  const [notices, setNotices] = useState<Notice[]>([]);
+  const [animatedNotices, setAnimatedNotices] = useState<AnimatedNotice[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [readNoticeId, setReadNoticeId] = useState(null);
   // console.log('1111', notices)
@@ -201,82 +254,131 @@ const NoticeTab = (props: Props) => {
     }
   };
 
+  const calculateTimeAgo = (createdAt: string) => {
+    const now = new Date(); // 현재 시간
+    const created = new Date(createdAt); // createdAt을 Date 객체로 변환
+    const diff = now.getTime() - created.getTime(); // 현재 시간과 createdAt 사이의 차이(밀리초)
+    const minutesAgo = Math.floor(diff / (1000 * 60)); // 밀리초를 분으로 변환하여 계산
+    const hoursAgo = Math.floor(minutesAgo / 60); // 분을 시간으로 변환하여 계산
+    const daysAgo = Math.floor(hoursAgo / 24); // 시간을 일로 변환하여 계산
+
+    if (daysAgo > 30) {
+      // 30일 이상인 경우 한 달 전을 반환
+      const monthsAgo = Math.floor(daysAgo / 30);
+      return `${monthsAgo}달 전`;
+    } else if (daysAgo > 7) {
+      // 7일 이상인 경우 일주일 전을 반환
+      const weeksAgo = Math.floor(daysAgo / 7);
+      return `${weeksAgo}주일 전`;
+    } else if (daysAgo > 0) {
+      // 1일 이상인 경우 일수로 반환
+      return `${daysAgo}일 전`;
+    } else if (hoursAgo > 0) {
+      // 1시간 이상인 경우 시간으로 반환
+      return `${hoursAgo}시간 전`;
+    } else {
+      // 1시간 미만인 경우 분으로 반환
+      return `${minutesAgo}분 전`;
+    }
+  };
+
+  // Animated.ValueXY는 x와 y 값을 모두 가진 애니메이션 값입니다.
+  const position = useRef(new Animated.ValueXY()).current;
+   
+  // 알림 읽음 상태 업데이트
   useEffect(() => {
     if (readNoticeId !== null) {
       axiosAuth
-        .put(`/notification/${readNoticeId}`)
-        .then(resp => {
-          setNotices(notices.map(notice => (notice.id === readNoticeId ? {...notice, isRead: true} : notice)));
-          const unreadNoticesCount = notices.filter(notice => !notice.isRead).length;
-          props.setNoticeCount(unreadNoticesCount);
-        })
-        .catch(error => {
-          console.error('알림 읽음 중 오류 발생:', error);
-        });
+      .put(`/notification/${readNoticeId}`)
+      .then(resp => {
+        setAnimatedNotices(animatedNotices.map(aNotice => aNotice.notice.id === readNoticeId ? {...aNotice, notice: {...aNotice.notice, isRead: true}} : aNotice));
+        const unreadNoticesCount = animatedNotices.filter(aNotice => !aNotice.notice.isRead).length;
+        props.setNoticeCount(unreadNoticesCount);
+      })
+      .catch(error => {
+        console.error('알림 읽음 중 오류 발생:', error);
+      });
     }
   }, [readNoticeId]);
 
   const readAllNotices = () => {
     axiosAuth
-      .put(`/notification`)
-      .then(resp => {
-        setNotices(notices.map(notice => ({...notice, isRead: true})));
-        props.setNoticeCount(0);
-      })
-      .catch(error => {
-        console.error('전체 알림 읽음 중 오류 발생:', error);
-      });
+    .put(`/notification`)
+    .then(resp => {
+
+      setAnimatedNotices(animatedNotices.map(aNotice => ({...aNotice, notice: {...aNotice.notice, isRead: true}})));
+      props.setNoticeCount(0);
+    })
+    .catch(error => {
+      console.error('전체 알림 읽음 중 오류 발생:', error);
+    });
   };
 
   const deleteAllNotices = () => {
     axiosAuth
-      .delete(`/notification`)
-      .then(() => {
-        console.log('전체 삭제 성공');
-        setNotices([]);
-        setModalVisible(false);
-      })
-      .catch(error => {
-        console.error('전체 알림 삭제 중 오류 발생:', error);
-      });
+    .delete(`/notification`)
+    .then(() => {
+      console.log('전체 삭제 성공')
+      setAnimatedNotices([]);
+      setModalVisible(false);
+    })
+    .catch(error => {
+      console.error('전체 알림 삭제 중 오류 발생:', error);
+    });
   };
 
   const deleteNotice = (id: NoticeId) => {
-    axiosAuth
-      .delete(`/notification/${id}`)
-      .then(() => {
+    const targetIndex = animatedNotices.findIndex(aNotice => aNotice.notice.id === id);
+    
+    if (targetIndex !== -1) {
+      Animated.timing(animatedNotices[targetIndex].position, {
+        toValue: { x: 1000, y: 0 },
+        duration: 500,
+        useNativeDriver: false
+      }).start(() => {
         axiosAuth
-          .get(`/notification`)
-          .then(resp => {
-            // 새로운 배열을 생성하여 상태를 업데이트합니다.
-            setNotices([...resp.data]);
-          })
-          .catch(error => {
-            console.error('데이터를 가져오는 중 오류 발생:', error);
-          });
-      })
-      .catch(error => {
-        console.error('알림 삭제 중 오류 발생:', error);
+        .delete(`/notification/${id}`)
+        .then(() => {
+          axiosAuth
+            .get(`/notification`)
+            .then(resp => {
+              const newAnimatedNotices = resp.data.map(notice => ({
+                notice,
+                position: new Animated.ValueXY()
+              }));
+              setAnimatedNotices(newAnimatedNotices);
+            })
+            .catch(error => {
+              console.error('데이터를 가져오는 중 오류 발생:', error);
+            });
+        })
+        .catch(error => {
+          console.error('알림 삭제 중 오류 발생:', error);
+        });
       });
+    }
   };
 
   useEffect(() => {
     // console.log('알림 데이터가 업데이트되었습니다:', notices);
-  }, [notices]);
+  }, [animatedNotices]);
 
   useEffect(() => {
-    axiosAuth
-      .get(`/notification`)
-      .then(resp => {
-        console.log('알림이 조회 : ', resp.data);
-        console.log('이미지 : ', resp.data[1].deal);
-        setNotices(resp.data);
-        console.log(notices.map(notice => notice));
-      })
-      .catch(error => {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
-      });
-  }, []);
+  axiosAuth
+  .get(`/notification`)
+  .then(resp => {
+    const newAnimatedNotices = resp.data.map(notice => ({
+      notice,
+      position: new Animated.ValueXY()
+    }));
+    console.log(resp.data[5])
+    console.log(resp.data[5].deal.id)
+    setAnimatedNotices(newAnimatedNotices);
+  })
+  .catch(error => {
+    console.error('데이터를 가져오는 중 오류 발생:', error);
+  });
+}, []); 
 
   return (
     <GlobalContainer>
@@ -289,27 +391,15 @@ const NoticeTab = (props: Props) => {
         </TotalDelete>
       </TotalDeleteContainer>
       <DistinctLineGreen></DistinctLineGreen>
-      {notices.map(notice => (
+      {animatedNotices.length > 0 && animatedNotices.map(({ notice, position }) => (
+      <Animated.View style={position.getLayout()}>
         <NoticeCard key={notice.id}>
-          {!notice.isRead && (
-            <Entypo
-              name="dot-single"
-              size={40}
-              color={'red'}
-              style={css`
-                position: absolute;
-                bottom: 90px;
-                right: 355px;
-              `}
-            />
-          )}
-          <CardButton onPress={() => setReadNoticeId(notice.id)}>
+          {!notice.isRead && <Entypo name='dot-single' size={40} color={'red'} style={css`position: absolute; bottom: 130px; right: 355px;`}/>}
+          <CardButton onPress={() => {setReadNoticeId(notice.id)}}>
+          
             <CardHeader>
-              <View
-                style={css`
-                  flex-direction: row;
-                  align-items: center;
-                `}>
+              <View style={css`flex-direction: row; align-items: center;`}>
+                
                 <CardTitle>{notice.title} </CardTitle>
                 <MaterialCommunityIcons name="bell-ring-outline" size={25}></MaterialCommunityIcons>
               </View>
@@ -325,38 +415,84 @@ const NoticeTab = (props: Props) => {
                 </CardContent>
               )}
 
-              {notice.notificationType === 'DEAL_NEW' && (
-                <CardContent>
-                  {notice.deal.dong}에서
-                  {notice.deal.dealType === 'PET' && <SvgIcon name="puppy" size={25} />}
-                  {notice.deal.dealType === 'RECYCLE' && <SvgIcon name="shopping" size={25} />}
-                  {notice.deal.dealType === 'SHOP' && <SvgIcon name="bags" size={25} />}
-                  {notice.deal.dealType === 'ETC' && <SvgIcon name="building" size={25} />}
-                  거래가 생성되었습니다.
-                </CardContent>
-              )}
+                {notice.notificationType === 'CHAT' && <CardContent>{notice.dong.name}의 {notice.nickname}님과 채팅이 시작되었습니다.</CardContent>}
+                {/* 해줘요잉 추천 */}
+                {notice.notificationType === 'DEAL_NEW' && 
+                  <TouchableOpacity onPress={() => navigation.navigate('DoItListDetail', {id: notice.deal.id})}>
+                    {notice.deal.dealType === 'PET' && 
+                      <InfoComponent>
+                        <TextCategory >{userData.dongName === notice.dong.name ? '내 아파트에서' : notice.dong.name} </TextCategory>
+                        <SvgIcon name="bags" size={37}/>
+                        <TextCategory style={css`font-weight: 900; padding-bottom: 3px;`}>'반려동물 산책' </TextCategory>
+                        <TextCategory >요청이 있어요.</TextCategory>
+                    </InfoComponent>} 
+                    {notice.deal.dealType === 'RECYCLE' &&
+                      <InfoComponent>
+                        <TextCategory >{userData.dongName === notice.dong.name ? '내 아파트에서' : notice.dong.name} </TextCategory>
+                        <SvgIcon name="bags" size={37}/>
+                        <TextCategory style={css`font-weight: 900; padding-bottom: 3px;`}>'분리수거' </TextCategory>
+                        <TextCategory >요청이 있어요.</TextCategory>
+                      </InfoComponent>} 
+                    {notice.deal.dealType === 'SHOP' && 
+                      <InfoComponent>
+                        <TextCategory >{userData.dongName === notice.dong.name ? '내 아파트에서' : notice.dong.name} </TextCategory>
+                        <SvgIcon name="bags" size={37}/>
+                        <TextCategory style={css`font-weight: 900; padding-bottom: 3px;`}>'심부름' </TextCategory>
+                        <TextCategory >요청이 있어요.</TextCategory>
+                    </InfoComponent>} 
+                    {notice.deal.dealType === 'ETC' && 
+                      <InfoComponent>
+                        <TextCategory >{userData.dongName === notice.dong.name ? '내 아파트에서' : notice.dong.name} </TextCategory>
+                        <SvgIcon name="bags" size={37}/>
+                        <TextCategory style={css`font-weight: 900; padding-bottom: 3px;`}>'기타' </TextCategory>
+                        <TextCategory >요청이 있어요.</TextCategory>
+                        
+                    </InfoComponent>} 
+                  </TouchableOpacity>}
 
-              {notice.notificationType === 'DEAL_ACCEPT' && (
-                <CardContent>
-                  {notice.deal.dong}의 {notice.nickname}님과 거래가 수락되었습니다.
-                </CardContent>
-              )}
-              {notice.notificationType === 'DEAL_REJECT' && (
-                <CardContent>
-                  {notice.deal.dong}의 {notice.nickname}님과 거래가 거절되었습니다.
-                </CardContent>
-              )}
-              {notice.notificationType === 'DEAL_CANCEL' && (
-                <CardContent>
-                  {notice.deal.dong}의 {notice.nickname}님과 거래가 취소되었습니다.
-                </CardContent>
-              )}
+                {/* 해줘요잉 수락 */}
+                {notice.notificationType === 'DEAL_ACCEPT' && 
+                  ( 
+                    <View>
+                      <TextCategory style={css`font-size: 16px;`}>
+                        {notice.message}
+                      </TextCategory>
+                      <TouchableOpacity>
+                        <InfoComponent>
+                          <TextCategory style={css`font-size: 16px; font-weight: 900; text-decoration: underline;`}>
+                            제목 : {notice.deal.title}
+                          </TextCategory>
+                          <TextCategory style={css`font-size: 16px; font-weight: 900; text-decoration: underline; color: gray; margin-left: 5px; `}> 
+                            바로가기 
+                          </TextCategory>
+                        </InfoComponent>
+                      </TouchableOpacity>
+                    </View>
+                  )
+                }
+                {/* 해줘요잉 수락 취소 */}
+                {notice.notificationType === 'DEAL_CANCEL' && 
+                  ( 
+                    <View>
+                      <TextCategory style={css`font-size: 16px;`}>
+                        {notice.message}
+                      </TextCategory>
+                      <TextCategory style={css`font-weight: 900; font-size: 16px;; text-decoration: underline;`}>
+                        제목 : {notice.deal.title}
+                      </TextCategory>
+                    </View>
+                  )
+                }
             </CardContentComponent>
+            <InfoComponent style={css`justify-content: flex-end;`}>
 
-            <NoticeTime></NoticeTime>
-            <DistinctLineGray></DistinctLineGray>
+              <NoticeTime style={css`margin-top: 10px;`}>{calculateTimeAgo(notice.deal.createdAt)}</NoticeTime>
+            </InfoComponent>
+          
+          <DistinctLineGray></DistinctLineGray>
           </CardButton>
         </NoticeCard>
+        </Animated.View>
       ))}
       <>
         <Modal

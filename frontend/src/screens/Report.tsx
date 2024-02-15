@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Button, ScrollView} from 'react-native';
 import styled, {css} from '@emotion/native';
 import Header from '@/components/Header';
@@ -125,22 +125,21 @@ const Report = ({route, navigation}: any) => {
 
   const reportHandle = (type: string) => {
     switch (type) {
-      case '사기인 것 같아요.':
+      case '광고/사기인 것 같아요.':
         return 'Spam';
-      case '비매너 사용자에요.':
+      case '유해한 내용이에요.':
         return 'Harmful';
-      case '거래 금지 물품이에요.':
+      case '법적 문제가 있을 것 같아요.':
         return 'LegalIssue';
       case '욕설, 비방, 혐오 표현을 해요.':
         return 'Violent';
-      case '다른 대화를 시도해요.':
+      case '성적인 내용이에요.':
         return 'Sexual'
       default:
         return 'ETC';
     }
   };
-
-
+  
   const submitReport = () => {
     axiosAuth.put(`deal/complain/${param.id}`, { 
       complainType: reportType,
@@ -160,6 +159,11 @@ const Report = ({route, navigation}: any) => {
         console.error(error);
       });
   };
+
+  useEffect(() => {
+    // reportType이 바뀔 때마다 이 부분이 실행됩니다.
+    console.log(`reportType이 ${reportType}으로 변경되었습니다.`);
+  }, [reportType, reportContent]); // 의존성 배열에 reportType을 추가합니다.
 
   return (
     <ScrollView style={css`
@@ -186,24 +190,24 @@ const Report = ({route, navigation}: any) => {
           <DistinctLine></DistinctLine>
         </ReportArticleTitle>
           <ReportArticleContent onPress={() => {
-            setReportContent(prevContent => `${prevContent} 사기인 것 같아요. `);
-            setReportType(reportHandle('사기인 것 같아요.'));
+            setReportContent(prevContent => `${prevContent} 광고/사기인 것 같아요. `);
+            setReportType(reportHandle('광고/사기인 것 같아요.'));
           }}>
-            <ArticleContent> 사기인 것 같아요. </ArticleContent>
+            <ArticleContent> 광고/사기인 것 같아요. </ArticleContent>
           </ReportArticleContent>
           <DistinctLine></DistinctLine>
           <ReportArticleContent onPress={() => {
-            setReportContent(prevContent => `${prevContent} 거래 중 분쟁이 있었어요. `);
-            setReportType(reportHandle('거래 중 분쟁이 있었어요.'));
+            setReportContent(prevContent => `${prevContent} 유해한 내용이에요. `);
+            setReportType(reportHandle('유해한 내용이에요.'));
           }}>
-            <ArticleContent> 거래 중 분쟁이 있었어요. </ArticleContent>
+            <ArticleContent> 유해한 내용이에요. </ArticleContent>
           </ReportArticleContent>
           <DistinctLine></DistinctLine>
           <ReportArticleContent onPress={() => {
-            setReportContent(prevContent => `${prevContent} 거래 금지 물품이에요. `);
-            setReportType(reportHandle('거래 금지 물품이에요.'));
+            setReportContent(prevContent => `${prevContent} 법적 문제가 있을 것 같아요. `);
+            setReportType(reportHandle('법적 문제가 있을 것 같아요.'));
           }}>
-            <ArticleContent> 거래 금지 물품이에요. </ArticleContent>
+            <ArticleContent> 법적 문제가 있을 것 같아요. </ArticleContent>
           </ReportArticleContent>
           <DistinctLine></DistinctLine>
           <ReportArticleContent onPress={() => {
@@ -214,10 +218,10 @@ const Report = ({route, navigation}: any) => {
           </ReportArticleContent>
           <DistinctLine></DistinctLine>
           <ReportArticleContent onPress={() => {
-            setReportContent(prevContent => `${prevContent} 다른 대화를 시도해요. `);
-            setReportType(reportHandle('다른 대화를 시도해요.'));
+            setReportContent(prevContent => `${prevContent} 성적인 내용이에요. `);
+            setReportType(reportHandle('성적인 내용이에요.'));
           }}>
-            <ArticleContent> 다른 대화를 시도해요. </ArticleContent>
+            <ArticleContent> 성적인 내용이에요. </ArticleContent>
           </ReportArticleContent>
           <DistinctLine></DistinctLine>
           <ReportArticleContent onPress={() => {

@@ -14,7 +14,7 @@ import styled, {css} from '@emotion/native';
 import {AppState} from 'react-native';
 
 //recoil&react-query
-import {isLoggedInState, userDataState, apartDataState, fcmTokenState} from '@/recoil/atoms';
+import {isLoggedInState, userDataState, apartDataState, fcmTokenState, noticeCountState} from '@/recoil/atoms';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
@@ -86,6 +86,8 @@ const App = ({navigation}: any) => {
   const setApartData = useSetRecoilState(apartDataState);
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const setFcmTokenState = useSetRecoilState(fcmTokenState);
+  const setNoticeCount = useSetRecoilState(noticeCountState);
+
   async function requestPermissions() {
     if (Platform.OS === 'android') {
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
