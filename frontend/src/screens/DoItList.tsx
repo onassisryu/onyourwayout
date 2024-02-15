@@ -135,7 +135,7 @@ const DoItList = ({navigation}: any) => {
   const [selectedTypeCategory, setSelectedTypeCategory] = useState<string>('');
 
   const [apartModalVisible, setApartModalVisible] = useState<boolean>(false);
-  const [selectedApart, setSelectedApart] = useState(userData.apt.name);
+  const [selectedApart, setSelectedApart] = useState('');
 
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [cardListData, setCardListData] = useState<DoListCard[]>([]);
@@ -172,7 +172,7 @@ const DoItList = ({navigation}: any) => {
     switch (category) {
       case '반려동물 산책':
         return 'PET';
-      case '심부름':
+      case '장보기':
         return 'SHOP';
       case '분리수거':
         return 'RECYCLE';
@@ -183,12 +183,10 @@ const DoItList = ({navigation}: any) => {
     }
   };
 
-
   let filteredData = cardListData;
   if (selectedTypeCategory) {
     filteredData = cardListData.filter(card => card.dealType === categoryToDealType(selectedTypeCategory));
   }
-
 
   const [selectedCard, setSelectedCard] = useState({});
 
@@ -209,6 +207,11 @@ const DoItList = ({navigation}: any) => {
       results = results.filter(card => card.dealType === categoryToDealType(selectedTypeCategory));
     }
 
+    // 아파트 필터링
+    if (selectedApart) {
+      results = results.filter(card => card.requestInfo.dongName === selectedApart);
+    }
+
     // 검색어가 있는 경우에만 검색 필터링을 적용합니다.
     if (searchTerm !== '') {
       results = results.filter((card) =>
@@ -218,12 +221,12 @@ const DoItList = ({navigation}: any) => {
   
     // 필터링된 결과를 searchResults로 세팅합니다.
     setSearchResults(results);
-  }, [selectedTypeCategory, searchTerm, cardListData]);
+  }, [selectedTypeCategory, selectedApart, searchTerm, cardListData]);
   
   // 카테고리가 변경될 때마다 필터링을 다시 수행
   useEffect(() => {
     filterAndUpdateResults();
-  }, [selectedTypeCategory, cardListData, searchTerm]);
+  }, [selectedTypeCategory, selectedApart, cardListData, searchTerm]);
 
   // useEffect 부분
   useFocusEffect(
@@ -346,7 +349,7 @@ const DoItList = ({navigation}: any) => {
                       card.dealImages.length === 0 ? (
                         <CardImageContainer style={{backgroundColor: card.dealType === 'PET' ? 'yellow' : card.dealType === 'SHOP' ? 'blue' : card.dealType === 'RECYCLE' ? '#00D282' : 'gray'}}>
                           {card.dealType === 'PET' && <SvgIcon name="puppy" size={130} style={css`justify-content: center; align-items: center;`} />}
-                          {card.dealType === 'SHOP' && <SvgIcon name="shopping" size={120} style={css`justify-content: center; align-items: center;`} />}
+                          {card.dealType === 'SHOP' && <SvgIcon name="shopping" size={125} style={css`justify-content: center; align-items: center;`} />}
                           {card.dealType === 'RECYCLE' && <SvgIcon name="bags" size={130} style={css`justify-content: center; align-items: center;`} />}
                           {card.dealType === 'ETC' && <SvgIcon name="building" size={130} style={css`justify-content: center; align-items: center;`}/>}
                         </CardImageContainer>
@@ -354,7 +357,6 @@ const DoItList = ({navigation}: any) => {
                       <DoItListImage src={card.dealImages[0].imgUrl} />
                       )
                     }
-
 
                   <CardTextContainer>
                     {userData.id === card.requestId ? (

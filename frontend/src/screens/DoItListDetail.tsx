@@ -266,7 +266,7 @@ const DoItListDetail = ({route, navigation}: any) => {
         setRequestUserId(resp.data.requestId);
         setUserInfo(resp.data.requestInfo);
         setDetailImage(resp.data.dealImages);
-        console.log('게시글 상세===================유저', resp.data.requestInfo);
+        console.log('게시글 상세===================유저', resp.data);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
