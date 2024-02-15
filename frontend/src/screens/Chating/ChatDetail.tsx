@@ -8,7 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import styled, {css} from '@emotion/native';
 import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
-import {useRef, useEffect, useState} from 'react';
+import {useRef, useEffect, useState, FC} from 'react';
 import axiosAuth from '@/axios/axiosAuth';
 import {NavigationProp} from '@react-navigation/native';
 import {RouteProp, useRoute} from '@react-navigation/native';
@@ -22,6 +22,8 @@ import {launchImageLibrary, ImageLibraryOptions, ImagePickerResponse, Asset} fro
 import Entypo from 'react-native-vector-icons/Entypo';
 import DefaultButton from '@/components/DefaultButton';
 import SvgIcon from '@/components/SvgIcon';
+import Modal from 'react-native-modal';
+import theme from '@/Theme';
 const TextEncodingPolyfill = require('text-encoding');
 
 Object.assign('global', {
@@ -174,6 +176,7 @@ const ChatDetail = ({navigation}: Props) => {
   const [deal, setDeal] = useState<MyObject | null>(null);
   const [textDisabled, setTextDisabled] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     if (messageText) {
@@ -233,6 +236,7 @@ const ChatDetail = ({navigation}: Props) => {
   };
   const closeDeal = async () => {
     console.log('거래 완료', deal?.id);
+    setModalVisible(true);
     await axiosAuth
       .put(`/deal/close/${deal?.id}`)
       .then(res => {
@@ -396,9 +400,193 @@ const ChatDetail = ({navigation}: Props) => {
       client.current?.deactivate();
     };
   }, []);
+  const Scorebarbackground = styled.View`
+    height: 15px;
+    width: 100%;
+    border-radius: 10px;
+    background-color: #eaeaea;
+    position: relative;
+  `;
+  const Scorebar = styled.View`
+    height: 15px;
+    border-radius: 10px;
+    background-color: ${theme.color.primary};
+    position: absolute;
+  `;
+  interface CustomAlertProps {
+    visible: boolean;
+    title: string;
+    onClose: () => void;
+    dealId: string;
+    acceptId: string;
+    nickname: string;
+    dong: string;
+    memberScore: number;
+    time: number;
+  }
+  const CustomAlert: FC<CustomAlertProps> = ({
+    visible,
+    title,
+    onClose,
+    dealId,
+    acceptId,
+    nickname,
+    dong,
+    memberScore,
+    time,
+  }) => {
+    return (
+      <Modal isVisible={visible}>
+        <View
+          style={css`
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+          `}>
+          <View
+            style={css`
+              background-color: white;
+              padding: 20px;
+              border-radius: 10px;
+              width: 95%;
+              height: 55%;
+              align-items: center;
+            `}>
+            <View
+              style={css`
+                height: 20%;
+                width: 100%;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 10px;
+              `}>
+              <Text
+                style={css`
+                  font-size: 20px;
+                  font-weight: 700;
+                `}>
+                [{nickname}]님과의 {'\n'}거래는 어떠셨나요?
+              </Text>
+            </View>
+            <View
+              style={css`
+                width: 90%;
+                height: 150px;
+                border: 1px solid gray;
+                border-radius: 10px;
+                margin-bottom: 20px;
+              `}>
+              <View
+                style={css`
+                  flex-direction: row;
+                  align-items: center;
+                  height: 100%;
+                `}>
+                <View
+                  style={css`
+                    height: 100px;
+                    width: 100px;
+                    border-radius: 100px;
+                    margin: 10px;
+                    background-color: ${theme.color.gray100};
+                  `}></View>
+                <View
+                  style={css`
+                    width: 50%;
+                  `}>
+                  <Text
+                    style={css`
+                      font-size: 20px;
+                      font-weight: 700;
+                    `}>
+                    {nickname}
+                  </Text>
+                  <Text
+                    style={css`
+                      font-size: 15px;
+                      font-weight: 700;
+                      color: ${theme.color.gray300};
+                      margin-bottom: 10px;
+                    `}>
+                    {dong}동
+                  </Text>
+                  <Text>이웃지수</Text>
+                  <View
+                    style={css`
+                      width: 100%;
+                      margin-top: 5px;
+                    `}>
+                    <Scorebarbackground>
+                      <Scorebar
+                        style={css`
+                          width: ${memberScore}%;
+                        `}></Scorebar>
+                    </Scorebarbackground>
+                  </View>
+                </View>
+              </View>
+            </View>
+            {/* 상대방 정보 카드 */}
+            <View
+              style={css`
+                flex-direction: row;
+                justify-content: space-between;
+                width: 90%;
+              `}>
+              <TouchableOpacity
+                style={css`
+                  width: 47%;
+                  height: 50px;
+                  background-color: ${theme.color.primary};
+                  justify-content: center;
+                  align-items: center;
+                  border-radius: 10px;
+                `}>
+                <Text
+                  style={css`
+                    color: white;
+                    font-size: 20px;
+                    font-weight: 700;
+                  `}>
+                  수락하기
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={css`
+                  width: 47%;
+                  height: 50px;
+                  background-color: ${theme.color.gray};
+                  justify-content: center;
+                  align-items: center;
+                  border-radius: 10px;
+                `}>
+                <Text
+                  style={css`
+                    color: white;
+                    font-size: 20px;
+                    font-weight: 700;
+                  `}>
+                  거절하기
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
 
   return (
-    <GlobalContainer style={{position: 'relative'}}>
+    <GlobalContainer
+      style={css`
+        position: 'relative';
+      `}>
+      <CustomAlert
+        visible={isModalVisible}
+        nickname={params.name}
+        dong={params.dong}
+        // memberScore={params.requestInfo.score}
+      />
       <Header>
         <GoBack />
         <StyledText>{params.name}</StyledText>

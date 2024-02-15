@@ -106,7 +106,7 @@ const My = ({navigation}: any) => {
       `}>
       <ScrollView overScrollMode="never">
         <MyHeader>
-          <TouchableOpacity onPress={() => navigation.navigate('MySetting')}>
+          <TouchableOpacity onPress={() => navigation.navigate('NoticeSetting')}>
             <Text>
               <Ant name="setting" size={30} color="gray" />
             </Text>
@@ -267,7 +267,7 @@ const My = ({navigation}: any) => {
                 title="환경설정"
                 iconType="Ant"
                 icon="setting"
-                onPress={() => navigation.navigate('MySetting')}
+                onPress={() => navigation.navigate('NoticeSetting')}
               />
               <Mypagelist
                 title="로그아웃"
