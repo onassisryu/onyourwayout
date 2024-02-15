@@ -19,11 +19,9 @@ import * as encoding from 'text-encoding';
 import {getAccessToken} from '@/utils/common';
 import ChatMessage from '@/components/Chatpage/ChatMessage';
 import {launchImageLibrary, ImageLibraryOptions, ImagePickerResponse, Asset} from 'react-native-image-picker';
-import Entypo from 'react-native-vector-icons/Entypo';
-import DefaultButton from '@/components/DefaultButton';
-import SvgIcon from '@/components/SvgIcon';
-import Modal from 'react-native-modal';
+import DealContent from '@/components/Chatpage/DealContent';
 import theme from '@/Theme';
+import Modal from 'react-native-modal';
 const TextEncodingPolyfill = require('text-encoding');
 
 Object.assign('global', {
@@ -77,14 +75,6 @@ const ReportButton = styled(GlobalButton)`
   background-color: white;
 `;
 
-const ChatMessageContainer = styled.View<{isModal: boolean}>`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-`;
-
 type Message = {
   msg: string;
   senderId: number;
@@ -118,21 +108,6 @@ const SendImg = styled(Pressable)`
   margin-left: 10px;
 `;
 
-const DealContainer = styled.View`
-  min-height: 90px;
-  flex-direction: column;
-  height: auto;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  position: absolute;
-  background-color: white;
-  margin-top: 60px;
-  z-index: 1000;
-  flex: 1;
-  top: 0;
-`;
 type ImgData = {
   uri: string | undefined;
   type: string | undefined;
@@ -166,7 +141,7 @@ interface MyObject {
 const ChatDetail = ({navigation}: Props) => {
   const {params} = useRoute<ChatDetailScreenRouteProp>();
   const userData = useRecoilValue(userDataState);
-  const [icon, setIcon] = useState('puppy');
+  const [icon, setIcon] = useState('building');
   const [img, setImg] = useState('');
   const [imageData, setImageData] = useState<ImgData>({uri: '', type: '', fileSize: 0, name: '', imgUrl: ''});
   const [messages, setMessages] = useState<Message[]>([]);
@@ -177,6 +152,7 @@ const ChatDetail = ({navigation}: Props) => {
   const [textDisabled, setTextDisabled] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [reviewStatus, setReviewStatus] = useState('');
 
   useEffect(() => {
     if (messageText) {
@@ -212,39 +188,6 @@ const ChatDetail = ({navigation}: Props) => {
   const detailParams = {
     room: params.roomId,
     id: userData.id,
-  };
-  const closeReview = async () => {
-    console.log('거래 후기 작성', deal?.id);
-    const gb = 'good' || 'bad';
-    // await axiosAuth
-    //   .put(`/deal/review/${deal.id}/${gb}`)
-    //   .then()
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
-  };
-  const cancleDeal = async () => {
-    console.log('거래 취소', deal?.id);
-    await axiosAuth
-      .put(`/deal/accept/${deal?.id}`)
-      .then(res => {
-        console.log(res.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-  const closeDeal = async () => {
-    console.log('거래 완료', deal?.id);
-    setModalVisible(true);
-    await axiosAuth
-      .put(`/deal/close/${deal?.id}`)
-      .then(res => {
-        closeReview();
-      })
-      .catch(err => {
-        console.log(err);
-      });
   };
   const getRecentDeal = async () => {
     console.log('거래 최신 조회 시작', userData.id, params.userId);
@@ -288,7 +231,6 @@ const ChatDetail = ({navigation}: Props) => {
         console.log(res.data.chatRoom);
         const msg = data.map((message: any) => {
           const convertedTime = convertTimeFormat(message.createdAt);
-
           return {
             msg: message.msg,
             senderId: message.senderId,
@@ -306,8 +248,7 @@ const ChatDetail = ({navigation}: Props) => {
     flatListRef.current?.scrollToEnd({animated: true});
   };
   const sendMessage = async () => {
-    console.log('메시지 전송중이여');
-    console.log('메시지', messageText);
+    console.log('메시지 ', messageText);
     await client.current?.publish({
       destination: `/pub/channel`,
       skipContentLengthHeader: true,
@@ -343,15 +284,17 @@ const ChatDetail = ({navigation}: Props) => {
         client.current?.subscribe(`/sub/channel/${params.roomId}`, message => {
           const json_body = JSON.parse(message.body);
           console.log('구독', json_body);
-
           const msg = {
             msg: json_body.msg,
             senderId: json_body.sendId,
             imgUrl: json_body.img,
             createdAt: convertTimeFormat(json_body.createdAt),
           };
-
-          setMessages(prev => [msg, ...prev]);
+          if (msg.msg == '--거래완료--') {
+            getRecentDeal();
+          } else {
+            setMessages(prev => [msg, ...prev]);
+          }
         });
         if (client.current?.connected) {
           console.log('연결됨');
@@ -415,26 +358,10 @@ const ChatDetail = ({navigation}: Props) => {
   `;
   interface CustomAlertProps {
     visible: boolean;
-    title: string;
-    onClose: () => void;
-    dealId: string;
-    acceptId: string;
     nickname: string;
     dong: string;
-    memberScore: number;
-    time: number;
   }
-  const CustomAlert: FC<CustomAlertProps> = ({
-    visible,
-    title,
-    onClose,
-    dealId,
-    acceptId,
-    nickname,
-    dong,
-    memberScore,
-    time,
-  }) => {
+  const CustomAlert: FC<CustomAlertProps> = ({visible, nickname, dong}) => {
     return (
       <Modal isVisible={visible}>
         <View
@@ -510,19 +437,6 @@ const ChatDetail = ({navigation}: Props) => {
                     `}>
                     {dong}동
                   </Text>
-                  <Text>이웃지수</Text>
-                  <View
-                    style={css`
-                      width: 100%;
-                      margin-top: 5px;
-                    `}>
-                    <Scorebarbackground>
-                      <Scorebar
-                        style={css`
-                          width: ${memberScore}%;
-                        `}></Scorebar>
-                    </Scorebarbackground>
-                  </View>
                 </View>
               </View>
             </View>
@@ -534,6 +448,10 @@ const ChatDetail = ({navigation}: Props) => {
                 width: 90%;
               `}>
               <TouchableOpacity
+                onPress={() => {
+                  setReviewStatus('good');
+                  setModalVisible(false);
+                }}
                 style={css`
                   width: 47%;
                   height: 50px;
@@ -548,10 +466,14 @@ const ChatDetail = ({navigation}: Props) => {
                     font-size: 20px;
                     font-weight: 700;
                   `}>
-                  수락하기
+                  좋아요
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
+                onPress={() => {
+                  setReviewStatus('bad');
+                  setModalVisible(false);
+                }}
                 style={css`
                   width: 47%;
                   height: 50px;
@@ -566,7 +488,7 @@ const ChatDetail = ({navigation}: Props) => {
                     font-size: 20px;
                     font-weight: 700;
                   `}>
-                  거절하기
+                  싫어요
                 </Text>
               </TouchableOpacity>
             </View>
@@ -581,12 +503,7 @@ const ChatDetail = ({navigation}: Props) => {
       style={css`
         position: 'relative';
       `}>
-      <CustomAlert
-        visible={isModalVisible}
-        nickname={params.name}
-        dong={params.dong}
-        // memberScore={params.requestInfo.score}
-      />
+      <CustomAlert visible={isModalVisible} nickname={params.name} dong={params.dong} />
       <Header>
         <GoBack />
         <StyledText>{params.name}</StyledText>
@@ -600,130 +517,17 @@ const ChatDetail = ({navigation}: Props) => {
           />
         </ReportButton>
       </Header>
-      <DealContainer>
-        <View
-          style={css`
-            display: flex;
-            flex: 1;
-            flex-direction: row;
-            align-items: center;
-            justify-content: start;
-            min-height: 80px;
-            height: auto;
-            width: auto;
-            background-color: #f8f8f8;
-            flex: 1;
-            padding: 10px;
-            z-index: 10;
-          `}>
-          <View
-            style={css`
-              background-color: #00d282;
-              margin-left: 20px;
-              width: 6px;
-              height: 100%;
-            `}></View>
-          <View
-            style={css`
-              font-size: 20px;
-              color: #000;
-              margin-left: 10px;
-              display: flex;
-              flex-direction: row;
-              height: 100%;
-              width: 100%;
-            `}>
-            <View
-              style={css`
-                width: 80px;
-                height: 100%;
-                border-radius: 5px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              `}>
-              {img ? (
-                <Image
-                  style={css`
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 5px;
-                  `}
-                  src={img}
-                />
-              ) : (
-                <SvgIcon name={icon} size={60} style={css``} />
-              )}
-            </View>
-            <View
-              style={css`
-                padding-left: 10px;
-                font-size: 20px;
-                width: auto;
-              `}>
-              <View
-                style={css`
-                  display: flex;
-                  flex-direction: row;
-                  align-items: center;
-                  justify-content: start;
-                `}>
-                <Entypo name="dot-single" size={20} color={'black'} />
-                <Text> 동호수 : {deal?.userDong}</Text>
-              </View>
-              <View
-                style={css`
-                  display: flex;
-                  flex-direction: row;
-                  align-items: center;
-                  justify-content: start;
-                  height: auto;
-                `}>
-                <Entypo name="dot-single" size={20} color={'black'} />
-                <Text> 맡긴 일 : {deal?.title}</Text>
-              </View>
-              <View
-                style={css`
-                  display: flex;
-                  flex-direction: row;
-                  align-items: center;
-                  justify-content: start;
-                `}>
-                <Entypo name="dot-single" size={20} color={'black'} />
-                {deal?.rewardType === 'CASH' ? <Text> 현금 : {deal?.cash}원</Text> : <Text> 물품 : {deal?.item}</Text>}
-              </View>
-            </View>
-          </View>
-        </View>
-        <View
-          style={css`
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            margin-top: 10px;
-            width: 100%;
-            justify-content: center;
-          `}>
-          {deal?.request ? (
-            <>
-              <DefaultButton
-                size={'sm'}
-                color="primary"
-                onPress={() => {
-                  closeDeal();
-                }}
-                title="완료하기"
-              />
-              <DefaultButton size={'sm'} color="gray" title="취소하기" onPress={cancleDeal} />
-            </>
-          ) : (
-            deal?.dealStatus === 'ING' && (
-              <DefaultButton size={'sm'} color="gray" title="거절하기" onPress={cancleDeal} />
-            )
-          )}
-        </View>
-      </DealContainer>
+
+      <DealContent
+        img={img}
+        icon={icon}
+        deal={deal}
+        client={client}
+        roomId={params.roomId}
+        sendId={userData.id}
+        setModalVisible={setModalVisible}
+        reviewStatus={reviewStatus}
+      />
       <View
         style={{
           marginBottom: 120,
