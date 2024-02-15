@@ -274,7 +274,7 @@ const My = ({navigation}: any) => {
                 iconType="Ant"
                 icon="setting"
                 onPress={() => {
-                  logoutUser;
+                  logoutUser();
                   setIsLoggedIn(false);
                 }}
               />
