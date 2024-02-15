@@ -188,7 +188,7 @@ const ChatMain = ({navigation}: any) => {
         <StyledText>채팅</StyledText>
         <TouchableOpacity onPress={() => navigation.navigate('Notice')}>
           <Fontisto name="bell" size={28} color="gray" />
-          {noticeCount > 0 && <BellNotifBadge />}
+          {noticeCount > 1 && <BellNotifBadge />}
         </TouchableOpacity>
       </Header>
 

@@ -15,6 +15,8 @@ import theme from '@/Theme';
 import styled from '@emotion/native';
 import apartImage from '../../assets/images/apart.png';
 import goOutMan from '../../assets/images/goOutMan.png';
+
+
 const BoxText = styled(GlobalText)`
   font-size: 27px;
   font-weight: 500;

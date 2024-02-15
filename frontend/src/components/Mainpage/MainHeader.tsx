@@ -54,14 +54,14 @@ interface Props {
 const MainHeader = ({navigation}: Props) => {
 
   const [noticeCount, setNoticeCount] = useRecoilState(noticeCountState)
-
+  console.log(noticeCount)
   return (
     <HeaderContainer>
       <EmptyView></EmptyView>
       <StyledText>나온김에</StyledText>
       <TouchableOpacity onPress={() => navigation.navigate('Notice')}>
         <Fontisto name="bell" size={28} color="gray" />
-        {noticeCount > 0 && <BellNotifBadge />}
+        {noticeCount > 1 && <BellNotifBadge />}
       </TouchableOpacity>
     </HeaderContainer>
   );
