@@ -35,7 +35,7 @@ interface Props {
 
 const NoticeHeader = (props : Props) => {
 
-  console.log('여기다 여기', props.noticeCount)
+  // console.log('여기다 여기', props.noticeCount)
   return (
     <HeaderContainer>
       <GoBack onPress={() => {

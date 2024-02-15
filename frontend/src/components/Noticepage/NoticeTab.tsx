@@ -184,16 +184,15 @@ const NoticeTab = (props: Props) => {
   const notificationTime = new Date();
   const [notices, setNotices] = useState<Notice[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-
   const [readNoticeId, setReadNoticeId] = useState(null);
-  console.log('1111', notices)
+  // console.log('1111', notices)
 
   useEffect(() => {
     if (readNoticeId !== null) {
       axiosAuth
       .put(`/notification/${readNoticeId}`)
       .then(resp => {
-        console.log('알림', resp.data)
+
         setNotices(notices.map(notice => notice.id === readNoticeId ? {...notice, isRead: true} : notice));
         const unreadNoticesCount = notices.filter(notice => !notice.isRead).length;
         props.setNoticeCount(unreadNoticesCount);
@@ -208,7 +207,7 @@ const NoticeTab = (props: Props) => {
     axiosAuth
     .put(`/notification`)
     .then(resp => {
-      console.log('전체알림', resp.data)
+
       setNotices(notices.map(notice => ({...notice, isRead: true})));
       props.setNoticeCount(0);
     })
@@ -250,14 +249,14 @@ const NoticeTab = (props: Props) => {
   };
 
   useEffect(() => {
-    console.log('알림 데이터가 업데이트되었습니다:', notices);
+    // console.log('알림 데이터가 업데이트되었습니다:', notices);
   }, [notices]);
 
   useEffect(() => {
     axiosAuth
     .get(`/notification`)
     .then(resp => {
-      console.log('성공----------------', resp.data);
+
       setNotices(resp.data)
 
     })

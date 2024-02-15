@@ -247,10 +247,11 @@ type User = {
 };
 
 const DoItListDetail = ({route, navigation}: any) => {
+
   const [requestUserId, setRequestUserId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
-
+  
   const [responseData, setResponseData] = useState({});
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [detailImage, setDetailImage] = useState([]);
@@ -445,9 +446,7 @@ const DoItListDetail = ({route, navigation}: any) => {
           z-index: 1;
         `}>
         {userInfo?.id === loginuser.id ? (
-          <View>
-            <Text>내 작성글 입니다</Text>
-          </View>
+          <></>
         ) : (
           <View
             style={css`

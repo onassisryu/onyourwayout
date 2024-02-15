@@ -11,6 +11,9 @@ import SvgIcon from '@/components/SvgIcon';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import {NavigationProp} from '@react-navigation/native';
 import Header from '@/components/Header';
+import { useRecoilState } from 'recoil';
+import { noticeCountState } from '@/recoil/atoms'; 
+
 
 const StyledText = styled.Text`
   font-weight: bold;
@@ -101,21 +104,6 @@ interface ChatRoom {
   };
 }
 
-// 알림 아이콘 컴포넌트
-const NotificationIcon = ({navigation}: Props) => {
-  const [hasNotifications, setHasNotifications] = useState<boolean>(true);
-
-  const handlePress = () => {
-    navigation.navigate('Notice');
-  };
-
-  return (
-    <TouchableOpacity onPress={handlePress}>
-      <Fontisto name="bell" size={28} color="gray" />
-      {hasNotifications && <BellNotifBadge />}
-    </TouchableOpacity>
-  );
-};
 
 const ChatMain = ({navigation}: any) => {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
@@ -124,6 +112,7 @@ const ChatMain = ({navigation}: any) => {
     memberNickname: userData.nickname,
     otherNickname: '가영가영이',
   };
+  const [noticeCount, setNoticeCount] = useRecoilState(noticeCountState)
   //채팅방생성
   const makeChatRoom = () => {
     axiosAuth
@@ -197,7 +186,10 @@ const ChatMain = ({navigation}: any) => {
         margin-left: 5px;
       `}>
         <StyledText>채팅</StyledText>
-        <NotificationIcon navigation={navigation} />
+        <TouchableOpacity onPress={() => navigation.navigate('Notice')}>
+          <Fontisto name="bell" size={28} color="gray" />
+          {noticeCount > 0 && <BellNotifBadge />}
+        </TouchableOpacity>
       </Header>
 
       <ChatRoomsContainer contentInsetAdjustmentBehavior="automatic">

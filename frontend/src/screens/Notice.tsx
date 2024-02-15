@@ -15,7 +15,6 @@ interface Props {
 const Notice = ({navigation}: Props) => {
 
   const [noticeCount, setNoticeCount] = useRecoilState(noticeCountState);
-  console.log(noticeCount)
 
   return (
     <ScrollView overScrollMode='never'>
