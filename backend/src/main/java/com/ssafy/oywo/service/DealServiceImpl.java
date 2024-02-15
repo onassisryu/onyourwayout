@@ -527,6 +527,11 @@ public class DealServiceImpl implements DealService{
                 .isRead(false)
                 .build();
 
+        // 신고수 5이상이면 자동 거래 pause
+        if (deal.getComplaint() >= 5) {
+            deal.setDealStatus(Deal.DealStatus.PAUSE);
+        }
+
         dealComplaintRepository.save(complaint);
         dealRepository.save(deal);
     }
