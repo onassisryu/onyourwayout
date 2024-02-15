@@ -154,6 +154,8 @@ interface MyObject {
   dealType: string;
   expireAt: string;
   dealImages: string[];
+  imgUrl: string;
+  userDong: string;
   createdAt: string;
   modifiedAt: string;
   deletedAt: null | string;
@@ -222,18 +224,29 @@ const ChatDetail = ({navigation}: Props) => {
     //     console.log(err);
     //   });
   };
+  const cancleDeal = async () => {
+    console.log('거래 취소', deal?.id);
+    await axiosAuth
+      .put(`/deal/accept/${deal?.id}`)
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
   const closeDeal = async () => {
     console.log('거래 완료', deal?.id);
-    // await axiosAuth
-    //   .put(`/deal/close/${deal.id}`)
-    //   .then()
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
+    await axiosAuth
+      .put(`/deal/close/${deal?.id}`)
+      .then(res => {
+        closeReview();
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
   const getRecentDeal = async () => {
-    console.log('거래 최신 조회', userData.id, params.userId);
-
     await axiosAuth
       .get(`/deal/user/${userData.id}/${params.userId}`)
       .then(res => {
@@ -244,6 +257,11 @@ const ChatDetail = ({navigation}: Props) => {
         } else {
           data.request = false;
         }
+        if (deal?.dealImages[0]) {
+          data.imgUrl = data.dealImages[0].imgUrl;
+        }
+        const userDong = data.requestInfo.dongName + '동 ' + data.requestInfo.hoName;
+        data.userDong = userDong;
         setDeal(data);
         console.log('거래 최신 조회 성공', data);
       })
@@ -440,10 +458,22 @@ const ChatDetail = ({navigation}: Props) => {
             `}>
             <View
               style={css`
-                border-radius: 5px;
                 width: 80px;
+                height: 100%;
+                margin-bottom: 20px;
+                background-color: gray;
+                border-radius: 5px;
               `}>
-              <Image src={deal?.dealImages[0]} />
+              {deal?.imgUrl && (
+                <Image
+                  style={css`
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 5px;
+                  `}
+                  src={deal?.imgUrl}
+                />
+              )}
             </View>
             <View
               style={css`
@@ -459,7 +489,7 @@ const ChatDetail = ({navigation}: Props) => {
                   justify-content: start;
                 `}>
                 <Entypo name="dot-single" size={20} color={'black'} />
-                <Text> 동호수 : </Text>
+                <Text> 동호수 : {deal?.userDong}</Text>
               </View>
               <View
                 style={css`
@@ -505,10 +535,12 @@ const ChatDetail = ({navigation}: Props) => {
                 }}
                 title="완료하기"
               />
-              <DefaultButton size={'sm'} color="gray" title="취소하기" />
+              <DefaultButton size={'sm'} color="gray" title="취소하기" onPress={cancleDeal} />
             </>
           ) : (
-            <DefaultButton size={'sm'} color="gray" title="거절하기" onPress={closeReview} />
+            deal?.dealStatus === 'ING' && (
+              <DefaultButton size={'sm'} color="gray" title="거절하기" onPress={cancleDeal} />
+            )
           )}
         </View>
       </DealContainer>
@@ -518,7 +550,9 @@ const ChatDetail = ({navigation}: Props) => {
         }}>
         <FlatList
           inverted
-          style={{}}
+          style={css`
+            margin-top: 90px;
+          `}
           data={messages}
           ref={flatListRef}
           contentContainerStyle={{
@@ -560,17 +594,20 @@ const ChatDetail = ({navigation}: Props) => {
             style={css`
               align-items: center;
               justify-content: center;
+              background-color: grey;
+              width: 200px;
+              height: 200px;
+              border-radius: 10px;
             `}>
-            <Image
-              source={imageData}
-              style={css`
-                width: 200px;
-                height: 200px;
-                border-radius: 10px;
-                margin-bottom: 20px;
-                margin-top: 10px;
-              `}
-            />
+            {imageData && (
+              <Image
+                source={imageData}
+                style={css`
+                  margin-bottom: 20px;
+                  margin-top: 10px;
+                `}
+              />
+            )}
           </View>
         )}
       </ChatSendContainer>

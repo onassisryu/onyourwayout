@@ -87,12 +87,6 @@ interface ChatRoom {
 const ChatMain = ({navigation}: any) => {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const userData = useRecoilValue(userDataState);
-  //텍스트 오류 해결
-  // const TextEncodingPolyfill = require('text-encoding');
-  // Object.assign('global', {
-  //   TextEncoder: TextEncodingPolyfill.TextEncoder,
-  //   TextDecoder: TextEncodingPolyfill.TextDecoder,
-  // });
   const user = {
     memberNickname: userData.nickname,
     otherNickname: '가영가영이',

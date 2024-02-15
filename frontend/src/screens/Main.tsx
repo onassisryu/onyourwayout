@@ -12,7 +12,6 @@ import {useRecoilValue} from 'recoil';
 import {isLoggedInState} from '@/recoil/atoms';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import theme from '@/Theme';
-import {logoutUser} from '@/utils/common';
 import styled from '@emotion/native';
 import apartImage from '../../assets/images/apart.png';
 import goOutMan from '../../assets/images/goOutMan.png';
@@ -26,18 +25,6 @@ const StyledImage = styled.Image`
   margin-right: 8%;
 `;
 const Home = ({navigation}: any) => {
-  const isLoggedIn = useRecoilValue(isLoggedInState);
-
-  async function requestPermissions() {
-    if (Platform.OS === 'android') {
-      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-    }
-  }
-
-  useEffect(() => {
-    console.log('메인화면이유');
-    requestPermissions();
-  }, []);
   return (
     <GlobalContainer style={css``}>
       <MainHeader navigation={navigation} />

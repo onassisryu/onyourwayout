@@ -49,7 +49,7 @@ const Home = ({navigation}: any) => {
         <MainDoList navigation={navigation} />
       </ScrollView>
       <MainModal navigation={navigation} />
-      <GlobalButton onPress={logoutUser}>
+      <GlobalButton>
         <GlobalText>리셋</GlobalText>
       </GlobalButton>
     </GlobalContainer>

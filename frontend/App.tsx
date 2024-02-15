@@ -311,23 +311,20 @@ const App = () => {
   };
 
   const checkLogin = async () => {
-    if (isLoggedIn) {
-      console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
-    } else {
-      getStorage('token').then(token => {
-        console.log(token);
-        if (token) {
-          console.log('토큰이 있습니다.', token);
-          getStorage('user').then(user => {
-            setUserData(user);
+    console.log('데이터 세팅중이여!!!!!!!!');
+    getStorage('token').then(token => {
+      if (token) {
+        console.log('토큰이 있습니다.', token);
+        getStorage('user').then(user => {
+          setUserData(user);
+          getStorage('adjDongs').then(adjDongs => {
+            setApartData(adjDongs);
             setIsLoggedIn(true);
-            getStorage('adjDongs').then(adjDongs => {
-              setApartData(adjDongs);
-            });
           });
-        }
-      });
-    }
+        });
+      }
+    });
+
     // if (userData.roles.includes('ADMIN')) {
     //   console.log('관리자유');
     //   setAdmin(true);
@@ -342,7 +339,7 @@ const App = () => {
   };
   useEffect(() => {
     checkLogin();
-  }, [isLoggedIn]);
+  }, []);
 
   PushNotification.createChannel(
     {
