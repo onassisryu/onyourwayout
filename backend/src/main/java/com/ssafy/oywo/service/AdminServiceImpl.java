@@ -69,7 +69,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<DealDto.Response> getDealsWithComplaint() {
 
-        List<Deal> deals = dealRepository.findDealsByOrderByComplaintDesc();
+        List<Deal> deals = dealRepository.findDealsByComplaintGreaterThanOrderByComplaintDesc();
+
 
         return deals.stream()
                 .map(d -> new DealDto.Response(d,

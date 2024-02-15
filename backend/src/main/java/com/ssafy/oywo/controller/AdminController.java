@@ -76,6 +76,19 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getDealsWithComplaint());
     }
 
+
+    /**
+     * 거래 세부 내용 조회 + 신고내역 포함
+     * @param dealId 거래 아이디
+     * @return 거래 정보
+     */
+    @GetMapping("/deal/{dealId}")
+    public ResponseEntity<?> getDealWithComplaint(@PathVariable Long dealId) {
+
+        return ResponseEntity.ok(adminService.getDealWithComplaint(dealId));
+    }
+
+
     @PutMapping("/deal")
     public ResponseEntity<?> changeDealStatus(@RequestParam("id") Long dealId){
         return ResponseEntity.ok(adminService.changeStatusToPause(dealId));
@@ -99,17 +112,6 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getPausedMember());
     }
 
-
-    /**
-     * 거래 세부 내용 조회 + 신고내역 포함
-     * @param dealId 거래 아이디
-     * @return 거래 정보
-     */
-    @GetMapping("/deal/{dealId}")
-    public ResponseEntity<?> getDealWithComplaint(@PathVariable Long dealId) {
-
-        return ResponseEntity.ok(adminService.getDealWithComplaint(dealId));
-    }
 
 
 
