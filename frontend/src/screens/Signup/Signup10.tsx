@@ -14,45 +14,11 @@ import {userSignUpDataState} from '@/recoil/atoms';
 import {useSetRecoilState, useRecoilValue} from 'recoil';
 import axios from 'axios';
 
-const Signup9 = ({navigation, route}: any) => {
+const Signup10 = ({navigation, route}: any) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const setUserSignUpData = useSetRecoilState(userSignUpDataState);
   const userSignUpData = useRecoilValue(userSignUpDataState);
 
-  const submitMultipart = (body: any) => {
-    const formData = new FormData();
-    formData.append('dto', JSON.stringify(body.jsonData));
-    formData.append('dealImageFileList', body.dealImageFileList);
-
-    console.log(JSON.stringify(body.jsonData));
-    const instance = axios.create();
-    return instance({
-      url: 'http://i10a302.p.ssafy.io:8080/members/signup',
-      method: 'post',
-      data: formData,
-      headers: {
-        'content-type': 'multipart/form-data',
-      },
-    });
-  };
-
-  function signUpFinish() {
-    console.log(userSignUpData);
-    const body = {
-      jsonData: userSignUpData,
-      dealImageFileList: '',
-    };
-
-    submitMultipart(body)
-      .then(resp => {
-        console.log('성공', resp.data);
-        navigation.navigate('Login');
-      })
-      .catch(error => {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
-        //
-      });
-  }
   return (
     <GlobalContainer>
       <Header>
@@ -73,4 +39,4 @@ const Signup9 = ({navigation, route}: any) => {
   );
 };
 
-export default Signup9;
+export default Signup10;
