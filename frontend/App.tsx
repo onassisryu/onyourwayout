@@ -90,6 +90,7 @@ const App = () => {
   async function requestPermissions() {
     if (Platform.OS === 'android') {
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
     }
   }
 
@@ -369,6 +370,8 @@ const App = () => {
       if (remoteMessage.notification?.title === '[나가요잉 신청]') {
         setData(remoteMessage.data);
         setModalVisible(true);
+      } else if (remoteMessage.notification?.title === '[해줘요잉 추천]') {
+        console.log('지도 알림');
       }
       sendNotification(notice);
     }
