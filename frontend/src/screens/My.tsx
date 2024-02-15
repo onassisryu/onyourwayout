@@ -165,7 +165,6 @@ const My = ({navigation}: any) => {
                         style={css`
                           color: red;
                         `}>
-                        {' '}
                         세대원 미인증
                       </CertifiedText>
                     </View>
@@ -191,11 +190,14 @@ const My = ({navigation}: any) => {
                     width: ${scorePercent};
                   `}></Scorebar>
                 <View
-                  style={css`
-                    position: absolute;
-                    top: -7px;
-                    left: ${scorePercent};
-                  `}>
+                  style={[
+                    css`
+                      position: absolute;
+                      top: -8px;
+                      left: ${scorePercent};
+                    `,
+                    {transform: [{translateX: -10}]},
+                  ]}>
                   <MarkImage source={Mark}></MarkImage>
                 </View>
               </Scorebarbackground>

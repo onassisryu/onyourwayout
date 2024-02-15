@@ -58,11 +58,11 @@ interface Props {
 
 const ApartSelectionModal = (props: Props) => {
   const userData = useRecoilValue(userDataState);
-
+  console.log(userData)
   // apt 값이 배열인지 확인
   const isAptArray = Array.isArray(userData.apt.name);
   // apt 값이 배열이면 그대로 사용하고, 아니라면 배열로 변환
-  const aptArray = isAptArray ? userData.apt.name : [userData.apt.name];
+  const aptArray = isAptArray ? userData.apt.name : [`${userData.dongName}동`];
 
   return (
     <GlobalContainer
@@ -80,30 +80,32 @@ const ApartSelectionModal = (props: Props) => {
         <TouchableWithoutFeedback onPress={() => props.setApartModalVisible(false)} style={{zIndex: 1}}>
           <ModalBackground style={{zIndex: 1}}>
             <ModalComponent>
-              {aptArray.map((apart:string) => (
                 <View>
                   <ModalSubComponent
                     onPress={() => {
-                      props.setSelectedApart(apart);
+                      props.setSelectedApart(`${userData.apt.name} ${userData.dongName}동`);
                       props.setApartModalVisible(false);
                     }}>
                     <MaterialIcons name="apartment" size={25}></MaterialIcons>
                     <ModalText>
                       {' '}
-                      {apart}
+                      {userData.dongName}동
                     </ModalText>
                   </ModalSubComponent>
                   <DistinctLine />
                 </View>
-              ))}
-              <ModalSubComponent>
+              <ModalSubComponent
+                onPress={() => {
+                  props.setSelectedApart(userData.apt.name);
+                  props.setApartModalVisible(false);
+                }}>
                 <GlobalText
                   style={css`
                     font-weight: bold;
                     margin: 1.5px;
                   `}>
                   {' '}
-                  내 아파트 설정{' '}
+                  내 아파트 단지{' '}
                 </GlobalText>
               </ModalSubComponent>
             </ModalComponent>

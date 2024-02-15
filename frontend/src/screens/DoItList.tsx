@@ -135,7 +135,7 @@ const DoItList = ({navigation}: any) => {
   const [selectedTypeCategory, setSelectedTypeCategory] = useState<string>('');
 
   const [apartModalVisible, setApartModalVisible] = useState<boolean>(false);
-  const [selectedApart, setSelectedApart] = useState('');
+  const [selectedApart, setSelectedApart] = useState(userData.apt.name);
 
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [cardListData, setCardListData] = useState<DoListCard[]>([]);
@@ -167,27 +167,6 @@ const DoItList = ({navigation}: any) => {
       return `${minutesAgo}분 전`;
     }
   };
-
-  // useEffect 부분
-  useFocusEffect(
-    React.useCallback(() => {
-      setIsLoading(true); 
-      axiosAuth
-        .get('deal/dong/list')
-        .then(resp => {
-          setCardListData(resp.data);
-          setSearchResults(resp.data);
-          console.log('카드리스트 api 호출 성공', resp.data);
-        })
-        .catch(error => {
-          console.error('데이터를 가져오는 중 오류 발생:', error);
-        })
-        .finally(() => {
-          setIsLoading(false);  // 데이터를 모두 가져왔으므로 로딩 상태를 false로 설정
-        });
-      }, [])
-  );
-  //한번렌더링하고 새로고침하면 다시랜더링 해야됨~
 
   const categoryToDealType = (category: string) => {
     switch (category) {
@@ -244,34 +223,29 @@ const DoItList = ({navigation}: any) => {
   // 카테고리가 변경될 때마다 필터링을 다시 수행
   useEffect(() => {
     filterAndUpdateResults();
-  }, [selectedTypeCategory, cardListData]);
-  
-  // 검색어가 변경될 때마다 필터링을 다시 수행
-  useEffect(() => {
-    filterAndUpdateResults();
-  }, [searchTerm, cardListData]);
+  }, [selectedTypeCategory, cardListData, searchTerm]);
 
-    // useEffect 부분
-    useFocusEffect(
-      React.useCallback(() => {
-        axiosAuth
-          .get('deal/dong/list')
-          .then(resp => {
-            // 모든 카드 데이터를 저장
-            setCardListData(resp.data);
-    
-            // 필터링된 결과를 저장
-            filterAndUpdateResults();
-          })
-          .catch(error => {
-            console.error('데이터를 가져오는 중 오류 발생:', error);
-          });
-      }, [])
-    );
+  // useEffect 부분
+  useFocusEffect(
+    React.useCallback(() => {
+      axiosAuth
+        .get('deal/dong/list')
+        .then(resp => {
+          // 모든 카드 데이터를 저장
+          setCardListData(resp.data);
+  
+          // 필터링된 결과를 저장
+          filterAndUpdateResults();
+        })
+        .catch(error => {
+          console.error('데이터를 가져오는 중 오류 발생:', error);
+        });
+    }, [])
+  );
 
   //----------
   const [scrollY, setScrollY] = useState<number>(0); // 스크롤 위치 상태 변수
-  const [isLoading, setIsLoading] = useState<boolean>(false); // 로딩 상태 변수
+  const [isLoading, setIsLoading] = useState<boolean>(true); // 로딩 상태 변수
   const [isUpdating, setIsUpdating] = useState<boolean>(false); // 업데이트 상태 변수
 
   const fetchNewData = (): Promise<void> => {
@@ -308,6 +282,28 @@ const DoItList = ({navigation}: any) => {
     }
   };
 
+    // useEffect 부분
+    useFocusEffect(
+      React.useCallback(() => {
+        if (isLoading) { // 로딩 상태가 true일 때만 데이터를 가져옴
+          axiosAuth
+            .get('deal/dong/list')
+            .then(resp => {
+              setCardListData(resp.data);
+              setSearchResults(resp.data);
+              console.log('카드리스트 api 호출 성공', resp.data);
+            })
+            .catch(error => {
+              console.error('데이터를 가져오는 중 오류 발생:', error);
+            })
+            .finally(() => {
+              setIsLoading(false);  // 데이터를 모두 가져왔으므로 로딩 상태를 false로 설정
+            });
+        }
+      }, [isLoading])  // isLoading 상태가 변경될 때마다 이 훅이 실행됨
+    );
+    //한번렌더링하고 새로고침하면 다시랜더링 해야됨~
+
   return (
     <GlobalContainer>
       <DoItListHeader 
@@ -317,7 +313,6 @@ const DoItList = ({navigation}: any) => {
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
       >
-
       </DoItListHeader>
 
       <DoItListCategory
@@ -353,7 +348,7 @@ const DoItList = ({navigation}: any) => {
                           {card.dealType === 'PET' && <SvgIcon name="puppy" size={130} style={css`justify-content: center; align-items: center;`} />}
                           {card.dealType === 'SHOP' && <SvgIcon name="shopping" size={120} style={css`justify-content: center; align-items: center;`} />}
                           {card.dealType === 'RECYCLE' && <SvgIcon name="bags" size={130} style={css`justify-content: center; align-items: center;`} />}
-                          {card.dealType === 'ETC' && <SvgIcon name="building" size={120} style={css`justify-content: center; align-items: center;`}/>}
+                          {card.dealType === 'ETC' && <SvgIcon name="building" size={130} style={css`justify-content: center; align-items: center;`}/>}
                         </CardImageContainer>
                       ) : (
                       <DoItListImage src={card.dealImages[0].imgUrl} />

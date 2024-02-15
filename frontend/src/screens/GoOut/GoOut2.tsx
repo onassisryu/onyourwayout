@@ -13,7 +13,7 @@ import GoBack from '@/components/Signup/GoBack';
 import axiosAuth from '@/axios/axiosAuth';
 import Carousel from 'pinar';
 import theme from '@/Theme';
-import LinearGradient from 'react-native-linear-gradient';
+import {RadialGradient, LinearGradient} from 'react-native-gradients';
 
 interface DoListCard {
   id: number;
@@ -105,11 +105,12 @@ const GoOut2 = ({route, navigation}: any) => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   }
+  const colorList = [
+    {offset: '0%', color: 'black', opacity: '0'},
+    {offset: '100%', color: 'black', opacity: '0.5'},
+  ];
   return (
-    <View
-      style={css`
-        flex: 1;
-      `}>
+    <View style={css``}>
       <CarouselContainer>
         <Carousel dotStyle={dotStyle} activeDotStyle={activeDotStyle}>
           {responseData.map((card, index) => (
@@ -122,11 +123,20 @@ const GoOut2 = ({route, navigation}: any) => {
               <View
                 style={css`
                   width: 100%;
+                  height: 300px;
+                  position: absolute;
+                  bottom: 0px;
+                  z-index: 1;
+                `}>
+                <LinearGradient colorList={colorList} angle={270} />
+              </View>
+              <View
+                style={css`
+                  width: 100%;
                   height: 150px;
                   position: absolute;
                   bottom: 10px;
                   z-index: 1;
-                  background-color: rgba(0, 0, 0, 0.1);
                   padding: 10px;
                 `}>
                 <Text

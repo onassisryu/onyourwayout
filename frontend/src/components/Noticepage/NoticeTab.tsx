@@ -174,15 +174,19 @@ type NoticeId = {
   id: number;
 };
 
-const NoticeTab = () => {
+interface Props {
+  noticeCount: number;
+  setNoticeCount: (notice: number) => void;
+};
+
+const NoticeTab = (props: Props) => {
 
   const notificationTime = new Date();
-  console.log(notificationTime)
-
   const [notices, setNotices] = useState<Notice[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
 
   const [readNoticeId, setReadNoticeId] = useState(null);
+  console.log('1111', notices)
 
   useEffect(() => {
     if (readNoticeId !== null) {
@@ -191,6 +195,8 @@ const NoticeTab = () => {
       .then(resp => {
         console.log('알림', resp.data)
         setNotices(notices.map(notice => notice.id === readNoticeId ? {...notice, isRead: true} : notice));
+        const unreadNoticesCount = notices.filter(notice => !notice.isRead).length;
+        props.setNoticeCount(unreadNoticesCount);
       })
       .catch(error => {
         console.error('알림 읽음 중 오류 발생:', error);
@@ -204,21 +210,10 @@ const NoticeTab = () => {
     .then(resp => {
       console.log('전체알림', resp.data)
       setNotices(notices.map(notice => ({...notice, isRead: true})));
+      props.setNoticeCount(0);
     })
     .catch(error => {
       console.error('전체 알림 읽음 중 오류 발생:', error);
-    });
-  };
-
-  const readNotice = (id: NoticeId) => {
-    axiosAuth
-    .put(`/notification/${id}`)
-    .then(resp => {
-      console.log('알림', resp.data)
-      setNotices(notices.map(notice => notice.id === id.id ? {...notice, isRead: true} : notice));
-    })
-    .catch(error => {
-      console.error('알림 읽음 중 오류 발생:', error);
     });
   };
 
@@ -285,7 +280,7 @@ const NoticeTab = () => {
       {notices.map(notice => (
 
         <NoticeCard key={notice.id}>
-          {!notice.isRead && <Entypo name='dot-single' size={30} color={'red'} style={css`position: absolute; bottom: 95px; right: 360px;`}/>}
+          {!notice.isRead && <Entypo name='dot-single' size={40} color={'red'} style={css`position: absolute; bottom: 90px; right: 355px;`}/>}
           <CardButton onPress={() => setReadNoticeId(notice.id)}>
           
             <CardHeader>

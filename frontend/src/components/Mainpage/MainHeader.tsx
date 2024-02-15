@@ -6,6 +6,8 @@ import styled from '@emotion/native';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import {NavigationProp} from '@react-navigation/native';
 import {View, TouchableOpacity, Text, ImageSourcePropType} from 'react-native';
+import { useRecoilState } from 'recoil';
+import { noticeCountState } from '@/recoil/atoms'; 
 
 // 헤더 컨테이너
 const HeaderContainer = styled(Header)`
@@ -48,7 +50,9 @@ interface Props {
 
 // 알림 아이콘 컴포넌트
 const NotificationIcon = ({navigation}: Props) => {
-  const [hasNotifications, setHasNotifications] = useState<boolean>(true);
+  
+  const noticeCount = useRecoilState(noticeCountState)
+  console.log('저기다 저기', noticeCount)
 
   const handlePress = () => {
     navigation.navigate('Notice');
@@ -57,7 +61,7 @@ const NotificationIcon = ({navigation}: Props) => {
   return (
     <TouchableOpacity onPress={handlePress}>
       <Fontisto name="bell" size={28} color="gray" />
-      {hasNotifications && <BellNotifBadge />}
+      {(Number(noticeCount) > 0) && <BellNotifBadge />}
     </TouchableOpacity>
   );
 };
