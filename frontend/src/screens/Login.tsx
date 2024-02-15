@@ -82,13 +82,13 @@ const Login = ({navigation}: any) => {
   }, [isLoggedIn]);
 
   async function login() {
-    console.log(fcmToken);
     if (username.trim() === '') {
       Alert.alert('아이디 입력 확인', '아이디가 입력되지 않았습니다.');
     } else if (password.trim() === '') {
       Alert.alert('비밀번호 입력 확인', '비밀번호가 입력되지 않았습니다.');
     } else {
       try {
+        console.log('fcmToken', fcmToken);
         const response = await axios.post('http://i10a302.p.ssafy.io:8080/members/signin', {
           username: username,
           password: password,

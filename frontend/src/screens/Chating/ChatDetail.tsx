@@ -247,6 +247,7 @@ const ChatDetail = ({navigation}: Props) => {
       });
   };
   const getRecentDeal = async () => {
+    console.log('거래 최신 조회 시작', userData.id, params.userId);
     await axiosAuth
       .get(`/deal/user/${userData.id}/${params.userId}`)
       .then(res => {
@@ -266,7 +267,7 @@ const ChatDetail = ({navigation}: Props) => {
         console.log('거래 최신 조회 성공', data);
       })
       .catch(err => {
-        console.log('Fffffffffffffff', err);
+        console.log('Fffffffffffffff', err.response);
       });
   };
   const getChatDetail = async () => {

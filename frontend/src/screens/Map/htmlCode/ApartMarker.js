@@ -24,7 +24,10 @@ const ApartMarker = (key, markers, location) => {
               level: 3,
             };
             const map = new kakao.maps.Map(container, options);
+
+            
             var bounds = new kakao.maps.LatLngBounds();    
+            if(markers[0].lat> 0){
             markers.forEach((markerObj) => {
               const markerPosition = new kakao.maps.LatLng(markerObj.lat, markerObj.lng);
               const marker = new kakao.maps.Marker({
@@ -39,6 +42,7 @@ const ApartMarker = (key, markers, location) => {
               });
             });
             map.setBounds(bounds);
+          };
           });
         </script>
       </body>
