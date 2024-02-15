@@ -23,6 +23,12 @@ import {
   Asset,
 } from 'react-native-image-picker';
 
+const StyledText = styled(Text)`
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: 700;
+  color: ${theme.color.black};
+`;
 const Signup9 = ({navigation}: any) => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [imageData, setImageData] = useState({});
@@ -150,9 +156,9 @@ const Signup9 = ({navigation}: any) => {
         <GoBack />
       </Header>
       <SignupBodyContainer>
-        <SignupHeadtext
-          title="거주지 주소가 나온 
-관리비 명세서를 업로드해주세요"></SignupHeadtext>
+        <View>
+          <StyledText>거주지 주소가 나온 관리비 명세서를 업로드해주세요</StyledText>
+        </View>
         <Text
           style={css`
             margin-top: 10px;
