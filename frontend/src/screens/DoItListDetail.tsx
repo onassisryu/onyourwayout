@@ -328,18 +328,18 @@ const DoItListDetail = ({route, navigation}: any) => {
       return `${minutesAgo}분 전`;
     }
   };
-  function acceptDoit(id: number, nickname: string) {
+  const acceptDoit = async (id: number, nickname: string) => {
     console.log(id);
-    axiosAuth
+    await axiosAuth
       .put(`deal/accept/${id}`)
       .then(resp => {
         console.log('성공', resp.data);
-        goChat(nickname, loginuser.nickname);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
-  }
+    goChat(nickname, loginuser.nickname);
+  };
   useFocusEffect(
     React.useCallback(() => {
       StatusBar.setTranslucent(true);

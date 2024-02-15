@@ -14,8 +14,8 @@ import styled, {css} from '@emotion/native';
 import {AppState} from 'react-native';
 
 //recoil&react-query
-import {isLoggedInState, userDataState, apartDataState, fcmTokenState} from '@/recoil/atoms';
-import {useRecoilValue, useSetRecoilState} from 'recoil';
+import {isLoggedInState, userDataState, apartDataState, fcmTokenState, alaramState} from '@/recoil/atoms';
+import {useRecoilValue, useSetRecoilState, useRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
 import {ThemeProvider} from '@emotion/react';
@@ -373,6 +373,16 @@ const App = () => {
   const updateData = (newData: any) => {
     setData(newData);
   };
+  const [notification, setNotification] = useRecoilState(alaramState);
+  let test = {
+    title: '',
+    acceptMemberNickname: '',
+    acceptMemberDong: '',
+    acceptMemberScore: 0,
+    acceptMemberId: '',
+    dealId: '',
+  };
+
   const handleNotification = (remoteMessage: any) => {
     console.log('[Remote Message] ', JSON.stringify(remoteMessage));
     if (remoteMessage.data) {
@@ -381,9 +391,11 @@ const App = () => {
         title: remoteMessage.notification?.title,
         body: remoteMessage.notification?.body,
       };
-      // setData(remoteMessage.data);
-      // console.log('data', data);
+      // // setData(remoteMessage.data);
+      // // console.log('data', data);
       if (remoteMessage.notification?.title === '[나가요잉 신청]') {
+        test = remoteMessage.data;
+        // setData(remoteMessage.data);
         setModalVisible(true);
       }
       sendNotification(notice);
@@ -410,12 +422,12 @@ const App = () => {
           <CustomAlert
             visible={isModalVisible}
             onClose={handleCloseModal}
-            title={data.title}
-            nickname={data.acceptMemberNickname}
-            dong={data.acceptMemberDong}
-            memberScore={data.acceptMemberScore}
-            acceptId={data.acceptMemberId}
-            dealId={data.dealId}
+            title={test.title}
+            nickname={test.acceptMemberNickname}
+            dong={test.acceptMemberDong}
+            memberScore={test.acceptMemberScore}
+            acceptId={test.acceptMemberId}
+            dealId={test.dealId}
             time={minuteTimer}
           />
           {admin ? <AdminStack /> : <MainStack />}

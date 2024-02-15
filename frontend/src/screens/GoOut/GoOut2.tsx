@@ -87,8 +87,8 @@ const GoOut2 = ({route, navigation}: any) => {
       .get(`deal/out-recommend?${queryString}`)
       .then(resp => {
         console.log(resp);
-        // setResponseData(resp.data);
-        // console.log('성공', resp.data);
+        setResponseData(resp.data);
+        console.log('성공', resp.data);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error.response);
