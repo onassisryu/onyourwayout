@@ -75,9 +75,6 @@ const CategoryComponent = ({name, selected, onSelect}: {name: string; selected: 
 );
 
 const DoItListCategory = (props: Props) => {
-   
-  const [userData, setUserData] = useRecoilState(userDataState);
-  props.setSelectedApart(userData.apt.name)
 
   return (
     <GlobalContainer

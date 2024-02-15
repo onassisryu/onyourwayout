@@ -230,7 +230,7 @@ const getBackgroundColor = (dealType: string): string => {
     case 'RECYCLE':
       return '#00D282';
     case 'ETC':
-      return 'yellow';
+      return 'gray';
     default:
       return 'gray'; // 기본값
   }
@@ -487,7 +487,7 @@ const DoItListDetail = ({route, navigation}: any) => {
               flex-direction: row;
               justify-content: space-between;
             `}>
-            <GoBack />
+            <GoBack onPress={() => navigation.navigate('Bottom', {screen : '아파트'})}/>
             <Feather name="more-vertical" size={40} onPress={handleIconPress} />
           </TouchableOpacity>
         </View>
@@ -529,7 +529,7 @@ const DoItListDetail = ({route, navigation}: any) => {
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
             navigation={navigation}
-            data={param}
+            data={responseData}
           />
         ) : (
           <ReportModal
