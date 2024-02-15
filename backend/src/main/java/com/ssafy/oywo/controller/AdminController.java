@@ -67,7 +67,7 @@ public class AdminController {
 
 
     /**
-     * 신고수 5개 이상 거래 전체 조회
+     * 신고된 거래 전체 조회
      * @return 거래 리스트
      */
     @GetMapping("/deal")
@@ -89,9 +89,9 @@ public class AdminController {
     }
 
 
-    @PutMapping("/deal")
-    public ResponseEntity<?> changeDealStatus(@RequestParam("id") Long dealId){
-        return ResponseEntity.ok(adminService.changeStatusToPause(dealId));
+    @PutMapping("/deal/re-open/{dealId}")
+    public ResponseEntity<?> changeDealStatus(@PathVariable Long dealId){
+        return ResponseEntity.ok(adminService.changeStatusToOpen(dealId));
 
     }
 
