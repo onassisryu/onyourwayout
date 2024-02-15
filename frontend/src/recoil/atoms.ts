@@ -13,6 +13,10 @@ export const apartDataState = atom({
   key: 'apartDataState',
   default: [],
 });
+export const alaramState = atom({
+  key: 'alaramState',
+  default: {},
+});
 
 export const fcmTokenState = atom({
   key: 'fcmTokenState',
