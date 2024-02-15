@@ -36,7 +36,7 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
 `;
 
 const Signup3 = ({navigation}: any) => {
-  const [value, setValue] = useState('010-1234-5678');
+  const [value, setValue] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -56,6 +56,15 @@ const Signup3 = ({navigation}: any) => {
     setIsFocused(false);
   };
 
+  const handleInputChange = (text: string) => {
+    const formattedPhoneNumber = text.replace(/-/g, '');
+    if (formattedPhoneNumber.length === 11) {
+      const formattedText = `010-${formattedPhoneNumber.slice(3, 7)}-${formattedPhoneNumber.slice(7)}`;
+      setValue(formattedText);
+    } else {
+      setValue(text);
+    }
+  };
   const setUserSignUpData = useSetRecoilState(userSignUpDataState);
   const userSignUpData = useRecoilValue(userSignUpDataState);
 
@@ -95,7 +104,7 @@ const Signup3 = ({navigation}: any) => {
           <StyledInput
             placeholder="XXX-XXXX-XXXX"
             placeholderTextColor={theme.color.gray200}
-            onChangeText={text => setValue(text)}
+            onChangeText={handleInputChange}
             value={value}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}

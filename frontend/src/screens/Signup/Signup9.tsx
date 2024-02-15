@@ -130,8 +130,9 @@ const Signup9 = ({navigation}: any) => {
     console.log(userSignUpData);
     const body = {
       jsonData: userSignUpData,
-      dealImageFileList: imageData,
+      dealImageFileList: Object.keys(imageData).length === 0 ? [] : imageData,
     };
+    console.log('body 전송중', body);
 
     submitMultipart(body)
       .then(resp => {
