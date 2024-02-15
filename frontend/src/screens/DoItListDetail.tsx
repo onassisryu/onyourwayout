@@ -246,11 +246,10 @@ type User = {
 };
 
 const DoItListDetail = ({route, navigation}: any) => {
-
   const [requestUserId, setRequestUserId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
-  
+
   const [responseData, setResponseData] = useState({});
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [detailImage, setDetailImage] = useState([]);
@@ -269,7 +268,7 @@ const DoItListDetail = ({route, navigation}: any) => {
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
-  }, []);
+  }, [route.params.id]);
   const goChat = (memberNickname: string, otherNickname: string) => {
     console.log('수락-채팅이동', memberNickname, otherNickname);
     const user = {
@@ -488,7 +487,7 @@ const DoItListDetail = ({route, navigation}: any) => {
               flex-direction: row;
               justify-content: space-between;
             `}>
-            <GoBack onPress={() => navigation.navigate('Bottom', {screen : '아파트'})}/>
+            <GoBack onPress={() => navigation.navigate('Bottom', {screen: '아파트'})} />
             <Feather name="more-vertical" size={40} onPress={handleIconPress} />
           </TouchableOpacity>
         </View>

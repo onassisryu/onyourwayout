@@ -72,7 +72,13 @@ const Signup5a = ({navigation, route}: any) => {
     phoneNumber: '010-1111-1121',
     inviteCode: '1d4b6978710c347ea32c6181e2f7f029',
   };
-
+  const StyledText = styled(Text)`
+    margin-top: 20px;
+    margin-bottom: 50px;
+    font-size: 20px;
+    font-weight: 700;
+    color: ${theme.color.black};
+  `;
   const submitMultipart = (body: any) => {
     const formData = new FormData();
     formData.append('dto', JSON.stringify(body.jsonData));
@@ -125,9 +131,20 @@ const Signup5a = ({navigation, route}: any) => {
       </Header>
       <SignupBodyContainer>
         <View>
-          <Text>{responseData.apartName}</Text>
-          <Text>{responseData.dongName}</Text>
-          <Text>{responseData.hoName}</Text>
+          <StyledText>초대 코드의 정보입니다</StyledText>
+          <Text
+            style={css`
+              font-size: 20px;
+            `}>
+            {responseData.apartName}아파트
+          </Text>
+          <Text
+            style={css`
+              font-size: 20px;
+              margin-bottom: 30px;
+            `}>
+            {responseData.dongName}동 {responseData.hoName}호
+          </Text>
         </View>
         <NextButton2 title="가입 완료" color="primary" size="lg" onPress={() => signUpFinish()} />
       </SignupBodyContainer>
