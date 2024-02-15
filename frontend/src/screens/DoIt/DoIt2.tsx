@@ -270,16 +270,18 @@ const DoIt2 = ({navigation}: Props) => {
     else {
       const uris: Asset[] = [];
       response.assets?.forEach(value => uris.push(value)); //선택한 사진 순서와 상관없이 들어옴
-      const uri = response.assets[0].uri; //assets 여러개가 올수 있는데 중에 0번방 거
-      const type = response.assets[0].type;
-      const fileSize = response.assets[0].fileSize;
-      const fileName = response.assets[0].fileName;
-
+      const {uri, type, fileName, fileSize} = response.assets[0];
+      const fileSizeLimit = 3 * 1024 * 1024;
       console.log('이미지 파일입니다', response.assets[0]);
 
-      const source = {uri: uri, type: type, fileSize: fileSize, name: fileName};
-      console.log('이미지 파일입니다', source);
-      setImageData(source);
+      if (fileSize > fileSizeLimit) {
+        // 파일 크기가 3MB를 초과하는 경우
+        alert('이미지 파일 크기는 3MB를 초과할 수 없습니다.');
+      } else {
+        const source = {uri: uri, type: type, fileSize: fileSize, name: fileName};
+        console.log('이미지 파일입니다', source);
+        setImageData(source);
+      }
     }
   };
   function MakeDeal() {
