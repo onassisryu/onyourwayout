@@ -231,7 +231,7 @@ const getBackgroundColor = (dealType: string): string => {
     case 'RECYCLE':
       return '#00D282';
     case 'ETC':
-      return 'yellow';
+      return 'gray';
     default:
       return 'gray'; // 기본값
   }

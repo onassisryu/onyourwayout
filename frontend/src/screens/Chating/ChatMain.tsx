@@ -16,7 +16,7 @@ const StyledText = styled.Text`
 `;
 
 const ChatRoomsContainer = styled(ScrollView)`
-  padding: 10px 20px 0 20px;
+  padding: 0px 20px 0 20px;
 `;
 
 const ChatRoomContainer = styled.TouchableOpacity`
@@ -41,7 +41,7 @@ const ChatSubTextContainer = styled.View`
   justify-content: flex-start;
   background-color: white;
   width: 70%;
-  margin: 0 10px 10px 0;
+  margin: 0 10px 5px 0;
 `;
 
 const NicknameText = styled.Text`
