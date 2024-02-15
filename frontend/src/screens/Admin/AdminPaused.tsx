@@ -1,37 +1,10 @@
-import React, {useState, useEffect} from 'react';
-import {Button, ScrollView, View, ImageSourcePropType} from 'react-native';
-import styled, {css} from '@emotion/native';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
-import Feather from 'react-native-vector-icons/Feather';
-import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
+import {GlobalContainer, GlobalText} from '@/GlobalStyles';
 import axiosAuth from '@/axios/axiosAuth';
 import Header from '@/components/Header';
 import GoBack from '@/components/Signup/GoBack';
-
-interface PausedMember {
-  id: number;
-  username: string;
-  nickname: String;
-  phoneNumber: String;
-  aptName: String;
-  dongName: String;
-  hoName: String;
-  pauseStart: String;
-  pauseEndAt: String;
-}
-const PausedListCardComponent = styled(ScrollView)`
-  padding-left: 10px;
-  padding-right: 10px;
-  margin-top: 10px;
-`;
-
-const PausedListCard = styled(GlobalContainer)`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  height: 130px;
-`;
+import styled, {css} from '@emotion/native';
+import React, {useEffect, useState} from 'react';
+import {Animated, ScrollView, TouchableOpacity, View, Text} from 'react-native';
 
 const TextComponent = styled(GlobalContainer)`
   width: 230px;
@@ -41,10 +14,38 @@ const TextComponent = styled(GlobalContainer)`
 `;
 
 const TextContent = styled(GlobalText)`
-  fint-size: ${props => props.theme.fontSize.small};
+  font-size: ${props => props.theme.fontSize.small};
   color: ${props => props.theme.color.black};
+  font-weight: bold;
   padding: 5px 0px 5px 0px;
 `;
+
+const Card = styled.View`
+  align-items: center;
+  padding: 15px;
+  border-radius: 15px;
+  border: 1px solid #bbbbbb;
+  height: 100px;
+  flex-direction: row;
+  margin-bottom: 10px;
+`;
+
+const PausedUserCard = ({member}: {member: any}) => {
+  return (
+    <Card>
+      <View
+        style={css`
+          width: 70%;
+        `}>
+        <TextComponent>
+          <TextContent>{'아이디 : ' + member.nickname}</TextContent>
+          <TextContent>{'정지횟수 : ' + member.penaltyCount}</TextContent>
+          <TextContent>{'정지 해제 일자 : ' + member.pauseEndAt.substring(0, 10)}</TextContent>
+        </TextComponent>
+      </View>
+    </Card>
+  );
+};
 
 // 정지된 사용자의 정보를 보여주는 페이지
 const AdminPaused = () => {
@@ -56,7 +57,9 @@ const AdminPaused = () => {
       .get('/admin/manages/pause')
       .then(resp => {
         setResponseData(resp.data);
-        console.log('성공', resp.data);
+        responseData.map((member: any) => {
+          console.log(member);
+        });
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생: ', error);
@@ -67,29 +70,23 @@ const AdminPaused = () => {
     <GlobalContainer>
       <Header>
         <GoBack />
+        <Text
+          style={css`
+            font-size: 27px;
+            color: #000000;
+            font-weight: bold;
+          `}>
+          정지 사용자 목록
+        </Text>
+        <View style={{width: 40}} />
       </Header>
-      <ScrollView overScrollMode="never">
+      <ScrollView
+        overScrollMode="never"
+        style={css`
+          padding: 10px;
+        `}>
         {responseData.map((member, index) => (
-          // member.username : 사용자 아이디
-          // member.nickname : 사용자 닉네임
-          // member.phoneNumber: 전화번호
-          // member.aptName : 아파트 이름
-          // member.dongName: 동 이름
-          // member.hoName : 호 이름
-          <View key={index}>
-            <PausedListCard>
-              <TextComponent>
-                <TextContent>
-                  {/* {member.username}
-                  {member.nickname}
-                  {member.phoneNumber}
-                  {member.aptName}
-                  {member.dongName}
-                  {member.hoName} */}
-                </TextContent>
-              </TextComponent>
-            </PausedListCard>
-          </View>
+          <PausedUserCard key={index} member={member} />
         ))}
       </ScrollView>
     </GlobalContainer>

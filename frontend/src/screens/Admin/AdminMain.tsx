@@ -1,12 +1,12 @@
 import React, {useEffect} from 'react';
-import {View, Text, Animated, TouchableOpacity} from 'react-native';
+import {Animated, Text, TouchableOpacity, View} from 'react-native';
 
-import {useRecoilValue} from 'recoil';
 import {isLoggedInState} from '@/recoil/atoms';
 import styled, {css} from '@emotion/native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import {useRecoilValue} from 'recoil';
 
-import {GlobalButton, GlobalText, GlobalContainer} from '@/GlobalStyles';
+import {GlobalButton, GlobalText} from '@/GlobalStyles';
 import {logoutUser} from '@/utils/common';
 
 // 배경
@@ -38,13 +38,6 @@ const Card = styled.View`
   padding: 15px;
   border-radius: 15px;
   border: 1px solid #bbbbbb;
-`;
-
-const CardTitle = styled(GlobalText)`
-  font-size: ${props => props.theme.fontSize.medium};
-  color: ${props => props.theme.color.primary};
-  font-weight: bold;
-  margin-bottom: 10px;
 `;
 
 const CardComponent = styled.View`
@@ -93,7 +86,6 @@ const AdminWorkCard = ({navigation, navigateTo, textBold, text, imageSource}: Ad
             <CardText>{text}</CardText>
           </View>
           <CardImage1 src={imageSource} />
-          {/* <CardImage1 source={require(imageSource)} />   */}
         </CardComponent>
       </TouchableOpacity>
     </Card1>
@@ -130,7 +122,6 @@ const AdminMain = ({navigation}: any) => {
     <View
       style={css`
         height: 100%;
-        background-color: red;
       `}>
       <NotificationBar>
         <TouchableOpacity onPress={logoutUser}>
@@ -144,7 +135,7 @@ const AdminMain = ({navigation}: any) => {
           `}>
           관리자 페이지
         </Text>
-        <SimpleLineIcons name="logout" size={24} style={{opacity: 0}} /> //반대쪽 투명화
+        <SimpleLineIcons name="logout" size={24} style={{opacity: 0}} />
       </NotificationBar>
       <NotificationBottom>
         <AdminWorkCard
@@ -156,7 +147,7 @@ const AdminMain = ({navigation}: any) => {
         />
         <AdminWorkCard
           navigation={navigation}
-          navigateTo="AdminPaused"
+          navigateTo="AdminComplainDeal"
           textBold="신고내역"
           text="확인하기 ➔"
           imageSource="https://oywo.s3.ap-northeast-2.amazonaws.com/src/trash2.png"
@@ -169,7 +160,6 @@ const AdminMain = ({navigation}: any) => {
           imageSource="https://oywo.s3.ap-northeast-2.amazonaws.com/src/trash2.png"
         />
       </NotificationBottom>
-      {/* <AdminNonCerti navigation={navigation} />; */}
       <GlobalButton onPress={logoutUser}>
         <GlobalText>리셋</GlobalText>
       </GlobalButton>
