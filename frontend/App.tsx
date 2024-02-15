@@ -291,10 +291,6 @@ const App = ({navigation}: any) => {
   };
 
   const checkLogin = async () => {
-    if (!isLoggedIn) {
-      navigation.navigate('Login');
-      return;
-    }
     console.log('데이터 세팅중이여!!!!!!!!');
     getStorage('token').then(token => {
       if (token) {
