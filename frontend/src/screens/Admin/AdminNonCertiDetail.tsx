@@ -1,12 +1,7 @@
-import React, {useState, useEffect} from 'react';
-import {ImageSourcePropType, StatusBar, View, Text, ScrollView, TouchableOpacity} from 'react-native';
+import {GlobalButton, GlobalContainer, GlobalText} from '@/GlobalStyles';
 import styled, {css} from '@emotion/native';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
-import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
-import axiosAuth from '@/axios/axiosAuth';
-
-import Header from '@/components/Header';
-import GoBack from '@/components/Signup/GoBack';
+import React from 'react';
+import {View} from 'react-native';
 
 const CertiImage = styled.Image`
   width: 100%;
@@ -14,29 +9,12 @@ const CertiImage = styled.Image`
   resize-mode: contain;
 `;
 
-const ContentComponent = styled(GlobalContainer)`
-  flex-direction: column;
-  align-items: flex-start;
-`;
-
 const TextContent = styled(GlobalText)`
   width: 390px;
-  font-size: 30px;
+  font-size: 27px;
   padding-left: 20px;
   font-weight: bold;
   color: ${props => props.theme.color.black};
-`;
-
-const CertiButton = styled(GlobalButton)`
-  flex-direction: row;
-  width: 150px;
-  height: 60px;
-  border: white;
-  background-color: ${props => props.theme.color.primary};
-  border-top-left-radius: 15px;
-  border-bottom-left-radius: 15px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
 `;
 
 const AvatarImage = styled.Image`
@@ -51,14 +29,6 @@ const MemberText = styled.Text`
   justify-content: center;
   align-items: center;
 `;
-
-interface AdminNonCerti {
-  id: number;
-}
-
-type RootStackParamList = {
-  AdminNonCertiDetail: {id: number};
-};
 
 const AdminNonCertiDetail = ({member}: {member: any}) => {
   console.log('===============route===========', member);
