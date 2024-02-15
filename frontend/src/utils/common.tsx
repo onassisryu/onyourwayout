@@ -34,6 +34,5 @@ export const logoutUser = async () => {
   await removeStorage('token');
   await removeStorage('refreshToken');
   await removeStorage('user');
-
   console.log('로그아웃 완료');
 };
