@@ -364,10 +364,10 @@ const App = () => {
         title: remoteMessage.notification?.title,
         body: remoteMessage.notification?.body,
       };
-      setData(remoteMessage.data);
 
       console.log('data', data);
       if (remoteMessage.notification?.title === '[나가요잉 신청]') {
+        setData(remoteMessage.data);
         setModalVisible(true);
       }
       sendNotification(notice);
