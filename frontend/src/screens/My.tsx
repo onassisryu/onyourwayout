@@ -165,7 +165,6 @@ const My = ({navigation}: any) => {
                         style={css`
                           color: red;
                         `}>
-                        {' '}
                         세대원 미인증
                       </CertifiedText>
                     </View>
@@ -191,11 +190,14 @@ const My = ({navigation}: any) => {
                     width: ${scorePercent};
                   `}></Scorebar>
                 <View
-                  style={css`
-                    position: absolute;
-                    top: -7px;
-                    left: ${scorePercent};
-                  `}>
+                  style={[
+                    css`
+                      position: absolute;
+                      top: -8px;
+                      left: ${scorePercent};
+                    `,
+                    {transform: [{translateX: -10}]},
+                  ]}>
                   <MarkImage source={Mark}></MarkImage>
                 </View>
               </Scorebarbackground>
@@ -233,7 +235,12 @@ const My = ({navigation}: any) => {
                 title="아파트 정보 인증"
                 iconType="MaterialCommunityIcons"
                 icon="office-building-marker-outline"
-                onPress={() => navigation.navigate('ApartCertification', {certified: userData.certified, nickname: userData.nickname})}
+                onPress={() =>
+                  navigation.navigate('ApartCertification', {
+                    certified: userData.certified,
+                    nickname: userData.nickname,
+                  })
+                }
               />
               <Mypagelist
                 title="초대 코드 발급"
