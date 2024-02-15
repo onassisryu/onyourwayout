@@ -89,9 +89,14 @@ const Location = ({navigation}: any) => {
     console.log('api호출후', res.data);
 
     const dongList = res.data;
-    const updatedMarkers = apartDongData.filter(apart => dongList.includes(apart.dongId));
-    console.log('updatedMarkers', updatedMarkers);
-    setMarkers(updatedMarkers);
+    console.log('dongList', dongList);
+    if (dongList.length > 0) {
+      const updatedMarkers = apartDongData.filter(apart => dongList.includes(apart.dongId));
+      console.log('updatedMarkers', updatedMarkers);
+      setMarkers(updatedMarkers);
+    } else {
+      setMarkers([{id: 0, name: '해당하는 동이 없습니다.', lat: 0, lng: 0}]);
+    }
   };
 
   useEffect(() => {
