@@ -43,3 +43,8 @@ export const loadingState = atom({
   key: 'loadingState',
   default: false,
 });
+
+export const noticeCountState = atom({
+  key: 'noticeCountState', // unique ID
+  default: 0, // default value
+});

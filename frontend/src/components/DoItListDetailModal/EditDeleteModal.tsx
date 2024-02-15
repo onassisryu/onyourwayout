@@ -48,25 +48,20 @@ const DistinctLine = styled(GlobalContainer)`
   border: 0.51px solid #b2b2b2;
 `;
 
-interface Data {
-  id: string;
-  [key: string]: any;
-}
 
 interface Props {
   modalVisible: boolean;
   setModalVisible: (state: boolean) => void;
   navigation: NavigationProp<ParamListBase>;
-  data: Data;
+  data: [object];
 }
 
 const EditDeleteModal = (props: Props) => {
   console.log('성공해쪄요', props.data);
 
   const handleDelete = () => {
-    const id = props.data.id; // 삭제할 게시글의 ID
     axiosAuth
-      .delete(`deal/${id}`) // 서버에 DELETE 요청을 보냅니다.
+      .delete(`deal/${props.data.id}`) // 서버에 DELETE 요청을 보냅니다.
       .then(() => {
         console.log('성공맨이야');
         props.setModalVisible(false); // 모달을 닫습니다.
