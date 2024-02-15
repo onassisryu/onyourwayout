@@ -257,14 +257,14 @@ const GoOut2 = ({route, navigation}: any) => {
                 </DoItListCard>
               </DoItListButton>
               <DistinctLine />
-              {type === 'accept' && (
+              {/* {type === 'accept' && (
                 <TouchableOpacity
                   onPress={() => {
                     acceptDoit(card.id);
                   }}>
                   <Text>파토내기</Text>
                 </TouchableOpacity>
-              )}
+              )} */}
             </View>
           ))}
         </ScrollView>

@@ -59,8 +59,8 @@ const DistinctLine = styled.View`
   border: 1px solid #b2b2b2;
 `;
 
-const outImage: ImageSourcePropType = require('images/나가요잉.png');
-const inImage: ImageSourcePropType = require('images/해줘요잉.png');
+const outImage: ImageSourcePropType = require('images/goout.png');
+const inImage: ImageSourcePropType = require('images/request.png');
 
 const MainPlusButton = ({navigation}: any) => {
   const [modalVisible, setModalVisible] = useState(false);

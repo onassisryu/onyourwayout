@@ -240,7 +240,7 @@ const GoOut2 = ({route, navigation}: any) => {
               <View
                 style={css`
                   position: absolute;
-                  bottom: 0;
+                  bottom: 3%;
                   height: 15%;
                   width: 100%;
                   justify-content: center;
@@ -249,6 +249,9 @@ const GoOut2 = ({route, navigation}: any) => {
                   z-index: 100;
                 `}>
                 <TouchableOpacity
+                  onPress={() => {
+                    sendGoOutRequest(card.id);
+                  }}
                   style={css`
                     height: 50%;
                     width: 90%;
