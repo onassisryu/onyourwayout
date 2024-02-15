@@ -188,7 +188,9 @@ const Location = ({navigation}: any) => {
         if (filteredDongs.length > 0) {
           filteredDongs.map(dong => {
             console.log('내 주변 동', dong.name, dong.dongId);
-            axiosAuth.get(`/notification/near/${dong.dongId}`);
+            axiosAuth.get(`/notification/near/${dong.dongId}`).then(resp => {
+              console.log('동 알림 성공');
+            });
             lastDetectedDongs.push({
               dongId: dong.dongId,
               detectedAt: new Date(),

@@ -80,17 +80,18 @@ const GoOut2 = ({route, navigation}: any) => {
     .map((button: {status: boolean; title: string}) => button.title);
   console.log('selectedTitles', selectedTitles);
   const queryString = selectedTitles.map(title => `dealType=${title}`).join('&');
-  const url = `deal/out-recommend?${queryString}`;
 
   useEffect(() => {
+    console.log('queryString', queryString);
     axiosAuth
-      .get(url)
+      .get(`deal/out-recommend?${queryString}`)
       .then(resp => {
-        setResponseData(resp.data);
-        console.log('성공', resp.data);
+        console.log(resp);
+        // setResponseData(resp.data);
+        // console.log('성공', resp.data);
       })
       .catch(error => {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
+        console.error('데이터를 가져오는 중 오류 발생:', error.response);
       });
   }, []);
 
