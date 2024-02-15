@@ -24,8 +24,8 @@ export type RootStackParamList = {
     icon: 'puppy' | 'puppyOff' | 'bags' | 'bagsOff' | 'building' | 'buildingOff' | 'shopping' | 'shoppingOff';
   };
   ChatDetail: {
-    roomId: long;
-    userId: long;
+    roomId: number;
+    userId: number;
     name: string;
     dong: string;
   };

@@ -291,7 +291,6 @@ const DoItListDetail = ({route, navigation}: any) => {
       .catch(err => {
         console.log(err);
       });
-    // navigation.navigate('ChatDetail', {id: requestUserId});
   };
   const handleIconPress = () => {
     if (userInfo?.id === loginuser.id) {

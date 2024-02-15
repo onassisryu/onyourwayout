@@ -9,6 +9,7 @@ import React, {useEffect, useState, FC} from 'react';
 import {Alert, TouchableOpacity} from 'react-native';
 import {StatusBar} from 'react-native';
 import {NavigationContainer, useNavigationContainerRef} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {Text, View, Button} from 'react-native';
 import styled, {css} from '@emotion/native';
 import {AppState} from 'react-native';
@@ -17,7 +18,7 @@ import {AppState} from 'react-native';
 import {isLoggedInState, userDataState, apartDataState, fcmTokenState} from '@/recoil/atoms';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
-
+import {NavigationProp, RouteProp} from '@react-navigation/native';
 import {ThemeProvider} from '@emotion/react';
 
 import theme from '@/Theme';
@@ -74,10 +75,12 @@ interface CustomAlertProps {
   memberScore: number;
   time: number;
 }
+interface Props {
+  navigation: NavigationProp<any>;
+}
 
-const App = ({navigation}: any) => {
+const App = () => {
   const queryClient = new QueryClient();
-
   const [admin, setAdmin] = useState(false);
   const userData = useRecoilValue(userDataState);
   const [minuteTimer, setMinuteTimer] = useState(60);
@@ -86,6 +89,7 @@ const App = ({navigation}: any) => {
   const setApartData = useSetRecoilState(apartDataState);
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const setFcmTokenState = useSetRecoilState(fcmTokenState);
+  const userInfo = useRecoilValue(userDataState);
   async function requestPermissions() {
     if (Platform.OS === 'android') {
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
@@ -104,22 +108,49 @@ const App = ({navigation}: any) => {
     setFcmTokenState({fcmToken});
     console.log('[FCM Token] ', fcmToken);
   };
-
-  function acceptGoOut(dealId: string, acceptId: string) {
+  // const handleNavigate = (id: number, userId: number, name: string, dong: string) => {
+  //   navigation.navigate('ChatDetail', {
+  //     roomId: id,
+  //     userId: userId,
+  //     name: name,
+  //     dong: dong,
+  //   });
+  // };
+  const goChat = (memberNickname: string, otherNickname: string, acceptId: number) => {
+    console.log('수락-채팅이동', memberNickname, otherNickname, acceptId);
+    const user = {
+      memberNickname: memberNickname,
+      otherNickname: otherNickname,
+    };
+    axiosAuth
+      .post('/chat/room', user)
+      .then(res => {
+        console.log('채팅방생성', res.data);
+        const chatRoom = res.data;
+        console.log('채팅방생성', chatRoom.id, userInfo.id, memberNickname, chatRoom.dong.name);
+        // handleNavigate(chatRoom.id, userInfo.id, memberNickname, chatRoom.dong.name);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  function acceptGoOut(dealId: string, acceptId: string, nickname: string) {
     console.log('dealId', dealId);
     console.log('acceptId', acceptId);
+    console.log('로그인유저', data.acceptMemberNickname);
     axiosAuth
       .put(`deal/out-recommend/${dealId}/${acceptId}`)
       .then(resp => {
         console.log('나가요잉 매칭 성공', resp.data);
         setModalVisible(false);
+        goChat(userInfo.nickname, nickname, acceptId);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   }
 
-  function cancelGoOut(dealId: string, acceptId: string) {
+  function cancelGoOut(dealId: string, acceptId: string, nickname: string) {
     console.log('dealId', dealId);
     console.log('acceptId', acceptId);
     axiosAuth
@@ -246,7 +277,7 @@ const App = ({navigation}: any) => {
                 width: 90%;
               `}>
               <TouchableOpacity
-                onPress={() => acceptGoOut(dealId, acceptId)}
+                onPress={() => acceptGoOut(dealId, acceptId, nickname)}
                 style={css`
                   width: 47%;
                   height: 50px;
@@ -265,7 +296,7 @@ const App = ({navigation}: any) => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => cancelGoOut(dealId, acceptId)}
+                onPress={() => cancelGoOut(dealId, acceptId, nickname)}
                 style={css`
                   width: 47%;
                   height: 50px;
@@ -368,7 +399,7 @@ const App = ({navigation}: any) => {
         title: remoteMessage.notification?.title,
         body: remoteMessage.notification?.body,
       };
-
+      console.log(remoteMessage.data);
       if (remoteMessage.notification?.title === '[나가요잉 신청]') {
         setData(remoteMessage.data);
         setModalVisible(true);

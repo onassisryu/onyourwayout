@@ -249,6 +249,9 @@ const GoOut2 = ({route, navigation}: any) => {
                   z-index: 100;
                 `}>
                 <TouchableOpacity
+                  onPress={() => {
+                    sendGoOutRequest(card.id);
+                  }}
                   style={css`
                     height: 50%;
                     width: 90%;
