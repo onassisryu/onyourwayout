@@ -39,4 +39,7 @@ public class Notification extends BaseTimeEntity {
     @OneToMany(mappedBy = "notification")
     private List<MembersNotification> membersNotifications;
 
+    private Long DealId;
+
+    private Long DongId;
 }
