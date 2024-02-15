@@ -552,7 +552,7 @@ const ChatDetail = ({navigation}: Props) => {
         <FlatList
           inverted
           style={css`
-            margin-top: 90px;
+            margin-top: 150px;
           `}
           data={messages}
           ref={flatListRef}

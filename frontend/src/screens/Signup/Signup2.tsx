@@ -35,7 +35,7 @@ const IconWrapper = styled(TouchableOpacity)<{visible: boolean}>`
 `;
 
 const Signup2 = ({navigation}: any) => {
-  const [value, setValue] = useState('1997-01-01');
+  const [value, setValue] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
   useEffect(() => {

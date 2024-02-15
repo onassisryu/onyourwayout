@@ -32,7 +32,6 @@ const ChatRoomContainer = styled.TouchableOpacity`
   justify-content: center;
   flex-direction: row;
   background-color: white;
-  border: 1px solid #00d282;
 `;
 
 const ChatTextContainer = styled.View`
@@ -43,9 +42,8 @@ const ChatTextContainer = styled.View`
 const ChatSubTextContainer = styled.View`
   flex-direction: row;
   align-items: flex-end;
-  justify-content: flex-start;
+  justify-content: space-between;
   background-color: white;
-  width: 70%;
   margin: 0 10px 5px 0;
 `;
 
@@ -59,13 +57,15 @@ const DongText = styled.Text`
   font-size: 13px;
   color: ${props => props.theme.color.gray300};
   margin-left: 7px;
+  margin-top: 5px;
 `;
 
 const TimeText = styled.Text`
   font-weight: bold;
+  //항상 왼쪽으로
+  text-align: right;
   font-size: 10px;
   color: ${props => props.theme.color.gray200};
-  margin-left: 120px;
   padding-bottom: 2px;
 `;
 
@@ -218,11 +218,17 @@ const ChatMain = ({navigation}: any) => {
 
             <ChatTextContainer>
               <ChatSubTextContainer>
-                <NicknameText>{chatRoom.oppNickName}</NicknameText>
-                <DongText>{chatRoom.dong.name}동</DongText>
+                <View
+                  style={css`
+                    flex-direction: row;
+                    justify-content: end;
+                  `}>
+                  <NicknameText>{chatRoom.oppNickName}</NicknameText>
+                  <DongText>{chatRoom.dong.name}동</DongText>
+                </View>
                 <TimeText>{chatRoom.createdAt}</TimeText>
               </ChatSubTextContainer>
-              <RecentlyChat>'ChatDetail'에서 불러오기</RecentlyChat>
+              <RecentlyChat>최근 채팅 </RecentlyChat>
             </ChatTextContainer>
           </ChatRoomContainer>
         ))}
