@@ -170,13 +170,9 @@ const ChatDetail = ({navigation}: Props) => {
     const dateObj = new Date(dateTime);
     let hours: number = dateObj.getHours();
     let minutes: number = dateObj.getMinutes();
-    let timeSuffix: string = '오전';
+    let timeSuffix: string = '오후';
 
-    if (hours >= 12) {
-      timeSuffix = '오후';
-      hours -= 12;
-    }
-
+    hours -= 3;
     if (hours === 0) {
       hours = 12;
     }
