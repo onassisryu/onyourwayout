@@ -180,7 +180,6 @@ const NoticeTime = styled(GlobalText)`
   color: #727272;
   font-weight: 900;
   margin-bottom: 15px;
-  background-color: pink;
   padding: 1px;
 `;
 
@@ -454,10 +453,13 @@ const NoticeTab = (props: Props) => {
                 {notice.notificationType === 'DEAL_ACCEPT' && 
                   ( 
                     <View>
-                      <TextCategory style={css`font-size: 16px;`}>
+                      <TextCategory style={css`font-size: 16px; width: 100%;`}>
                         {notice.message}
                       </TextCategory>
-                      <TouchableOpacity>
+                      <TouchableOpacity onPress={() => {
+                        setReadNoticeId(notice.id);
+                        navigation.navigate('DoItListDetail', {id: notice.deal.id})
+                      }}>
                         <InfoComponent>
                           <TextCategory style={css`font-size: 16px; font-weight: 900; text-decoration: underline;`}>
                             제목 : {notice.deal.title}
