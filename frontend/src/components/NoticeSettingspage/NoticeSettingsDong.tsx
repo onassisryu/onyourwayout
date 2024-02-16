@@ -52,11 +52,11 @@ const CategoryComponent = styled(GlobalContainer)`
 `;
 
 const Category = styled(GlobalButton)<{selected: boolean}>`
-  width: 47%;
+  width: 150px;
   border-radius: 15px;
+  margin-bottom: 10px;
   border: ${({selected}) => (selected ? '1px solid #E6FBF4' : '1px solid #B2B2B2')};
-  margin: 5px;
-  padding: 10px 5px;
+  padding: 12px 8px;
   background-color: ${({selected}) => (selected ? '#E6FBF4' : 'white')};
 `;
 

@@ -28,6 +28,7 @@ const TotalDeleteContainer = styled(GlobalComponent)`
   flex-direction: row;
   align-items: flex-end;
   justify-content: space-between;
+  margin-top: 10px;
   width: 96%;
   height: 40px;
 `;
@@ -35,8 +36,8 @@ const TotalDeleteContainer = styled(GlobalComponent)`
 const TotalDelete = styled(GlobalButton)`
   align-items: center;
   justify-content: center;
-  background-color: ${theme.color.primary};
-  width: 26%;
+  background-color: #dcdcdc;
+  width: 120px;
   height: 40px;
 `;
 
@@ -44,7 +45,7 @@ const TotalRead = styled(GlobalButton)`
   align-items: center;
   justify-content: center;
   background-color: ${theme.color.primary};
-  width: 26%;
+  width: 120px;
   height: 40px;
   margin-left: 20px;
 `;
@@ -432,19 +433,19 @@ const NoticeTab = (props: Props) => {
                 </CardHeader>
 
                 <CardContentComponent>
-                  {notice.notificationType === 'CHAT' && (
+                  {notice && notice.deal && notice.notificationType === 'CHAT' && (
                     <CardContent>
                       {notice.deal.dong}의 {notice.nickname}님과 채팅이 시작되었습니다.
                     </CardContent>
                   )}
 
-                  {notice.notificationType === 'CHAT' && (
+                  {notice && notice.deal && notice.notificationType === 'CHAT' && (
                     <CardContent>
                       {notice.dong.name}의 {notice.nickname}님과 채팅이 시작되었습니다.
                     </CardContent>
                   )}
                   {/* 해줘요잉 추천 */}
-                  {notice.notificationType === 'DEAL_NEW' && (
+                  {notice && notice.deal && notice.notificationType === 'DEAL_NEW' && (
                     <TouchableOpacity onPress={() => navigation.navigate('DoItListDetail', {id: notice.deal.id})}>
                       {notice.deal.dealType === 'PET' && (
                         <InfoComponent>
@@ -462,7 +463,7 @@ const NoticeTab = (props: Props) => {
                           <TextCategory>요청이 있어요.</TextCategory>
                         </InfoComponent>
                       )}
-                      {notice.deal.dealType === 'RECYCLE' && (
+                      {notice && notice.deal && notice.notificationType === 'RECYCLE' && (
                         <InfoComponent>
                           <TextCategory>
                             {userData.dongName === notice.dong.name ? '내 아파트에서' : `${notice.dong.name}동에서`}{' '}
@@ -514,7 +515,7 @@ const NoticeTab = (props: Props) => {
                   )}
 
                   {/* 해줘요잉 수락 */}
-                  {notice.notificationType === 'DEAL_ACCEPT' && (
+                  {notice && notice.deal && notice.notificationType === 'DEAL_ACCEPT' && (
                     <View>
                       <TextCategory
                         style={css`
@@ -552,7 +553,7 @@ const NoticeTab = (props: Props) => {
                     </View>
                   )}
                   {/* 해줘요잉 수락 취소 */}
-                  {notice.notificationType === 'DEAL_CANCEL' && (
+                  {notice && notice.deal && notice.notificationType === 'DEAL_CANCEL' && (
                     <View>
                       <TextCategory
                         style={css`

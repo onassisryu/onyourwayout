@@ -154,7 +154,7 @@ const NoticeSettings = ({navigation}: Props) => {
           setSelectedDongIds={setSelectedDongIds}
           setSelectedDongs={setSelectedDongs}
           setSelectAllText={setSelectAllDongsText}></NoticeSettingsDong>
-        <SaveButton title="저장하기" color="white" size="lg" onPress={onSave} />
+        <SaveButton title="저장하기" color="primary" size="lg" onPress={onSave} />
       </ScrollView>
     </GlobalContainer>
   );
