@@ -14,7 +14,7 @@ import axiosAuth from '@/axios/axiosAuth';
 import Carousel from 'pinar';
 import theme from '@/Theme';
 import {RadialGradient, LinearGradient} from 'react-native-gradients';
-import {useSetRecoilState} from 'recoil';
+import {useSetRecoilState, useRecoilValue} from 'recoil';
 import {modalState} from '@/recoil/atoms';
 import Modal from 'react-native-modal';
 import ProgressBarComponent from '@/components/ProgressBarComponent';
@@ -106,7 +106,13 @@ const GoOut2 = ({route, navigation}: any) => {
   console.log('selectedTitles', selectedTitles);
   const queryString = selectedTitles.map(title => `dealType=${title}`).join('&');
   const [isModalVisible, setModalVisible] = useState(false);
+  const isModalState = useRecoilValue(modalState);
 
+  useEffect(() => {
+    if (isModalState) {
+      navigation.navigate('Main');
+    }
+  }, [isModalState]);
   useEffect(() => {
     console.log('queryString', queryString);
     axiosAuth

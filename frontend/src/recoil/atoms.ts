@@ -37,9 +37,7 @@ export const userSignUpDataState = atom({
 });
 export const modalState = atom({
   key: 'modalState',
-  default: {
-    visible: false,
-  },
+  default: false,
 });
 
 //자동 로그인 여부
