@@ -35,6 +35,12 @@ export const userSignUpDataState = atom({
     inviteCode: '',
   },
 });
+export const modalState = atom({
+  key: 'modalState',
+  default: {
+    visible: false,
+  },
+});
 
 //자동 로그인 여부
 export const isLoggedInState = atom({

@@ -14,6 +14,10 @@ import axiosAuth from '@/axios/axiosAuth';
 import Carousel from 'pinar';
 import theme from '@/Theme';
 import {RadialGradient, LinearGradient} from 'react-native-gradients';
+import {useSetRecoilState} from 'recoil';
+import {modalState} from '@/recoil/atoms';
+import Modal from 'react-native-modal';
+import ProgressBarComponent from '@/components/ProgressBarComponent';
 
 interface DoListCard {
   id: number;
@@ -95,11 +99,13 @@ const dealTypeToCategory = (dealType: string) => {
 };
 const GoOut2 = ({route, navigation}: any) => {
   const [responseData, setResponseData] = useState([]);
+  const setModalStatus = useSetRecoilState(modalState);
   const selectedTitles: string[] = route.params.selectedButton
     .filter((button: {status: boolean; title: string}) => button.status === true)
     .map((button: {status: boolean; title: string}) => button.title);
   console.log('selectedTitles', selectedTitles);
   const queryString = selectedTitles.map(title => `dealType=${title}`).join('&');
+  const [isModalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     console.log('queryString', queryString);
@@ -120,6 +126,7 @@ const GoOut2 = ({route, navigation}: any) => {
       .get(`deal/out-recommend/${dealid}`)
       .then(resp => {
         console.log('성공', resp.data);
+        setModalVisible(true);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -129,6 +136,74 @@ const GoOut2 = ({route, navigation}: any) => {
     {offset: '0%', color: 'black', opacity: '0'},
     {offset: '100%', color: 'black', opacity: '0.5'},
   ];
+  const CustomAlert = ({visible}: any) => {
+    return (
+      <Modal isVisible={visible}>
+        <View
+          style={css`
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+          `}>
+          <View
+            style={css`
+              background-color: white;
+              padding: 20px;
+              border-radius: 10px;
+              width: 95%;
+              height: 200px;
+              align-items: center;
+            `}>
+            <View
+              style={css`
+                height: 20%;
+                width: 100%;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 10px;
+              `}>
+              <Text
+                style={css`
+                  font-size: 20px;
+                  font-weight: 700;
+                `}>
+                매칭을 진행중입니다.
+              </Text>
+            </View>
+            <ProgressBarComponent dealId="Ff" acceptId="ff" setModalVisible={setModalVisible} />
+            <View
+              style={css`
+                flex-direction: row;
+                justify-content: space-between;
+                width: 90%;
+              `}>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(false);
+                }}
+                style={css`
+                  width: 100%;
+                  height: 50px;
+                  background-color: ${theme.color.gray};
+                  justify-content: center;
+                  align-items: center;
+                  border-radius: 10px;
+                `}>
+                <Text
+                  style={css`
+                    color: white;
+                    font-size: 20px;
+                    font-weight: 700;
+                  `}>
+                  취소하기
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
   return (
     <View
       style={css`
@@ -281,6 +356,7 @@ const GoOut2 = ({route, navigation}: any) => {
           ))}
         </Carousel>
       </CarouselContainer>
+      <CustomAlert visible={isModalVisible} />
       {/* <View
         style={css`
           position: absolute;
