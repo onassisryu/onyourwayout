@@ -90,12 +90,17 @@ const App = () => {
   const setFcmTokenState = useSetRecoilState(fcmTokenState);
   const setNoticeCount = useSetRecoilState(noticeCountState);
 
+
   async function requestPermissions() {
     if (Platform.OS === 'android') {
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
     }
   }
 
+  useEffect(()=> { 
+    setNoticeCount(1)
+  }, []);
+  
   useEffect(() => {
     console.log('지도 인증할게요');
     requestPermissions();
