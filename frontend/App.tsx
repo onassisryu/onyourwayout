@@ -115,6 +115,7 @@ const App = ({navigation}: any) => {
       .then(resp => {
         console.log('나가요잉 매칭 성공', resp.data);
         setModalVisible(false);
+        navigation.navigate('MySettings');
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
