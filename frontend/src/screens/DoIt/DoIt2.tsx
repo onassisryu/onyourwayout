@@ -306,18 +306,13 @@ const DoIt2 = ({navigation}: Props) => {
       dealImageFileList: Object.keys(imageData).length === 0 ? [] : imageData,
     };
     console.log('body 전송중', body);
-    const goToDoItListDetail = (id: any) => {
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'DoItListDetail', params: {id}}],
-      });
-    };
+
     submitMultipart(body)
       .then(resp => {
         console.log(body);
         console.log('성공', resp.data);
         console.log('성공', resp.data.id);
-        goToDoItListDetail(resp.data.id);
+        navigation.navigate('DoItListDetail', {id: resp.data.id});
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
