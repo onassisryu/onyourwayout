@@ -55,14 +55,25 @@ import AdminNonCerti from '@/screens/Admin/AdminNonCerti';
 import AdminComplainDeal from '@/screens/Admin/AdminComplainDeal';
 import AdminComplainDealDetail from '@/screens/Admin/AdminComplainDealDetail';
 import AdminPaused from '@/screens/Admin/AdminPaused';
+import {useNavigation} from '@react-navigation/native';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const MainStack = () => {
+const MainStack = ({room, navigation}: any) => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
+  const navigationRef = useNavigation();
+  useEffect(() => {
+    StatusBar.setBackgroundColor('#ffffff');
+    StatusBar.setBarStyle('dark-content');
+  }, []);
+  useEffect(() => {
+    if (room.id) {
+      navigation.navigate('ChatDetail', {roomId: room.id, userId: room.userId, name: room.name, dong: room.dong});
+    }
+  }, [room]);
 
   const BottomTab = () => {
     return (

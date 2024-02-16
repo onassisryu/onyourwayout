@@ -15,14 +15,7 @@ import styled, {css} from '@emotion/native';
 import {AppState} from 'react-native';
 
 //recoil&react-query
-import {
-  isLoggedInState,
-  userDataState,
-  apartDataState,
-  fcmTokenState,
-  noticeCountState,
-  modalState,
-} from '@/recoil/atoms';
+import {isLoggedInState, userDataState, apartDataState, fcmTokenState} from '@/recoil/atoms';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
@@ -51,6 +44,7 @@ import MainStack from '@/navigations/MainStack';
 
 import {getStorage, setStorage} from '@/storage/common_storage';
 import axiosAuth from '@/axios/axiosAuth';
+import {get} from 'axios';
 const Scorebarbackground = styled.View`
   height: 15px;
   width: 100%;
@@ -96,24 +90,13 @@ const App = () => {
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const setFcmTokenState = useSetRecoilState(fcmTokenState);
   const userInfo = useRecoilValue(userDataState);
-  const setNoticeCount = useSetRecoilState(noticeCountState);
-  const ismodalState = useRecoilValue(modalState);
-
-  useEffect(() => {
-    if (ismodalState.visible) {
-      setModalVisible(true);
-    }
-  }, [ismodalState]);
-
   async function requestPermissions() {
     if (Platform.OS === 'android') {
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
     }
   }
-  useEffect(() => {
-    setNoticeCount(1);
-  }, []);
+
   useEffect(() => {
     console.log('지도 인증할게요');
     requestPermissions();
@@ -133,7 +116,6 @@ const App = () => {
   //     dong: dong,
   //   });
   // };
-  let room = {};
   const goChat = (memberNickname: string, otherNickname: string, acceptId: number) => {
     console.log('수락-채팅이동', memberNickname, otherNickname, acceptId);
     const user = {
@@ -146,14 +128,13 @@ const App = () => {
         console.log('채팅방생성', res.data);
         const chatRoom = res.data;
         console.log('채팅방생성', chatRoom.id, userInfo.id, memberNickname, chatRoom.dong.name);
-        room = {roomId: chatRoom.id, userId: userInfo.id, name: memberNickname, dong: chatRoom.dong.name};
         // handleNavigate(chatRoom.id, userInfo.id, memberNickname, chatRoom.dong.name);
       })
       .catch(err => {
         console.log(err);
       });
   };
-  function acceptGoOut(dealId: number, acceptId: number, nickname: string) {
+  function acceptGoOut(dealId: string, acceptId: string, nickname: string) {
     console.log('dealId', dealId);
     console.log('acceptId', acceptId);
     console.log('로그인유저', data.acceptMemberNickname);
@@ -457,7 +438,7 @@ const App = () => {
             dealId={data.dealId}
             time={minuteTimer}
           />
-          <MainStack room={room} />
+          <MainStack />
         </NavigationContainer>
       </ThemeProvider>
     </QueryClientProvider>
