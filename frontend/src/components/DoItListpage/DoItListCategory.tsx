@@ -40,10 +40,9 @@ const TypeCategoryComponent = styled(GlobalContainer)`
 `;
 
 const TypeCategory = styled(GlobalButton)<{selected: boolean}>`
-  max-width: 200px;
-  padding: 9px;
+  padding: 6px;
   border: ${({selected}) => (selected ? '1px solid #E6FBF4' : '1px solid #B2B2B2')};
-  margin-right: 10px;
+  margin-right: 5px;
   background-color: ${({selected}) => (selected ? '#E6FBF4' : 'white')};
 `;
 
@@ -75,7 +74,6 @@ const CategoryComponent = ({name, selected, onSelect}: {name: string; selected: 
 );
 
 const DoItListCategory = (props: Props) => {
-
   const userData = useRecoilValue(userDataState);
 
   return (
