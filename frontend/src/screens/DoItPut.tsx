@@ -81,16 +81,16 @@ type DealProps = {
   expireAtStr: string;
   cash: string | null;
   item: string | null;
-  dealImageFileList: ['']
+  dealImageFileList: [''];
 };
 
 const DoItPut = ({route, navigation}: any) => {
-  const {card} = route.params; 
+  const {card} = route.params;
   const currentTime = new Date();
   const currentHour = String(currentTime.getHours()).padStart(2, '0');
   const currentMinute = String(currentTime.getMinutes()).padStart(2, '0');
   const defaultTime = `${currentHour}:${currentMinute}`;
-  const oneHourLater = new Date(currentTime.getTime() + 60 * 60 * 1000); // 현재 시간에 1시간을 더함
+  const oneHourLater = new Date(currentTime.getTime() + 2 * 60 * 60 * 1000); // 현재 시간에 1시간을 더함
   const oneHourLaterHour = String(oneHourLater.getHours()).padStart(2, '0');
   const oneHourLaterMinute = String(oneHourLater.getMinutes()).padStart(2, '0');
   const oneHourLaterTime = `${oneHourLaterHour}:${oneHourLaterMinute}`;
@@ -105,7 +105,7 @@ const DoItPut = ({route, navigation}: any) => {
     expireAtStr: handleExpireAtChange(time), //만료시간
     cash: card.cash,
     item: card.item,
-    dealImageFileList: card.dealImages
+    dealImageFileList: card.dealImages,
   });
 
   useEffect(() => {
@@ -124,9 +124,9 @@ const DoItPut = ({route, navigation}: any) => {
     const selectedHour = hour ? hour.padStart(2, '0') : '00';
     const selectedMinute = minute ? minute.padStart(2, '0') : '00';
     const expireAtStr = `${year + 1}-${month}-${day} ${selectedHour}:${selectedMinute}:00`;
-    
+
     return expireAtStr;
-};
+  }
 
   const handleTimeChange = (text: string) => {
     setTime(text);
@@ -179,7 +179,7 @@ const DoItPut = ({route, navigation}: any) => {
     outputRange: [0, width / 2.4], // 화면의 반쪽으로 이동
   });
   const userData = useRecoilValue(userDataState);
-  
+
   const submitMultipart = async (body: any) => {
     const formData = new FormData();
     formData.append('dto', JSON.stringify(body.jsonData));
@@ -367,7 +367,6 @@ const DoItPut = ({route, navigation}: any) => {
               onChangeText={text => {
                 handleTimeChange(text);
               }}
-
             />
           </StyledInputContainer>
         </View>
