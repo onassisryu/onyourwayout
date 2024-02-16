@@ -293,4 +293,34 @@ public class NotificationServiceImpl implements NotificationService {
 
         sendMessage(notificationSaved, List.of(acceptMember), data);
     }
+
+    @Override
+    public void sendNotificationOutRecommendDealAccept(Deal deal, Member acceptMember){
+        Long requestMemberId = deal.getRequestId();
+        Member requestMember = memberRepository.findById(requestMemberId)
+                .orElseThrow(() -> new NoSuchElementException("해당하는 멤버가 없습니다."));
+
+        Ho ho = hoRepository.findByMemberId(requestMember.getId());
+
+        Notification notification = Notification.builder()
+                .title("[나가요잉 수락]")
+                .message(requestMember.getNickname() + "님이 \"" + deal.getTitle() + "\"에 대한 나가요잉 신청을 수락하였습니다.")
+                .notificationType(Notification.NotificationType.DEAL_ACCEPT)
+                .DongId(ho.getDong().getId())
+                .DealId(deal.getId())
+                .build();
+        Notification notificationSaved = notificationRepository.save(notification);
+
+        Map<String, String> data = new HashMap<>();
+        data.put("dealId",deal.getId().toString());
+        data.put("dealType", deal.getDealType().toString());
+        data.put("title",deal.getTitle());
+        data.put("requestMemberId",requestMember.getId().toString());
+        data.put("requestMemberNickname",requestMember.getNickname());
+        data.put("requestMemberDong",ho.getDong().getName());
+        data.put("requestMemberHo",ho.getName());
+        data.put("requestMemberScore",Integer.toString(requestMember.getScore()));
+
+        sendMessage(notificationSaved, List.of(acceptMember), data);
+    }
 }

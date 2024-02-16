@@ -644,6 +644,11 @@ public class DealServiceImpl implements DealService{
             throw new IllegalStateException("현재 거래 상태에서는 수락할 수 없음");
         }
 
+        Member acceptMember = memberRepository.findById(acceptId).orElseThrow(
+                () -> new NoSuchElementException("해당하는 멤버가 없습니다."));
+
+        // 수락된 유저에게 메시지
+        notificationService.sendNotificationOutRecommendDealAccept(deal, acceptMember);
         // 갱신된 엔티티 저장
         return new DealDto.Response(deal);
     }
