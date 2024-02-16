@@ -230,9 +230,9 @@ const DoItList = ({navigation}: any) => {
       );
     }
     // 필터링된 결과를 searchResults로 세팅합니다.
-      setSearchResults(results);
-    }, [selectedTypeCategory, selectedApart, searchTerm, cardListData]);
-  
+    setSearchResults(results);
+  }, [selectedTypeCategory, selectedApart, searchTerm, cardListData]);
+
   // 카테고리가 변경될 때마다 필터링을 다시 수행
   useEffect(() => {
     filterAndUpdateResults();
@@ -337,7 +337,7 @@ const DoItList = ({navigation}: any) => {
       />
       {isUpdating ? (
         <View style={{alignItems: 'center'}}>
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color="#6CA5FA" />
           <Text>데이터 업데이트 중입니다.</Text>
         </View>
       ) : null}
@@ -360,7 +360,7 @@ const DoItList = ({navigation}: any) => {
                           card.dealType === 'PET'
                             ? '#FADE6C'
                             : card.dealType === 'SHOP'
-                            ? '#2C70C1'
+                            ? '#6CA5FA'
                             : card.dealType === 'RECYCLE'
                             ? '#00D282'
                             : 'gray',

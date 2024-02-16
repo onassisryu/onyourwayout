@@ -224,9 +224,9 @@ const dealTypeTextMap = {
 const getBackgroundColor = (dealType: string): string => {
   switch (dealType) {
     case 'PET':
-      return 'yellow';
+      return '#FADE6C';
     case 'SHOP':
-      return 'blue';
+      return '#6CA5FA';
     case 'RECYCLE':
       return '#00D282';
     case 'ETC':

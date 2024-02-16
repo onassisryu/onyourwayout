@@ -180,6 +180,7 @@ const GoOut2 = ({route, navigation}: any) => {
               <TouchableOpacity
                 onPress={() => {
                   setModalVisible(false);
+                  navigation.navigate('Main');
                 }}
                 style={css`
                   width: 100%;
