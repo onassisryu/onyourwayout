@@ -97,13 +97,6 @@ const App = () => {
   const setFcmTokenState = useSetRecoilState(fcmTokenState);
   const userInfo = useRecoilValue(userDataState);
   const setNoticeCount = useSetRecoilState(noticeCountState);
-  const ismodalState = useRecoilValue(modalState);
-
-  useEffect(() => {
-    if (ismodalState.visible) {
-      setModalVisible(true);
-    }
-  }, [ismodalState]);
 
   async function requestPermissions() {
     if (Platform.OS === 'android') {
@@ -285,7 +278,6 @@ const App = () => {
                 </View>
               </View>
             </View>
-            {/* 상대방 정보 카드 */}
             <ProgressBarComponent dealId={dealId} acceptId={acceptId} setModalVisible={setModalVisible} />
 
             {/* 타이머 */}
@@ -422,6 +414,7 @@ const App = () => {
       if (remoteMessage.notification?.title === '[나가요잉 신청]') {
         setData(remoteMessage.data);
         setModalVisible(true);
+      } else if (remoteMessage.notification?.title === '[나가요잉 수락]') {
       } else if (remoteMessage.notification?.title === '[해줘요잉 추천]') {
         console.log('지도 알림');
       }

@@ -273,7 +273,7 @@ const DoIt2 = ({navigation}: Props) => {
       const uris: Asset[] = [];
       response.assets?.forEach(value => uris.push(value)); //선택한 사진 순서와 상관없이 들어옴
       const {uri, type, fileName, fileSize} = response.assets[0];
-      const fileSizeLimit = 3 * 1024 * 1024;
+      const fileSizeLimit = 10 * 1024 * 1024;
       console.log('이미지 파일입니다', response.assets[0]);
 
       if (fileSize > fileSizeLimit) {
