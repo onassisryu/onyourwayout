@@ -97,7 +97,7 @@ const App = () => {
   const setFcmTokenState = useSetRecoilState(fcmTokenState);
   const userInfo = useRecoilValue(userDataState);
   const setNoticeCount = useSetRecoilState(noticeCountState);
-
+  const setModalState = useSetRecoilState(modalState);
   async function requestPermissions() {
     if (Platform.OS === 'android') {
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
@@ -415,6 +415,7 @@ const App = () => {
         setData(remoteMessage.data);
         setModalVisible(true);
       } else if (remoteMessage.notification?.title === '[나가요잉 수락]') {
+        setModalState(true);
       } else if (remoteMessage.notification?.title === '[해줘요잉 추천]') {
         console.log('지도 알림');
       }

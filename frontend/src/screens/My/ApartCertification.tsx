@@ -31,7 +31,6 @@ const Container = styled(GlobalContainer)`
   background-color: white;
   height: 100%;
   width: 100%;
-
 `;
 
 const SubContainer = styled(GlobalContainer)`
@@ -39,7 +38,7 @@ const SubContainer = styled(GlobalContainer)`
   box-sizing: border-box;
   background-color: white;
   height: 80%;
-  width: 100%;
+  width: 80%;
   justify-content: center;
   align-items: center;
 `;
@@ -49,7 +48,6 @@ const ContainerText = styled(GlobalText)`
   font-size: 30px;
   color: ${theme.color.primary};
 `;
-
 
 const SubContainerNo = styled(GlobalContainer)`
   flex-direction: row;
@@ -69,9 +67,8 @@ const ContainerNoText = styled(GlobalText)`
 `;
 
 const ApartCertification = ({navigation, route}: any) => {
-
-  const nickname = route.params.nickname
-  const certified = route.params.certified
+  const nickname = route.params.nickname;
+  const certified = route.params.certified;
 
   const [isDisabled, setIsDisabled] = useState(true);
   const [imageData, setImageData] = useState({});
@@ -197,96 +194,109 @@ const ApartCertification = ({navigation, route}: any) => {
       <Header>
         <GoBack />
       </Header>
-      { certified ? 
-      (
-        <SubContainer >
-          <ContainerText style={css`color: black`}>{nickname}님은</ContainerText>
-          <SubContainer style={css`
-            height: initial;
-            flex-direction: row;
-          `}>
+      {certified ? (
+        <SubContainer>
+          <ContainerText
+            style={css`
+              color: black;
+            `}>
+            {nickname}님은
+          </ContainerText>
+          <SubContainer
+            style={css`
+              height: initial;
+              flex-direction: row;
+            `}>
             <ContainerText>세대원 인증</ContainerText>
-            <ContainerText style={css`color: black`}>이 이미 되었습니다.</ContainerText>
+            <ContainerText
+              style={css`
+                color: black;
+              `}>
+              이 이미 되었습니다.
+            </ContainerText>
           </SubContainer>
         </SubContainer>
-
-      )
-        :
-      (
-      <SignupBodyContainer>
-        <SubContainerNo>
-          <ContainerNoText style={css`color: black`}>{nickname}님은 </ContainerNoText>
-          <ContainerNoText>미인증 세대원</ContainerNoText>
-          <ContainerNoText style={css`color: black`}>입니다.</ContainerNoText>
-        </SubContainerNo>
-        <SignupHeadtext
-
-          title="거주지 주소가 나온 
+      ) : (
+        <SignupBodyContainer>
+          <SubContainerNo>
+            <ContainerNoText
+              style={css`
+                color: black;
+              `}>
+              {nickname}님은{' '}
+            </ContainerNoText>
+            <ContainerNoText>미인증 세대원</ContainerNoText>
+            <ContainerNoText
+              style={css`
+                color: black;
+              `}>
+              입니다.
+            </ContainerNoText>
+          </SubContainerNo>
+          <SignupHeadtext
+            title="거주지 주소가 나온 
 관리비 명세서를 업로드해주세요"></SignupHeadtext>
-        <Text
-          style={css`
-            margin-top: 10px;
-            color: ${theme.color.gray};
-          `}>
-          관리비 명세서를 인증받는데
-        </Text>
-        <Text
-          style={css`
-            color: ${theme.color.gray};
-          `}>
-          최대 1주일 정도의 시간이 소요됩니다
-        </Text>
-        <View
-          style={css`
-            margin-top: 30px;
-          `}>
-          <TouchableOpacity onPress={showPhoto}>
-            {Object.keys(imageData).length === 0 ? (
-              <View
-                style={css`
-                  width: 100%;
-                  height: 200px;
-                  background-color: ${theme.color.gray0};
-                  border-radius: 10px;
-                  margin-bottom: 20px;
-                  align-items: center;
-                  justify-content: center;
-                `}>
-                <Feather name="image" size={40} color={theme.color.gray300} />
-                <Text
+          <Text
+            style={css`
+              margin-top: 10px;
+              color: ${theme.color.gray};
+            `}>
+            관리비 명세서를 인증받는데
+          </Text>
+          <Text
+            style={css`
+              color: ${theme.color.gray};
+            `}>
+            최대 1주일 정도의 시간이 소요됩니다
+          </Text>
+          <View
+            style={css`
+              margin-top: 30px;
+            `}>
+            <TouchableOpacity onPress={showPhoto}>
+              {Object.keys(imageData).length === 0 ? (
+                <View
                   style={css`
-                    font-size: 15px;
-                    font-weight: 700;
-                    color: ${theme.color.gray300};
-                    margin-top: 10px;
+                    width: 100%;
+                    height: 200px;
+                    background-color: ${theme.color.gray0};
+                    border-radius: 10px;
+                    margin-bottom: 20px;
+                    align-items: center;
+                    justify-content: center;
                   `}>
-                  사진을 업로드 해주세요
-                </Text>
-              </View>
-            ) : (
-              <Image
-                source={imageData}
-                style={css`
-                  width: 100%;
-                  height: 200px;
-                  background-color: ${theme.color.gray0};
-                  border-radius: 10px;
-                  margin-bottom: 20px;
-                `}
-              />
-            )}
-          </TouchableOpacity>
-        </View>
+                  <Feather name="image" size={40} color={theme.color.gray300} />
+                  <Text
+                    style={css`
+                      font-size: 15px;
+                      font-weight: 700;
+                      color: ${theme.color.gray300};
+                      margin-top: 10px;
+                    `}>
+                    사진을 업로드 해주세요
+                  </Text>
+                </View>
+              ) : (
+                <Image
+                  source={imageData}
+                  style={css`
+                    width: 100%;
+                    height: 200px;
+                    background-color: ${theme.color.gray0};
+                    border-radius: 10px;
+                    margin-bottom: 20px;
+                  `}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
 
-        <NextButton title="다음" color="primary" size="lg" disabled={isDisabled} onPress={() => signUpFinish()} />
-      </SignupBodyContainer>
-      )
-    }
+          <NextButton title="다음" color="primary" size="lg" disabled={isDisabled} onPress={() => signUpFinish()} />
+        </SignupBodyContainer>
+      )}
     </Container>
-      
-  )
-}
-    
+  );
+};
 
 const style = StyleSheet.create({
   root: {
