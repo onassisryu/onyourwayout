@@ -11,9 +11,8 @@ import SvgIcon from '@/components/SvgIcon';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import {NavigationProp} from '@react-navigation/native';
 import Header from '@/components/Header';
-import { useRecoilState } from 'recoil';
-import { noticeCountState } from '@/recoil/atoms'; 
-
+import {useRecoilState} from 'recoil';
+import {noticeCountState} from '@/recoil/atoms';
 
 const StyledText = styled.Text`
   font-weight: bold;
@@ -102,7 +101,6 @@ interface ChatRoom {
   };
 }
 
-
 const ChatMain = ({navigation}: any) => {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const userData = useRecoilValue(userDataState);
@@ -110,11 +108,9 @@ const ChatMain = ({navigation}: any) => {
     memberNickname: userData.nickname,
     otherNickname: '가영가영이',
   };
-  const [noticeCount, setNoticeCount] = useRecoilState(noticeCountState)
+  const [noticeCount, setNoticeCount] = useRecoilState(noticeCountState);
 
-  useEffect(() => {
-
-  }, [noticeCount]); 
+  useEffect(() => {}, [noticeCount]);
   //채팅방생성
   const makeChatRoom = () => {
     axiosAuth
@@ -134,11 +130,13 @@ const ChatMain = ({navigation}: any) => {
       .then(res => {
         console.log('채팅방목록', res.data);
         const chatRooms = res.data.map((chatRoom: ChatRoom) => {
+          console.log(chatRoom);
           const createdAt = chatRoom.createdAt;
           const formattedTime = formatChatTime(createdAt);
           return {...chatRoom, createdAt: formattedTime};
         });
-        return setChatRooms(chatRooms);
+        const revertChatRooms = chatRooms.reverse();
+        return setChatRooms(revertChatRooms);
       })
       .catch(err => {
         console.log(err);
