@@ -136,13 +136,33 @@ const Home = ({navigation}: any) => {
                     style={css`
                       margin-left: 5%;
                     `}>
-                    <Text
+                    <View
                       style={css`
-                        font-weight: 500;
-                        font-size: 20px;
+                        flex-direction: row;
                       `}>
-                      단지 이웃에게 해줘요잉으로
-                    </Text>
+                      <Text
+                        style={css`
+                          font-weight: 500;
+                          font-size: 20px;
+                        `}>
+                        단지 이웃에게 {'\n'}
+                      </Text>
+                      <Text
+                        style={css`
+                          font-weight: 700;
+                          font-size: 20px;
+                        `}>
+                        해줘요잉 {'\n'}
+                      </Text>
+                      <Text
+                        style={css`
+                          font-weight: 500;
+                          font-size: 20px;
+                        `}>
+                        으로
+                      </Text>
+                    </View>
+
                     <Text
                       style={css`
                         font-weight: 500;
@@ -176,13 +196,32 @@ const Home = ({navigation}: any) => {
                     style={css`
                       margin-right: 5%;
                     `}>
-                    <Text
+                    <View
                       style={css`
-                        font-weight: 500;
-                        font-size: 18px;
+                        flex-direction: row;
                       `}>
-                      나가기전 나가요잉으로
-                    </Text>
+                      <Text
+                        style={css`
+                          font-weight: 500;
+                          font-size: 20px;
+                        `}>
+                        나가기전 {'\n'}
+                      </Text>
+                      <Text
+                        style={css`
+                          font-weight: 700;
+                          font-size: 20px;
+                        `}>
+                        나가요잉 {'\n'}
+                      </Text>
+                      <Text
+                        style={css`
+                          font-weight: 500;
+                          font-size: 20px;
+                        `}>
+                        으로
+                      </Text>
+                    </View>
                     <Text
                       style={css`
                         font-weight: 500;
@@ -273,12 +312,24 @@ const Home = ({navigation}: any) => {
               justify-content: center;
               align-items: center;
             `}>
-            <Text
+            <View
               style={css`
-                font-size: 20px;
+                flex-direction: row;
+                font-weight: 700;
               `}>
-              [{userData.nickname}] 님이 나온김에 할 일
-            </Text>
+              <Text
+                style={css`
+                  font-size: 20px;
+                `}>
+                [{userData.nickname}]
+              </Text>
+              <Text
+                style={css`
+                  font-size: 20px;
+                `}>
+                님이 나온김에 할 일
+              </Text>
+            </View>
           </View>
           <View
             style={css`
