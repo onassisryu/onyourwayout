@@ -1,25 +1,33 @@
 package com.ssafy.oywo.service;
 
+import com.ssafy.oywo.dto.AlarmSettingDto;
 import com.ssafy.oywo.dto.JwtToken;
 import com.ssafy.oywo.dto.MemberDto;
-import com.ssafy.oywo.entity.Member;
-import com.ssafy.oywo.entity.RefreshToken;
+import com.ssafy.oywo.entity.*;
 import com.ssafy.oywo.jwt.JwtTokenProvider;
-import com.ssafy.oywo.repository.HoRepository;
-import com.ssafy.oywo.repository.HouseRepository;
-import com.ssafy.oywo.repository.MemberRepository;
-import com.ssafy.oywo.repository.RefreshTokenRepository;
+import com.ssafy.oywo.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.Option;
+import javax.swing.text.html.Option;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -29,21 +37,25 @@ import java.util.*;
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final HoRepository hoRepository;
-    private final HouseRepository houseRepository;
+    private final DongRepository dongRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final NotiDongRepository notiDongRepository;
+    private final NotiDealCategoryRepository notiDealCategoryRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final S3UploadService s3UploadService;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
-    public JwtToken signIn(String username, String password) {
+    public JwtToken signIn(String username, String password) throws HttpClientErrorException.Unauthorized {
 
         // 1. username + password 를 기반으로 Authentication 객체 생성
         // 이때 authentication 은 인증 여부를 확인하는 authenticated 값이 false
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-
+        System.out.println("authenticationToken : " + authenticationToken);
         // 2. 실제 검증. authenticate() 메서드를 통해 요청된 Member 에 대한 검증 진행
         // authenticate 메서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -54,7 +66,9 @@ public class MemberServiceImpl implements MemberService {
         // 기존에 존재하는 refreshToken 삭제
         if (refreshTokenRepository.existsByUserName(username)) {
             log.info("기존에 존재하는 refreshToken 삭제");
-            refreshTokenRepository.deleteByUserName(username);
+            RefreshToken refreshToken=refreshTokenRepository.findByUserName(username)
+                    .orElseThrow(()->new EntityNotFoundException());
+            refreshTokenRepository.deleteById(refreshToken.getId());
         }
         RefreshToken refreshToken=RefreshToken.builder().userName(username).refreshToken(jwtToken.getRefreshToken()).build();
         refreshTokenRepository.save(refreshToken);
@@ -64,46 +78,95 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public MemberDto.Response signUp(MemberDto.Request memberDto) {
+    public MemberDto.Response signUp(MemberDto.Request memberDto, MultipartFile certiImage) {
         if (memberRepository.existsByUsername(memberDto.getUsername())) {
             throw new IllegalArgumentException("이미 사용 중인 사용자 이름입니다.");
         }
+
         // Password 암호화
         String encodedPassword = passwordEncoder.encode(memberDto.getPassword());
         List<String> roles = new ArrayList<>();
-        roles.add(Member.RoleType.ROLE_USER.name());  // USER 권한 부여
+//        roles.add(Member.RoleType.ROLE_USER.name());  // USER 권한 부여
+        roles.add("USER");  // USER 권한 부여
 
-//        List<Code> roles=new ArrayList<>();
-//        roles.add(new Code(1L));
-//
-//        List<Code> code=new ArrayList<>();
-//        code.add(new Code(1L));             // "USER"의 CODE ID 1이라고 가정
-
-        // 초대 코드 확인
-        // 1. 초대코드가 존재하는 경우
-//        String inviteCode=memberDto.getInviteCode();
-//        Optional<Ho> ho=hoRepository.findByInviteCode(inviteCode);
-//        // 거주자 리스트에 추가
-//        if(ho.isPresent()){
-//            // 호 아이디를 받는다.
-//            Long hoId=ho.get().getId();
-//
-//            // 거주자에 등록한다.
-//
-//        }
-//        // 2. 초대코드가 올바르지 않거나 존재하지 않는 경우
-//        else{
-//            Optional<Ho> existedHo=hoRepository.findByDongIdAndName(signUpDto.getDongId(), signUpDto.getHo());
-//            //  2-1. 등록되어 있지 않은 호인 경우
-//
-//            //  2-2. 이미 등록되어 있는 호인 경우
-//        }
-
-
+//        roles.add("ADMIN");
+        // 먼저 회원 정보를 저장
         MemberDto.SignUp signup=new MemberDto.SignUp();
-        Member member=memberRepository.save(signup.toEntity(memberDto,roles));
 
-        return new MemberDto.Response(member);
+        Member member=null;
+
+        // 반환할 값
+        MemberDto.Response response=null;
+
+        String inviteCode=memberDto.getInviteCode();
+        boolean isValidInviteCode=false;
+
+        // 초대 코드를 기입한 경우
+        if (!inviteCode.equals("")){
+            Optional<Ho> ho=hoRepository.findByInviteCode(inviteCode);
+            
+            // 유효한 초대 코드인 경우
+            if (ho.isPresent()){
+                isValidInviteCode=true;
+                member=memberRepository.save(signup.toEntity(memberDto,roles,true));
+                // 해당하는 호에 회원 추가
+                List<Member> members=ho.get().getMember();
+                members.add(member);
+                ho.get().builder().member(members).build();
+                member.setHo(ho.get());
+                response=MemberDto.Response.of(member,ho.get());
+            }
+        }
+
+        // 초대 코드를 기입하지 않은 경우 또는 유효하지 않은 초대 코드인 경우
+        // 동 id와 호 이름으로 회원을 저장한다.
+        else if (inviteCode.equals("") || !isValidInviteCode){
+            member=memberRepository.save(signup.toEntity(memberDto,roles,false));
+            Long dongId=memberDto.getDongId();
+            String hoName=memberDto.getHoName();
+            Optional<Ho> ho=hoRepository.findByDongIdAndName(dongId,hoName);
+            // 이미 등록된 호가 있는 경우
+            // 해당 호에 회원을 추가한다.
+            if (ho.isPresent()){
+                List<Member> members=ho.get().getMember();
+                members.add(member);
+                ho.get().builder().member(members).build();
+                member.setHo(ho.get());
+                response=MemberDto.Response.of(member,ho.get());
+                member.setHo(ho.get());
+            }
+            // 등록되지 않은 호인 경우
+            else{
+                // 새로운 호를 만들어서 저장한다.
+                Dong dong=dongRepository.findById(dongId)
+                        .orElseThrow(()->new RuntimeException("해당 동을 찾을 수 없습니다."));
+                List<Member> members=new ArrayList<>();
+                members.add(member);
+                // 새로운 호에는 동 정보, 호 이름, 해당 호에 살고 있는 거주자 리스트, 초대 코드를 함께 저장
+                UUID uuid=UUID.nameUUIDFromBytes(String.valueOf(System.currentTimeMillis()).getBytes());
+                String newInviteCode=uuid.toString().replaceAll("-","");
+                Ho newHo= Ho.builder().dong(dong).name(hoName).member(members).inviteCode(newInviteCode).build();
+                newHo=hoRepository.save(newHo);
+                member.setHo(newHo);
+                response= MemberDto.Response.of(member, newHo);
+            }
+            // 아파트 명세서 등록
+            String apartCertificateImgUrl="";
+            try{
+                if (certiImage!=null){
+                    apartCertificateImgUrl=s3UploadService.upload(certiImage,"CertiImage",member.getId());
+                }
+                member.setCertificationImg(apartCertificateImgUrl);
+                response=response.toBuilder().certificationImg(apartCertificateImgUrl).build();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("아파트 명세서 등록 중 오류 발생", e);
+            }
+        }
+
+
+
+        return response;
     }
 
     public Optional<RefreshToken> getRefreshToken(String refreshToken){
@@ -130,8 +193,331 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
+    @Transactional
     @Override
-    public Member getMemberInfo(String username, String password) {
-        return memberRepository.findByUsernameAndPassword(username,password);
+    public MemberDto.Response modify(Long id,MemberDto.Request memberDto) {
+
+        Optional<Member> member=memberRepository.findById(id);
+
+        if (member.isPresent()){
+            Member existedMember=member.get()
+                    .toBuilder()
+                    .username(memberDto.getUsername())
+                    .nickname(memberDto.getNickname())
+                    .phoneNumber(memberDto.getPhoneNumber())
+                    .birthDate(memberDto.getBirthDate())
+                    .password(memberDto.getPassword())
+                    .score(member.get().getScore())
+                    .build();;
+            existedMember=memberRepository.save(existedMember);
+
+
+            Long hoId=memberRepository.findHoAptIdsByMemberId(member.get().getId());
+            Ho ho=hoRepository.findById(hoId)
+                    .orElseThrow(()->new NoSuchElementException("존재하지 않는 호입니다."));
+
+            MemberDto.Response response=MemberDto.Response.of(existedMember,ho);
+
+            return response;
+        }
+        return null;
     }
+    @Transactional
+    @Override
+    public MemberDto.Response modifyWithAlarm(Member member) {
+        // 기존에 저장된 알림을 가져온다.
+        Member originMember=memberRepository.findById(member.getId())
+                .orElseThrow(()->new NoSuchElementException("존재하지 않는 사용자입니다."));
+        List<NotiDong> originNotiDongs=originMember.getNotiDongs();
+        List<NotiDealCategory> originNotiDealCategories=originMember.getNotiDealCategories();
+        // 기존 알림을 지운다.
+        for (NotiDong notiDong:originNotiDongs){
+            notiDongRepository.delete(notiDong);
+        }
+        for (NotiDealCategory category:originNotiDealCategories){
+            notiDealCategoryRepository.delete(category);
+        }
+        memberRepository.save(member);
+        if (!member.isNotiDongAll()){
+            for (NotiDong notiDong:member.getNotiDongs()){
+                notiDongRepository.save(notiDong);
+            }
+        }
+        if (!member.isNotiCategoryAll()){
+            for (NotiDealCategory category:member.getNotiDealCategories()){
+                notiDealCategoryRepository.save(category);
+            }
+        }
+        return MemberDto.Response.of(member);
+    }
+
+    @Transactional
+    @Override
+    public MemberDto.Response modify(Member member){
+        for (int i=0;i<member.getNotiDongs().size();i++){
+            System.out.println(member.getNotiDongs().get(i).getDongId());
+        }
+        Member modifiedMember=memberRepository.save(member);
+        for (int i=0;i<modifiedMember.getNotiDongs().size();i++){
+            System.out.println(modifiedMember.getNotiDongs().get(i).getDongId());
+        }
+        System.out.println(modifiedMember.getNotiDongs());
+
+        //System.out.println(modifiedMember.getNotiDealCategories());
+        return MemberDto.Response.of(modifiedMember);
+    }
+
+    @Transactional
+    @Override
+    public MemberDto.Response modify(MemberDto.Modification dto,MultipartFile certiImage) {
+        Member member=memberRepository.findById(dto.getId())
+                .orElseThrow(()->new NoSuchElementException("존재하지 않는 사용자입니다."));
+        member.setNickname(dto.getNickname());
+        member.setPassword(dto.getPassword());
+        member.setUsername(dto.getUsername());
+        member.setBirthDate(dto.getBirthDate());
+        member.setPhoneNumber(dto.getPhoneNumber());
+        try{
+            if (!certiImage.isEmpty()){
+                String imgURL=s3UploadService.upload(certiImage,"CertiImage",member.getId());
+                member.setCertificationImg(imgURL);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("아파트 명세서 등록 중 오류 발생", e);
+        }
+
+        Ho ho=hoRepository.findByMemberId(member.getId());
+
+        MemberDto.Response response=MemberDto.Response.of(member,ho);
+
+        return response;
+    }
+
+    @Transactional
+    @Override
+    public void logout(String username) {
+        Optional<RefreshToken> refreshToken=refreshTokenRepository.findByUserName(username);
+
+        if (refreshToken.isPresent()){
+            refreshTokenRepository.deleteById(refreshToken.get().getId());
+        }
+    }
+
+    @Override
+    public MemberDto.Response getMemberInfo(String username, String password) {
+        Member member=memberRepository.findByUsernameAndPassword(username,password);
+        List<NotiDong> notiDongs=new ArrayList<>();
+        List<NotiDealCategory> notiDealCategories=new ArrayList<>();
+
+        for (NotiDong notiDong:member.getNotiDongs()){
+            if (notiDong.getDeletedAt()==null){
+                notiDongs.add(notiDong);
+            }
+        }
+
+        for (NotiDealCategory category:member.getNotiDealCategories()){
+            if (category.getDeletedAt()==null){
+                notiDealCategories.add(category);
+            }
+        }
+        member=member.toBuilder().notiDongs(notiDongs).notiDealCategories(notiDealCategories).build();
+        return MemberDto.Response.of(member);
+    }
+
+    @Override
+    public MemberDto.Response getMemberInfo(Long id) {
+        Optional<Member> member=memberRepository.findById(id);
+        if (member.isPresent()){
+            Member m=member.get();
+            List<NotiDong> notiDongs=new ArrayList<>();
+            List<NotiDealCategory> notiDealCategories=new ArrayList<>();
+
+            for (NotiDong notiDong:m.getNotiDongs()){
+                if (notiDong.getDeletedAt()==null){
+                    notiDongs.add(notiDong);
+                }
+            }
+
+            for (NotiDealCategory category:m.getNotiDealCategories()){
+                if (category.getDeletedAt()==null){
+                    notiDealCategories.add(category);
+                }
+            }
+            m=m.toBuilder().notiDongs(notiDongs).notiDealCategories(notiDealCategories).build();
+            return MemberDto.Response.of(m);
+        }
+        return null;
+    }
+
+    @Transactional
+    @Override
+    public MemberDto.Response setMemberAlarm(AlarmSettingDto.Request alarmDto) {
+        // 사용자 정보 가져오기
+        Member member=memberRepository.findById(alarmDto.getMemberId())
+                .orElseThrow(()->new NoSuchElementException("존재하지 않는 사용자입니다."));
+
+        // 전체 동 알림 여부 확인
+        if (alarmDto.getIsNotiCategoryAll()){
+            // 사용자 정보 전체 동 알림으로 수정
+            member.setNotiDongAll(true);
+        }
+        else{
+
+            List<NotiDong> dongList=new ArrayList<>();
+             notiDongRepository.deleteAllByMemberId(alarmDto.getMemberId());
+            // 재설정
+            for (Long dongId:alarmDto.getDongIdList()){
+
+                // 이미 설정한 알림인 경우 deletedAt null로 수정
+                Optional<NotiDong> notiDongResult=notiDongRepository.findByMemberIdAndDongId(member.getId(),dongId);
+                if (notiDongResult.isPresent()){
+                    notiDongResult.get().setDeletedAt(null);
+                    dongList.add(notiDongResult.get());
+                }
+                // 설정한 적이 없는 알림인 경우 새로 추가
+                else{
+                    NotiDong dong=NotiDong.builder().member(member).dongId(dongId).build();
+                    dongList.add(dong);
+                    notiDongRepository.save(dong);
+                }
+            }
+            //member.setNotiDongs(dongList);
+        }
+        // 전체 카테고리 알림 여부 확인
+        if (alarmDto.getIsNotiDongAll()){
+            // 사용자 정보 전체 카테고리 알림으로 수정
+            member.setNotiCategoryAll(true);
+        }
+        else{
+             notiDealCategoryRepository.deleteAllByMemberId(alarmDto.getMemberId());
+            List<NotiDealCategory> notiDealCategoryList=new ArrayList<>();
+
+            // 재설정
+            for (DealType dealType:alarmDto.getDealTypeList()){
+
+                Optional<NotiDealCategory> categoryResult=notiDealCategoryRepository.findByMemberIdAndDealType(member.getId(),dealType);
+                if (categoryResult.isPresent()){
+                    categoryResult.get().setDeletedAt(null);
+                    notiDealCategoryList.add(categoryResult.get());
+                }
+                // 설정한 적이 없는 알림인 경우 추가
+                else{
+                    NotiDealCategory category=NotiDealCategory.builder().member(member).dealType(dealType).build();
+                    notiDealCategoryList.add(category);
+                    notiDealCategoryRepository.save(category);
+                }
+            }
+            //member.setNotiDealCategories(notiDealCategoryList);
+        }
+
+        // 시작 시간과 마지막 시간 설정
+        member.setNotificationStart(alarmDto.getNotificationStart());
+        member.setNotificationEnd(alarmDto.getNotificationEnd());
+
+        return MemberDto.Response.of(member);
+    }
+
+    @Override
+    public MemberDto.Response getMemberInfo(String username) {
+        Member member=memberRepository.findByUsername(username)
+                .orElseThrow(()->new NoSuchElementException("찾을 수 없는 아이디입니다."));
+        // member가 사는 곳을 찾는다.
+        Ho ho=hoRepository.findByMemberId(member.getId());
+        return MemberDto.Response.of(member,ho);
+    }
+
+    @Override
+    public Long getHoIdByMemberId(Long memberId) {
+        return memberRepository.findHoAptIdsByMemberId(memberId);
+    }
+
+    @Transactional
+    @Override
+    public void saveFcmToken(Long memberId, String fcmToken) {
+        Member member=memberRepository.findById(memberId)
+                .orElseThrow(()->new EntityNotFoundException("없는 사용자 입니다."));
+        member.setFcmToken(fcmToken);
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    @Override
+    public List<String> getFcmTokens(List<Long> memberIdList) {
+        List<String> fcmTokens=new ArrayList<>();
+        for(Long id:memberIdList){
+            Optional<Member> member=memberRepository.findById(id);
+            if (member.isPresent()){
+                fcmTokens.add(member.get().getFcmToken());
+            }
+        }
+        return fcmTokens;
+    }
+
+    @Override
+    public void removeFcmToken(String username) {
+        Member member=memberRepository.findByUsername(username)
+                .orElseThrow(NoSuchElementException::new);
+        member=member.toBuilder().fcmToken(null).build();
+        memberRepository.save(member);
+    }
+
+    @Override
+    public HashMap<String, Object> findHoByInviteCode(String inviteCode) {
+        HashMap<String,Object> payload=new HashMap<>();
+        Optional<Ho> ho=hoRepository.findByInviteCode(inviteCode);
+
+        if (ho.isPresent()){
+            payload.put("hoId",ho.get().getId());
+            payload.put("hoName",ho.get().getName());
+            payload.put("dongId",ho.get().getDong().getId());
+            payload.put("dongName",ho.get().getDong().getName());
+            payload.put("apartName",ho.get().getDong().getApartment().getName());
+            payload.put("apartId",ho.get().getDong().getApartment().getId());
+            return payload;
+        }
+        return null;
+
+
+    }
+
+    public Long getLoginUserId() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Long loginUserId = memberRepository.findByUsername(username)
+                .map(Member::getId)
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
+
+        log.info("loginUserName: {}, loginUserId: {}", username, loginUserId);
+        return loginUserId;
+    }
+
+    @Override
+    public boolean isExistUserName(String userName) {
+        Optional<Member> member=memberRepository.findByUsername(userName);
+        if (member.isPresent()){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isExistNickName(String nickName) {
+        Optional<Member> member=memberRepository.findByNickname(nickName);
+        if (member.isPresent()){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isExistPhoneNumber(String phoneNumber) {
+        Optional<Member> member=memberRepository.findByPhoneNumber(phoneNumber);
+        if (member.isPresent()){
+            return true;
+        }
+        return false;
+    }
+
+
 }

@@ -1,16 +1,10 @@
-
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://i10a302.p.ssafy.io/oywo?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    url: jdbc:mysql://localhost:3306/test?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: 1234
+  profiles:
+    active: aws
   security:
     user:
       name: user
       password: 1234
-
 
   jpa:
     hibernate:
@@ -20,5 +14,27 @@ spring:
       hibernate:
         format_sql: true
 
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
 jwt:
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  default-consumes-media-type: application/json; charset=UTF-8
+  default-produces-media-type: application/json; charset=UTF-8
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-exception: false
+  tomcat:
+    connection-timeout: 60000
+    keep-alive-timeout: 60000
