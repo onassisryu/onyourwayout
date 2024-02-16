@@ -95,7 +95,7 @@ const MainStack = ({room, navigation}: any) => {
 
             if (route.name === '홈') {
               iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === '위치') {
+            } else if (route.name === '우리 단지') {
               iconName = focused ? 'location' : 'location-outline';
             } else if (route.name === '채팅') {
               iconName = focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline';
@@ -109,7 +109,7 @@ const MainStack = ({room, navigation}: any) => {
           },
         })}>
         <Tab.Screen name="홈" component={Main} />
-        <Tab.Screen name="위치" component={Location} />
+        <Tab.Screen name="우리 단지" component={Location} />
         <Tab.Screen name="아파트" component={DoItList} />
         <Tab.Screen name="채팅" component={ChatMain} />
         <Tab.Screen name="내정보" component={My} />

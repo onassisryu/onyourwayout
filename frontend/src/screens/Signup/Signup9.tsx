@@ -69,7 +69,6 @@ const Signup9 = ({navigation}: any) => {
         if (response.assets != null) {
           //선택된 이미지 객체를 이미지뷰가 보여주는 state변수 img에 저장
           //선택된 이미지의 uri 경로 얻어오기
-          const name = response.assets[0].fileName;
           const uri = response.assets[0].uri; //assets 여러개가 올수 있는데 중에 0번방 거
           const type = response.assets[0].type;
           const fileSize = response.assets[0].fileSize;
@@ -120,7 +119,6 @@ const Signup9 = ({navigation}: any) => {
     formData.append('dto', JSON.stringify(body.jsonData));
     formData.append('dealImageFileList', body.dealImageFileList);
 
-    console.log(JSON.stringify(body.jsonData));
     const instance = axios.create();
     return instance({
       url: 'http://i10a302.p.ssafy.io:8080/members/signup',
@@ -134,6 +132,7 @@ const Signup9 = ({navigation}: any) => {
 
   function signUpFinish() {
     console.log(userSignUpData);
+    console.log('회원가입 진행중 이미지', imageData);
     const body = {
       jsonData: userSignUpData,
       dealImageFileList: Object.keys(imageData).length === 0 ? [] : imageData,
