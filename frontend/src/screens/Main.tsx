@@ -315,11 +315,11 @@ const Home = ({navigation}: any) => {
             <View
               style={css`
                 flex-direction: row;
-                font-weight: 700;
               `}>
               <Text
                 style={css`
                   font-size: 20px;
+                  font-weight: 700;
                 `}>
                 [{userData.nickname}]
               </Text>
