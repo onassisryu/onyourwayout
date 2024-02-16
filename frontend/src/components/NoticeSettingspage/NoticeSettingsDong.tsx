@@ -7,6 +7,9 @@ import axiosAuth from '@/axios/axiosAuth';
 
 import {View, TouchableOpacity, ImageSourcePropType, Switch, TextInput} from 'react-native';
 import {GlobalText, GlobalContainer, GlobalButton} from '@/GlobalStyles';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { userDataState } from '@/recoil/atoms';
+
 
 const SettingsComponent = styled(GlobalContainer)`
   justify-content: initial;
@@ -95,20 +98,25 @@ type ApartmentData = {
     name: string;
 };
 
-const NoticeSettingsDong = (props: NoticeSettingsDongProps) => {
+interface Dong {
+  dongId: number;
+  // 필요한 경우 다른 필드를 추가할 수 있습니다.
+}
 
+const NoticeSettingsDong = (props: NoticeSettingsDongProps) => {
+  
+  const [userData, setUserData] = useRecoilState(userDataState);
 
   const onSelectCategory = (category: string) => {
-    
-
+    const index = props.dongs.indexOf(category);
+  
     if (props.selectedDongs.includes(category)) {
-      const index = props.selectedDongs.indexOf(category);
+      const selectedIndex = props.selectedDongs.indexOf(category);
       props.setSelectedDongs(prevDongs => prevDongs.filter(selected => selected !== category));
-      props.setSelectedDongIds(prevIds => prevIds.filter((_, idIndex) => idIndex !== index));
-    } else {
-      const index = props.dongs.indexOf(category);
-      props.setSelectedDongs(prevDongs => prevDongs.concat(category));
-      props.setSelectedDongIds(prevIds => prevIds.concat(props.dongsId[index]));
+      props.setSelectedDongIds(prevIds => prevIds.filter((_, idIndex) => idIndex !== selectedIndex));
+    } else if (!props.selectedDongs.includes(category)) {
+      props.setSelectedDongs(prevDongs => [...prevDongs, category]);
+      props.setSelectedDongIds(prevIds => [...prevIds, props.dongsId[index]]);
     }
     console.log(props.selectedDongs, props.selectedDongIds)
   };
@@ -121,28 +129,53 @@ const NoticeSettingsDong = (props: NoticeSettingsDongProps) => {
       props.setSelectedDongs(props.dongs);
       props.setSelectedDongIds(props.dongsId); // 모든 항목이 선택될 때 selectedDongIds에 모든 Id를 설정
     }
+    console.log(props.selectedDongs, props.selectedDongIds)
   };
 
-    useEffect(() => {
-      axiosAuth
-        .get('/members/auth')
-        .then(resp => {
-          console.log('성공', resp.data);
-          props.setMyDong(resp.data.dongName)
-          axiosAuth
-          .get(`apart/dong/${resp.data.aptId}`)
-          .then(resp => {
-              console.log('성공', resp.data.data);
-              const categoryNames = resp.data.data.map((item: ApartmentData) => item.name);
-              const categoryIds = resp.data.data.map((item: ApartmentData) => item.dongId);
-              props.setDongs(categoryNames);
-              props.setDongsId(categoryIds)
-          })
-        })
-        .catch(error => {
-          console.error('데이터를 가져오는 중 오류 발생:', error);
+  useEffect(() => {
+    axiosAuth.get('/members/auth')
+    .then(resp => {
+      console.log('사용자 정보: ', resp.data);
+      props.setMyDong(resp.data.dongName);
+    
+      // 사용자 정보를 기반으로 아파트 동 정보를 가져오는 요청을 실행합니다.
+      return axiosAuth.get(`apart/dong/${resp.data.aptId}`);
+    })
+    .then(apartResp => {
+      console.log('아파트 동 정보: ', apartResp.data.data);
+      const categoryNames = apartResp.data.data.map((item: ApartmentData) => item.name);
+      const categoryIds = apartResp.data.data.map((item: ApartmentData) => item.dongId);
+      props.setDongs(categoryNames);
+      props.setDongsId(categoryIds);
+    })
+    .catch(error => {
+      console.error('데이터를 가져오는 중 오류 발생:', error);
+    });
+  }, []);
+  
+  useEffect(() => {
+    // 아파트 동 정보가 설정된 후에 알람 설정 정보를 가져옵니다.
+    if (props.dongs.length > 0) {
+      axiosAuth.get(`/alarm/get/${userData.id}`)
+      .then(alarmResp => {
+        console.log('알람 설정 정보: ', alarmResp.data);
+  
+        // 알람 설정 정보를 이용하여 selectedDongs 상태를 업데이트합니다.
+        const newDongIds = alarmResp.data.notiDongs.map((dong: Dong) => dong.dongId);
+        props.setSelectedDongIds(newDongIds);
+  
+        // dongId에 해당하는 동네 이름 찾기
+        const newDongs = newDongIds.map((id : string) => {
+          const index = props.dongsId.indexOf(id);
+          return props.dongs[index];
         });
-    }, []);
+        props.setSelectedDongs(newDongs);
+      })
+      .catch(error => {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      });
+    }
+  }, [props.dongs]);
   
     useEffect(() => {
       props.setSelectAllText(props.selectedDongs.length === props.dongs.length ? '모두 해제' : '모두 선택');
@@ -157,15 +190,15 @@ const NoticeSettingsDong = (props: NoticeSettingsDongProps) => {
           </AllSelectionButton>
         </CategorySettingsTitle>
         <CategoryComponent>
-          {props.dongs.map(dong => (
-            <Category
-              key={dong}
-              selected={props.selectedDongs.includes(dong)}
-              onPress={() => onSelectCategory(dong)}>
-              <CategoryText selected={props.selectedDongs.includes(dong)}>{dong}동{dong === props.myDong ? ' (내 아파트)' : ''}</CategoryText>
-            </Category>
-          ))}
-        </CategoryComponent>
+        {props.dongs.map(dong => (
+          <Category
+            key={dong}
+            selected={props.selectedDongs.includes(dong)} // selectedDongs 배열에 해당 동네 이름이 있으면 selected prop을 true로 설정
+            onPress={() => onSelectCategory(dong)}>
+            <CategoryText selected={props.selectedDongs.includes(dong)}>{dong}동{dong === props.myDong ? ' (내 아파트)' : ''}</CategoryText>
+          </Category>
+        ))}
+      </CategoryComponent>
       </SettingsComponent>
     );
   };

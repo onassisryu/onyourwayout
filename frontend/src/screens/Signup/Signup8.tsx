@@ -173,7 +173,7 @@ const Signup8 = ({navigation, route}: any) => {
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
             />
-            <Text
+            {/* <Text
               style={css`
                 position: absolute;
                 top: 56px;
@@ -181,7 +181,7 @@ const Signup8 = ({navigation, route}: any) => {
                 font-size: 20px;
               `}>
               호
-            </Text>
+            </Text> */}
             <IconWrapper onPress={handleClearInput2} visible={isFocused && ho.length > 0}>
               <Ant name="closecircleo" size={20} color={theme.color.gray200} />
             </IconWrapper>

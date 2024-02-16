@@ -227,26 +227,70 @@ const GoOut2 = ({route, navigation}: any) => {
         width: 100%;
         height: 100%;
       `}>
-      <ScrollView>
-        {responseData.map((card, index) => (
-          <View
-            key={index}
-            style={css`
-              border: 1px solid black;
-            `}>
-            <Text>{card.title}</Text>
-            <Text>{card.content}</Text>
-            {type === 'accept' && (
-              <TouchableOpacity
-                onPress={() => {
-                  acceptDoit(card.id);
-                }}>
-                <Text>파토내기</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        ))}
-      </ScrollView>
+      <Header>
+        <GoBack />
+      </Header>
+      <View
+        style={css`
+          margin-left: 10px;
+          margin-right: 10px;
+          height: 90%;
+        `}>
+        <ScrollView overScrollMode="never">
+          {responseData.map((card, index) => (
+            <View key={index}>
+              <DoItListButton onPress={() => navigation.navigate('DoItListDetail', {id: card.id})}>
+                <DoItListCard>
+                  <CardImageContainer>
+                    {card.dealImages.length > 0 && <DoItListImage src={card.dealImages[0].imgUrl} />}
+                  </CardImageContainer>
+
+                  <CardTextContainer>
+                    <View
+                      style={css`
+                        flex: 1;
+                        margin-top: 10px;
+                      `}>
+                      <TextTitle numberOfLines={1}>{card.title}</TextTitle>
+
+                      <TextApart>{calculateTimeAgo(card.createdAt)}</TextApart>
+                    </View>
+                    <View
+                      style={css`
+                        width: 100%;
+                        flex-direction: row;
+                        justify-content: space-between;
+                        margin-top: 10px;
+                      `}>
+                      {card.dealStatus === 'OPEN' && currentTime < new Date(card.expireAt) && <Text>[대기 중]</Text>}
+                      {card.dealStatus === 'OPEN' && currentTime > new Date(card.expireAt) && <Text>[시간만료]</Text>}
+                      {card.dealStatus === 'ING' && <Text>[진행 중]</Text>}
+                      {card.dealStatus === 'CLOSE' && <Text>[완료]</Text>}
+                      <TextPrice>
+                        {' '}
+                        {card.rewardType === 'CASH'
+                          ? `${card.cash.toLocaleString()}원`
+                          : card.rewardType === 'ITEM'
+                          ? card.item
+                          : 'Unknown Reward Type'}
+                      </TextPrice>
+                    </View>
+                  </CardTextContainer>
+                </DoItListCard>
+              </DoItListButton>
+              <DistinctLine />
+              {/* {type === 'accept' && (
+                <TouchableOpacity
+                  onPress={() => {
+                    acceptDoit(card.id);
+                  }}>
+                  <Text>파토내기</Text>
+                </TouchableOpacity>
+              )} */}
+            </View>
+          ))}
+        </ScrollView>
+      </View>
     </View>
   );
 };

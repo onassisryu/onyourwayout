@@ -13,6 +13,10 @@ export const apartDataState = atom({
   key: 'apartDataState',
   default: [],
 });
+export const alaramState = atom({
+  key: 'alaramState',
+  default: {},
+});
 
 export const fcmTokenState = atom({
   key: 'fcmTokenState',
@@ -31,6 +35,10 @@ export const userSignUpDataState = atom({
     inviteCode: '',
   },
 });
+export const modalState = atom({
+  key: 'modalState',
+  default: false,
+});
 
 //자동 로그인 여부
 export const isLoggedInState = atom({
@@ -42,4 +50,9 @@ export const isLoggedInState = atom({
 export const loadingState = atom({
   key: 'loadingState',
   default: false,
+});
+
+export const noticeCountState = atom({
+  key: 'noticeCountState', // unique ID
+  default: 0, // default value
 });

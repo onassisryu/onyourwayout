@@ -7,15 +7,23 @@ import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
 import {useRef, useEffect, useState} from 'react';
 import axiosAuth from '@/axios/axiosAuth';
+import SvgIcon from '@/components/SvgIcon';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+import {NavigationProp} from '@react-navigation/native';
+import Header from '@/components/Header';
+import { useRecoilState } from 'recoil';
+import { noticeCountState } from '@/recoil/atoms'; 
+
 
 const StyledText = styled.Text`
-  font-size: 30px;
-  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 22px;
 `;
 
 const ChatRoomsContainer = styled(ScrollView)`
-  padding: 0 20px;
+  padding: 0px 20px 0 20px;
 `;
+
 const ChatRoomContainer = styled.TouchableOpacity`
   height: 80px;
   padding: 10px;
@@ -23,12 +31,63 @@ const ChatRoomContainer = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
   flex-direction: row;
-  background-color: pink;
+  background-color: white;
 `;
+
 const ChatTextContainer = styled.View`
   flex: 1;
-  background-color: #eaeaea;
+  background-color: white;
 `;
+
+const ChatSubTextContainer = styled.View`
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  background-color: white;
+  margin: 0 10px 5px 0;
+`;
+
+const NicknameText = styled.Text`
+  font-weight: bold;
+  font-size: 18px;
+`;
+
+const DongText = styled.Text`
+  font-weight: bold;
+  font-size: 13px;
+  color: ${props => props.theme.color.gray300};
+  margin-left: 7px;
+  margin-top: 5px;
+`;
+
+const TimeText = styled.Text`
+  font-weight: bold;
+  //항상 왼쪽으로
+  text-align: right;
+  font-size: 10px;
+  color: ${props => props.theme.color.gray200};
+  padding-bottom: 2px;
+`;
+
+const RecentlyChat = styled.Text`
+  font-weight: bold;
+  font-size: 16px;
+  color: ${props => props.theme.color.gray300};
+`;
+
+// 알림 아이콘
+const BellNotifBadge = styled.View`
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: red;
+  position: absolute;
+  right: 0;
+`;
+
+interface Props {
+  navigation: NavigationProp<any>;
+}
 
 interface ChatRoom {
   id: number;
@@ -42,19 +101,20 @@ interface ChatRoom {
     name: string;
   };
 }
+
+
 const ChatMain = ({navigation}: any) => {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const userData = useRecoilValue(userDataState);
-  //텍스트 오류 해결
-  // const TextEncodingPolyfill = require('text-encoding');
-  // Object.assign('global', {
-  //   TextEncoder: TextEncodingPolyfill.TextEncoder,
-  //   TextDecoder: TextEncodingPolyfill.TextDecoder,
-  // });
   const user = {
-    memberNickname: '가영가영이',
-    otherNickname: '하구팟',
+    memberNickname: userData.nickname,
+    otherNickname: '가영가영이',
   };
+  const [noticeCount, setNoticeCount] = useRecoilState(noticeCountState)
+
+  useEffect(() => {
+
+  }, [noticeCount]); 
   //채팅방생성
   const makeChatRoom = () => {
     axiosAuth
@@ -118,8 +178,23 @@ const ChatMain = ({navigation}: any) => {
 
   return (
     <GlobalContainer>
-      <StyledText>Chat</StyledText>
-      <DefaultButton color="primary" title="채팅방생성" onPress={makeChatRoom} />
+      <Header
+        style={css`
+          width: 99%;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          height: 60px;
+          margin-left: 5px;
+        `}>
+        <StyledText>채팅</StyledText>
+        <TouchableOpacity onPress={() => navigation.navigate('Notice')}>
+          <Fontisto name="bell" size={28} color="gray" />
+          {noticeCount > 0 && <BellNotifBadge />}
+        </TouchableOpacity>
+      </Header>
+
       <ChatRoomsContainer contentInsetAdjustmentBehavior="automatic">
         {chatRooms.map(chatRoom => (
           <ChatRoomContainer
@@ -127,7 +202,7 @@ const ChatMain = ({navigation}: any) => {
             onPress={() => {
               navigation.navigate('ChatDetail', {
                 roomId: chatRoom.id,
-                userId: userData.id,
+                userId: chatRoom.oppId,
                 name: chatRoom.oppNickName,
                 dong: chatRoom.dong.name,
               });
@@ -138,14 +213,26 @@ const ChatMain = ({navigation}: any) => {
                 width: 52px;
                 border-radius: 30px;
                 background-color: #eaeaea;
-                margin-right: 10px;
-              `}
-            />
+                margin-right: 15px;
+                justify-content: center;
+                align-items: center;
+              `}>
+              <SvgIcon name="profile" size={60} />
+            </View>
+
             <ChatTextContainer>
-              <Text>상대방 닉네임: {chatRoom.oppNickName}</Text>
-              <Text>상대방 id: {chatRoom.oppId}</Text>
-              <Text>동: {chatRoom.dong.name}</Text>
-              <Text>시간: {chatRoom.createdAt}</Text>
+              <ChatSubTextContainer>
+                <View
+                  style={css`
+                    flex-direction: row;
+                    justify-content: end;
+                  `}>
+                  <NicknameText>{chatRoom.oppNickName}</NicknameText>
+                  <DongText>{chatRoom.dong.name}동</DongText>
+                </View>
+                <TimeText>{chatRoom.createdAt}</TimeText>
+              </ChatSubTextContainer>
+              <RecentlyChat>최근 채팅 </RecentlyChat>
             </ChatTextContainer>
           </ChatRoomContainer>
         ))}

@@ -195,18 +195,24 @@ const ButtonText = styled(GlobalText)`
   margin-bottom: 4px;
 `;
 
-interface DoListCard {
+type ResponseData = {
   id: number;
-  category: string;
-  image: ImageSourcePropType;
   title: string;
-  apart: string;
-  uptime: string;
-  nickname: string;
+  dealType: 'PET' | 'RECYCLE' | 'SHOP' | 'ETC';
+  rewardType: 'CASH' | 'ITEM';
+  cash: number;
+  item: string;
   content: string;
-  price: string;
-  remaintime: string;
-}
+  createdAt: string;
+  dealStatus: 'OPEN' | 'CLOSED'; // 등등...
+};
+
+type UserInfo = {
+  id: number;
+  nickname: string;
+  dongName: string;
+  // 등등...
+};
 
 const dealTypeTextMap = {
   PET: '애완동물 산책',
@@ -215,78 +221,90 @@ const dealTypeTextMap = {
   ETC: '기타',
 };
 
+const getBackgroundColor = (dealType: string): string => {
+  switch (dealType) {
+    case 'PET':
+      return '#FADE6C';
+    case 'SHOP':
+      return '#6CA5FA';
+    case 'RECYCLE':
+      return '#00D282';
+    case 'ETC':
+      return 'gray';
+    default:
+      return 'gray'; // 기본값
+  }
+};
+
+type User = {
+  id: number;
+  nickname: string;
+  username: string;
+  score: number;
+  dongId: number;
+  dongName: string;
+};
+
 const DoItListDetail = ({route, navigation}: any) => {
-  const [userData, setUserData] = useRecoilState(userDataState);
-
-  const handleEdit = (newData: object) => {
-    setUserData(newData); // userData를 수정합니다.
-  };
-
-  const card = {
-    id: 1,
-    category: 'PET',
-    title: '맛있는 김치를 구해요!',
-    apart: '삼성아파트',
-    uptime: '1시간 전',
-    price: '10,000원',
-    nickname: '호구팟',
-    content: '나는김치맨김치파워',
-  };
-
-  const [userId, setUserId] = useState(null); // 로그인한 사용자의 ID를 저장하는 state
+  const {id} = route.params;
   const [requestUserId, setRequestUserId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
 
-  const param = route.params;
-
   const [responseData, setResponseData] = useState({});
-  const [userInfo, setUserInfo] = useState({});
+  const [userInfo, setUserInfo] = useState<User | null>(null);
   const [detailImage, setDetailImage] = useState([]);
   const loginuser = useRecoilValue(userDataState);
-  console.log('로그인 유저', loginuser);
-  useEffect(() => {
-    getStorage('user').then(data => {
-      setUserId(data?.id); // 로그인한 사용자의 ID를 state에 저장
-    });
-    console.log('param', param);
+
+  const fetchPostDetail = () => {
     axiosAuth
-      .get(`/deal/${param.id}`)
+      .get(`/deal/${id}`)
       .then(resp => {
         setResponseData(resp.data);
         setRequestUserId(resp.data.requestId);
         setUserInfo(resp.data.requestInfo);
         setDetailImage(resp.data.dealImages);
-        console.log(detailImage);
-        console.log('성공', resp.data);
+        console.log('게시글 상세===================유저', resp.data);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
-  }, [param]);
+  };
 
+  useEffect(() => {
+    fetchPostDetail();
+  }, [route.params.id]);
+
+  const goChat = (memberNickname: string, otherNickname: string) => {
+    console.log('수락-채팅이동', memberNickname, otherNickname);
+    const user = {
+      memberNickname: memberNickname,
+      otherNickname: otherNickname,
+    };
+    axiosAuth
+      .post('/chat/room', user)
+      .then(res => {
+        console.log('채팅방생성', res.data);
+        const chatRoom = res.data;
+        console.log('채팅방생성', chatRoom.id, userInfo?.id, memberNickname, chatRoom.dong.name);
+        navigation.navigate('ChatDetail', {
+          roomId: chatRoom.id,
+          userId: userInfo?.id,
+          name: memberNickname,
+          dong: chatRoom.dong.name,
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
   const handleIconPress = () => {
-    if (requestUserId === userId) {
+    if (userInfo?.id === loginuser.id) {
       setModalType('edit'); // 수정, 삭제 가능한 모달
     } else {
       setModalType('report'); // 신고 가능한 모달
     }
     setModalVisible(true); // 모달 열기
-  };
-
-  const categoryToDealType = (category: string) => {
-    switch (category) {
-      case '반려동물 산책':
-        return 'PET';
-      case '심부름':
-        return 'SHOP';
-      case '분리수거':
-        return 'RECYCLE';
-      case '기타':
-        return 'ETC';
-      default:
-        return '';
-    }
   };
 
   const calculateTimeAgo = (createdAt: string) => {
@@ -316,17 +334,18 @@ const DoItListDetail = ({route, navigation}: any) => {
       return `${minutesAgo}분 전`;
     }
   };
-  function acceptDoit(id: number) {
+  const acceptDoit = async (id: number, nickname: string) => {
     console.log(id);
-    axiosAuth
-      .put(`deal/accept/${id}`)
-      .then(resp => {
-        console.log('성공', resp.data);
-      })
-      .catch(error => {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
-      });
-  }
+    try {
+      const resp = await axiosAuth.put(`deal/accept/${id}`);
+      const data = resp.data;
+      console.log('성공', data);
+
+      goChat(nickname, loginuser.nickname);
+    } catch (error) {
+      console.error('데이터를 가져오는 중 오류 발생:', error);
+    }
+  };
   useFocusEffect(
     React.useCallback(() => {
       StatusBar.setTranslucent(true);
@@ -367,19 +386,25 @@ const DoItListDetail = ({route, navigation}: any) => {
                   style={css`
                     height: 400px;
                     width: 100%;
-                    background-color: gray;
-                  `}
-                />
+                    background-color: ${getBackgroundColor(responseData.dealType)};
+                    justify-content: center;
+                    align-items: center;
+                  `}>
+                  {responseData.dealType === 'PET' && <SvgIcon name="puppy" size={300} />}
+                  {responseData.dealType === 'SHOP' && <SvgIcon name="shopping" size={300} />}
+                  {responseData.dealType === 'RECYCLE' && <SvgIcon name="bags" size={300} />}
+                  {responseData.dealType === 'ETC' && <SvgIcon name="building" size={300} />}
+                </View>
               )}
             </View>
             <SubContainer>
               <SubHeader>
                 <SvgIcon name="profile" size={40} />
                 <ProfileComponent>
-                  <TextNickname> {userInfo.nickname}</TextNickname>
+                  <TextNickname> {userInfo?.nickname}</TextNickname>
                   <TextApart>
                     {' '}
-                    {userInfo.dongName}동 / {calculateTimeAgo(responseData.createdAt)}
+                    {userInfo?.dongName}동 / {calculateTimeAgo(responseData.createdAt)}
                   </TextApart>
                 </ProfileComponent>
               </SubHeader>
@@ -399,7 +424,14 @@ const DoItListDetail = ({route, navigation}: any) => {
                 </InfoComponent>
 
                 <TextContent>{responseData.content}</TextContent>
-                <TextReport>게시글 신고하기</TextReport>
+
+                {userInfo?.id === loginuser.id ? (
+                  <></>
+                ) : (
+                  <TouchableOpacity onPress={() => navigation.navigate('Report', {card: responseData})}>
+                    <TextReport>게시글 신고하기</TextReport>
+                  </TouchableOpacity>
+                )}
               </ContentComponent>
             </SubContainer>
           </View>
@@ -424,12 +456,12 @@ const DoItListDetail = ({route, navigation}: any) => {
               flex-direction: row;
               justify-content: space-between;
             `}>
-            <Ant
-              name="arrowleft"
-              size={40}
-              color="black"
+            <GoBack />
+            <TouchableOpacity
               onPress={() => navigation.navigate('Bottom', {screen: '아파트'})}
-            />
+              style={css`
+                width: 100px;
+              `}></TouchableOpacity>
             <Feather name="more-vertical" size={40} onPress={handleIconPress} />
           </TouchableOpacity>
         </View>
@@ -442,10 +474,8 @@ const DoItListDetail = ({route, navigation}: any) => {
           bottom: 60px;
           z-index: 1;
         `}>
-        {userInfo.id === loginuser.id ? (
-          <View>
-            <Text>내 작성글 입니다</Text>
-          </View>
+        {userInfo?.id === loginuser.id ? (
+          <></>
         ) : (
           <View
             style={css`
@@ -453,7 +483,7 @@ const DoItListDetail = ({route, navigation}: any) => {
             `}>
             <AgreeButton
               onPress={() => {
-                acceptDoit(responseData.id);
+                acceptDoit(responseData.id, userInfo.nickname);
               }}>
               <FontAwesome name="handshake-o" size={20} color="white"></FontAwesome>
               <ButtonText> 수락하기 </ButtonText>
@@ -466,12 +496,12 @@ const DoItListDetail = ({route, navigation}: any) => {
         )}
       </View>
       {modalVisible &&
-        (modalType === 'edit' ? (
+        (modalType === 'edit' && responseData.dealStatus === 'OPEN' ? (
           <EditDeleteModal
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
             navigation={navigation}
-            data={param}
+            data={responseData}
           />
         ) : (
           <ReportModal modalVisible={modalVisible} setModalVisible={setModalVisible} navigation={navigation} />

@@ -42,20 +42,37 @@ import DoItListDetail from '@/screens/DoItListDetail';
 import DoItList from '@/screens/DoItList';
 import GoOut1 from '@/screens/GoOut/GoOut1';
 import GoOut2 from '@/screens/GoOut/GoOut2';
-import AdminStack from '@/navigations/AdminStack';
 import ApartCertification from '@/screens/My/ApartCertification';
 import BankAccount from '@/screens/My/BankAccount';
 import InvitationCode from '@/screens/My/InvitationCode';
 import ServiceCenter from '@/screens/My/ServiceCenter';
 import MyDoList from '@/screens/My/MyDoList';
+import DoItPut from '@/screens/DoItPut';
+import Report from '@/screens/Report';
+import AdminMain from '@/screens/Admin/AdminMain';
+import AdminNonCerti from '@/screens/Admin/AdminNonCerti';
+import AdminComplainDeal from '@/screens/Admin/AdminComplainDeal';
+import AdminComplainDealDetail from '@/screens/Admin/AdminComplainDealDetail';
+import AdminPaused from '@/screens/Admin/AdminPaused';
+import {useNavigation} from '@react-navigation/native';
 
 //icon
 import Ionic from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const MainStack = () => {
+const MainStack = ({room, navigation}: any) => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
+  const navigationRef = useNavigation();
+  useEffect(() => {
+    StatusBar.setBackgroundColor('#ffffff');
+    StatusBar.setBarStyle('dark-content');
+  }, []);
+  useEffect(() => {
+    if (room.id) {
+      navigation.navigate('ChatDetail', {roomId: room.id, userId: room.userId, name: room.name, dong: room.dong});
+    }
+  }, [room]);
 
   const BottomTab = () => {
     return (
@@ -124,13 +141,19 @@ const MainStack = () => {
       <Stack.Screen name="ChatMain" component={ChatMain} />
       <Stack.Screen name="ChatDetail" component={ChatDetail} />
       <Stack.Screen name="MySetting" component={MySetting} />
-      <Stack.Screen name="AdminStack" component={AdminStack} />
       <Stack.Screen name="DoItListDetail" component={DoItListDetail} />
       <Stack.Screen name="ApartCertification" component={ApartCertification} />
       <Stack.Screen name="BankAccount" component={BankAccount} />
       <Stack.Screen name="InvitationCode" component={InvitationCode} />
       <Stack.Screen name="ServiceCenter" component={ServiceCenter} />
       <Stack.Screen name="MyDoList" component={MyDoList} />
+      <Stack.Screen name="DoItPut" component={DoItPut} />
+      <Stack.Screen name="Report" component={Report} />
+      <Stack.Screen name="AdminMain" component={AdminMain} />
+      <Stack.Screen name="AdminNonCerti" component={AdminNonCerti} />
+      <Stack.Screen name="AdminComplainDeal" component={AdminComplainDeal} />
+      <Stack.Screen name="AdminComplainDealDetail" component={AdminComplainDealDetail} />
+      <Stack.Screen name="AdminPaused" component={AdminPaused} />
     </Stack.Navigator>
   );
 };

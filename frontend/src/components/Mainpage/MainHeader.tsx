@@ -5,7 +5,9 @@ import Header from '@/components/Header';
 import styled from '@emotion/native';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import {NavigationProp} from '@react-navigation/native';
-import {View, TouchableOpacity, ImageSourcePropType} from 'react-native';
+import {View, TouchableOpacity, Text, ImageSourcePropType} from 'react-native';
+import { useRecoilState } from 'recoil';
+import { noticeCountState } from '@/recoil/atoms'; 
 
 // 헤더 컨테이너
 const HeaderContainer = styled(Header)`
@@ -44,33 +46,26 @@ interface Props {
   navigation: NavigationProp<any>;
 }
 
-// 알림 아이콘 컴포넌트
-const NotificationIcon = ({navigation}: Props) => {
-  const [hasNotifications, setHasNotifications] = useState<boolean>(true);
 
-  const handlePress = () => {
-    navigation.navigate('Notice');
-  };
-
-  return (
-    <TouchableOpacity onPress={handlePress}>
-      <Fontisto name="bell" size={28} color="gray" />
-      {hasNotifications && <BellNotifBadge />}
-    </TouchableOpacity>
-  );
-};
 
 // HeaderFunc 컴포넌트
 const MainHeader = ({navigation}: Props) => {
+
+  const [noticeCount, setNoticeCount] = useRecoilState(noticeCountState)
+  
+  useEffect(() => {
+
+  }, [noticeCount]); 
+
   return (
-    <View>
-      <HeaderContainer>
-        <StyledText>나온김에</StyledText>
-        <IconsContainer>
-          <NotificationIcon navigation={navigation} />
-        </IconsContainer>
-      </HeaderContainer>
-    </View>
+    <HeaderContainer>
+      <EmptyView></EmptyView>
+      <StyledText>나온김에</StyledText>
+      <TouchableOpacity onPress={() => navigation.navigate('Notice')}>
+        <Fontisto name="bell" size={28} color="gray" />
+        {noticeCount > 0 && <BellNotifBadge />}
+      </TouchableOpacity>
+    </HeaderContainer>
   );
 };
 

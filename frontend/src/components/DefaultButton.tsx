@@ -17,7 +17,7 @@ const StyledText = styled(GlobalText)<{size?: Size; color?: Color}>`
   font-size: ${props => {
     switch (props.size) {
       case 'sm':
-        return '15px';
+        return '17px';
       case 'md':
         return '18px';
       case 'lg':
@@ -51,7 +51,7 @@ const StyledButton = styled(GlobalButton)`
   shadow-radius: '3.84';
   elevation: '5'; */
 `;
-const DefaultButton = (props: ButtonProps) => {
+const DefaultButton = (props: ButtonProps & {style?: any}) => {
   const theme = useTheme();
 
   let colorStyle;
@@ -59,7 +59,9 @@ const DefaultButton = (props: ButtonProps) => {
   switch (props.size) {
     case 'sm':
       sizeStyle = css`
-        padding: 5px;
+        padding: 9px;
+        margin-right: 5px;
+        margin-left: 5px;
       `;
       break;
     case 'md':
@@ -105,7 +107,7 @@ const DefaultButton = (props: ButtonProps) => {
       `;
   }
   return (
-    <StyledButton style={[colorStyle, sizeStyle]} onPress={props.onPress} {...props}>
+    <StyledButton style={[props.style, colorStyle, sizeStyle]} onPress={props.onPress} {...props}>
       <StyledText size={props.size} color={props.color}>
         {props.title}
       </StyledText>

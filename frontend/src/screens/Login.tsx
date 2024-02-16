@@ -51,8 +51,8 @@ const LoginButton = styled(DefaultButton)`
 `;
 
 const Login = ({navigation}: any) => {
-  const [username, setusername] = useState('a@gmail');
-  const [password, setPassword] = useState('1234');
+  const [username, setusername] = useState('');
+  const [password, setPassword] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isnotValueid, setIsnotValueid] = useState(true);
   const [isnotValuepassword, setIsnotValuepassword] = useState(true);
@@ -61,13 +61,25 @@ const Login = ({navigation}: any) => {
   const setUserData = useSetRecoilState(userDataState);
   const setApartData = useSetRecoilState(apartDataState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
-
+  const userData = useRecoilValue(userDataState);
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const toggleSecureTextEntry = () => {
+    setSecureTextEntry(prevState => !prevState);
+  };
   const checkLogin = async () => {
     if (isLoggedIn) {
       console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
-      navigation.navigate('Main');
+
+      if (userData.roles[0] === 'ADMIN') {
+        console.log('관리자 페이지로 이동');
+        navigation.navigate('AdminMain');
+        return;
+      } else {
+        navigation.navigate('Main');
+        return;
+      }
     } else {
-      console.log('로그인 상태가 아닙니다.======> 페이지 이동', isLoggedIn);
+      console.log('로그인 상태가 아닙니다.======> 페이지 이동X', isLoggedIn);
     }
   };
   useEffect(() => {
@@ -75,13 +87,13 @@ const Login = ({navigation}: any) => {
   }, [isLoggedIn]);
 
   async function login() {
-    console.log(fcmToken);
     if (username.trim() === '') {
       Alert.alert('아이디 입력 확인', '아이디가 입력되지 않았습니다.');
     } else if (password.trim() === '') {
       Alert.alert('비밀번호 입력 확인', '비밀번호가 입력되지 않았습니다.');
     } else {
       try {
+        console.log('fcmToken', fcmToken);
         const response = await axios.post('http://i10a302.p.ssafy.io:8080/members/signin', {
           username: username,
           password: password,
@@ -92,7 +104,6 @@ const Login = ({navigation}: any) => {
           const refreshToken = response.data.token.refreshToken;
           const user = response.data.memberInfo;
           const adjDongs = response.data.adjDongs;
-          console.log('로그인 성공', response.data);
           await setStorage('token', token);
           await setStorage('refreshToken', refreshToken);
           await setStorage('user', user);
@@ -104,9 +115,6 @@ const Login = ({navigation}: any) => {
           setApartData(adjDongs);
           navigation.navigate('Main');
           Keyboard.dismiss();
-          console.log('123123');
-          console.log(user);
-          console.log(token);
           console.log('로그인 성공');
         } else {
           Alert.alert('로그인 실패', '아이디나 비밀번호를 확인하세요.');

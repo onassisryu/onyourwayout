@@ -9,16 +9,26 @@ import React, {useEffect, useState, FC} from 'react';
 import {Alert, TouchableOpacity} from 'react-native';
 import {StatusBar} from 'react-native';
 import {NavigationContainer, useNavigationContainerRef} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {Text, View, Button} from 'react-native';
-import {css} from '@emotion/native';
+import styled, {css} from '@emotion/native';
+import {AppState} from 'react-native';
 
 //recoil&react-query
-import {isLoggedInState, userDataState, apartDataState, fcmTokenState} from '@/recoil/atoms';
+import {
+  isLoggedInState,
+  userDataState,
+  apartDataState,
+  fcmTokenState,
+  noticeCountState,
+  modalState,
+} from '@/recoil/atoms';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
-
+import {NavigationProp, RouteProp} from '@react-navigation/native';
 import {ThemeProvider} from '@emotion/react';
 import theme from '@/Theme';
+import ProgressBarComponent from '@/components/ProgressBarComponent';
 import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 import 'moment/locale/ko';
@@ -35,17 +45,45 @@ import Ionic from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import MainStack from '@/navigations/MainStack';
-import AdminStack from '@/navigations/AdminStack';
-import LoginStack from '@/navigations/LoginStack';
-
-// import {NoticeTab, sendNotification} from '@/components/Noticepage/NoticeTab';
 
 import {getStorage, setStorage} from '@/storage/common_storage';
 import axiosAuth from '@/axios/axiosAuth';
+const Scorebarbackground = styled.View`
+  height: 15px;
+  width: 100%;
+  border-radius: 10px;
+  background-color: #eaeaea;
+  position: relative;
+`;
+const Scorebar = styled.View`
+  height: 15px;
+  border-radius: 10px;
+  background-color: ${theme.color.primary};
+  position: absolute;
+`;
+
+interface Notice {
+  id: string;
+  title: string | undefined;
+  body: string | undefined;
+}
+interface CustomAlertProps {
+  visible: boolean;
+  title: string;
+  onClose: () => void;
+  dealId: string;
+  acceptId: string;
+  nickname: string;
+  dong: string;
+  memberScore: number;
+  time: number;
+}
+interface Props {
+  navigation: NavigationProp<any>;
+}
 
 const App = () => {
   const queryClient = new QueryClient();
-
   const [admin, setAdmin] = useState(false);
   const userData = useRecoilValue(userDataState);
 
@@ -54,6 +92,22 @@ const App = () => {
   const setApartData = useSetRecoilState(apartDataState);
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const setFcmTokenState = useSetRecoilState(fcmTokenState);
+  const userInfo = useRecoilValue(userDataState);
+  const setNoticeCount = useSetRecoilState(noticeCountState);
+  const setModalState = useSetRecoilState(modalState);
+  async function requestPermissions() {
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+    }
+  }
+  useEffect(() => {
+    setNoticeCount(1);
+  }, []);
+  useEffect(() => {
+    console.log('지도 인증할게요');
+    requestPermissions();
+  }, []);
 
   // FCM 토큰 발급
   const getFcmToken = async () => {
@@ -61,26 +115,75 @@ const App = () => {
     setFcmTokenState({fcmToken});
     console.log('[FCM Token] ', fcmToken);
   };
-
-  interface CustomAlertProps {
-    visible: boolean;
-    title: string;
-    onClose: () => void;
-    dealId: string;
-    acceptId: string;
-  }
-
-  function acceptGoOut(dealId: string, acceptId: string) {
+  // const handleNavigate = (id: number, userId: number, name: string, dong: string) => {
+  //   navigation.navigate('ChatDetail', {
+  //     roomId: id,
+  //     userId: userId,
+  //     name: name,
+  //     dong: dong,
+  //   });
+  // };
+  let room = {};
+  const goChat = (memberNickname: string, otherNickname: string, acceptId: number) => {
+    console.log('수락-채팅이동', memberNickname, otherNickname, acceptId);
+    const user = {
+      memberNickname: memberNickname,
+      otherNickname: otherNickname,
+    };
+    axiosAuth
+      .post('/chat/room', user)
+      .then(res => {
+        console.log('채팅방생성', res.data);
+        const chatRoom = res.data;
+        console.log('채팅방생성', chatRoom.id, userInfo.id, memberNickname, chatRoom.dong.name);
+        room = {roomId: chatRoom.id, userId: userInfo.id, name: memberNickname, dong: chatRoom.dong.name};
+        // handleNavigate(chatRoom.id, userInfo.id, memberNickname, chatRoom.dong.name);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  function acceptGoOut(dealId: number, acceptId: number, nickname: string) {
+    console.log('dealId', dealId);
+    console.log('acceptId', acceptId);
+    console.log('로그인유저', data.acceptMemberNickname);
     axiosAuth
       .put(`deal/out-recommend/${dealId}/${acceptId}`)
       .then(resp => {
         console.log('나가요잉 매칭 성공', resp.data);
+        setModalVisible(false);
+        goChat(userInfo.nickname, nickname, acceptId);
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
   }
-  const CustomAlert: FC<CustomAlertProps> = ({visible, title, onClose, dealId, acceptId}) => {
+
+  function cancelGoOut(dealId: string, acceptId: string, nickname: string) {
+    console.log('dealId', dealId);
+    console.log('acceptId', acceptId);
+    axiosAuth
+      .get(`deal/out-recommend/${dealId}/${acceptId}/cancel`)
+      .then(resp => {
+        console.log('나가요잉 매칭 실패', resp.data);
+        setModalVisible(false);
+      })
+      .catch(error => {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      });
+  }
+
+  const CustomAlert: FC<CustomAlertProps> = ({
+    visible,
+    title,
+    onClose,
+    dealId,
+    acceptId,
+    nickname,
+    dong,
+    memberScore,
+    time,
+  }) => {
     return (
       <Modal isVisible={visible}>
         <View
@@ -121,15 +224,59 @@ const App = () => {
                 border: 1px solid gray;
                 border-radius: 10px;
                 margin-bottom: 20px;
-              `}></View>
-            {/* 상대방 정보 카드 */}
-            <View
-              style={css`
-                height: 30px;
-                width: 80%;
-                background-color: green;
-                margin-bottom: 20px;
-              `}></View>
+              `}>
+              <View
+                style={css`
+                  flex-direction: row;
+                  align-items: center;
+                  height: 100%;
+                `}>
+                <View
+                  style={css`
+                    height: 100px;
+                    width: 40%;
+                    border-radius: 100px;
+                    margin: 10px;
+                    background-color: ${theme.color.gray100};
+                  `}></View>
+                <View
+                  style={css`
+                    width: 50%;
+                  `}>
+                  <Text
+                    style={css`
+                      font-size: 20px;
+                      font-weight: 700;
+                    `}>
+                    {nickname}
+                  </Text>
+                  <Text
+                    style={css`
+                      font-size: 15px;
+                      font-weight: 700;
+                      color: ${theme.color.gray300};
+                      margin-bottom: 10px;
+                    `}>
+                    {dong}동
+                  </Text>
+                  <Text>이웃지수</Text>
+                  <View
+                    style={css`
+                      width: 100%;
+                      margin-top: 5px;
+                    `}>
+                    <Scorebarbackground>
+                      <Scorebar
+                        style={css`
+                          width: ${memberScore}%;
+                        `}></Scorebar>
+                    </Scorebarbackground>
+                  </View>
+                </View>
+              </View>
+            </View>
+            <ProgressBarComponent dealId={dealId} acceptId={acceptId} setModalVisible={setModalVisible} />
+
             {/* 타이머 */}
             <View
               style={css`
@@ -138,7 +285,7 @@ const App = () => {
                 width: 80%;
               `}>
               <TouchableOpacity
-                onPress={() => acceptGoOut(dealId, acceptId)}
+                onPress={() => acceptGoOut(dealId, acceptId, nickname)}
                 style={css`
                   width: 45%;
                   background-color: green;
@@ -146,7 +293,7 @@ const App = () => {
                 <Text>수락하기</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={onClose}
+                onPress={() => cancelGoOut(dealId, acceptId, nickname)}
                 style={css`
                   width: 45%;
                   background-color: green;
@@ -159,57 +306,35 @@ const App = () => {
       </Modal>
     );
   };
-
-  PushNotification.createChannel(
-    {
-      channelId: 'channel-id', // 채널 ID
-      channelName: 'My channel', // 채널 이름
-      channelDescription: 'A channel to categorise your notifications', // 채널 설명
-      soundName: 'default', // 기본 사운드 사용
-      importance: 4, // 알림 중요도 설정. 4는 High를 의미함
-      vibrate: true, // 진동 설정
-    },
-    created => console.log(`createChannel returned '${created}'`) // (optional) 채널 생성 성공 여부를 로그에 출력
-  );
-
-  const sendNotification = (notice: any) => {
-    const now = moment();
-    const formattedTime = now.format('A hh:mm');
-    const message = `${notice.content} (${formattedTime})`;
-
-    PushNotification.localNotification({
-      /* Android Only Properties */
-      channelId: 'channel-id',
-      /* iOS and Android properties */
-      id: notice.id,
-      title: notice.title,
-      message: message,
-      playSound: true,
-      soundName: 'default',
-    });
-  };
-
-  const checkLogin = async () => {
-    if (isLoggedIn) {
-      console.log('로그인 상태입니다.======> 페이지 이동', isLoggedIn);
-      if (userData.roles == 'ADMIN') {
-        setAdmin(true);
-      }
-    } else {
-      getStorage('token').then(token => {
-        console.log(token);
-        if (token) {
-          console.log('토큰이 있습니다.', token);
-          getStorage('user').then(user => {
-            setUserData(user);
-            setIsLoggedIn(true);
-            getStorage('adjDongs').then(adjDongs => {
-              setApartData(adjDongs);
-            });
-          });
+  if (!String.prototype.padStart) {
+    String.prototype.padStart = function padStart(targetLength, padString) {
+      targetLength = targetLength >> 0; //truncate if number, or convert non-number to 0;
+      padString = String(typeof padString !== 'undefined' ? padString : ' ');
+      if (this.length >= targetLength) {
+        return String(this);
+      } else {
+        targetLength = targetLength - this.length;
+        if (targetLength > padString.length) {
+          padString += padString.repeat(targetLength / padString.length);
         }
-      });
-    }
+        return padString.slice(0, targetLength) + String(this);
+      }
+    };
+  }
+  const checkLogin = async () => {
+    console.log('데이터 세팅중이여!!!!!!!!');
+    getStorage('token').then(token => {
+      if (token) {
+        console.log('토큰이 있습니다.', token);
+        getStorage('user').then(user => {
+          setUserData(user);
+          getStorage('adjDongs').then(adjDongs => {
+            setApartData(adjDongs);
+            setIsLoggedIn(true);
+          });
+        });
+      }
+    });
   };
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -220,26 +345,65 @@ const App = () => {
   };
   useEffect(() => {
     checkLogin();
+  }, []);
+  useEffect(() => {
+    checkLogin();
   }, [isLoggedIn]);
 
-  useEffect(() => {
-    getFcmToken(); // 토큰 발급
-    // 앱이 켜져있을때
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('[Remote Message] ', JSON.stringify(remoteMessage));
-      // 메시지 오면 띄우는 코드
-      const notice = {
-        id: remoteMessage.messageId,
-        title: remoteMessage.notification?.title || 'No Title',
-        content: remoteMessage.notification?.body || 'No content',
-      };
-      setData(remoteMessage.data);
-      console.log('data', data);
-      sendNotification(notice);
-      if (remoteMessage.notification.title === '[나가요잉 신청]') {
-        setModalVisible(true);
-      }
+  PushNotification.createChannel(
+    {
+      channelId: 'channel-id',
+      channelName: 'My channel',
+      channelDescription: 'A channel to categorise your notifications',
+      soundName: 'default',
+      importance: 4,
+      vibrate: true,
+    },
+    created => console.log(`createChannel returned '${created}'`)
+  );
+
+  const sendNotification = (notice: Notice) => {
+    const now = moment();
+    const formattedTime = now.format('A hh:mm');
+    const message = `${notice.body} (${formattedTime})`;
+
+    PushNotification.localNotification({
+      channelId: 'channel-id',
+      id: notice.id,
+      title: notice.title || '',
+      message: message,
+      playSound: true,
+      soundName: 'default',
     });
+  };
+
+  const handleNotification = (remoteMessage: any) => {
+    console.log('[Remote Message] ', JSON.stringify(remoteMessage));
+    if (remoteMessage?.data) {
+      const notice: Notice = {
+        id: String(remoteMessage.data.notificationId),
+        title: remoteMessage.notification?.title,
+        body: remoteMessage.notification?.body,
+      };
+      console.log(remoteMessage.data);
+      if (remoteMessage.notification?.title === '[나가요잉 신청]') {
+        setData(remoteMessage.data);
+        setModalVisible(true);
+      } else if (remoteMessage.notification?.title === '[나가요잉 수락]') {
+        setModalState(true);
+      } else if (remoteMessage.notification?.title === '[해줘요잉 추천]') {
+        console.log('지도 알림');
+      }
+      sendNotification(notice);
+    }
+  };
+
+  useEffect(() => {
+    getFcmToken();
+    const unsubscribe = messaging().onMessage(handleNotification);
+    messaging().onNotificationOpenedApp(handleNotification);
+    messaging().getInitialNotification().then(handleNotification);
+
     return unsubscribe;
   }, []);
 
@@ -256,7 +420,7 @@ const App = () => {
             acceptId={data.acceptMemberId}
             dealId={data.dealId}
           />
-          {admin ? <AdminStack /> : <MainStack />}
+          <MainStack room={room} />
         </NavigationContainer>
       </ThemeProvider>
     </QueryClientProvider>

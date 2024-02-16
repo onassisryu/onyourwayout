@@ -52,7 +52,7 @@ interface Props {
     navigation: NavigationProp<any>
   }
   
-  const EditDeleteModal = ( props: Props ) => {
+  const ReportModal = ( props: Props ) => {
   
 
     return (
@@ -83,4 +83,4 @@ interface Props {
     );
   };
 
-export default EditDeleteModal;
+export default ReportModal;

@@ -1,67 +1,92 @@
-import React, {useState, useEffect} from 'react';
-import {css} from '@emotion/native';
-import {ScrollView, View, TouchableOpacity, Text, Animated, useWindowDimensions, Image} from 'react-native';
+import React, {useState} from 'react';
+import styled, {css} from '@emotion/native';
+import {ScrollView, View, TouchableOpacity, Text, Animated, useWindowDimensions} from 'react-native';
+import {ImageURISource, Alert, Button, Image, StyleSheet} from 'react-native';
 import {GlobalContainer, GlobalText} from '@/GlobalStyles';
-import {NavigationProp} from '@react-navigation/native';
-import DefaultButton from '@/components/DefaultButton';
 import Header from '@/components/Header';
 import GoBack from '@components/Signup/GoBack';
-import {RouteProp, useRoute} from '@react-navigation/native';
-import styled from '@emotion/native';
+import {NavigationProp, RouteProp, useRoute} from '@react-navigation/native';
 import theme from '@/Theme';
+import {useEffect} from 'react';
 import SvgIcon from '@/components/SvgIcon';
 import {RootStackParamList} from '@/@types';
 import moment from 'moment';
 import 'moment/locale/ko';
 import Feather from 'react-native-vector-icons/Feather';
 import Ant from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useRecoilValue} from 'recoil';
 import {userDataState} from '@/recoil/atoms';
 import axiosAuth from '@/axios/axiosAuth';
 import {getAccessToken} from '@/utils/common';
+import DefaultButton from '@/components/DefaultButton';
+import {
+  launchCamera,
+  launchImageLibrary,
+  CameraOptions,
+  ImagePickerResponse,
+  ImageLibraryOptions,
+  Asset,
+} from 'react-native-image-picker';
 import axios from 'axios';
-type DoItScreenRouteProp = RouteProp<RootStackParamList, 'DoIt2'>;
+import {parse} from 'path';
 
 interface Props {
   navigation: NavigationProp<any>;
 }
 const StyledInputTitle = styled(GlobalText)`
   font-size: 18px;
-  font-weight: 900;
+  font-weight: 700;
   color: ${props => props.theme.color.black};
   margin-bottom: 12px;
 `;
 const StyledInput = styled.TextInput`
   width: 100%;
   font-size: 18px;
+  padding: 10px;
   color: ${props => props.theme.color.primary};
   background-color: white;
   border-radius: 10px;
-  padding: 10px;
   border: 1px solid ${props => props.theme.color.primary};
   color: ${props => props.theme.color.black};
 `;
 const StyledInputContainer = styled.View`
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  margin-top: 8px;
+  margin-bottom: 5px;
 `;
 const IconWrapper = styled.View`
   position: absolute;
-  left: 25px;
+  left: 20px;
   top: 4px;
+`;
+const MoneyButton = styled.TouchableOpacity`
+  width: 90px;
+  font-size: 20px;
+  background-color: #e6fbf4;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: row;
+  padding: 10px;
 `;
 
 type DealProps = {
+  id: number;
   title: string;
   content: string;
   dealType: string;
   expireAtStr: string;
-  cash: number;
+  cash: string | null;
+  item: string | null;
+  dealImageFileList: ['']
 };
 
-const EditPage = ({route, navigation}: any) => {
-  const {data} = route.params; // 수정할 게시물의 ID를 가져옵니다.
-  const currentTime = new Date(data.createdAt);
+const DoItPut = ({route, navigation}: any) => {
+  const {card} = route.params; 
+  const currentTime = new Date();
   const currentHour = String(currentTime.getHours()).padStart(2, '0');
   const currentMinute = String(currentTime.getMinutes()).padStart(2, '0');
   const defaultTime = `${currentHour}:${currentMinute}`;
@@ -70,33 +95,60 @@ const EditPage = ({route, navigation}: any) => {
   const oneHourLaterMinute = String(oneHourLater.getMinutes()).padStart(2, '0');
   const oneHourLaterTime = `${oneHourLaterHour}:${oneHourLaterMinute}`;
 
-  console.log(data);
-  const formatNumber = (num: string) => {
-    return num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  };
+  const [time, setTime] = useState(oneHourLaterTime);
 
-  const [title, setTitle] = useState(data.title); // 제목을 관리하는 상태
-  const [expireAt, setExpireAt] = useState(data.expireAt); // 제목을 관리하는 상태
-  const [cash, setCash] = useState(formatNumber(data.cash.toString()));
-  const [content, setContent] = useState(data.content);
+  const [deal, setDeal] = useState<DealProps>({
+    id: card.id,
+    title: card.title,
+    content: card.content,
+    dealType: card.dealType, //거래유형
+    expireAtStr: handleExpireAtChange(time), //만료시간
+    cash: card.cash,
+    item: card.item,
+    dealImageFileList: card.dealImages
+  });
+
+  useEffect(() => {
+    console.log('deal', deal);
+  }, [deal]);
+
+  // 만료 시간 변경
+  function handleExpireAtChange(time: string) {
+    const [hour, minute] = time.split(':');
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+
+    const selectedHour = hour ? hour.padStart(2, '0') : '00';
+    const selectedMinute = minute ? minute.padStart(2, '0') : '00';
+    const expireAtStr = `${year + 1}-${month}-${day} ${selectedHour}:${selectedMinute}:00`;
+    
+    return expireAtStr;
+};
+
+  const handleTimeChange = (text: string) => {
+    setTime(text);
+    const expireAtStr = handleExpireAtChange(text);
+    setDeal({...deal, expireAtStr: expireAtStr});
+  };
 
   // 제목을 변경하는 핸들러 함수
-  const handleTitleChange = (text: string) => {
-    setTitle(text);
-  };
-  const handleExpireAtChange = (text: string) => {
-    setExpireAt(text);
+  const handleTitleChange = () => {
+    setDeal({...deal, title: card.title});
   };
   // 현금 데이터를 변경하는 핸들러 함수
   const handleCashChange = (text: string) => {
-    const formattedText = formatNumber(text.replace(/,/g, '')); // 쉼표를 제거한 후 새로운 값을 포맷팅합니다.
-    setCash(formattedText); // 현금 데이터를 업데이트합니다.
+    const formattedText = text.replace(/,/g, ''); // 쉼표를 제거한 후 새로운 값을 포맷팅합니다.
+    setDeal({...deal, cash: formattedText}); // 현금 데이터를 업데이트합니다.
   };
-
+  // 내용 변경
   const handleContentChange = (text: string) => {
-    setContent(text);
+    setDeal({...deal, content: card.content});
   };
 
+  // 거래 유형 변경
   const [selectedTab, setSelectedTab] = useState<'현금' | '물물'>('현금');
   const [tabcolor, settabcolor] = useState<'현금' | '물물'>('현금');
   const [animatedValue] = useState(new Animated.Value(0));
@@ -117,7 +169,7 @@ const EditPage = ({route, navigation}: any) => {
   useEffect(() => {
     Animated.timing(animatedValue, {
       toValue: selectedTab === '물물' ? 1 : 0,
-      duration: 300, // 애니메이션 지속 시간 (ms)
+      duration: 150, // 애니메이션 지속 시간 (ms)
       useNativeDriver: true, // 네이티브 드라이버 사용 여부
     }).start();
   }, [selectedTab]);
@@ -127,59 +179,119 @@ const EditPage = ({route, navigation}: any) => {
     outputRange: [0, width / 2.4], // 화면의 반쪽으로 이동
   });
   const userData = useRecoilValue(userDataState);
-  const token =
-    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzM1ODI4N30.qU7yh9VK8SNoDHVMSPIBiejonl6AFXeIui_3ONrz2YQ';
-
-  const editMultipart = (body: any) => {
+  
+  const submitMultipart = async (body: any) => {
     const formData = new FormData();
     formData.append('dto', JSON.stringify(body.jsonData));
     formData.append('dealImageFileList', body.dealImageFileList);
 
-    console.log(JSON.stringify(body.jsonData));
+    console.log('1111', formData);
     const instance = axios.create();
     return instance({
-      url: `http://i10a302.p.ssafy.io:8080/deal/${data.id}`,
+      url: `http://i10a302.p.ssafy.io:8080/deal/${card.id}`,
       method: 'put',
       data: formData,
       headers: {
-        'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTcwNzM1ODI4N30.qU7yh9VK8SNoDHVMSPIBiejonl6AFXeIui_3ONrz2YQ',
+        'Authorization': await getAccessToken(),
         'content-type': 'multipart/form-data',
       },
     });
   };
 
-  function Edit() {
-    const formatCash = (cash: string) => {
-      return Number(cash.replace(/,/g, '')); // 쉼표를 제거하고, 숫자 형식으로 변환합니다.
+  const [img, setImg] = useState<ImageURISource>({
+    uri: '',
+  }); //setState를 대신하는 넘이랑 변수랑 같이 하기
+  const [imageData, setImageData] = useState(
+    card && card.dealImages && card.dealImages.length > 0
+      ? {uri: card.dealImages[0].imgUrl, type: 'image/jpeg', name: card.dealImages[0].id.toString()}
+      : {}
+  );
+  //버튼 동작
+  //카메라 앱을 실행하는 기능 화살표 함수
+  const showCamera = () => {
+    //1. launchCamera 하기 위한 옵션 객체
+    const options: CameraOptions = {
+      //Property 'mediaType' is missing in type '{}' but required in type 'CameraOptions'
+      mediaType: 'photo', //필수 속성
+      cameraType: 'back',
+      saveToPhotos: true,
+      quality: 1,
+      videoQuality: 'high',
     };
 
-    const formatExpireAt = (expireAt: string) => {
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더해줍니다.
-      const date = String(today.getDate()).padStart(2, '0');
+    //2. 촬영 결과를 받아오는 callback 메소드 등록
+    launchCamera(options, (response: ImagePickerResponse) => {
+      if (response.didCancel) Alert.alert('촬영취소');
+      else if (response.errorMessage) Alert.alert('Error : ' + response.errorMessage);
+      else {
+        //이곳에 왔다면 이미지가 잘 촬영된 것
+        //촬용된 이미지는 response 객체의 assets 라는 속성으로 전달됨
+        if (response.assets != null) {
+          //선택된 이미지 객체를 이미지뷰가 보여주는 state변수 img에 저장
+          //선택된 이미지의 uri 경로 얻어오기
+          const name = response.assets[0].fileName;
+          const uri = response.assets[0].uri; //assets 여러개가 올수 있는데 중에 0번방 거
+          const type = response.assets[0].type;
+          const fileSize = response.assets[0].fileSize;
+          const fileName = response.assets[0].fileName;
 
-      return `${year}-${month}-${date}T${expireAt}:00`; // "YYYY-MM-DDTHH:MM:SS" 형태로 만듭니다.
+          console.log('이미지 파일입니다', response.assets[0]);
+
+          const source = {uri: uri, type: type, fileSize: fileSize, name: fileName};
+          setImageData(source);
+        }
+      }
+    }); //파라미터로 응답객체 받음
+  };
+
+  //사진앱을 실행하는 기능 화살표 함수
+  const showPhoto = async () => {
+    //1. 옵션객체 만들기
+    const option: ImageLibraryOptions = {
+      mediaType: 'photo',
+      selectionLimit: 5,
     };
 
-    const data = {
-      title: title,
-      content: content,
-      cash: formatCash(cash), // 쉼표를 제거하고 숫자 형식으로 변환한 후 cash 데이터를 집어넣습니다.
-      dealType: 'PET',
-      expireAt: formatExpireAt(expireAt), // ":00"을 추가한 형태로 expireAt 데이터를 집어넣습니다.
-    };
+    //callback 말고 async-await 문법 사용해보기!!!!!!
+    //ES7의 새로운 문법 : async-await 문법 [callback 비동기 작업을 동기작업처럼 처리함]
+    const response = await launchImageLibrary(option); //함수에 async가 붙어 있어야 함
+    //결과를 기다렸다가 받아와라
+
+    if (response.didCancel) Alert.alert('취소');
+    else if (response.errorMessage) Alert.alert('Error : ' + response.errorMessage);
+    else {
+      const uris: Asset[] = [];
+      response.assets?.forEach(value => uris.push(value)); //선택한 사진 순서와 상관없이 들어옴
+      const uri = response.assets[0].uri; //assets 여러개가 올수 있는데 중에 0번방 거
+      const type = response.assets[0].type;
+      const fileSize = response.assets[0].fileSize;
+      const fileName = response.assets[0].fileName;
+
+      console.log('이미지 파일입니다', response.assets[0]);
+
+      const source = {uri: uri, type: type, fileSize: fileSize, name: fileName};
+      console.log('이미지 파일입니다', source);
+      setImageData(source);
+    }
+  };
+  function EditDeal() {
+    const data = deal;
+
+    console.log('-----------------------------------------------------------------------');
+    console.log(imageData);
 
     const body = {
       jsonData: data,
-      dealImageFileList: '',
+      dealImageFileList: Object.keys(imageData).length === 0 ? [] : imageData,
     };
+    console.log('body 전송중', body);
 
-    editMultipart(body)
+    submitMultipart(body)
       .then(resp => {
+        console.log(body);
         console.log('성공', resp.data);
-        navigation.navigate('DoItListDetail', {id: resp.data.id});
+        console.log('성공', resp.data.id);
+        navigation.replace('DoItListDetail', {id: resp.data.id, deal: deal});
       })
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -195,25 +307,30 @@ const EditPage = ({route, navigation}: any) => {
       <ScrollView
         style={css`
           padding: 0 32px;
-        `}
-        overScrollMode="never">
-        <StyledInputTitle>제목</StyledInputTitle>
+        `}>
         <StyledInputContainer>
           <StyledInput
             style={css`
               padding-left: 70px;
             `}
-            placeholder={data.title}
+            placeholder={deal.title}
             placeholderTextColor={theme.color.gray100}
-            defaultValue={title} // 제목의 초기값을 설정합니다.
-            onChangeText={handleTitleChange} // 제목이 변경되면 이를 반영합니다.
+            defaultValue={deal.title}
+            value={deal.title}
+            onChangeText={text => setDeal({...deal, title: text})}
           />
-          <IconWrapper>{/* <SvgIcon name={params.icon} size={40} /> */}</IconWrapper>
+          <IconWrapper>
+            {card.dealType === 'PET' && <SvgIcon name={'puppy'} size={40} />}
+            {card.dealType === 'RECYCLE' && <SvgIcon name={'bags'} size={40} />}
+            {card.dealType === 'SHOP' && <SvgIcon name={'shopping'} size={40} />}
+            {card.dealType === 'ETC' && <SvgIcon name={'building'} size={40} />}
+          </IconWrapper>
         </StyledInputContainer>
         <View
           style={css`
             flex-direction: row;
             justify-content: space-between;
+            margin-bottom: 10px;
           `}>
           <StyledInputContainer
             style={css`
@@ -244,49 +361,68 @@ const EditPage = ({route, navigation}: any) => {
                 font-weight: 500;
                 height: 40px;
               `}
-              defaultValue={oneHourLaterTime}
-              onChangeText={handleExpireAtChange}
+              placeholder={oneHourLaterTime}
+              value={time}
+              onFocus={() => setTime('')}
+              onChangeText={text => {
+                handleTimeChange(text);
+              }}
+
             />
           </StyledInputContainer>
         </View>
-        <View>
-          <TouchableOpacity></TouchableOpacity>
-        </View>
-        <StyledInputTitle>사진</StyledInputTitle>
-        <TouchableOpacity>
-          <View
-            style={css`
-              width: 100%;
-              height: 200px;
-              background-color: ${theme.color.gray0};
-              border-radius: 10px;
-              margin-bottom: 20px;
-              align-items: center;
-              justify-content: center;
-            `}>
-            <Feather name="image" size={40} color={theme.color.gray300} />
-            <Text
+        <DefaultButton size="md" color="primary" title="카메라 앱 열기" onPress={showCamera}></DefaultButton>
+        <TouchableOpacity onPress={showPhoto}>
+          {Object.keys(imageData).length === 0 ? (
+            <View
               style={css`
-                font-size: 15px;
-                font-weight: 700;
-                color: ${theme.color.gray300};
-                margin-top: 10px;
+                width: 100%;
+                height: 150px;
+                background-color: ${theme.color.gray0};
+                border-radius: 10px;
+                margin-bottom: 20px;
+                align-items: center;
+                justify-content: center;
               `}>
-              사진을 업로드 해주세요
-            </Text>
-          </View>
+              <Feather name="image" size={40} color={theme.color.gray300} />
+              <Text
+                style={css`
+                  font-size: 15px;
+                  font-weight: 700;
+                  color: ${theme.color.gray300};
+                  margin-top: 10px;
+                `}>
+                사진을 업로드 해주세요
+              </Text>
+            </View>
+          ) : (
+            <View
+              style={css`
+                width: 100%;
+                height: 150px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+              `}>
+              <Image
+                style={css`
+                  width: 100%;
+                  height: 100%;
+                  border-radius: 10px;
+                `}
+                source={imageData}
+                resizeMode="contain"
+              />
+            </View>
+          )}
         </TouchableOpacity>
-
-        <StyledInputTitle>거래방식&가격</StyledInputTitle>
         <View>
           <View
             style={css`
               flex-direction: row;
               background-color: ${theme.color.gray0};
-              height: 40px;
+              height: 32px;
               border-radius: 10px;
-              font-weight: 700;
-              margin-bottom: 20px;
+              margin-bottom: 10px;
               position: relative;
             `}>
             <Animated.View
@@ -294,7 +430,7 @@ const EditPage = ({route, navigation}: any) => {
                 {
                   zIndex: 0,
                   position: 'absolute',
-                  backgroundColor: theme.color.black,
+                  backgroundColor: 'black',
                   borderRadius: 10,
                   height: '120%',
                   width: '50%',
@@ -307,6 +443,7 @@ const EditPage = ({route, navigation}: any) => {
               style={css`
                 width: 50%;
                 height: 100%;
+                text-align: center;
                 align-items: center;
                 justify-content: center;
               `}
@@ -315,7 +452,7 @@ const EditPage = ({route, navigation}: any) => {
                 style={css`
                   flex-direction: row;
                 `}>
-                <Ant
+                <FontAwesome
                   style={[
                     css`
                       z-index: 1;
@@ -323,14 +460,19 @@ const EditPage = ({route, navigation}: any) => {
                       color: ${tabcolor === '현금' ? 'white' : theme.color.black};
                     `,
                   ]}
-                  name="wallet"
-                  size={30}
+                  name="dollar"
+                  size={25}
                 />
                 <Text
                   style={[
                     css`
                       z-index: 1;
-                      font-size: 20px;
+                      text-align: center;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      padding-top: 3px;
+                      font-size: 15px;
                       color: ${tabcolor === '현금' ? 'white' : theme.color.black};
                     `,
                   ]}>
@@ -365,7 +507,8 @@ const EditPage = ({route, navigation}: any) => {
                   style={[
                     css`
                       z-index: 1;
-                      font-size: 20px;
+                      padding-top: 5px;
+                      font-size: 15px;
                       color: ${tabcolor === '물물' ? 'white' : theme.color.black};
                     `,
                   ]}>
@@ -377,20 +520,24 @@ const EditPage = ({route, navigation}: any) => {
           {tabcolor === '현금' ? (
             <StyledInputContainer>
               <StyledInput
-                keyboardType="numeric"
+                placeholder="가격을 입력해주세요"
                 placeholderTextColor={theme.color.gray200}
-                defaultValue={cash} // 현금 데이터를 표시합니다.
-                onChangeText={handleCashChange} // 현금 데이터가 변경되면 이를 반영합니다.
+                value={deal.cash.toString()}
+                onChangeText={text => {
+                  handleCashChange(text);
+                }}
+                keyboardType="numeric"
                 style={css`
                   text-align: right;
-                  padding-right: 60px;
+                  padding: 10px;
+                  padding-right: 50px;
                 `}
               />
               <View
                 style={css`
                   position: absolute;
-                  top: 5px;
-                  left: 290px;
+                  top: 20%;
+                  right: 5%;
                 `}>
                 <Text
                   style={css`
@@ -407,28 +554,80 @@ const EditPage = ({route, navigation}: any) => {
               <StyledInput
                 placeholder="상품을 입력해주세요"
                 placeholderTextColor={theme.color.gray100}
-                defaultValue={data.item}
+                defaultValue=""
               />
             </StyledInputContainer>
           )}
         </View>
-        <StyledInputTitle>상세정보</StyledInputTitle>
+        <View
+          style={css`
+            flex-direction: row;
+            justify-content: space-between;
+            display: flex;
+          `}>
+          <MoneyButton
+            onPress={() => {
+              const number = deal.cash + 1000;
+              setDeal({...deal, cash: number});
+            }}>
+            <FontAwesome name="plus" size={18} color="#27D894" />
+            <Text
+              style={css`
+                color: ${theme.color.primary};
+              `}>
+              천원
+            </Text>
+          </MoneyButton>
+          <MoneyButton
+            onPress={() => {
+              const number = deal.cash + 3000;
+              setDeal({...deal, cash: number});
+            }}>
+            <FontAwesome name="plus" size={18} color="#27D894" />
+            <Text
+              style={css`
+                color: ${theme.color.primary};
+              `}>
+              삼천원
+            </Text>
+          </MoneyButton>
+          <MoneyButton
+            onPress={() => {
+              const number = deal.cash + 5000;
+              setDeal({...deal, cash: number});
+            }}>
+            <FontAwesome name="plus" size={18} color="#27D894" />
+            <Text
+              style={css`
+                color: ${theme.color.primary};
+              `}>
+              오천원
+            </Text>
+          </MoneyButton>
+        </View>
+        <StyledInputTitle
+          style={css`
+            margin-top: 10px;
+            margin-bottom: 0px;
+          `}>
+          상세정보
+        </StyledInputTitle>
         <StyledInputContainer>
           <StyledInput
             style={css`
-              height: 100px;
+              height: 60px;
+              margin-bottom: 10px;
             `}
-            placeholder={data.content}
+            placeholder={deal.content}
             placeholderTextColor={theme.color.gray100}
-            defaultValue={content} // 제목의 초기값을 설정합니다.
-            onChangeText={handleContentChange} // 제목이 변경되면 이를 반영합니다.
-            // onChangeText={handleContents}
+            value={deal.content}
+            onChangeText={text => setDeal({...deal, content: text})}
           />
         </StyledInputContainer>
-        <DefaultButton color="primary" title="수정 완료" onPress={() => Edit()} />
+        <DefaultButton onPress={() => EditDeal()} color="primary" title="수정 완료" />
       </ScrollView>
     </GlobalContainer>
   );
 };
 
-export default EditPage;
+export default DoItPut;

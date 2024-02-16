@@ -15,9 +15,9 @@ const ModalBackground = styled(GlobalContainer)`
 
 const ModalComponent = styled(GlobalContainer)`
   position: absolute;
-  left: 20px;
-  top: 100px;
-  width: 200px;
+  left: 15px;
+  top: 120px;
+  width: 42%;
   height: initial;
   max-width: 250px;
   border: 2px solid #00d282;
@@ -54,12 +54,13 @@ interface Props {
   setSelectedApart: (apart: string) => void;
 }
 
-const MainModal = (props: Props) => {
-  const Apartlist = [
-    {id: 1, apart: '싸피아파트', name: '303동', default: true},
-    {id: 2, apart: '궁전아파트', name: '403동', default: false},
-    {id: 3, name: '503동', default: false},
-  ];
+const ApartSelectionModal = (props: Props) => {
+  const userData = useRecoilValue(userDataState);
+  console.log(userData)
+  // apt 값이 배열인지 확인
+  const isAptArray = Array.isArray(userData.apt.name);
+  // apt 값이 배열이면 그대로 사용하고, 아니라면 배열로 변환
+  const aptArray = isAptArray ? userData.apt.name : [`${userData.dongName}동`];
 
   return (
     <GlobalContainer
@@ -77,30 +78,32 @@ const MainModal = (props: Props) => {
         <TouchableWithoutFeedback onPress={() => props.setApartModalVisible(false)} style={{zIndex: 1}}>
           <ModalBackground style={{zIndex: 1}}>
             <ModalComponent>
-              {Apartlist.map(apart => (
-                <View key={apart.id}>
+                <View>
                   <ModalSubComponent
                     onPress={() => {
-                      props.setSelectedApart(apart.name);
+                      props.setSelectedApart(`${userData.dongName}`);
                       props.setApartModalVisible(false);
                     }}>
                     <MaterialIcons name="apartment" size={25}></MaterialIcons>
                     <ModalText>
                       {' '}
-                      {apart.name} {apart.default ? '(기본)' : ''}
+                      {userData.dongName}동
                     </ModalText>
                   </ModalSubComponent>
                   <DistinctLine />
                 </View>
-              ))}
-              <ModalSubComponent>
+              <ModalSubComponent
+                onPress={() => {
+                  props.setSelectedApart('');
+                  props.setApartModalVisible(false);
+                }}>
                 <GlobalText
                   style={css`
                     font-weight: bold;
                     margin: 1.5px;
                   `}>
                   {' '}
-                  내 아파트 설정{' '}
+                  내 아파트 단지{' '}
                 </GlobalText>
               </ModalSubComponent>
             </ModalComponent>
@@ -111,4 +114,4 @@ const MainModal = (props: Props) => {
   );
 };
 
-export default MainModal;
+export default ApartSelectionModal;
