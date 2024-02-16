@@ -29,4 +29,6 @@ public interface NotificationService {
     public void requestRecommendDeal(Deal deal, Member acceptMember);
 
     public void cancelRecommendDeal(Deal deal, Member acceptMember);
+
+    public void sendNotificationOutRecommendDealAccept(Deal deal, Member acceptMember);
 }
