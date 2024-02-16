@@ -31,6 +31,7 @@ public class ChatRoomDto {
     public static class Response{
         private Long id;
         private LocalDateTime createdAt;
+        private LocalDateTime modifiedAt;
         private String oppNickName;             // 상대방 닉네임
         private Long oppId;                     // 상대방 uuid
         private Dong dong;                       // 상대방 동
@@ -41,6 +42,7 @@ public class ChatRoomDto {
             return Response.builder()
                     .id(chatRoom.getId())
                     .createdAt(chatRoom.getCreatedAt())
+                    .modifiedAt(chatRoom.getModifiedAt())
                     .chatMessages(chatRoom.getChatMessages())
                     .build();
         }

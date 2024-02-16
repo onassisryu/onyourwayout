@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -39,8 +40,13 @@ public class ChatServiceImpl implements ChatService{
                 .orElseThrow(()->new NoSuchElementException("채팅 상대방 : 알 수 없는 호입니다."));
 
 
+        // 공통된 채팅방이 있다면
         if (commonRoomId!=null){
-            response=new ChatRoomDto.Response().toDto(ChatRoom.builder().id(commonRoomId).build());
+            Optional<ChatRoom> chatRoom=chatRoomRepository.findById(commonRoomId);
+            if (chatRoom.isPresent()){
+                chatRoom.get().setModifiedAt(LocalDateTime.now());
+            }
+            response=new ChatRoomDto.Response().toDto(chatRoom.get());
         }
 
         // 공통된 채팅방이 없다면

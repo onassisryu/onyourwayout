@@ -60,6 +60,15 @@ public class ChatController {
         return result;
     }
 
+    @MessageMapping("/complete")
+    public ChatMessageDto.Request completeHandler(ChatMessageDto.Request message) throws IOException{
+
+        sendingOperations.convertAndSend("/sub/complete/"+message.getChatRoomId(),"COMPLETE");
+
+        return message;
+    }
+
+
     // 바이트 코드를 파일 형태로 변환하여 S3에 저장하고 링크를 반환
     public String changeBinaryImageChange(String byteCode, Long senderId){
         try{
