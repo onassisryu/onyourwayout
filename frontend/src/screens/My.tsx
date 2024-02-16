@@ -9,9 +9,9 @@ import {logoutUser} from '@/utils/common';
 import Header from '@/components/Header';
 import Ant from 'react-native-vector-icons/AntDesign';
 import Mypagelist from '@/components/Mypage/InnerContainerBoxhorizontal';
-import AcceptImage from '../../assets/images/나가요잉2.png';
-import RequestImage from '../../assets/images/해줘요잉2.png';
-import Mark from '../../assets/images/이웃지수마크.png';
+import AcceptImage from '../../assets/images/goout2.png';
+import RequestImage from '../../assets/images/request2.png';
+import Mark from '../../assets/images/Mark.png';
 const MyHeader = styled(Header)`
   justify-content: flex-end;
   position: absolute;
@@ -106,7 +106,7 @@ const My = ({navigation}: any) => {
       `}>
       <ScrollView overScrollMode="never">
         <MyHeader>
-          <TouchableOpacity onPress={() => navigation.navigate('NoticeSetting')}>
+          <TouchableOpacity onPress={() => navigation.navigate('NoticeSettings')}>
             <Text>
               <Ant name="setting" size={30} color="gray" />
             </Text>
@@ -267,12 +267,12 @@ const My = ({navigation}: any) => {
                 title="환경설정"
                 iconType="Ant"
                 icon="setting"
-                onPress={() => navigation.navigate('NoticeSetting')}
+                onPress={() => navigation.navigate('NoticeSettings')}
               />
               <Mypagelist
                 title="로그아웃"
-                iconType="Ant"
-                icon="setting"
+                iconType="MaterialCommunityIcons"
+                icon="logout"
                 onPress={() => {
                   logoutUser();
                   setIsLoggedIn(false);

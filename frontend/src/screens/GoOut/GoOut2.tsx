@@ -240,7 +240,7 @@ const GoOut2 = ({route, navigation}: any) => {
               <View
                 style={css`
                   position: absolute;
-                  bottom: 0;
+                  bottom: 3%;
                   height: 15%;
                   width: 100%;
                   justify-content: center;

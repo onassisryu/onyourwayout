@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
-import {ImageSourcePropType, StatusBar, View, Text, ScrollView, TouchableOpacity, Modal} from 'react-native';
+import {ImageSourcePropType, StatusBar, View, Text, ScrollView, TouchableOpacity, Modal, } from 'react-native';
 import styled, {css} from '@emotion/native';
 import EditDeleteModal from '@/components/DoItListDetailModal/EditDeleteModal';
 import ReportModal from '@/components/DoItListDetailModal/ReportModal';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
+import {NavigationProp, RouteProp,} from '@react-navigation/native';
 import {useFocusEffect} from '@react-navigation/native';
 import {GlobalContainer, GlobalButton, GlobalText} from '@/GlobalStyles';
 import Header from '@/components/Header';
@@ -246,6 +246,7 @@ type User = {
 };
 
 const DoItListDetail = ({route, navigation}: any) => {
+  const { id } = route.params;
   const [requestUserId, setRequestUserId] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(''); // 모달의 종류를 저장하는 state
@@ -254,10 +255,10 @@ const DoItListDetail = ({route, navigation}: any) => {
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [detailImage, setDetailImage] = useState([]);
   const loginuser = useRecoilValue(userDataState);
-  useEffect(() => {
-    console.log('param', route.params.id);
+
+  const fetchPostDetail = () => {
     axiosAuth
-      .get(`/deal/${route.params.id}`)
+      .get(`/deal/${id}`)
       .then(resp => {
         setResponseData(resp.data);
         setRequestUserId(resp.data.requestId);
@@ -268,7 +269,14 @@ const DoItListDetail = ({route, navigation}: any) => {
       .catch(error => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       });
+  };
+  
+  useEffect(() => {
+    fetchPostDetail();
   }, [route.params.id]);
+
+
+
   const goChat = (memberNickname: string, otherNickname: string) => {
     console.log('수락-채팅이동', memberNickname, otherNickname);
     const user = {
@@ -381,45 +389,31 @@ const DoItListDetail = ({route, navigation}: any) => {
                     height: 400px;
                     width: 100%;
                     background-color: ${getBackgroundColor(responseData.dealType)};
+                    justify-content: center;
+                    align-items: center;
                   `}>
                   {responseData.dealType === 'PET' && (
                     <SvgIcon
                       name="puppy"
-                      size={415}
-                      style={css`
-                        justify-content: center;
-                        align-items: center;
-                      `}
+                      size={300}
                     />
                   )}
                   {responseData.dealType === 'SHOP' && (
                     <SvgIcon
                       name="shopping"
-                      size={400}
-                      style={css`
-                        justify-content: center;
-                        align-items: center;
-                      `}
+                      size={300}
                     />
                   )}
                   {responseData.dealType === 'RECYCLE' && (
                     <SvgIcon
                       name="bags"
-                      size={415}
-                      style={css`
-                        justify-content: center;
-                        align-items: center;
-                      `}
+                      size={300}
                     />
                   )}
                   {responseData.dealType === 'ETC' && (
                     <SvgIcon
                       name="building"
-                      size={415}
-                      style={css`
-                        justify-content: center;
-                        align-items: center;
-                      `}
+                      size={300}
                     />
                   )}
                 </View>
@@ -487,7 +481,7 @@ const DoItListDetail = ({route, navigation}: any) => {
               flex-direction: row;
               justify-content: space-between;
             `}>
-            <GoBack onPress={() => navigation.navigate('Bottom', {screen: '아파트'})} />
+            <GoBack/>
             <Feather name="more-vertical" size={40} onPress={handleIconPress} />
           </TouchableOpacity>
         </View>

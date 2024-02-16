@@ -206,6 +206,7 @@ const Home = ({navigation}: any) => {
           padding-right: 20px;
         `}>
         <TouchableOpacity
+          onPress={() => navigation.navigate('Bottom', {screen: '아파트'})}
           style={css`
             height: 40%;
             margin-top: 7%;

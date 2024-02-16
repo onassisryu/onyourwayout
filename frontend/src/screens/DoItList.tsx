@@ -206,25 +206,20 @@ const DoItList = ({navigation}: any) => {
   // 검색어를 기반으로 카드를 필터링하는 함수
 
   const [openSearch, setOpenSearch] = useState(false);
-
-  const [isSearchModalVisible, setSearchModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
   const [searchResults, setSearchResults] = useState<DoListCard[]>(cardListData);
 
   const filterAndUpdateResults = React.useCallback(() => {
     let results = cardListData; // 먼저 카테고리 필터링이 적용될 것입니다.
-
     // 카테고리 필터링
     if (selectedTypeCategory) {
       results = results.filter(card => card.dealType === categoryToDealType(selectedTypeCategory));
     }
-
     // 아파트 필터링
     if (selectedApart) {
       results = results.filter(card => card.requestInfo.dongName === selectedApart);
     }
-
     // 검색어가 있는 경우에만 검색 필터링을 적용합니다.
     if (searchTerm !== '') {
       results = results.filter(
@@ -234,11 +229,10 @@ const DoItList = ({navigation}: any) => {
           card.cash.toString().includes(searchTerm)
       );
     }
-
     // 필터링된 결과를 searchResults로 세팅합니다.
-    setSearchResults(results);
-  }, [selectedTypeCategory, selectedApart, searchTerm, cardListData]);
-
+      setSearchResults(results);
+    }, [selectedTypeCategory, selectedApart, searchTerm, cardListData]);
+  
   // 카테고리가 변경될 때마다 필터링을 다시 수행
   useEffect(() => {
     filterAndUpdateResults();
@@ -252,7 +246,6 @@ const DoItList = ({navigation}: any) => {
         .then(resp => {
           // 모든 카드 데이터를 저장
           setCardListData(resp.data);
-
           // 필터링된 결과를 저장
           filterAndUpdateResults();
         })
@@ -273,10 +266,8 @@ const DoItList = ({navigation}: any) => {
       .get<DoListCard[]>('deal/dong/list')
       .then(resp => {
         console.log('1111111111', resp);
-
         // 모든 카드 데이터를 추가
         setCardListData(prevData => [...prevData, ...resp.data]);
-
         // 필터링된 결과를 추가
         filterAndUpdateResults();
 

@@ -15,7 +15,7 @@ import styled, {css} from '@emotion/native';
 import {AppState} from 'react-native';
 
 //recoil&react-query
-import {isLoggedInState, userDataState, apartDataState, fcmTokenState} from '@/recoil/atoms';
+import {isLoggedInState, userDataState, apartDataState, fcmTokenState, noticeCountState} from '@/recoil/atoms';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {QueryClient, QueryClientProvider} from 'react-query';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
@@ -89,7 +89,13 @@ const App = () => {
   const setApartData = useSetRecoilState(apartDataState);
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const setFcmTokenState = useSetRecoilState(fcmTokenState);
+<<<<<<< HEAD
   const userInfo = useRecoilValue(userDataState);
+=======
+  const setNoticeCount = useSetRecoilState(noticeCountState);
+
+
+>>>>>>> c3928959da119b7e41f4c04b65a38b14410612af
   async function requestPermissions() {
     if (Platform.OS === 'android') {
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
@@ -97,6 +103,10 @@ const App = () => {
     }
   }
 
+  useEffect(()=> { 
+    setNoticeCount(1)
+  }, []);
+  
   useEffect(() => {
     console.log('지도 인증할게요');
     requestPermissions();
